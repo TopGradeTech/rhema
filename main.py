@@ -10,6 +10,7 @@ import requests
 import base64
 import json
 import pyaudio
+from collections import deque
 
 class TranslationApp:
     def __init__(self):
@@ -86,6 +87,13 @@ class TranslationApp:
         self.bad_words = set(["fuck", "shit", "ass", "bitch", "damn", "hell", "crap", "piss", "dick", "cock", "pussy", "tits", "cunt", "bastard", "slut", "whore"])
         self.api_key = ""  # Google STT API key
         self.settings_window = None
+        self.text_queue = deque()
+        self.is_flushing_queue = False
+        self.chunk_size = 100
+        self.chunk_delay_ms = 300
+        self.flush_timeout_ms = 2000
+        self.pending_text = ""
+        self.flush_after_id = None
         
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
         
@@ -250,6 +258,16 @@ class TranslationApp:
         font_size_scale = tk.Scale(display_section, from_=12, to=72, orient=tk.HORIZONTAL, variable=font_size_var)
         font_size_scale.pack(fill=tk.X)
 
+        tk.Label(display_section, text="Text Chunk Size (chars):", **label_opts).pack(anchor="w", pady=(10, 4))
+        chunk_size_var = tk.IntVar(value=self.chunk_size)
+        chunk_size_spin = tk.Spinbox(display_section, from_=20, to=300, textvariable=chunk_size_var)
+        chunk_size_spin.pack(fill=tk.X)
+
+        tk.Label(display_section, text="Chunk Delay (ms):", **label_opts).pack(anchor="w", pady=(10, 4))
+        chunk_delay_var = tk.IntVar(value=self.chunk_delay_ms)
+        chunk_delay_spin = tk.Spinbox(display_section, from_=50, to=2000, increment=50, textvariable=chunk_delay_var)
+        chunk_delay_spin.pack(fill=tk.X)
+
         audio_section = tk.LabelFrame(
             content,
             text="Audio",
@@ -323,6 +341,8 @@ class TranslationApp:
             self.bg_color = bg_color_var.get()
             self.text_color = text_color_var.get()
             self.font_size = font_size_var.get()
+            self.chunk_size = max(20, int(chunk_size_var.get()))
+            self.chunk_delay_ms = max(50, int(chunk_delay_var.get()))
             if self.device_var.get() in self.device_indices:
                 self.microphone_index = self.devices.index(self.device_var.get())
             else:
@@ -434,17 +454,72 @@ class TranslationApp:
     
     def update_text(self, text):
         def update():
-            filtered_text = self.filter_bad_words(text)
-            self.translations.append(filtered_text)
-            if len(self.translations) > self.max_lines:
-                self.translations.pop(0)
-            display_text = '\n'.join(self.translations)
-            font_size = self.font_size
-            self.text_label.config(state='normal', font=(self.font_family, font_size))
-            self.text_label.delete(1.0, tk.END)
-            self.text_label.insert(tk.END, display_text)
-            self.text_label.config(state='disabled')
+            incoming = text.strip()
+            if not incoming:
+                return
+
+            if self.pending_text:
+                self.pending_text = f"{self.pending_text} {incoming}"
+            else:
+                self.pending_text = incoming
+
+            if len(self.pending_text) >= self.chunk_size:
+                self.enqueue_text(self.pending_text)
+                self.pending_text = ""
+
+            if self.flush_after_id is not None:
+                self.root.after_cancel(self.flush_after_id)
+            self.flush_after_id = self.root.after(self.flush_timeout_ms, self.flush_pending_text)
         self.root.after(0, update)
+
+    def enqueue_text(self, text):
+        for chunk in self.chunk_text(text, self.chunk_size):
+            self.text_queue.append(chunk)
+        if not self.is_flushing_queue:
+            self.flush_text_queue()
+
+    def flush_pending_text(self):
+        self.flush_after_id = None
+        if not self.pending_text:
+            return
+        self.enqueue_text(self.pending_text)
+        self.pending_text = ""
+
+    def flush_text_queue(self):
+        if not self.text_queue:
+            self.is_flushing_queue = False
+            return
+
+        self.is_flushing_queue = True
+        chunk = self.text_queue.popleft()
+        filtered_text = self.filter_bad_words(chunk)
+        self.translations.append(filtered_text)
+        if len(self.translations) > self.max_lines:
+            self.translations.pop(0)
+        display_text = '\n'.join(self.translations)
+        font_size = self.font_size
+        self.text_label.config(state='normal', font=(self.font_family, font_size))
+        self.text_label.delete(1.0, tk.END)
+        self.text_label.insert(tk.END, display_text)
+        self.text_label.config(state='disabled')
+        self.root.after(self.chunk_delay_ms, self.flush_text_queue)
+
+    def chunk_text(self, text, max_len):
+        if len(text) <= max_len:
+            return [text]
+
+        chunks = []
+        remaining = text.strip()
+        while remaining:
+            if len(remaining) <= max_len:
+                chunks.append(remaining)
+                break
+            split_at = remaining.rfind(" ", 0, max_len + 1)
+            if split_at == -1 or split_at < max_len // 2:
+                split_at = max_len
+            chunks.append(remaining[:split_at].rstrip())
+            remaining = remaining[split_at:].lstrip()
+        return chunks
     
     def filter_bad_words(self, text):
         filtered = text
