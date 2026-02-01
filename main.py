@@ -257,15 +257,18 @@ class TranslationApp:
     def get_audio_devices(self):
         p = pyaudio.PyAudio()
         input_devices = []
+        output_devices = []
         
         for i in range(p.get_device_count()):
             device_info = p.get_device_info_by_index(i)
             if device_info.get('maxInputChannels', 0) > 0:
                 input_devices.append((i, device_info.get('name', 'Unknown')))
+            elif device_info.get('maxOutputChannels', 0) > 0:
+                output_devices.append((i, device_info.get('name', 'Unknown')))
         
         p.terminate()
         
-        # Only list real input devices to avoid unreliable loopback capture.
+        # Include input devices and optionally output devices (for loopback/monitor sources).
         devices = []
         self.device_indices = {}
         self.device_types = {}
@@ -274,6 +277,11 @@ class TranslationApp:
             devices.append(label)
             self.device_indices[label] = idx
             self.device_types[label] = 'input'
+        for idx, name in output_devices:
+            label = f"Output ({idx}): {name}"
+            devices.append(label)
+            self.device_indices[label] = idx
+            self.device_types[label] = 'output'
             
         return devices if devices else ["No devices found"]
     
