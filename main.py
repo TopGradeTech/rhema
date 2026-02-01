@@ -45,7 +45,6 @@ class TranslationApp:
         self.bg_color = "#000000"  # Background color
         self.text_color = "#ffffff"  # Text color
         self.font_size = 24  # Font size
-        self.apply_colors()  # Apply default colors
         
         self.status_label = tk.Label(
             self.root,
@@ -58,6 +57,8 @@ class TranslationApp:
             highlightthickness=0,
         )
         self.status_label.grid(row=1, column=0, sticky='sw', padx=10, pady=(0, 5))
+        
+        self.apply_colors()  # Apply default colors
         
         self.fullscreen_button = tk.Button(self.root, text="Toggle Fullscreen", command=self.toggle_fullscreen)
         self.fullscreen_button.grid(row=2, column=0, pady=10)
@@ -199,7 +200,8 @@ class TranslationApp:
     
     def apply_colors(self):
         self.text_label.config(bg=self.bg_color, fg=self.text_color)
-        self.status_label.config(bg=self.bg_color, fg=self.text_color)
+        if hasattr(self, "status_label"):
+            self.status_label.config(bg=self.bg_color, fg=self.text_color)
     
     def listen_and_translate(self):
         while self.listening:
