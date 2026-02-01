@@ -1,10 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+mkdir -p logs
+
 if [ ! -d ".venv" ]; then
   python3 -m venv .venv
 fi
 
 source .venv/bin/activate
 python -m pip install -r requirements.txt
-python main.py
+timestamp=$(date +"%Y%m%d-%H%M%S")
+log_file="logs/run-${timestamp}.log"
+python main.py >"${log_file}" 2>&1
