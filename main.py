@@ -45,17 +45,7 @@ class TranslationApp:
         self.text_canvas = tk.Canvas(self.root, bg=self.bg_color, highlightthickness=0)
         self.text_canvas.grid(row=0, column=0, sticky='nsew', padx=10, pady=10)
         self.text_padding = 10
-        self.live_gap = 10
-        self.history_item = self.text_canvas.create_text(
-            self.text_padding,
-            0,
-            anchor="sw",
-            text="",
-            fill=self.text_color,
-            font=self.text_font,
-            width=0,
-        )
-        self.live_item = self.text_canvas.create_text(
+        self.text_item = self.text_canvas.create_text(
             self.text_padding,
             0,
             anchor="sw",
@@ -134,10 +124,7 @@ class TranslationApp:
         self.scroll_offset = 0.0
         self.scroll_last_time = time.time()
         self.scroll_after_id = None
-        self.history_bbox_height = 0
-        self.live_bbox_height = 0
-        self.history_lines = []
-        self.live_lines = []
+        self.text_bbox_height = 0
         self.enable_scrolling = False
 
         self.load_settings()
@@ -614,8 +601,7 @@ class TranslationApp:
     
     def apply_colors(self):
         self.text_canvas.config(bg=self.bg_color)
-        self.text_canvas.itemconfigure(self.history_item, fill=self.text_color)
-        self.text_canvas.itemconfigure(self.live_item, fill=self.text_color)
+        self.text_canvas.itemconfigure(self.text_item, fill=self.text_color)
         if hasattr(self, "status_label"):
             self.status_label.config(bg=self.bg_color, fg=self.text_color)
         if hasattr(self, "controls_frame"):
