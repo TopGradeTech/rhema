@@ -129,6 +129,7 @@ class TranslationApp:
         self.custom_vocabulary = self.default_biblical_terms()
         self.biblical_books = self.default_biblical_books()
         self.is_paused = False
+        self.allow_loopback = False
         self.scroll_speed_px = 20
         self.scroll_offset = 0.0
         self.scroll_last_time = time.time()
@@ -229,6 +230,7 @@ class TranslationApp:
         self.custom_vocabulary = data.get("custom_vocabulary", self.custom_vocabulary)
         self.biblical_books = data.get("biblical_books", self.biblical_books)
         self.scroll_speed_px = data.get("scroll_speed_px", self.scroll_speed_px)
+        self.allow_loopback = data.get("allow_loopback", self.allow_loopback)
 
     def save_settings(self):
         data = {
@@ -247,6 +249,7 @@ class TranslationApp:
             "custom_vocabulary": self.custom_vocabulary,
             "biblical_books": self.biblical_books,
             "scroll_speed_px": self.scroll_speed_px,
+            "allow_loopback": self.allow_loopback,
         }
         try:
             with open(self.settings_path, "w", encoding="utf-8") as f:
@@ -277,11 +280,12 @@ class TranslationApp:
             devices.append(label)
             self.device_indices[label] = idx
             self.device_types[label] = 'input'
-        for idx, name in output_devices:
-            label = f"Output ({idx}): {name}"
-            devices.append(label)
-            self.device_indices[label] = idx
-            self.device_types[label] = 'output'
+        if self.allow_loopback:
+            for idx, name in output_devices:
+                label = f"Output ({idx}): {name}"
+                devices.append(label)
+                self.device_indices[label] = idx
+                self.device_types[label] = 'output'
             
         return devices if devices else ["No devices found"]
     
@@ -425,6 +429,18 @@ class TranslationApp:
         device_menu = tk.OptionMenu(audio_section, self.device_var, *self.devices)
         device_menu.pack(fill=tk.X)
 
+        loopback_var = tk.BooleanVar(value=self.allow_loopback)
+        loopback_check = tk.Checkbutton(
+            audio_section,
+            text="Allow output/loopback capture (PipeWire/WASAPI)",
+            variable=loopback_var,
+            bg=section_bg,
+            fg=settings_fg,
+            selectcolor=section_bg,
+            activebackground=section_bg,
+        )
+        loopback_check.pack(anchor="w", pady=(6, 0))
+
         tk.Label(audio_section, text="Transcription Engine:", **label_opts).pack(anchor="w", pady=(10, 4))
         transcription_options = [
             ("Google (Free)", "google_free"),
@@ -552,6 +568,11 @@ class TranslationApp:
             )
             vocab_str = vocab_text.get("1.0", tk.END).strip()
             self.custom_vocabulary = [v.strip() for v in vocab_str.split(",") if v.strip()]
+            self.allow_loopback = bool(loopback_var.get())
+            # Refresh device list if loopback setting changed.
+            self.devices = self.get_audio_devices()
+            if self.device_var.get() not in self.devices:
+                self.device_var.set(self.devices[0] if self.devices else "No devices")
             if self.device_var.get() in self.device_indices:
                 self.microphone_index = self.devices.index(self.device_var.get())
             else:
@@ -603,9 +624,11 @@ class TranslationApp:
                     time.sleep(1)
                     continue
                 if self.device_types.get(device_name) != "input":
-                    self.update_status("Selected device is output-only")
-                    time.sleep(1)
-                    continue
+                    if not self.allow_loopback:
+                        self.update_status("Selected device is output-only (enable loopback)")
+                        time.sleep(1)
+                        continue
+                    self.update_status("Loopback capture (output)")
                     
                 device_index = self.device_indices.get(device_name, 0)
                 # Use microphone input
