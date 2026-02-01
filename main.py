@@ -602,6 +602,10 @@ class TranslationApp:
                     self.update_status("No audio device selected")
                     time.sleep(1)
                     continue
+                if self.device_types.get(device_name) != "input":
+                    self.update_status("Selected device is output-only")
+                    time.sleep(1)
+                    continue
                     
                 device_index = self.device_indices.get(device_name, 0)
                 # Use microphone input
