@@ -27,7 +27,7 @@ class TranslationApp:
         self.root.overrideredirect(False)
         self.menubar = tk.Menu(self.root)
         self.menubar.add_command(label="Settings", command=self.open_settings)
-        self.root.config(menu=self.menubar)
+        self.root.config(menu=None)
         
         self.root.grid_rowconfigure(0, weight=8)  # 80% height for text
         self.root.grid_rowconfigure(1, weight=0)  # status line
@@ -85,6 +85,7 @@ class TranslationApp:
         self.max_lines = 8  # Default number of lines
         self.bad_words = set(["fuck", "shit", "ass", "bitch", "damn", "hell", "crap", "piss", "dick", "cock", "pussy", "tits", "cunt", "bastard", "slut", "whore"])
         self.api_key = ""  # Google STT API key
+        self.settings_window = None
         
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
         
@@ -109,7 +110,11 @@ class TranslationApp:
 
     def open_settings_event(self, event):
         self.show_status_temporarily()
-        self.open_settings()
+        if self.settings_window is not None and self.settings_window.winfo_exists():
+            self.settings_window.destroy()
+            self.settings_window = None
+        else:
+            self.open_settings()
         return "break"
 
     def close_app_event(self, event):
@@ -168,10 +173,22 @@ class TranslationApp:
         return devices if devices else ["No devices found"]
     
     def open_settings(self):
+        if self.settings_window is not None and self.settings_window.winfo_exists():
+            self.settings_window.focus_force()
+            return
+
         settings_window = tk.Toplevel(self.root)
+        self.settings_window = settings_window
         settings_window.title("Settings")
         settings_window.geometry("420x600")
         settings_window.minsize(420, 600)
+
+        def on_settings_close():
+            if self.settings_window is not None:
+                self.settings_window.destroy()
+                self.settings_window = None
+
+        settings_window.protocol("WM_DELETE_WINDOW", on_settings_close)
 
         content = tk.Frame(settings_window)
         content.pack(fill=tk.BOTH, expand=True)
@@ -241,7 +258,7 @@ class TranslationApp:
         save_button = tk.Button(button_frame, text="Save", command=save_settings)
         save_button.pack(side=tk.LEFT, padx=10, pady=10)
         
-        close_button = tk.Button(button_frame, text="Close", command=settings_window.destroy)
+        close_button = tk.Button(button_frame, text="Close", command=on_settings_close)
         close_button.pack(side=tk.RIGHT, padx=10, pady=10)
     
     def choose_color(self, color_var, color_type, parent):
