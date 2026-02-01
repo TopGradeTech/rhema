@@ -99,6 +99,8 @@ class TranslationApp:
         self.source_lang = "auto"
         self.target_lang = "en"
         self.transcription_mode = "google_free"
+        self.custom_vocabulary = self.default_biblical_terms()
+        self.biblical_books = self.default_biblical_books()
 
         self.load_settings()
         
@@ -184,6 +186,8 @@ class TranslationApp:
         self.source_lang = data.get("source_lang", self.source_lang)
         self.target_lang = data.get("target_lang", self.target_lang)
         self.transcription_mode = data.get("transcription_mode", self.transcription_mode)
+        self.custom_vocabulary = data.get("custom_vocabulary", self.custom_vocabulary)
+        self.biblical_books = data.get("biblical_books", self.biblical_books)
 
     def save_settings(self):
         data = {
@@ -199,6 +203,8 @@ class TranslationApp:
             "source_lang": self.source_lang,
             "target_lang": self.target_lang,
             "transcription_mode": self.transcription_mode,
+            "custom_vocabulary": self.custom_vocabulary,
+            "biblical_books": self.biblical_books,
         }
         try:
             with open(self.settings_path, "w", encoding="utf-8") as f:
@@ -378,6 +384,11 @@ class TranslationApp:
         transcription_menu = tk.OptionMenu(audio_section, transcription_var, *transcription_display)
         transcription_menu.pack(fill=tk.X)
 
+        tk.Label(audio_section, text="Custom Vocabulary (comma-separated):", **label_opts).pack(anchor="w", pady=(10, 4))
+        vocab_text = tk.Text(audio_section, height=4, width=50)
+        vocab_text.insert(tk.END, ", ".join(self.custom_vocabulary))
+        vocab_text.pack(fill=tk.X)
+
         filters_section = tk.LabelFrame(
             content,
             text="Filters",
@@ -482,6 +493,8 @@ class TranslationApp:
                 transcription_var.get(),
                 "google_free",
             )
+            vocab_str = vocab_text.get("1.0", tk.END).strip()
+            self.custom_vocabulary = [v.strip() for v in vocab_str.split(",") if v.strip()]
             if self.device_var.get() in self.device_indices:
                 self.microphone_index = self.devices.index(self.device_var.get())
             else:
@@ -562,6 +575,8 @@ class TranslationApp:
                 src=self.source_lang,
                 dest=self.target_lang,
             ).text
+            translated = self.apply_custom_vocabulary(translated)
+            translated = self.format_scripture_refs(translated)
         except Exception as e:
             self.update_status(f"Translation error: {e}")
             translated = text
@@ -580,6 +595,9 @@ class TranslationApp:
                 "languageCode": "en-US",
                 "enableAutomaticPunctuation": True
             },
+            "speechContexts": [
+                {"phrases": self.custom_vocabulary}
+            ],
             "audio": {
                 "content": audio_base64
             }
@@ -672,6 +690,78 @@ class TranslationApp:
             pattern = r"\b" + re.escape(word) + r"\b"
             filtered = re.sub(pattern, '***', filtered, flags=re.IGNORECASE)
         return filtered
+
+    def apply_custom_vocabulary(self, text):
+        if not self.custom_vocabulary:
+            return text
+        replacements = {v.lower(): v for v in self.custom_vocabulary}
+        def repl(match):
+            key = match.group(0).lower()
+            return replacements.get(key, match.group(0))
+        pattern = r"\b(" + "|".join(re.escape(v) for v in self.custom_vocabulary) + r")\b"
+        return re.sub(pattern, repl, text, flags=re.IGNORECASE)
+
+    def format_scripture_refs(self, text):
+        if not self.biblical_books:
+            return text
+        book_pattern = "|".join(re.escape(b) for b in self.biblical_books)
+        pattern = (
+            r"\b(" + book_pattern + r")\b"
+            r"(?:\s+chapter)?\s+(\d{1,3})"
+            r"(?:\s*[:]\s*|\s+verse\s+|\s+)(\d{1,3})\b"
+        )
+        def repl(match):
+            book = match.group(1)
+            chapter = match.group(2)
+            verse = match.group(3)
+            return f"{book} {chapter}:{verse}"
+        return re.sub(pattern, repl, text, flags=re.IGNORECASE)
+
+    def default_biblical_books(self):
+        return [
+            "Genesis", "Exodus", "Leviticus", "Numbers", "Deuteronomy",
+            "Joshua", "Judges", "Ruth", "1 Samuel", "2 Samuel",
+            "1 Kings", "2 Kings", "1 Chronicles", "2 Chronicles",
+            "Ezra", "Nehemiah", "Esther", "Job", "Psalms", "Proverbs",
+            "Ecclesiastes", "Song of Solomon", "Isaiah", "Jeremiah",
+            "Lamentations", "Ezekiel", "Daniel", "Hosea", "Joel", "Amos",
+            "Obadiah", "Jonah", "Micah", "Nahum", "Habakkuk",
+            "Zephaniah", "Haggai", "Zechariah", "Malachi",
+            "Matthew", "Mark", "Luke", "John", "Acts", "Romans",
+            "1 Corinthians", "2 Corinthians", "Galatians", "Ephesians",
+            "Philippians", "Colossians", "1 Thessalonians",
+            "2 Thessalonians", "1 Timothy", "2 Timothy", "Titus",
+            "Philemon", "Hebrews", "James", "1 Peter", "2 Peter",
+            "1 John", "2 John", "3 John", "Jude", "Revelation"
+        ]
+
+    def default_biblical_terms(self):
+        return [
+            "Genesis", "Exodus", "Leviticus", "Numbers", "Deuteronomy",
+            "Joshua", "Judges", "Ruth", "1 Samuel", "2 Samuel",
+            "1 Kings", "2 Kings", "1 Chronicles", "2 Chronicles",
+            "Ezra", "Nehemiah", "Esther", "Job", "Psalms", "Proverbs",
+            "Ecclesiastes", "Song of Solomon", "Isaiah", "Jeremiah",
+            "Lamentations", "Ezekiel", "Daniel", "Hosea", "Joel", "Amos",
+            "Obadiah", "Jonah", "Micah", "Nahum", "Habakkuk",
+            "Zephaniah", "Haggai", "Zechariah", "Malachi",
+            "Matthew", "Mark", "Luke", "John", "Acts", "Romans",
+            "1 Corinthians", "2 Corinthians", "Galatians", "Ephesians",
+            "Philippians", "Colossians", "1 Thessalonians",
+            "2 Thessalonians", "1 Timothy", "2 Timothy", "Titus",
+            "Philemon", "Hebrews", "James", "1 Peter", "2 Peter",
+            "1 John", "2 John", "3 John", "Jude", "Revelation",
+            "Moses", "Abraham", "Isaac", "Jacob", "Joseph",
+            "David", "Solomon", "Samuel", "Isaiah", "Jeremiah",
+            "Ezekiel", "Daniel", "Paul", "Peter", "Mary", "Jesus",
+            "Jerusalem", "Bethlehem", "Nazareth", "Galilee", "Jericho",
+            "Capernaum", "Nazareth", "Judea", "Samaria", "Bethany",
+            "Golgotha", "Calvary", "Mount Sinai", "Mount Zion",
+            "Jordan", "Sea of Galilee", "Dead Sea", "Damascus",
+            "Assyria", "Babylon", "Egypt", "Rome", "Antioch",
+            "Corinth", "Ephesus", "Philippi", "Thessalonica",
+            "Tarsus", "Patmos"
+        ]
     
     def update_display(self):
         def update():
