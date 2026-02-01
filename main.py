@@ -23,7 +23,11 @@ class TranslationApp:
         self.devices = self.get_audio_devices()
         self.microphone_index = 0 if self.devices else None
         
-        self.root.overrideredirect(True)
+        # Restore window manager controls and menu for reliability.
+        self.root.overrideredirect(False)
+        menubar = tk.Menu(self.root)
+        menubar.add_command(label="Settings", command=self.open_settings)
+        self.root.config(menu=menubar)
         
         self.root.grid_rowconfigure(0, weight=8)  # 80% height for text
         self.root.grid_rowconfigure(1, weight=0)  # status line
@@ -71,6 +75,7 @@ class TranslationApp:
         self.root.bind_all("<Control-Alt-f>", self.toggle_fullscreen_event)
         self.root.bind_all("<Escape>", self.exit_fullscreen_event)
         self.root.bind_all("<Control-s>", self.open_settings_event)
+        self.root.bind_all("<Control-q>", self.close_app_event)
         self.root.bind("<Motion>", self.on_mouse_move)
         self.root.focus_set()
         self.listening = True
@@ -103,6 +108,10 @@ class TranslationApp:
     def open_settings_event(self, event):
         self.show_status_temporarily()
         self.open_settings()
+        return "break"
+
+    def close_app_event(self, event):
+        self.on_closing()
         return "break"
 
     def on_mouse_move(self, event):
