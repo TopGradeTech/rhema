@@ -123,6 +123,7 @@ class TranslationApp:
         self.scroll_offset = 0.0
         self.scroll_last_time = time.time()
         self.scroll_after_id = None
+        self.text_bbox_height = 0
 
         self.load_settings()
         self.text_font.configure(size=self.font_size)
@@ -837,6 +838,9 @@ class TranslationApp:
     def render_text(self):
         display_text = '\n'.join(self.filter_bad_words(t) for t in self.translations[-self.max_lines:])
         self.text_canvas.itemconfigure(self.text_item, text=display_text, font=self.text_font)
+        self.text_canvas.update_idletasks()
+        bbox = self.text_canvas.bbox(self.text_item)
+        self.text_bbox_height = (bbox[3] - bbox[1]) if bbox else 0
         self.update_text_position()
 
     def start_scroll_loop(self):
@@ -855,13 +859,19 @@ class TranslationApp:
             self.scroll_after_id = self.root.after(16, self.scroll_tick)
             return
 
-        self.scroll_offset += self.scroll_speed_px * dt
+        speed_scale = max(1.0, len(self.translations) / max(1, self.max_lines))
+        self.scroll_offset += (self.scroll_speed_px * speed_scale) * dt
         line_height = self.text_font.metrics("linespace") or 1
-        if self.scroll_offset >= line_height and len(self.translations) > 1:
-            while self.scroll_offset >= line_height and len(self.translations) > 1:
-                self.scroll_offset -= line_height
+        height = self.text_canvas.winfo_height()
+        y = height - self.text_padding - self.scroll_offset
+        top = y - self.text_bbox_height
+        if top <= 0 and len(self.translations) > 1:
+            while top <= 0 and len(self.translations) > 1:
                 self.translations.pop(0)
-            self.render_text()
+                self.scroll_offset = max(0.0, self.scroll_offset - line_height)
+                self.render_text()
+                y = height - self.text_padding - self.scroll_offset
+                top = y - self.text_bbox_height
         else:
             self.update_text_position()
         self.scroll_after_id = self.root.after(16, self.scroll_tick)
