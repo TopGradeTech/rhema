@@ -29,9 +29,10 @@ class TranslationApp:
         
         # Restore window manager controls and menu for reliability.
         self.root.overrideredirect(False)
+        self.empty_menubar = tk.Menu(self.root)
         self.menubar = tk.Menu(self.root)
         self.menubar.add_command(label="Settings", command=self.open_settings)
-        self.root.config(menu=None)
+        self.root.config(menu=self.empty_menubar)
         
         self.root.grid_rowconfigure(0, weight=8)  # 80% height for text
         self.root.grid_rowconfigure(1, weight=0)  # status line
@@ -89,7 +90,7 @@ class TranslationApp:
         self.pause_button.pack(side=tk.LEFT)
         self.controls_frame.grid_remove()
 
-        self.root.config(menu=None)
+        self.root.config(menu=self.empty_menubar)
         
         self.apply_colors()  # Apply default colors
         
@@ -186,7 +187,7 @@ class TranslationApp:
     def hide_status(self):
         self.status_label.grid_remove()
         self.controls_frame.grid_remove()
-        self.root.config(menu=None)
+        self.root.config(menu=self.empty_menubar)
         self.status_hide_after_id = None
         self.overlay_visible = False
 
