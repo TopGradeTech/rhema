@@ -42,7 +42,7 @@ class TranslationApp:
 
         self.bg_color = "#000000"  # Background color
         self.text_color = "#ffffff"  # Text color
-        self.font_size = 24  # Font size
+        self.font_size = 50  # Font size
         
         self.status_label = tk.Label(
             self.root,
