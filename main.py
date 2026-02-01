@@ -69,6 +69,7 @@ class TranslationApp:
         self.status_label.grid(row=1, column=0, sticky='sw', padx=10, pady=(0, 5))
         self.status_label.grid_remove()
         self.status_hide_after_id = None
+        self.overlay_visible = False
 
         self.controls_frame = tk.Frame(self.root, bg=self.bg_color)
         self.controls_frame.grid(row=2, column=0, pady=10)
@@ -171,6 +172,9 @@ class TranslationApp:
         self.show_status_temporarily()
 
     def show_status_temporarily(self, duration_ms=2000):
+        if self.overlay_visible:
+            return
+        self.overlay_visible = True
         self.status_label.grid()
         self.controls_frame.grid()
         if self.menubar is not None:
@@ -184,6 +188,7 @@ class TranslationApp:
         self.controls_frame.grid_remove()
         self.root.config(menu=None)
         self.status_hide_after_id = None
+        self.overlay_visible = False
 
     def pick_font_family(self, candidates):
         available = set(tkfont.families())
