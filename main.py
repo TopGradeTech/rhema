@@ -2,6 +2,7 @@ import speech_recognition as sr
 from googletrans import Translator
 import tkinter as tk
 from tkinter import colorchooser
+from tkinter import font as tkfont
 from threading import Thread
 import time
 import re
@@ -14,10 +15,13 @@ class TranslationApp:
     def __init__(self):
         self.root = tk.Tk()
         self.root.title("Python Translation App")
+        self.font_family = self.pick_font_family(
+            ["DejaVu Sans", "Liberation Sans", "Arial", "Helvetica"]
+        )
         self.translator = Translator()
         self.recognizer = sr.Recognizer()
         self.devices = self.get_audio_devices()
-        self.microphone_index = 0
+        self.microphone_index = 0 if self.devices else None
         
         # Menu bar
         menubar = tk.Menu(self.root)
@@ -30,7 +34,12 @@ class TranslationApp:
         self.root.grid_rowconfigure(1, weight=1)  # 20% for status and controls
         self.root.grid_columnconfigure(0, weight=1)
         
-        self.text_label = tk.Text(self.root, wrap=tk.WORD, state='disabled', font=("Arial", 24))
+        self.text_label = tk.Text(
+            self.root,
+            wrap=tk.WORD,
+            state='disabled',
+            font=(self.font_family, 24),
+        )
         self.text_label.grid(row=0, column=0, sticky='nsew', padx=10, pady=10)
         
         self.status_text = tk.Text(self.root, height=3, width=60, state='disabled', wrap=tk.WORD)
@@ -62,6 +71,13 @@ class TranslationApp:
     def toggle_fullscreen(self):
         self.is_fullscreen = not self.is_fullscreen
         self.root.attributes("-fullscreen", self.is_fullscreen)
+
+    def pick_font_family(self, candidates):
+        available = set(tkfont.families())
+        for name in candidates:
+            if name in available:
+                return name
+        return "TkDefaultFont"
     
     def on_closing(self):
         self.listening = False
@@ -146,7 +162,10 @@ class TranslationApp:
             self.bg_color = bg_color_var.get()
             self.text_color = text_color_var.get()
             self.font_size = font_size_var.get()
-            self.microphone_index = self.devices.index(self.device_var.get()) if self.device_var.get() in self.devices else 0
+            if self.device_var.get() in self.device_indices:
+                self.microphone_index = self.devices.index(self.device_var.get())
+            else:
+                self.microphone_index = None
             self.apply_colors()
             self.update_display()
             # Don't destroy here, let user close manually
@@ -169,8 +188,14 @@ class TranslationApp:
     def listen_and_translate(self):
         while self.listening:
             try:
-                device_name = self.devices[self.microphone_index] if self.devices and self.microphone_index < len(self.devices) else None
-                if not device_name:
+                device_name = None
+                if (
+                    self.microphone_index is not None
+                    and self.devices
+                    and self.microphone_index < len(self.devices)
+                ):
+                    device_name = self.devices[self.microphone_index]
+                if not device_name or device_name not in self.device_indices:
                     self.update_status("No audio device selected")
                     time.sleep(1)
                     continue
@@ -250,7 +275,7 @@ class TranslationApp:
                 self.translations.pop(0)
             display_text = '\n'.join(self.translations)
             font_size = self.font_size
-            self.text_label.config(state='normal', font=("Arial", font_size))
+            self.text_label.config(state='normal', font=(self.font_family, font_size))
             self.text_label.delete(1.0, tk.END)
             self.text_label.insert(tk.END, display_text)
             self.text_label.config(state='disabled')
@@ -267,7 +292,7 @@ class TranslationApp:
         def update():
             display_text = '\n'.join(self.filter_bad_words(t) for t in self.translations[-self.max_lines:])
             font_size = self.font_size
-            self.text_label.config(state='normal', font=("Arial", font_size))
+            self.text_label.config(state='normal', font=(self.font_family, font_size))
             self.text_label.delete(1.0, tk.END)
             self.text_label.insert(tk.END, display_text)
             self.text_label.config(state='disabled')
