@@ -719,6 +719,7 @@ class TranslationApp:
         self.live_lines = [filtered_text]
         if len(self.history_lines) > self.max_lines:
             self.history_lines = self.history_lines[-self.max_lines:]
+        self.translations = self.history_lines + self.live_lines
         self.render_text()
         self.root.after(self.chunk_delay_ms, self.flush_text_queue)
 
@@ -825,8 +826,6 @@ class TranslationApp:
     
     def update_display(self):
         def update():
-            self.history_lines = self.translations[-self.max_lines:]
-            self.live_lines = []
             self.render_text()
         self.root.after(0, update)
     
@@ -892,6 +891,7 @@ class TranslationApp:
                 self.history_lines.pop(0)
                 # Keep visual position stable when dropping a line.
                 self.scroll_offset += line_height
+                self.translations = self.history_lines + self.live_lines
                 self.render_text()
                 history_y = height - self.text_padding - self.live_bbox_height - self.live_gap - self.scroll_offset
                 top = history_y - self.history_bbox_height
