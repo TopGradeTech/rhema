@@ -173,7 +173,8 @@ class TranslationApp:
     def show_status_temporarily(self, duration_ms=2000):
         self.status_label.grid()
         self.controls_frame.grid()
-        self.root.config(menu=self.menubar)
+        if self.menubar is not None:
+            self.root.config(menu=self.menubar)
         if self.status_hide_after_id is not None:
             self.root.after_cancel(self.status_hide_after_id)
         self.status_hide_after_id = self.root.after(duration_ms, self.hide_status)
