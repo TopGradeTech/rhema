@@ -593,11 +593,11 @@ class TranslationApp:
                 "encoding": "LINEAR16",
                 "sampleRateHertz": audio.sample_rate,
                 "languageCode": "en-US",
-                "enableAutomaticPunctuation": True
+                "enableAutomaticPunctuation": True,
+                "speechContexts": [
+                    {"phrases": self.custom_vocabulary}
+                ],
             },
-            "speechContexts": [
-                {"phrases": self.custom_vocabulary}
-            ],
             "audio": {
                 "content": audio_base64
             }
