@@ -182,6 +182,10 @@ class TranslationApp:
         settings_window.title("Settings")
         settings_window.geometry("420x600")
         settings_window.minsize(420, 600)
+        settings_window.update_idletasks()
+        x = self.root.winfo_rootx() + (self.root.winfo_width() - settings_window.winfo_width()) // 2
+        y = self.root.winfo_rooty() + (self.root.winfo_height() - settings_window.winfo_height()) // 2
+        settings_window.geometry(f"+{x}+{y}")
         settings_bg = "#111111"
         section_bg = "#1a1a1a"
         settings_fg = "#f5f5f5"
@@ -273,10 +277,27 @@ class TranslationApp:
         )
         filters_section.pack(fill=tk.BOTH, expand=True, pady=(0, 10))
 
-        tk.Label(filters_section, text="Bad words filter (comma-separated):", **label_opts).pack(anchor="w", pady=(0, 4))
-        bad_words_text = tk.Text(filters_section, height=5, width=50)
+        tk.Label(filters_section, text="Bad words filter:", **label_opts).pack(anchor="w", pady=(0, 4))
+        toggle_var = tk.BooleanVar(value=False)
+
+        bad_words_container = tk.Frame(filters_section, bg=section_bg)
+        bad_words_container.pack(fill=tk.BOTH, expand=True)
+        bad_words_container.pack_forget()
+
+        bad_words_text = tk.Text(bad_words_container, height=5, width=50)
         bad_words_text.insert(tk.END, ', '.join(sorted(self.bad_words)))
         bad_words_text.pack(fill=tk.BOTH, expand=True)
+
+        def toggle_bad_words():
+            if toggle_var.get():
+                bad_words_container.pack(fill=tk.BOTH, expand=True, pady=(6, 0))
+                toggle_button.config(text="Hide list")
+            else:
+                bad_words_container.pack_forget()
+                toggle_button.config(text="Show list")
+
+        toggle_button = tk.Button(filters_section, text="Edit filter", command=lambda: toggle_var.set(not toggle_var.get()) or toggle_bad_words())
+        toggle_button.pack(anchor="w")
 
         api_section = tk.LabelFrame(
             content,
