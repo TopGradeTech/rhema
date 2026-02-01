@@ -188,15 +188,15 @@ class TranslationApp:
         settings_window = tk.Toplevel(self.root)
         self.settings_window = settings_window
         settings_window.title("Settings")
-        settings_window.geometry("420x600")
-        settings_window.minsize(420, 600)
+        settings_window.geometry("480x640")
+        settings_window.minsize(480, 640)
         settings_window.update_idletasks()
         x = self.root.winfo_rootx() + (self.root.winfo_width() - settings_window.winfo_width()) // 2
         y = self.root.winfo_rooty() + (self.root.winfo_height() - settings_window.winfo_height()) // 2
         settings_window.geometry(f"+{x}+{y}")
-        settings_bg = "#111111"
-        section_bg = "#1a1a1a"
-        settings_fg = "#f5f5f5"
+        settings_bg = "#f7f7f7"
+        section_bg = "#ffffff"
+        settings_fg = "#222222"
         settings_window.configure(bg=settings_bg)
         label_opts = {"bg": settings_bg, "fg": settings_fg}
         section_font = (self.font_family, 12, "bold")
@@ -208,8 +208,25 @@ class TranslationApp:
 
         settings_window.protocol("WM_DELETE_WINDOW", on_settings_close)
 
-        content = tk.Frame(settings_window, bg=settings_bg)
-        content.pack(fill=tk.BOTH, expand=True, padx=12, pady=12)
+        canvas = tk.Canvas(settings_window, bg=settings_bg, highlightthickness=0)
+        scrollbar = tk.Scrollbar(settings_window, orient="vertical", command=canvas.yview)
+        canvas.configure(yscrollcommand=scrollbar.set)
+        canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+        content = tk.Frame(canvas, bg=settings_bg)
+        canvas_window = canvas.create_window((0, 0), window=content, anchor="nw")
+
+        def on_canvas_configure(event):
+            canvas.itemconfigure(canvas_window, width=event.width)
+
+        def on_content_configure(event):
+            canvas.configure(scrollregion=canvas.bbox("all"))
+
+        canvas.bind("<Configure>", on_canvas_configure)
+        content.bind("<Configure>", on_content_configure)
+
+        content.configure(padx=12, pady=12)
 
         display_section = tk.LabelFrame(
             content,
