@@ -112,6 +112,8 @@ class TranslationApp:
         self.custom_vocabulary = self.default_biblical_terms()
         self.biblical_books = self.default_biblical_books()
         self.is_paused = False
+        self.fade_duration_ms = 180
+        self.fade_after_id = None
 
         self.load_settings()
         
@@ -533,6 +535,8 @@ class TranslationApp:
         self.text_label.config(bg=self.bg_color, fg=self.text_color)
         if hasattr(self, "status_label"):
             self.status_label.config(bg=self.bg_color, fg=self.text_color)
+        if hasattr(self, "controls_frame"):
+            self.controls_frame.config(bg=self.bg_color)
     
     def listen_and_translate(self):
         while self.listening:
@@ -681,6 +685,7 @@ class TranslationApp:
         self.text_label.delete(1.0, tk.END)
         self.text_label.insert(tk.END, display_text)
         self.text_label.config(state='disabled')
+        self.flash_text()
         self.root.after(self.chunk_delay_ms, self.flush_text_queue)
 
     def chunk_text(self, text, max_len):
@@ -803,6 +808,34 @@ class TranslationApp:
         self.is_paused = not self.is_paused
         self.pause_button.config(text="Resume" if self.is_paused else "Pause")
         self.update_status("Paused" if self.is_paused else "Listening...")
+
+    def flash_text(self):
+        if self.fade_after_id is not None:
+            self.root.after_cancel(self.fade_after_id)
+            self.fade_after_id = None
+        try:
+            dim_color = self.blend_colors(self.text_color, self.bg_color, 0.6)
+            self.text_label.config(fg=dim_color)
+            self.fade_after_id = self.root.after(self.fade_duration_ms, self.restore_text_color)
+        except Exception:
+            pass
+
+    def restore_text_color(self):
+        self.fade_after_id = None
+        self.text_label.config(fg=self.text_color)
+
+    def blend_colors(self, fg_hex, bg_hex, alpha):
+        fg = self.hex_to_rgb(fg_hex)
+        bg = self.hex_to_rgb(bg_hex)
+        blended = tuple(int(bg[i] + (fg[i] - bg[i]) * alpha) for i in range(3))
+        return self.rgb_to_hex(blended)
+
+    def hex_to_rgb(self, value):
+        value = value.lstrip("#")
+        return tuple(int(value[i:i+2], 16) for i in (0, 2, 4))
+
+    def rgb_to_hex(self, rgb):
+        return "#{:02x}{:02x}{:02x}".format(*rgb)
 
 if __name__ == "__main__":
     app = TranslationApp()
