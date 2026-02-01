@@ -862,10 +862,11 @@ class TranslationApp:
         height = self.text_canvas.winfo_height()
         y = height - self.text_padding - self.scroll_offset
         top = y - self.text_bbox_height
-        if top <= 0 and len(self.translations) > 1:
-            while top <= 0 and len(self.translations) > 1:
+        if top <= -line_height and len(self.translations) > 1:
+            while top <= -line_height and len(self.translations) > 1:
                 self.translations.pop(0)
-                self.scroll_offset = max(0.0, self.scroll_offset - line_height)
+                # Keep visual position stable when dropping a line.
+                self.scroll_offset += line_height
                 self.render_text()
                 y = height - self.text_padding - self.scroll_offset
                 top = y - self.text_bbox_height
