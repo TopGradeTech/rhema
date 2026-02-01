@@ -11,9 +11,11 @@ import base64
 import json
 import pyaudio
 from collections import deque
+import os
 
 class TranslationApp:
     def __init__(self):
+        self.settings_path = os.path.join(os.path.dirname(__file__), "settings.json")
         self.root = tk.Tk()
         self.root.title("Python Translation App")
         self.font_family = self.pick_font_family(
@@ -96,6 +98,8 @@ class TranslationApp:
         self.flush_after_id = None
         self.source_lang = "auto"
         self.target_lang = "en"
+
+        self.load_settings()
         
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
         
@@ -158,6 +162,46 @@ class TranslationApp:
     def on_closing(self):
         self.listening = False
         self.root.quit()
+
+    def load_settings(self):
+        if not os.path.exists(self.settings_path):
+            return
+        try:
+            with open(self.settings_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+        except Exception:
+            return
+        self.api_key = data.get("api_key", self.api_key)
+        self.bg_color = data.get("bg_color", self.bg_color)
+        self.text_color = data.get("text_color", self.text_color)
+        self.font_size = data.get("font_size", self.font_size)
+        self.max_lines = data.get("max_lines", self.max_lines)
+        self.bad_words = set(data.get("bad_words", list(self.bad_words)))
+        self.chunk_size = data.get("chunk_size", self.chunk_size)
+        self.chunk_delay_ms = data.get("chunk_delay_ms", self.chunk_delay_ms)
+        self.flush_timeout_ms = data.get("flush_timeout_ms", self.flush_timeout_ms)
+        self.source_lang = data.get("source_lang", self.source_lang)
+        self.target_lang = data.get("target_lang", self.target_lang)
+
+    def save_settings(self):
+        data = {
+            "api_key": self.api_key,
+            "bg_color": self.bg_color,
+            "text_color": self.text_color,
+            "font_size": self.font_size,
+            "max_lines": self.max_lines,
+            "bad_words": sorted(self.bad_words),
+            "chunk_size": self.chunk_size,
+            "chunk_delay_ms": self.chunk_delay_ms,
+            "flush_timeout_ms": self.flush_timeout_ms,
+            "source_lang": self.source_lang,
+            "target_lang": self.target_lang,
+        }
+        try:
+            with open(self.settings_path, "w", encoding="utf-8") as f:
+                json.dump(data, f, indent=2)
+        except Exception:
+            pass
     
     def get_audio_devices(self):
         p = pyaudio.PyAudio()
@@ -423,6 +467,7 @@ class TranslationApp:
                 self.microphone_index = None
             self.apply_colors()
             self.update_display()
+            self.save_settings()
             # Don't destroy here, let user close manually
         
         button_frame = tk.Frame(settings_window, bg=settings_bg)
