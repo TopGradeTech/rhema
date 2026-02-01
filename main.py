@@ -25,9 +25,9 @@ class TranslationApp:
         
         # Restore window manager controls and menu for reliability.
         self.root.overrideredirect(False)
-        menubar = tk.Menu(self.root)
-        menubar.add_command(label="Settings", command=self.open_settings)
-        self.root.config(menu=menubar)
+        self.menubar = tk.Menu(self.root)
+        self.menubar.add_command(label="Settings", command=self.open_settings)
+        self.root.config(menu=self.menubar)
         
         self.root.grid_rowconfigure(0, weight=8)  # 80% height for text
         self.root.grid_rowconfigure(1, weight=0)  # status line
@@ -66,6 +66,8 @@ class TranslationApp:
         )
         self.fullscreen_button.grid(row=2, column=0, pady=10)
         self.fullscreen_button.grid_remove()
+
+        self.root.config(menu=None)
         
         self.apply_colors()  # Apply default colors
         
@@ -120,6 +122,7 @@ class TranslationApp:
     def show_status_temporarily(self, duration_ms=2000):
         self.status_label.grid()
         self.fullscreen_button.grid()
+        self.root.config(menu=self.menubar)
         if self.status_hide_after_id is not None:
             self.root.after_cancel(self.status_hide_after_id)
         self.status_hide_after_id = self.root.after(duration_ms, self.hide_status)
@@ -127,6 +130,7 @@ class TranslationApp:
     def hide_status(self):
         self.status_label.grid_remove()
         self.fullscreen_button.grid_remove()
+        self.root.config(menu=None)
         self.status_hide_after_id = None
 
     def pick_font_family(self, candidates):
