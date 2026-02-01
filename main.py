@@ -54,6 +54,14 @@ class TranslationApp:
         self.status_label.grid(row=1, column=0, sticky='sw', padx=10, pady=(0, 5))
         self.status_label.grid_remove()
         self.status_hide_after_id = None
+
+        self.fullscreen_button = tk.Button(
+            self.root,
+            text="Toggle Fullscreen",
+            command=self.toggle_fullscreen,
+        )
+        self.fullscreen_button.grid(row=2, column=0, pady=10)
+        self.fullscreen_button.grid_remove()
         
         self.apply_colors()  # Apply default colors
         
@@ -102,12 +110,14 @@ class TranslationApp:
 
     def show_status_temporarily(self, duration_ms=2000):
         self.status_label.grid()
+        self.fullscreen_button.grid()
         if self.status_hide_after_id is not None:
             self.root.after_cancel(self.status_hide_after_id)
         self.status_hide_after_id = self.root.after(duration_ms, self.hide_status)
 
     def hide_status(self):
         self.status_label.grid_remove()
+        self.fullscreen_button.grid_remove()
         self.status_hide_after_id = None
 
     def pick_font_family(self, candidates):
