@@ -109,30 +109,34 @@ class TranslationApp:
     def open_settings(self):
         settings_window = tk.Toplevel(self.root)
         settings_window.title("Settings")
-        settings_window.geometry("400x500")
+        settings_window.geometry("420x600")
+        settings_window.minsize(420, 600)
+
+        content = tk.Frame(settings_window)
+        content.pack(fill=tk.BOTH, expand=True)
         
-        tk.Label(settings_window, text="Number of lines to show:").pack(pady=5)
+        tk.Label(content, text="Number of lines to show:").pack(pady=5)
         lines_var = tk.IntVar(value=self.max_lines)
-        lines_spinbox = tk.Spinbox(settings_window, from_=1, to=10, textvariable=lines_var)
+        lines_spinbox = tk.Spinbox(content, from_=1, to=10, textvariable=lines_var)
         lines_spinbox.pack()
         
-        tk.Label(settings_window, text="Bad words filter (comma-separated):").pack(pady=5)
-        bad_words_text = tk.Text(settings_window, height=5, width=50)
+        tk.Label(content, text="Bad words filter (comma-separated):").pack(pady=5)
+        bad_words_text = tk.Text(content, height=5, width=50)
         bad_words_text.insert(tk.END, ', '.join(sorted(self.bad_words)))
         bad_words_text.pack()
         
-        tk.Label(settings_window, text="Google STT API Key (optional):").pack(pady=5)
+        tk.Label(content, text="Google STT API Key (optional):").pack(pady=5)
         api_key_var = tk.StringVar(value=self.api_key)
-        api_key_entry = tk.Entry(settings_window, textvariable=api_key_var, width=50)
+        api_key_entry = tk.Entry(content, textvariable=api_key_var, width=50)
         api_key_entry.pack()
         
-        tk.Label(settings_window, text="Audio Device:").pack(pady=5)
+        tk.Label(content, text="Audio Device:").pack(pady=5)
         self.device_var = tk.StringVar(value=self.devices[self.microphone_index] if self.devices else "No devices")
-        device_menu = tk.OptionMenu(settings_window, self.device_var, *self.devices)
+        device_menu = tk.OptionMenu(content, self.device_var, *self.devices)
         device_menu.pack()
         
-        tk.Label(settings_window, text="Background Color:").pack(pady=5)
-        bg_frame = tk.Frame(settings_window)
+        tk.Label(content, text="Background Color:").pack(pady=5)
+        bg_frame = tk.Frame(content)
         bg_frame.pack()
         bg_color_var = tk.StringVar(value=self.bg_color)
         bg_entry = tk.Entry(bg_frame, textvariable=bg_color_var, width=20)
@@ -140,8 +144,8 @@ class TranslationApp:
         bg_button = tk.Button(bg_frame, text="Choose", command=lambda: self.choose_color(bg_color_var, "background", settings_window))
         bg_button.pack(side=tk.LEFT)
         
-        tk.Label(settings_window, text="Text Color:").pack(pady=5)
-        text_frame = tk.Frame(settings_window)
+        tk.Label(content, text="Text Color:").pack(pady=5)
+        text_frame = tk.Frame(content)
         text_frame.pack()
         text_color_var = tk.StringVar(value=self.text_color)
         text_entry = tk.Entry(text_frame, textvariable=text_color_var, width=20)
@@ -149,9 +153,9 @@ class TranslationApp:
         text_button = tk.Button(text_frame, text="Choose", command=lambda: self.choose_color(text_color_var, "text", settings_window))
         text_button.pack(side=tk.LEFT)
         
-        tk.Label(settings_window, text="Font Size:").pack(pady=5)
+        tk.Label(content, text="Font Size:").pack(pady=5)
         font_size_var = tk.IntVar(value=self.font_size)
-        font_size_scale = tk.Scale(settings_window, from_=12, to=72, orient=tk.HORIZONTAL, variable=font_size_var)
+        font_size_scale = tk.Scale(content, from_=12, to=72, orient=tk.HORIZONTAL, variable=font_size_var)
         font_size_scale.pack()
         
         def save_settings():
@@ -170,10 +174,13 @@ class TranslationApp:
             self.update_display()
             # Don't destroy here, let user close manually
         
-        save_button = tk.Button(settings_window, text="Save", command=save_settings)
+        button_frame = tk.Frame(settings_window)
+        button_frame.pack(fill=tk.X, side=tk.BOTTOM)
+
+        save_button = tk.Button(button_frame, text="Save", command=save_settings)
         save_button.pack(side=tk.LEFT, padx=10, pady=10)
         
-        close_button = tk.Button(settings_window, text="Close", command=settings_window.destroy)
+        close_button = tk.Button(button_frame, text="Close", command=settings_window.destroy)
         close_button.pack(side=tk.RIGHT, padx=10, pady=10)
     
     def choose_color(self, color_var, color_type, parent):
