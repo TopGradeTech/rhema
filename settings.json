@@ -27,7 +27,7 @@
   "flush_timeout_ms": 2000,
   "source_lang": "auto",
   "target_lang": "en",
-  "transcription_mode": "google_free",
+  "transcription_mode": "google_cloud",
   "custom_vocabulary": [
     "Genesis",
     "Exodus",
