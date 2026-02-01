@@ -119,7 +119,7 @@ class TranslationApp:
         self.settings_window = None
         self.text_queue = deque()
         self.is_flushing_queue = False
-        self.chunk_size = 100
+        self.chunk_size = 65
         self.chunk_delay_ms = 300
         self.flush_timeout_ms = 2000
         self.pending_text = ""
@@ -419,7 +419,7 @@ class TranslationApp:
         scroll_enabled_var = tk.BooleanVar(value=self.enable_scrolling)
         scroll_enabled_check = tk.Checkbutton(
             display_section,
-            text="Enable scrolling",
+            text="Enable scrolling (beta)",
             variable=scroll_enabled_var,
             bg=section_bg,
             fg=settings_fg,
@@ -909,11 +909,43 @@ class TranslationApp:
         self.text_canvas.itemconfigure(self.history_item, text=history_text, font=self.text_font)
         self.text_canvas.itemconfigure(self.live_item, text=live_text, font=self.text_font)
         self.text_canvas.update_idletasks()
+        self.update_text_metrics()
+        self.clamp_text_to_fit()
+        self.update_text_position()
+
+    def update_text_metrics(self):
         history_bbox = self.text_canvas.bbox(self.history_item)
         live_bbox = self.text_canvas.bbox(self.live_item)
         self.history_bbox_height = (history_bbox[3] - history_bbox[1]) if history_bbox else 0
         self.live_bbox_height = (live_bbox[3] - live_bbox[1]) if live_bbox else 0
-        self.update_text_position()
+
+    def clamp_text_to_fit(self):
+        height = max(1, self.text_canvas.winfo_height())
+        available = max(1, height - (self.text_padding * 2))
+        total = self.history_bbox_height + self.live_bbox_height
+        if self.history_lines and total > available:
+            while self.history_lines and total > available:
+                self.history_lines.pop(0)
+                history_text = '\n'.join(self.filter_bad_words(t) for t in self.history_lines)
+                self.text_canvas.itemconfigure(self.history_item, text=history_text, font=self.text_font)
+                self.text_canvas.update_idletasks()
+                self.update_text_metrics()
+                total = self.history_bbox_height + self.live_bbox_height
+        if not self.history_lines and self.live_bbox_height > available:
+            self.truncate_live_to_fit(available)
+
+    def truncate_live_to_fit(self, available_height):
+        if not self.live_lines:
+            return
+        text = self.live_lines[0]
+        while len(text) > 10:
+            text = text[: max(10, int(len(text) * 0.85))].rstrip() + "..."
+            self.text_canvas.itemconfigure(self.live_item, text=text, font=self.text_font)
+            self.text_canvas.update_idletasks()
+            self.update_text_metrics()
+            if self.live_bbox_height <= available_height:
+                self.live_lines[0] = text
+                return
 
     def start_scroll_loop(self):
         if self.scroll_after_id is not None:
