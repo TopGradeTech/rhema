@@ -58,7 +58,7 @@ class TranslationApp:
         self.apply_colors()  # Apply default colors
         
         self.is_fullscreen = True
-        self.root.attributes("-fullscreen", True)
+        self.root.after(0, lambda: self.root.attributes("-fullscreen", True))
         self.root.bind("<F11>", self.toggle_fullscreen_event)
         self.root.bind("<Escape>", self.exit_fullscreen_event)
         self.root.bind("<Control-s>", self.open_settings_event)
