@@ -577,7 +577,8 @@ class TranslationApp:
             "config": {
                 "encoding": "LINEAR16",
                 "sampleRateHertz": audio.sample_rate,
-                "languageCode": "en-US"
+                "languageCode": "en-US",
+                "enableAutomaticPunctuation": True
             },
             "audio": {
                 "content": audio_base64
