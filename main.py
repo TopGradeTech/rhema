@@ -98,6 +98,7 @@ class TranslationApp:
         self.flush_after_id = None
         self.source_lang = "auto"
         self.target_lang = "en"
+        self.transcription_mode = "google_free"
 
         self.load_settings()
         
@@ -182,6 +183,7 @@ class TranslationApp:
         self.flush_timeout_ms = data.get("flush_timeout_ms", self.flush_timeout_ms)
         self.source_lang = data.get("source_lang", self.source_lang)
         self.target_lang = data.get("target_lang", self.target_lang)
+        self.transcription_mode = data.get("transcription_mode", self.transcription_mode)
 
     def save_settings(self):
         data = {
@@ -196,6 +198,7 @@ class TranslationApp:
             "flush_timeout_ms": self.flush_timeout_ms,
             "source_lang": self.source_lang,
             "target_lang": self.target_lang,
+            "transcription_mode": self.transcription_mode,
         }
         try:
             with open(self.settings_path, "w", encoding="utf-8") as f:
@@ -361,6 +364,20 @@ class TranslationApp:
         device_menu = tk.OptionMenu(audio_section, self.device_var, *self.devices)
         device_menu.pack(fill=tk.X)
 
+        tk.Label(audio_section, text="Transcription Engine:", **label_opts).pack(anchor="w", pady=(10, 4))
+        transcription_options = [
+            ("Google (Free)", "google_free"),
+            ("Google Cloud (API Key)", "google_cloud"),
+        ]
+        transcription_display = [name for name, _ in transcription_options]
+        transcription_map = {name: code for name, code in transcription_options}
+        rev_transcription_map = {code: name for name, code in transcription_options}
+        transcription_var = tk.StringVar(
+            value=rev_transcription_map.get(self.transcription_mode, "Google (Free)")
+        )
+        transcription_menu = tk.OptionMenu(audio_section, transcription_var, *transcription_display)
+        transcription_menu.pack(fill=tk.X)
+
         filters_section = tk.LabelFrame(
             content,
             text="Filters",
@@ -461,6 +478,10 @@ class TranslationApp:
             self.chunk_delay_ms = max(50, int(chunk_delay_var.get()))
             self.source_lang = lang_map.get(source_lang_var.get(), "auto")
             self.target_lang = lang_map.get(target_lang_var.get(), "en")
+            self.transcription_mode = transcription_map.get(
+                transcription_var.get(),
+                "google_free",
+            )
             if self.device_var.get() in self.device_indices:
                 self.microphone_index = self.devices.index(self.device_var.get())
             else:
@@ -524,11 +545,11 @@ class TranslationApp:
     def process_audio(self, audio):
         self.update_status("Processing speech...")
         try:
-            if self.api_key:
-                # Use Google Cloud Speech-to-Text REST API
+            if self.transcription_mode == "google_cloud":
+                if not self.api_key:
+                    raise Exception("Google Cloud selected but API key is empty")
                 text = self.recognize_google_rest(audio, self.api_key)
             else:
-                # Use free Google Speech Recognition
                 text = self.recognizer.recognize_google(audio)
         except Exception as e:
             self.update_status(f"Speech error: {e}")
