@@ -23,10 +23,7 @@ class TranslationApp:
         self.devices = self.get_audio_devices()
         self.microphone_index = 0 if self.devices else None
         
-        # Menu bar
-        menubar = tk.Menu(self.root)
-        menubar.add_command(label="Settings", command=self.open_settings)
-        self.root.config(menu=menubar)
+        self.root.overrideredirect(True)
         
         self.root.grid_rowconfigure(0, weight=8)  # 80% height for text
         self.root.grid_rowconfigure(1, weight=0)  # status line
@@ -55,6 +52,8 @@ class TranslationApp:
             highlightthickness=0,
         )
         self.status_label.grid(row=1, column=0, sticky='sw', padx=10, pady=(0, 5))
+        self.status_label.grid_remove()
+        self.status_hide_after_id = None
         
         self.apply_colors()  # Apply default colors
         
@@ -62,6 +61,8 @@ class TranslationApp:
         self.root.attributes("-fullscreen", True)
         self.root.bind("<F11>", self.toggle_fullscreen_event)
         self.root.bind("<Escape>", self.exit_fullscreen_event)
+        self.root.bind("<Control-s>", self.open_settings_event)
+        self.root.bind("<Motion>", self.on_mouse_move)
         self.listening = True
         self.translations = []
         self.max_lines = 8  # Default number of lines
@@ -87,6 +88,25 @@ class TranslationApp:
         if self.is_fullscreen:
             self.is_fullscreen = False
             self.root.attributes("-fullscreen", False)
+        return "break"
+
+    def open_settings_event(self, event):
+        self.show_status_temporarily()
+        self.open_settings()
+        return "break"
+
+    def on_mouse_move(self, event):
+        self.show_status_temporarily()
+
+    def show_status_temporarily(self, duration_ms=2000):
+        self.status_label.grid()
+        if self.status_hide_after_id is not None:
+            self.root.after_cancel(self.status_hide_after_id)
+        self.status_hide_after_id = self.root.after(duration_ms, self.hide_status)
+
+    def hide_status(self):
+        self.status_label.grid_remove()
+        self.status_hide_after_id = None
 
     def pick_font_family(self, candidates):
         available = set(tkfont.families())
