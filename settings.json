@@ -209,5 +209,6 @@
     "Jude",
     "Revelation"
   ],
-  "scroll_speed_px": 20
+  "scroll_speed_px": 20,
+  "allow_loopback": true
 }
