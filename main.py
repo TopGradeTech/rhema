@@ -41,6 +41,11 @@ class TranslationApp:
             font=(self.font_family, 24),
         )
         self.text_label.grid(row=0, column=0, sticky='nsew', padx=10, pady=10)
+
+        self.bg_color = "#000000"  # Background color
+        self.text_color = "#ffffff"  # Text color
+        self.font_size = 24  # Font size
+        self.apply_colors()  # Apply default colors
         
         self.status_label = tk.Label(
             self.root,
@@ -53,11 +58,6 @@ class TranslationApp:
             highlightthickness=0,
         )
         self.status_label.grid(row=1, column=0, sticky='sw', padx=10, pady=(0, 5))
-        
-        self.bg_color = "#000000"  # Background color
-        self.text_color = "#ffffff"  # Text color
-        self.font_size = 24  # Font size
-        self.apply_colors()  # Apply default colors
         
         self.fullscreen_button = tk.Button(self.root, text="Toggle Fullscreen", command=self.toggle_fullscreen)
         self.fullscreen_button.grid(row=2, column=0, pady=10)
