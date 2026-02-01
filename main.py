@@ -44,7 +44,17 @@ class TranslationApp:
         self.text_canvas = tk.Canvas(self.root, bg=self.bg_color, highlightthickness=0)
         self.text_canvas.grid(row=0, column=0, sticky='nsew', padx=10, pady=10)
         self.text_padding = 10
-        self.text_item = self.text_canvas.create_text(
+        self.live_gap = 10
+        self.history_item = self.text_canvas.create_text(
+            self.text_padding,
+            0,
+            anchor="sw",
+            text="",
+            fill=self.text_color,
+            font=self.text_font,
+            width=0,
+        )
+        self.live_item = self.text_canvas.create_text(
             self.text_padding,
             0,
             anchor="sw",
@@ -123,7 +133,10 @@ class TranslationApp:
         self.scroll_offset = 0.0
         self.scroll_last_time = time.time()
         self.scroll_after_id = None
-        self.text_bbox_height = 0
+        self.history_bbox_height = 0
+        self.live_bbox_height = 0
+        self.history_lines = []
+        self.live_lines = []
 
         self.load_settings()
         self.text_font.configure(size=self.font_size)
@@ -556,7 +569,8 @@ class TranslationApp:
     
     def apply_colors(self):
         self.text_canvas.config(bg=self.bg_color)
-        self.text_canvas.itemconfigure(self.text_item, fill=self.text_color)
+        self.text_canvas.itemconfigure(self.history_item, fill=self.text_color)
+        self.text_canvas.itemconfigure(self.live_item, fill=self.text_color)
         if hasattr(self, "status_label"):
             self.status_label.config(bg=self.bg_color, fg=self.text_color)
         if hasattr(self, "controls_frame"):
@@ -700,9 +714,11 @@ class TranslationApp:
         self.is_flushing_queue = True
         chunk = self.text_queue.popleft()
         filtered_text = self.filter_bad_words(chunk)
-        self.translations.append(filtered_text)
-        if len(self.translations) > self.max_lines:
-            self.translations.pop(0)
+        if self.live_lines:
+            self.history_lines.extend(self.live_lines)
+        self.live_lines = [filtered_text]
+        if len(self.history_lines) > self.max_lines:
+            self.history_lines = self.history_lines[-self.max_lines:]
         self.render_text()
         self.root.after(self.chunk_delay_ms, self.flush_text_queue)
 
@@ -809,6 +825,8 @@ class TranslationApp:
     
     def update_display(self):
         def update():
+            self.history_lines = self.translations[-self.max_lines:]
+            self.live_lines = []
             self.render_text()
         self.root.after(0, update)
     
@@ -824,20 +842,27 @@ class TranslationApp:
 
     def on_canvas_resize(self, event):
         width = max(10, event.width - (self.text_padding * 2))
-        self.text_canvas.itemconfigure(self.text_item, width=width, font=self.text_font)
+        self.text_canvas.itemconfigure(self.history_item, width=width, font=self.text_font)
+        self.text_canvas.itemconfigure(self.live_item, width=width, font=self.text_font)
         self.update_text_position()
 
     def update_text_position(self):
         height = self.text_canvas.winfo_height()
-        y = height - self.text_padding - self.scroll_offset
-        self.text_canvas.coords(self.text_item, self.text_padding, y)
+        live_y = height - self.text_padding
+        history_y = live_y - self.live_bbox_height - self.live_gap - self.scroll_offset
+        self.text_canvas.coords(self.live_item, self.text_padding, live_y)
+        self.text_canvas.coords(self.history_item, self.text_padding, history_y)
 
     def render_text(self):
-        display_text = '\n'.join(self.filter_bad_words(t) for t in self.translations[-self.max_lines:])
-        self.text_canvas.itemconfigure(self.text_item, text=display_text, font=self.text_font)
+        history_text = '\n'.join(self.filter_bad_words(t) for t in self.history_lines)
+        live_text = '\n'.join(self.filter_bad_words(t) for t in self.live_lines)
+        self.text_canvas.itemconfigure(self.history_item, text=history_text, font=self.text_font)
+        self.text_canvas.itemconfigure(self.live_item, text=live_text, font=self.text_font)
         self.text_canvas.update_idletasks()
-        bbox = self.text_canvas.bbox(self.text_item)
-        self.text_bbox_height = (bbox[3] - bbox[1]) if bbox else 0
+        history_bbox = self.text_canvas.bbox(self.history_item)
+        live_bbox = self.text_canvas.bbox(self.live_item)
+        self.history_bbox_height = (history_bbox[3] - history_bbox[1]) if history_bbox else 0
+        self.live_bbox_height = (live_bbox[3] - live_bbox[1]) if live_bbox else 0
         self.update_text_position()
 
     def start_scroll_loop(self):
@@ -850,26 +875,26 @@ class TranslationApp:
         now = time.time()
         dt = now - self.scroll_last_time
         self.scroll_last_time = now
-        if not self.translations:
+        if not self.history_lines and not self.live_lines:
             self.scroll_offset = 0.0
             self.update_text_position()
             self.scroll_after_id = self.root.after(16, self.scroll_tick)
             return
 
-        speed_scale = max(1.0, len(self.translations) / max(1, self.max_lines))
+        speed_scale = max(1.0, len(self.history_lines) / max(1, self.max_lines))
         self.scroll_offset += (self.scroll_speed_px * speed_scale) * dt
         line_height = self.text_font.metrics("linespace") or 1
         height = self.text_canvas.winfo_height()
-        y = height - self.text_padding - self.scroll_offset
-        top = y - self.text_bbox_height
-        if top <= -line_height and len(self.translations) > 1:
-            while top <= -line_height and len(self.translations) > 1:
-                self.translations.pop(0)
+        history_y = height - self.text_padding - self.live_bbox_height - self.live_gap - self.scroll_offset
+        top = history_y - self.history_bbox_height
+        if top <= -line_height and len(self.history_lines) > 1:
+            while top <= -line_height and len(self.history_lines) > 1:
+                self.history_lines.pop(0)
                 # Keep visual position stable when dropping a line.
                 self.scroll_offset += line_height
                 self.render_text()
-                y = height - self.text_padding - self.scroll_offset
-                top = y - self.text_bbox_height
+                history_y = height - self.text_padding - self.live_bbox_height - self.live_gap - self.scroll_offset
+                top = history_y - self.history_bbox_height
         else:
             self.update_text_position()
         self.scroll_after_id = self.root.after(16, self.scroll_tick)
