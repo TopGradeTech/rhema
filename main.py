@@ -225,6 +225,9 @@ class TranslationApp:
 
         canvas.bind("<Configure>", on_canvas_configure)
         content.bind("<Configure>", on_content_configure)
+        canvas.bind("<MouseWheel>", lambda e: canvas.yview_scroll(int(-1 * (e.delta / 120)), "units"))
+        canvas.bind("<Button-4>", lambda e: canvas.yview_scroll(-1, "units"))
+        canvas.bind("<Button-5>", lambda e: canvas.yview_scroll(1, "units"))
 
         content.configure(padx=12, pady=12)
 
