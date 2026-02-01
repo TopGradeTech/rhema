@@ -203,6 +203,9 @@ class TranslationApp:
 
         def on_settings_close():
             if self.settings_window is not None:
+                self.settings_window.unbind_all("<MouseWheel>")
+                self.settings_window.unbind_all("<Button-4>")
+                self.settings_window.unbind_all("<Button-5>")
                 self.settings_window.destroy()
                 self.settings_window = None
 
@@ -225,9 +228,17 @@ class TranslationApp:
 
         canvas.bind("<Configure>", on_canvas_configure)
         content.bind("<Configure>", on_content_configure)
-        canvas.bind("<MouseWheel>", lambda e: canvas.yview_scroll(int(-1 * (e.delta / 120)), "units"))
-        canvas.bind("<Button-4>", lambda e: canvas.yview_scroll(-1, "units"))
-        canvas.bind("<Button-5>", lambda e: canvas.yview_scroll(1, "units"))
+        def on_mousewheel(event):
+            if event.delta:
+                canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
+            elif event.num == 4:
+                canvas.yview_scroll(-1, "units")
+            elif event.num == 5:
+                canvas.yview_scroll(1, "units")
+
+        settings_window.bind_all("<MouseWheel>", on_mousewheel)
+        settings_window.bind_all("<Button-4>", on_mousewheel)
+        settings_window.bind_all("<Button-5>", on_mousewheel)
 
         content.configure(padx=12, pady=12)
 
