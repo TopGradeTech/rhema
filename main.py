@@ -23,6 +23,7 @@ class TranslationApp:
         )
         self.translator = Translator()
         self.recognizer = sr.Recognizer()
+        self.allow_loopback = False
         self.devices = self.get_audio_devices()
         self.microphone_index = 0 if self.devices else None
         
@@ -129,7 +130,6 @@ class TranslationApp:
         self.custom_vocabulary = self.default_biblical_terms()
         self.biblical_books = self.default_biblical_books()
         self.is_paused = False
-        self.allow_loopback = False
         self.scroll_speed_px = 20
         self.scroll_offset = 0.0
         self.scroll_last_time = time.time()
@@ -138,6 +138,7 @@ class TranslationApp:
         self.live_bbox_height = 0
         self.history_lines = []
         self.live_lines = []
+        self.enable_scrolling = False
 
         self.load_settings()
         self.text_font.configure(size=self.font_size)
@@ -231,6 +232,7 @@ class TranslationApp:
         self.biblical_books = data.get("biblical_books", self.biblical_books)
         self.scroll_speed_px = data.get("scroll_speed_px", self.scroll_speed_px)
         self.allow_loopback = data.get("allow_loopback", self.allow_loopback)
+        self.enable_scrolling = data.get("enable_scrolling", self.enable_scrolling)
 
     def save_settings(self):
         data = {
@@ -250,6 +252,7 @@ class TranslationApp:
             "biblical_books": self.biblical_books,
             "scroll_speed_px": self.scroll_speed_px,
             "allow_loopback": self.allow_loopback,
+            "enable_scrolling": self.enable_scrolling,
         }
         try:
             with open(self.settings_path, "w", encoding="utf-8") as f:
@@ -413,6 +416,18 @@ class TranslationApp:
         scroll_speed_spin = tk.Spinbox(display_section, from_=5, to=200, increment=5, textvariable=scroll_speed_var)
         scroll_speed_spin.pack(fill=tk.X)
 
+        scroll_enabled_var = tk.BooleanVar(value=self.enable_scrolling)
+        scroll_enabled_check = tk.Checkbutton(
+            display_section,
+            text="Enable scrolling",
+            variable=scroll_enabled_var,
+            bg=section_bg,
+            fg=settings_fg,
+            selectcolor=section_bg,
+            activebackground=section_bg,
+        )
+        scroll_enabled_check.pack(anchor="w", pady=(6, 0))
+
         audio_section = tk.LabelFrame(
             content,
             text="Audio",
@@ -560,6 +575,7 @@ class TranslationApp:
             self.chunk_size = max(20, int(chunk_size_var.get()))
             self.chunk_delay_ms = max(50, int(chunk_delay_var.get()))
             self.scroll_speed_px = max(5, int(scroll_speed_var.get()))
+            self.enable_scrolling = bool(scroll_enabled_var.get())
             self.source_lang = lang_map.get(source_lang_var.get(), "auto")
             self.target_lang = lang_map.get(target_lang_var.get(), "en")
             self.transcription_mode = transcription_map.get(
@@ -906,6 +922,11 @@ class TranslationApp:
         self.scroll_after_id = self.root.after(16, self.scroll_tick)
 
     def scroll_tick(self):
+        if not self.enable_scrolling:
+            self.scroll_offset = 0.0
+            self.update_text_position()
+            self.scroll_after_id = self.root.after(200, self.scroll_tick)
+            return
         now = time.time()
         dt = now - self.scroll_last_time
         self.scroll_last_time = now
