@@ -31,7 +31,7 @@ class TranslationApp:
         self.root.config(menu=menubar)
         
         self.root.grid_rowconfigure(0, weight=8)  # 80% height for text
-        self.root.grid_rowconfigure(1, weight=1)  # 20% for status and controls
+        self.root.grid_rowconfigure(1, weight=0)  # status line
         self.root.grid_columnconfigure(0, weight=1)
         
         self.text_label = tk.Text(
@@ -42,8 +42,17 @@ class TranslationApp:
         )
         self.text_label.grid(row=0, column=0, sticky='nsew', padx=10, pady=10)
         
-        self.status_text = tk.Text(self.root, height=3, width=60, state='disabled', wrap=tk.WORD)
-        self.status_text.grid(row=1, column=0, sticky='ew', padx=10)
+        self.status_label = tk.Label(
+            self.root,
+            text="",
+            anchor="w",
+            bg=self.bg_color,
+            fg=self.text_color,
+            font=(self.font_family, 10),
+            bd=0,
+            highlightthickness=0,
+        )
+        self.status_label.grid(row=1, column=0, sticky='sw', padx=10, pady=(0, 5))
         
         self.bg_color = "#000000"  # Background color
         self.text_color = "#ffffff"  # Text color
@@ -190,7 +199,7 @@ class TranslationApp:
     
     def apply_colors(self):
         self.text_label.config(bg=self.bg_color, fg=self.text_color)
-        self.status_text.config(bg=self.bg_color, fg=self.text_color)
+        self.status_label.config(bg=self.bg_color, fg=self.text_color)
     
     def listen_and_translate(self):
         while self.listening:
@@ -307,10 +316,7 @@ class TranslationApp:
     
     def update_status(self, msg):
         def update():
-            self.status_text.config(state='normal')
-            self.status_text.delete(1.0, tk.END)
-            self.status_text.insert(tk.END, f"Status: {msg}")
-            self.status_text.config(state='disabled')
+            self.status_label.config(text=f"Status: {msg}")
         self.root.after(0, update)
 
 if __name__ == "__main__":
