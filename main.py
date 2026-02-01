@@ -182,6 +182,12 @@ class TranslationApp:
         settings_window.title("Settings")
         settings_window.geometry("420x600")
         settings_window.minsize(420, 600)
+        settings_bg = "#111111"
+        section_bg = "#1a1a1a"
+        settings_fg = "#f5f5f5"
+        settings_window.configure(bg=settings_bg)
+        label_opts = {"bg": settings_bg, "fg": settings_fg}
+        section_font = (self.font_family, 12, "bold")
 
         def on_settings_close():
             if self.settings_window is not None:
@@ -190,51 +196,103 @@ class TranslationApp:
 
         settings_window.protocol("WM_DELETE_WINDOW", on_settings_close)
 
-        content = tk.Frame(settings_window)
-        content.pack(fill=tk.BOTH, expand=True)
+        content = tk.Frame(settings_window, bg=settings_bg)
+        content.pack(fill=tk.BOTH, expand=True, padx=12, pady=12)
+
+        display_section = tk.LabelFrame(
+            content,
+            text="Display",
+            bg=section_bg,
+            fg=settings_fg,
+            font=section_font,
+            padx=10,
+            pady=10,
+        )
+        display_section.pack(fill=tk.X, pady=(0, 10))
         
-        tk.Label(content, text="Number of lines to show:").pack(pady=5)
+        tk.Label(display_section, text="Number of lines to show:", **label_opts).pack(anchor="w", pady=(0, 4))
         lines_var = tk.IntVar(value=self.max_lines)
-        lines_spinbox = tk.Spinbox(content, from_=1, to=10, textvariable=lines_var)
-        lines_spinbox.pack()
-        
-        tk.Label(content, text="Bad words filter (comma-separated):").pack(pady=5)
-        bad_words_text = tk.Text(content, height=5, width=50)
-        bad_words_text.insert(tk.END, ', '.join(sorted(self.bad_words)))
-        bad_words_text.pack()
-        
-        tk.Label(content, text="Google STT API Key (optional):").pack(pady=5)
-        api_key_var = tk.StringVar(value=self.api_key)
-        api_key_entry = tk.Entry(content, textvariable=api_key_var, width=50)
-        api_key_entry.pack()
-        
-        tk.Label(content, text="Audio Device:").pack(pady=5)
-        self.device_var = tk.StringVar(value=self.devices[self.microphone_index] if self.devices else "No devices")
-        device_menu = tk.OptionMenu(content, self.device_var, *self.devices)
-        device_menu.pack()
-        
-        tk.Label(content, text="Background Color:").pack(pady=5)
-        bg_frame = tk.Frame(content)
-        bg_frame.pack()
+        lines_spinbox = tk.Spinbox(display_section, from_=1, to=10, textvariable=lines_var)
+        lines_spinbox.pack(fill=tk.X)
+
+        tk.Label(display_section, text="Background Color:", **label_opts).pack(anchor="w", pady=(10, 4))
+        bg_frame = tk.Frame(display_section, bg=section_bg)
+        bg_frame.pack(fill=tk.X)
         bg_color_var = tk.StringVar(value=self.bg_color)
         bg_entry = tk.Entry(bg_frame, textvariable=bg_color_var, width=20)
         bg_entry.pack(side=tk.LEFT)
-        bg_button = tk.Button(bg_frame, text="Choose", command=lambda: self.choose_color(bg_color_var, "background", settings_window))
-        bg_button.pack(side=tk.LEFT)
+        bg_button = tk.Button(
+            bg_frame,
+            text="Choose",
+            command=lambda: self.choose_color(bg_color_var, "background", settings_window),
+        )
+        bg_button.pack(side=tk.LEFT, padx=(8, 0))
         
-        tk.Label(content, text="Text Color:").pack(pady=5)
-        text_frame = tk.Frame(content)
-        text_frame.pack()
+        tk.Label(display_section, text="Text Color:", **label_opts).pack(anchor="w", pady=(10, 4))
+        text_frame = tk.Frame(display_section, bg=section_bg)
+        text_frame.pack(fill=tk.X)
         text_color_var = tk.StringVar(value=self.text_color)
         text_entry = tk.Entry(text_frame, textvariable=text_color_var, width=20)
         text_entry.pack(side=tk.LEFT)
-        text_button = tk.Button(text_frame, text="Choose", command=lambda: self.choose_color(text_color_var, "text", settings_window))
-        text_button.pack(side=tk.LEFT)
+        text_button = tk.Button(
+            text_frame,
+            text="Choose",
+            command=lambda: self.choose_color(text_color_var, "text", settings_window),
+        )
+        text_button.pack(side=tk.LEFT, padx=(8, 0))
         
-        tk.Label(content, text="Font Size:").pack(pady=5)
+        tk.Label(display_section, text="Font Size:", **label_opts).pack(anchor="w", pady=(10, 4))
         font_size_var = tk.IntVar(value=self.font_size)
-        font_size_scale = tk.Scale(content, from_=12, to=72, orient=tk.HORIZONTAL, variable=font_size_var)
-        font_size_scale.pack()
+        font_size_scale = tk.Scale(display_section, from_=12, to=72, orient=tk.HORIZONTAL, variable=font_size_var)
+        font_size_scale.pack(fill=tk.X)
+
+        audio_section = tk.LabelFrame(
+            content,
+            text="Audio",
+            bg=section_bg,
+            fg=settings_fg,
+            font=section_font,
+            padx=10,
+            pady=10,
+        )
+        audio_section.pack(fill=tk.X, pady=(0, 10))
+        
+        tk.Label(audio_section, text="Audio Device:", **label_opts).pack(anchor="w", pady=(0, 4))
+        self.device_var = tk.StringVar(value=self.devices[self.microphone_index] if self.devices else "No devices")
+        device_menu = tk.OptionMenu(audio_section, self.device_var, *self.devices)
+        device_menu.pack(fill=tk.X)
+
+        filters_section = tk.LabelFrame(
+            content,
+            text="Filters",
+            bg=section_bg,
+            fg=settings_fg,
+            font=section_font,
+            padx=10,
+            pady=10,
+        )
+        filters_section.pack(fill=tk.BOTH, expand=True, pady=(0, 10))
+
+        tk.Label(filters_section, text="Bad words filter (comma-separated):", **label_opts).pack(anchor="w", pady=(0, 4))
+        bad_words_text = tk.Text(filters_section, height=5, width=50)
+        bad_words_text.insert(tk.END, ', '.join(sorted(self.bad_words)))
+        bad_words_text.pack(fill=tk.BOTH, expand=True)
+
+        api_section = tk.LabelFrame(
+            content,
+            text="API",
+            bg=section_bg,
+            fg=settings_fg,
+            font=section_font,
+            padx=10,
+            pady=10,
+        )
+        api_section.pack(fill=tk.X)
+        
+        tk.Label(api_section, text="Google STT API Key (optional):", **label_opts).pack(anchor="w", pady=(0, 4))
+        api_key_var = tk.StringVar(value=self.api_key)
+        api_key_entry = tk.Entry(api_section, textvariable=api_key_var, width=50)
+        api_key_entry.pack(fill=tk.X)
         
         def save_settings():
             self.max_lines = lines_var.get()
@@ -252,8 +310,8 @@ class TranslationApp:
             self.update_display()
             # Don't destroy here, let user close manually
         
-        button_frame = tk.Frame(settings_window)
-        button_frame.pack(fill=tk.X, side=tk.BOTTOM)
+        button_frame = tk.Frame(settings_window, bg=settings_bg)
+        button_frame.pack(fill=tk.X, side=tk.BOTTOM, padx=12, pady=(0, 12))
 
         save_button = tk.Button(button_frame, text="Save", command=save_settings)
         save_button.pack(side=tk.LEFT, padx=10, pady=10)
@@ -370,7 +428,7 @@ class TranslationApp:
     def filter_bad_words(self, text):
         filtered = text
         for word in self.bad_words:
-            pattern = re.escape(word)
+            pattern = r"\b" + re.escape(word) + r"\b"
             filtered = re.sub(pattern, '***', filtered, flags=re.IGNORECASE)
         return filtered
     
