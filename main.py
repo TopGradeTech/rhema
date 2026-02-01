@@ -60,6 +60,7 @@ class TranslationApp:
         self.is_fullscreen = True
         self.root.after(0, lambda: self.root.attributes("-fullscreen", True))
         self.root.bind_all("<F11>", self.toggle_fullscreen_event)
+        self.root.bind_all("<Control-Alt-f>", self.toggle_fullscreen_event)
         self.root.bind_all("<Escape>", self.exit_fullscreen_event)
         self.root.bind_all("<Control-s>", self.open_settings_event)
         self.root.bind("<Motion>", self.on_mouse_move)
