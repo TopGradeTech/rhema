@@ -94,6 +94,8 @@ class TranslationApp:
         self.flush_timeout_ms = 2000
         self.pending_text = ""
         self.flush_after_id = None
+        self.source_lang = "auto"
+        self.target_lang = "en"
         
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
         
@@ -363,6 +365,45 @@ class TranslationApp:
         api_key_var = tk.StringVar(value=self.api_key)
         api_key_entry = tk.Entry(api_section, textvariable=api_key_var, width=50)
         api_key_entry.pack(fill=tk.X)
+
+        translation_section = tk.LabelFrame(
+            content,
+            text="Translation",
+            bg=section_bg,
+            fg=settings_fg,
+            font=section_font,
+            padx=10,
+            pady=10,
+        )
+        translation_section.pack(fill=tk.X, pady=(10, 0))
+
+        tk.Label(translation_section, text="Translate from:", **label_opts).pack(anchor="w", pady=(0, 4))
+        lang_options = [
+            ("Auto Detect", "auto"),
+            ("English", "en"),
+            ("Spanish", "es"),
+            ("French", "fr"),
+            ("German", "de"),
+            ("Italian", "it"),
+            ("Portuguese", "pt"),
+            ("Dutch", "nl"),
+            ("Russian", "ru"),
+            ("Japanese", "ja"),
+            ("Korean", "ko"),
+            ("Chinese (Simplified)", "zh-cn"),
+        ]
+        lang_display = [name for name, _ in lang_options]
+        lang_map = {name: code for name, code in lang_options}
+        rev_lang_map = {code: name for name, code in lang_options}
+
+        source_lang_var = tk.StringVar(value=rev_lang_map.get(self.source_lang, "Auto Detect"))
+        source_menu = tk.OptionMenu(translation_section, source_lang_var, *lang_display)
+        source_menu.pack(fill=tk.X)
+
+        tk.Label(translation_section, text="Translate to:", **label_opts).pack(anchor="w", pady=(10, 4))
+        target_lang_var = tk.StringVar(value=rev_lang_map.get(self.target_lang, "English"))
+        target_menu = tk.OptionMenu(translation_section, target_lang_var, *lang_display)
+        target_menu.pack(fill=tk.X)
         
         def save_settings():
             self.max_lines = lines_var.get()
@@ -374,6 +415,8 @@ class TranslationApp:
             self.font_size = font_size_var.get()
             self.chunk_size = max(20, int(chunk_size_var.get()))
             self.chunk_delay_ms = max(50, int(chunk_delay_var.get()))
+            self.source_lang = lang_map.get(source_lang_var.get(), "auto")
+            self.target_lang = lang_map.get(target_lang_var.get(), "en")
             if self.device_var.get() in self.device_indices:
                 self.microphone_index = self.devices.index(self.device_var.get())
             else:
@@ -448,7 +491,11 @@ class TranslationApp:
         
         self.update_status("Translating...")
         try:
-            translated = self.translator.translate(text, dest='en').text
+            translated = self.translator.translate(
+                text,
+                src=self.source_lang,
+                dest=self.target_lang,
+            ).text
         except Exception as e:
             self.update_status(f"Translation error: {e}")
             translated = text
