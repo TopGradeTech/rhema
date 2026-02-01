@@ -36,17 +36,24 @@ class TranslationApp:
         self.root.grid_rowconfigure(1, weight=0)  # status line
         self.root.grid_columnconfigure(0, weight=1)
         
-        self.text_label = tk.Text(
-            self.root,
-            wrap=tk.WORD,
-            state='disabled',
-            font=(self.font_family, 24),
-        )
-        self.text_label.grid(row=0, column=0, sticky='nsew', padx=10, pady=10)
-
         self.bg_color = "#000000"  # Background color
         self.text_color = "#ffffff"  # Text color
         self.font_size = 50  # Font size
+
+        self.text_font = tkfont.Font(family=self.font_family, size=self.font_size)
+        self.text_canvas = tk.Canvas(self.root, bg=self.bg_color, highlightthickness=0)
+        self.text_canvas.grid(row=0, column=0, sticky='nsew', padx=10, pady=10)
+        self.text_padding = 10
+        self.text_item = self.text_canvas.create_text(
+            self.text_padding,
+            0,
+            anchor="sw",
+            text="",
+            fill=self.text_color,
+            font=self.text_font,
+            width=0,
+        )
+        self.text_canvas.bind("<Configure>", self.on_canvas_resize)
         
         self.status_label = tk.Label(
             self.root,
@@ -112,10 +119,16 @@ class TranslationApp:
         self.custom_vocabulary = self.default_biblical_terms()
         self.biblical_books = self.default_biblical_books()
         self.is_paused = False
-        self.fade_duration_ms = 180
-        self.fade_after_id = None
+        self.scroll_speed_px = 20
+        self.scroll_offset = 0.0
+        self.scroll_last_time = time.time()
+        self.scroll_after_id = None
 
         self.load_settings()
+        self.text_font.configure(size=self.font_size)
+        self.apply_colors()
+        self.render_text()
+        self.start_scroll_loop()
         
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
         
@@ -201,6 +214,7 @@ class TranslationApp:
         self.transcription_mode = data.get("transcription_mode", self.transcription_mode)
         self.custom_vocabulary = data.get("custom_vocabulary", self.custom_vocabulary)
         self.biblical_books = data.get("biblical_books", self.biblical_books)
+        self.scroll_speed_px = data.get("scroll_speed_px", self.scroll_speed_px)
 
     def save_settings(self):
         data = {
@@ -218,6 +232,7 @@ class TranslationApp:
             "transcription_mode": self.transcription_mode,
             "custom_vocabulary": self.custom_vocabulary,
             "biblical_books": self.biblical_books,
+            "scroll_speed_px": self.scroll_speed_px,
         }
         try:
             with open(self.settings_path, "w", encoding="utf-8") as f:
@@ -367,6 +382,11 @@ class TranslationApp:
         chunk_delay_spin = tk.Spinbox(display_section, from_=50, to=2000, increment=50, textvariable=chunk_delay_var)
         chunk_delay_spin.pack(fill=tk.X)
 
+        tk.Label(display_section, text="Scroll Speed (px/sec):", **label_opts).pack(anchor="w", pady=(10, 4))
+        scroll_speed_var = tk.IntVar(value=self.scroll_speed_px)
+        scroll_speed_spin = tk.Spinbox(display_section, from_=5, to=200, increment=5, textvariable=scroll_speed_var)
+        scroll_speed_spin.pack(fill=tk.X)
+
         audio_section = tk.LabelFrame(
             content,
             text="Audio",
@@ -498,8 +518,10 @@ class TranslationApp:
             self.bg_color = bg_color_var.get()
             self.text_color = text_color_var.get()
             self.font_size = font_size_var.get()
+            self.text_font.configure(size=self.font_size)
             self.chunk_size = max(20, int(chunk_size_var.get()))
             self.chunk_delay_ms = max(50, int(chunk_delay_var.get()))
+            self.scroll_speed_px = max(5, int(scroll_speed_var.get()))
             self.source_lang = lang_map.get(source_lang_var.get(), "auto")
             self.target_lang = lang_map.get(target_lang_var.get(), "en")
             self.transcription_mode = transcription_map.get(
@@ -532,7 +554,8 @@ class TranslationApp:
             color_var.set(color[1])
     
     def apply_colors(self):
-        self.text_label.config(bg=self.bg_color, fg=self.text_color)
+        self.text_canvas.config(bg=self.bg_color)
+        self.text_canvas.itemconfigure(self.text_item, fill=self.text_color)
         if hasattr(self, "status_label"):
             self.status_label.config(bg=self.bg_color, fg=self.text_color)
         if hasattr(self, "controls_frame"):
@@ -679,13 +702,7 @@ class TranslationApp:
         self.translations.append(filtered_text)
         if len(self.translations) > self.max_lines:
             self.translations.pop(0)
-        display_text = '\n'.join(self.translations)
-        font_size = self.font_size
-        self.text_label.config(state='normal', font=(self.font_family, font_size))
-        self.text_label.delete(1.0, tk.END)
-        self.text_label.insert(tk.END, display_text)
-        self.text_label.config(state='disabled')
-        self.flash_text()
+        self.render_text()
         self.root.after(self.chunk_delay_ms, self.flush_text_queue)
 
     def chunk_text(self, text, max_len):
@@ -791,12 +808,7 @@ class TranslationApp:
     
     def update_display(self):
         def update():
-            display_text = '\n'.join(self.filter_bad_words(t) for t in self.translations[-self.max_lines:])
-            font_size = self.font_size
-            self.text_label.config(state='normal', font=(self.font_family, font_size))
-            self.text_label.delete(1.0, tk.END)
-            self.text_label.insert(tk.END, display_text)
-            self.text_label.config(state='disabled')
+            self.render_text()
         self.root.after(0, update)
     
     def update_status(self, msg):
@@ -809,33 +821,42 @@ class TranslationApp:
         self.pause_button.config(text="Resume" if self.is_paused else "Pause")
         self.update_status("Paused" if self.is_paused else "Listening...")
 
-    def flash_text(self):
-        if self.fade_after_id is not None:
-            self.root.after_cancel(self.fade_after_id)
-            self.fade_after_id = None
-        try:
-            dim_color = self.blend_colors(self.text_color, self.bg_color, 0.6)
-            self.text_label.config(fg=dim_color)
-            self.fade_after_id = self.root.after(self.fade_duration_ms, self.restore_text_color)
-        except Exception:
-            pass
+    def on_canvas_resize(self, event):
+        width = max(10, event.width - (self.text_padding * 2))
+        self.text_canvas.itemconfigure(self.text_item, width=width, font=self.text_font)
+        self.update_text_position()
 
-    def restore_text_color(self):
-        self.fade_after_id = None
-        self.text_label.config(fg=self.text_color)
+    def update_text_position(self):
+        height = self.text_canvas.winfo_height()
+        y = height - self.text_padding - self.scroll_offset
+        self.text_canvas.coords(self.text_item, self.text_padding, y)
 
-    def blend_colors(self, fg_hex, bg_hex, alpha):
-        fg = self.hex_to_rgb(fg_hex)
-        bg = self.hex_to_rgb(bg_hex)
-        blended = tuple(int(bg[i] + (fg[i] - bg[i]) * alpha) for i in range(3))
-        return self.rgb_to_hex(blended)
+    def render_text(self):
+        display_text = '\n'.join(self.filter_bad_words(t) for t in self.translations[-self.max_lines:])
+        self.text_canvas.itemconfigure(self.text_item, text=display_text, font=self.text_font)
+        self.update_text_position()
 
-    def hex_to_rgb(self, value):
-        value = value.lstrip("#")
-        return tuple(int(value[i:i+2], 16) for i in (0, 2, 4))
+    def start_scroll_loop(self):
+        if self.scroll_after_id is not None:
+            return
+        self.scroll_last_time = time.time()
+        self.scroll_after_id = self.root.after(16, self.scroll_tick)
 
-    def rgb_to_hex(self, rgb):
-        return "#{:02x}{:02x}{:02x}".format(*rgb)
+    def scroll_tick(self):
+        now = time.time()
+        dt = now - self.scroll_last_time
+        self.scroll_last_time = now
+        self.scroll_offset += self.scroll_speed_px * dt
+        line_height = self.text_font.metrics("linespace") or 1
+        if self.translations and self.scroll_offset >= line_height:
+            while self.scroll_offset >= line_height and self.translations:
+                self.scroll_offset -= line_height
+                self.translations.pop(0)
+            self.render_text()
+        else:
+            self.update_text_position()
+        self.scroll_after_id = self.root.after(16, self.scroll_tick)
+
 
 if __name__ == "__main__":
     app = TranslationApp()
