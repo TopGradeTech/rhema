@@ -592,6 +592,7 @@ class TranslationApp:
             ).text
             translated = self.apply_custom_vocabulary(translated)
             translated = self.format_scripture_refs(translated)
+            translated = self.clean_text_spacing(translated)
         except Exception as e:
             self.update_status(f"Translation error: {e}")
             translated = text
@@ -715,6 +716,11 @@ class TranslationApp:
             return replacements.get(key, match.group(0))
         pattern = r"\b(" + "|".join(re.escape(v) for v in self.custom_vocabulary) + r")\b"
         return re.sub(pattern, repl, text, flags=re.IGNORECASE)
+
+    def clean_text_spacing(self, text):
+        text = re.sub(r'([.!?])(?=[A-Za-z])', r'\1 ', text)
+        text = re.sub(r'\s{2,}', ' ', text)
+        return text.strip()
 
     def format_scripture_refs(self, text):
         if not self.biblical_books:
