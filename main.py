@@ -703,9 +703,6 @@ class TranslationApp:
         self.translations.append(filtered_text)
         if len(self.translations) > self.max_lines:
             self.translations.pop(0)
-        # Reset scroll so new text is visible.
-        self.scroll_offset = 0.0
-        self.scroll_last_time = time.time()
         self.render_text()
         self.root.after(self.chunk_delay_ms, self.flush_text_queue)
 
