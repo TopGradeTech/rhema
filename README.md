@@ -13,11 +13,16 @@ A simple Python application for real-time speech-to-text translation, similar to
 ## Installation
 
 1. Install Python 3.7 or higher
-2. Install dependencies:
+2. Ubuntu dependencies (for audio + Tk):
+   ```
+   sudo apt update
+   sudo apt install -y python3-tk portaudio19-dev
+   ```
+3. Install dependencies:
    ```
    pip install -r requirements.txt
    ```
-3. Run the app:
+4. Run the app:
    ```
    python main.py
    ```
@@ -34,5 +39,6 @@ A simple Python application for real-time speech-to-text translation, similar to
 - speechrecognition
 - googletrans
 - pyaudio
+- tkinter (system package on Ubuntu)
 
 Note: You may need to install PyAudio manually on some systems. See https://people.csail.mit.edu/hubert/pyaudio/
