@@ -58,10 +58,10 @@ class TranslationApp:
         
         self.apply_colors()  # Apply default colors
         
-        self.fullscreen_button = tk.Button(self.root, text="Toggle Fullscreen", command=self.toggle_fullscreen)
-        self.fullscreen_button.grid(row=2, column=0, pady=10)
-        
-        self.is_fullscreen = False
+        self.is_fullscreen = True
+        self.root.attributes("-fullscreen", True)
+        self.root.bind("<F11>", self.toggle_fullscreen_event)
+        self.root.bind("<Escape>", self.exit_fullscreen_event)
         self.listening = True
         self.translations = []
         self.max_lines = 8  # Default number of lines
@@ -79,6 +79,14 @@ class TranslationApp:
     def toggle_fullscreen(self):
         self.is_fullscreen = not self.is_fullscreen
         self.root.attributes("-fullscreen", self.is_fullscreen)
+
+    def toggle_fullscreen_event(self, event):
+        self.toggle_fullscreen()
+
+    def exit_fullscreen_event(self, event):
+        if self.is_fullscreen:
+            self.is_fullscreen = False
+            self.root.attributes("-fullscreen", False)
 
     def pick_font_family(self, candidates):
         available = set(tkfont.families())
