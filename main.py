@@ -904,6 +904,16 @@ class TranslationApp:
         self.text_canvas.coords(self.history_item, self.text_padding, history_y)
 
     def render_text(self):
+        # Strictly cap visible content to max_lines across history+live.
+        capped_lines = (self.history_lines + self.live_lines)[-self.max_lines:]
+        if capped_lines:
+            if self.live_lines:
+                self.live_lines = [capped_lines[-1]]
+                self.history_lines = capped_lines[:-1]
+            else:
+                self.history_lines = capped_lines
+                self.live_lines = []
+
         history_text = '\n'.join(self.filter_bad_words(t) for t in self.history_lines)
         live_text = '\n'.join(self.filter_bad_words(t) for t in self.live_lines)
         self.text_canvas.itemconfigure(self.history_item, text=history_text, font=self.text_font)
