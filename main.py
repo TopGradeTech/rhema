@@ -45,8 +45,8 @@ class TranslationApp:
         self.status_text = tk.Text(self.root, height=3, width=60, state='disabled', wrap=tk.WORD)
         self.status_text.grid(row=1, column=0, sticky='ew', padx=10)
         
-        self.bg_color = "white"  # Background color
-        self.text_color = "black"  # Text color
+        self.bg_color = "#000000"  # Background color
+        self.text_color = "#ffffff"  # Text color
         self.font_size = 24  # Font size
         self.apply_colors()  # Apply default colors
         
@@ -56,7 +56,7 @@ class TranslationApp:
         self.is_fullscreen = False
         self.listening = True
         self.translations = []
-        self.max_lines = 3  # Default number of lines
+        self.max_lines = 8  # Default number of lines
         self.bad_words = set(["fuck", "shit", "ass", "bitch", "damn", "hell", "crap", "piss", "dick", "cock", "pussy", "tits", "cunt", "bastard", "slut", "whore"])
         self.api_key = ""  # Google STT API key
         
