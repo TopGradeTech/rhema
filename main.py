@@ -62,13 +62,23 @@ class TranslationApp:
         self.status_label.grid_remove()
         self.status_hide_after_id = None
 
+        self.controls_frame = tk.Frame(self.root, bg=self.bg_color)
+        self.controls_frame.grid(row=2, column=0, pady=10)
+
         self.fullscreen_button = tk.Button(
-            self.root,
+            self.controls_frame,
             text="Toggle Fullscreen",
             command=self.toggle_fullscreen,
         )
-        self.fullscreen_button.grid(row=2, column=0, pady=10)
-        self.fullscreen_button.grid_remove()
+        self.fullscreen_button.pack(side=tk.LEFT, padx=(0, 8))
+
+        self.pause_button = tk.Button(
+            self.controls_frame,
+            text="Pause",
+            command=self.toggle_pause,
+        )
+        self.pause_button.pack(side=tk.LEFT)
+        self.controls_frame.grid_remove()
 
         self.root.config(menu=None)
         
@@ -101,6 +111,7 @@ class TranslationApp:
         self.transcription_mode = "google_free"
         self.custom_vocabulary = self.default_biblical_terms()
         self.biblical_books = self.default_biblical_books()
+        self.is_paused = False
 
         self.load_settings()
         
@@ -143,7 +154,7 @@ class TranslationApp:
 
     def show_status_temporarily(self, duration_ms=2000):
         self.status_label.grid()
-        self.fullscreen_button.grid()
+        self.controls_frame.grid()
         self.root.config(menu=self.menubar)
         if self.status_hide_after_id is not None:
             self.root.after_cancel(self.status_hide_after_id)
@@ -151,7 +162,7 @@ class TranslationApp:
 
     def hide_status(self):
         self.status_label.grid_remove()
-        self.fullscreen_button.grid_remove()
+        self.controls_frame.grid_remove()
         self.root.config(menu=None)
         self.status_hide_after_id = None
 
@@ -526,6 +537,10 @@ class TranslationApp:
     def listen_and_translate(self):
         while self.listening:
             try:
+                if self.is_paused:
+                    self.update_status("Paused")
+                    time.sleep(0.2)
+                    continue
                 device_name = None
                 if (
                     self.microphone_index is not None
@@ -777,6 +792,11 @@ class TranslationApp:
         def update():
             self.status_label.config(text=f"Status: {msg}")
         self.root.after(0, update)
+
+    def toggle_pause(self):
+        self.is_paused = not self.is_paused
+        self.pause_button.config(text="Resume" if self.is_paused else "Pause")
+        self.update_status("Paused" if self.is_paused else "Listening...")
 
 if __name__ == "__main__":
     app = TranslationApp()
