@@ -25,9 +25,7 @@ class TranslationApp:
         
         # Menu bar
         menubar = tk.Menu(self.root)
-        settings_menu = tk.Menu(menubar, tearoff=0)
-        settings_menu.add_command(label="Settings", command=self.open_settings)
-        menubar.add_cascade(label="Settings", menu=settings_menu)
+        menubar.add_command(label="Settings", command=self.open_settings)
         self.root.config(menu=menubar)
         
         self.root.grid_rowconfigure(0, weight=8)  # 80% height for text
