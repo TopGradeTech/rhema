@@ -14,6 +14,10 @@ from collections import deque
 import os
 
 class TranslationApp:
+    SCROLL_EVENTS = ("<MouseWheel>", "<Button-4>", "<Button-5>")
+    CONFIGURE_EVENT = "<Configure>"
+    STATUS_LISTENING = "Listening..."
+
     def __init__(self):
         self.set_dpi_awareness()
         self.settings_path = os.path.join(os.path.dirname(__file__), "settings.json")
@@ -36,11 +40,10 @@ class TranslationApp:
         self.devices = self.get_audio_devices()
         self.microphone_index = 0 if self.devices else None
         
-        # Restore window manager controls and menu for reliability.
+        # Restore window manager controls for reliability.
         self.root.overrideredirect(False)
         self.empty_menubar = tk.Menu(self.root)
-        self.menubar = tk.Menu(self.root)
-        self.menubar.add_command(label="Settings", command=self.open_settings)
+        self.menubar = None
         self.root.config(menu=self.empty_menubar)
         
         self.root.grid_rowconfigure(0, weight=8)  # 80% height for text
@@ -64,40 +67,11 @@ class TranslationApp:
             font=self.text_font,
             width=0,
         )
-        self.text_canvas.bind("<Configure>", self.on_canvas_resize)
+        self.text_canvas.bind(self.CONFIGURE_EVENT, self.on_canvas_resize)
         
-        self.status_label = tk.Label(
-            self.root,
-            text="",
-            anchor="w",
-            bg=self.bg_color,
-            fg=self.text_color,
-            font=(self.font_family, 10),
-            bd=0,
-            highlightthickness=0,
-        )
-        self.status_label.grid(row=1, column=0, sticky='sw', padx=10, pady=(0, 5))
-        self.status_label.grid_remove()
+        self.status_label = None
         self.status_hide_after_id = None
         self.overlay_visible = False
-
-        self.controls_frame = tk.Frame(self.root, bg=self.bg_color)
-        self.controls_frame.grid(row=2, column=0, pady=10)
-
-        self.fullscreen_button = tk.Button(
-            self.controls_frame,
-            text="Toggle Fullscreen",
-            command=self.toggle_fullscreen,
-        )
-        self.fullscreen_button.pack(side=tk.LEFT, padx=(0, 8))
-
-        self.pause_button = tk.Button(
-            self.controls_frame,
-            text="Pause",
-            command=self.toggle_pause,
-        )
-        self.pause_button.pack(side=tk.LEFT)
-        self.controls_frame.grid_remove()
 
         self.root.config(menu=self.empty_menubar)
         
@@ -119,7 +93,24 @@ class TranslationApp:
         self.listening = True
         self.translations = []
         self.max_lines = 8  # Default number of lines
-        self.bad_words = set(["fuck", "shit", "ass", "bitch", "damn", "hell", "crap", "piss", "dick", "cock", "pussy", "tits", "cunt", "bastard", "slut", "whore"])
+        self.bad_words = {
+            "fuck",
+            "shit",
+            "ass",
+            "bitch",
+            "damn",
+            "hell",
+            "crap",
+            "piss",
+            "dick",
+            "cock",
+            "pussy",
+            "tits",
+            "cunt",
+            "bastard",
+            "slut",
+            "whore",
+        }
         self.api_key = ""  # Google STT API key
         self.settings_window = None
         self.text_queue = deque()
@@ -155,6 +146,8 @@ class TranslationApp:
         
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
         
+        self.open_settings()
+
         self.thread = Thread(target=self.listen_and_translate)
         self.thread.daemon = True
         self.thread.start()
@@ -204,7 +197,7 @@ class TranslationApp:
     def open_settings_event(self, event):
         self.show_status_temporarily()
         if self.settings_window is not None and self.settings_window.winfo_exists():
-            self.close_settings_window()
+            self.settings_window.focus_force()
         else:
             self.open_settings()
         return "break"
@@ -214,11 +207,9 @@ class TranslationApp:
         return "break"
 
     def show_status_temporarily(self, duration_ms=None):
-        if self.overlay_visible:
+        if self.overlay_visible or self.status_label is None:
             return
         self.overlay_visible = True
-        self.status_label.grid()
-        self.controls_frame.grid()
         if self.menubar is not None:
             self.root.config(menu=self.menubar)
         if duration_ms is not None:
@@ -227,8 +218,8 @@ class TranslationApp:
             self.status_hide_after_id = self.root.after(duration_ms, self.hide_status)
 
     def hide_status(self):
-        self.status_label.grid_remove()
-        self.controls_frame.grid_remove()
+        if self.status_label is None:
+            return
         self.root.config(menu=self.empty_menubar)
         if self.status_hide_after_id is not None:
             self.root.after_cancel(self.status_hide_after_id)
@@ -325,9 +316,8 @@ class TranslationApp:
         except Exception:
             pass
         try:
-            self.settings_window.unbind_all("<MouseWheel>")
-            self.settings_window.unbind_all("<Button-4>")
-            self.settings_window.unbind_all("<Button-5>")
+            for event_name in self.SCROLL_EVENTS:
+                self.settings_window.unbind_all(event_name)
         except Exception:
             pass
         self.settings_window.destroy()
@@ -437,7 +427,7 @@ class TranslationApp:
         if not self.monitors:
             return
         # Close any existing overlays.
-        for win in list(self.monitor_id_windows):
+        for win in tuple(self.monitor_id_windows):
             try:
                 win.destroy()
             except Exception:
@@ -465,7 +455,7 @@ class TranslationApp:
             self.monitor_id_windows.append(overlay)
 
         def close_overlays():
-            for win in list(self.monitor_id_windows):
+            for win in tuple(self.monitor_id_windows):
                 try:
                     win.destroy()
                 except Exception:
@@ -517,34 +507,43 @@ class TranslationApp:
         if self.prev_geometry is None:
             self.prev_geometry = self.root.geometry()
         if self.use_custom_fullscreen:
-            if self.prev_overrideredirect is None:
-                try:
-                    self.prev_overrideredirect = bool(self.root.overrideredirect())
-                except Exception:
-                    self.prev_overrideredirect = False
-            if self.prev_topmost is None:
-                try:
-                    self.prev_topmost = bool(self.root.attributes("-topmost"))
-                except Exception:
-                    self.prev_topmost = False
-            try:
-                self.root.state("normal")
-            except Exception:
-                pass
-            self.root.overrideredirect(True)
-            self.root.attributes("-topmost", True)
-            self.root.attributes("-fullscreen", False)
-            self.move_window_to_monitor(self.root, self.monitor_index, keep_size=False)
-            self.root.update_idletasks()
-            # Apply twice to avoid position being offset by window manager.
-            self.move_window_to_monitor(self.root, self.monitor_index, keep_size=False)
+            self._prepare_custom_fullscreen_state()
+            self._apply_custom_fullscreen()
         else:
-            # Some window managers ignore geometry changes while fullscreen is active.
-            if self.root.attributes("-fullscreen"):
-                self.root.attributes("-fullscreen", False)
-            self.move_window_to_monitor(self.root, self.monitor_index, keep_size=False)
-            self.root.update_idletasks()
-            self.root.attributes("-fullscreen", True)
+            self._apply_standard_fullscreen()
+
+    def _prepare_custom_fullscreen_state(self):
+        if self.prev_overrideredirect is None:
+            try:
+                self.prev_overrideredirect = bool(self.root.overrideredirect())
+            except Exception:
+                self.prev_overrideredirect = False
+        if self.prev_topmost is None:
+            try:
+                self.prev_topmost = bool(self.root.attributes("-topmost"))
+            except Exception:
+                self.prev_topmost = False
+        try:
+            self.root.state("normal")
+        except Exception:
+            pass
+
+    def _apply_custom_fullscreen(self):
+        self.root.overrideredirect(True)
+        self.root.attributes("-topmost", True)
+        self.root.attributes("-fullscreen", False)
+        self.move_window_to_monitor(self.root, self.monitor_index, keep_size=False)
+        self.root.update_idletasks()
+        # Apply twice to avoid position being offset by window manager.
+        self.move_window_to_monitor(self.root, self.monitor_index, keep_size=False)
+
+    def _apply_standard_fullscreen(self):
+        # Some window managers ignore geometry changes while fullscreen is active.
+        if self.root.attributes("-fullscreen"):
+            self.root.attributes("-fullscreen", False)
+        self.move_window_to_monitor(self.root, self.monitor_index, keep_size=False)
+        self.root.update_idletasks()
+        self.root.attributes("-fullscreen", True)
 
     def exit_fullscreen(self):
         if self.use_custom_fullscreen:
@@ -566,6 +565,11 @@ class TranslationApp:
         self.prev_geometry = None
     
     def get_audio_devices(self):
+        device_infos, input_devices, output_devices = self._get_device_infos()
+        loopback_inputs = self._get_loopback_inputs(device_infos)
+        return self._build_device_list(input_devices, output_devices, loopback_inputs)
+
+    def _get_device_infos(self):
         p = pyaudio.PyAudio()
         input_devices = []
         output_devices = []
@@ -573,13 +577,7 @@ class TranslationApp:
 
         for i in range(p.get_device_count()):
             device_info = p.get_device_info_by_index(i)
-            host_api_index = device_info.get("hostApi")
-            host_api_name = ""
-            if host_api_index is not None:
-                try:
-                    host_api_name = p.get_host_api_info_by_index(host_api_index).get("name", "")
-                except Exception:
-                    host_api_name = ""
+            host_api_name = self._get_host_api_name(p, device_info)
             entry = {
                 "index": i,
                 "name": device_info.get("name", "Unknown"),
@@ -594,24 +592,54 @@ class TranslationApp:
                 output_devices.append((i, entry["name"]))
 
         p.terminate()
+        return device_infos, input_devices, output_devices
 
-        def is_loopback_name(name):
-            lowered = name.lower()
-            keywords = ["loopback", "stereo mix", "what u hear", "what you hear"]
-            return any(k in lowered for k in keywords)
+    def _get_host_api_name(self, pyaudio_instance, device_info):
+        host_api_index = device_info.get("hostApi")
+        if host_api_index is None:
+            return ""
+        try:
+            return pyaudio_instance.get_host_api_info_by_index(host_api_index).get("name", "")
+        except Exception:
+            return ""
 
-        def normalize_name(name):
-            lowered = name.lower()
-            lowered = re.sub(r"\(.*?\)", "", lowered)
-            lowered = re.sub(r"\b(loopback|stereo mix|what u hear|what you hear)\b", "", lowered)
-            lowered = re.sub(r"\s+", " ", lowered)
-            return lowered.strip()
+    def _is_loopback_name(self, name):
+        lowered = name.lower()
+        keywords = ["loopback", "stereo mix", "what u hear", "what you hear"]
+        return any(k in lowered for k in keywords)
 
+    def _normalize_device_name(self, name):
+        lowered = name.lower()
+        lowered = re.sub(r"\([^)]*\)", "", lowered)
+        lowered = re.sub(r"\b(loopback|stereo mix|what u hear|what you hear)\b", "", lowered)
+        lowered = re.sub(r"\s+", " ", lowered)
+        return lowered.strip()
+
+    def _get_loopback_inputs(self, device_infos):
         loopback_inputs = []
         for info in device_infos:
-            if info["max_input"] > 0 and is_loopback_name(info["name"]):
+            if info["max_input"] > 0 and self._is_loopback_name(info["name"]):
                 loopback_inputs.append(info)
+        return loopback_inputs
 
+    def _register_device_label(self, devices, label, idx, device_type):
+        devices.append(label)
+        self.device_indices[label] = idx
+        self.device_types[label] = device_type
+
+    def _resolve_loopback_match(self, output_name, loopback_inputs):
+        matched_input = None
+        norm_out = self._normalize_device_name(output_name)
+        for candidate in loopback_inputs:
+            norm_in = self._normalize_device_name(candidate["name"])
+            if norm_out and (norm_out in norm_in or norm_in in norm_out):
+                matched_input = candidate["index"]
+                break
+        if matched_input is None and len(loopback_inputs) == 1:
+            matched_input = loopback_inputs[0]["index"]
+        return matched_input
+
+    def _build_device_list(self, input_devices, output_devices, loopback_inputs):
         # Include input devices and optionally output devices (for loopback/monitor sources).
         devices = []
         self.device_indices = {}
@@ -620,26 +648,14 @@ class TranslationApp:
 
         for idx, name in input_devices:
             label = f"Input ({idx}): {name}"
-            devices.append(label)
-            self.device_indices[label] = idx
-            self.device_types[label] = "input"
+            self._register_device_label(devices, label, idx, "input")
 
         if self.allow_loopback:
             for idx, name in output_devices:
                 label = f"Output ({idx}): {name}"
-                devices.append(label)
-                self.device_indices[label] = idx
-                self.device_types[label] = "output"
+                self._register_device_label(devices, label, idx, "output")
 
-                matched_input = None
-                norm_out = normalize_name(name)
-                for candidate in loopback_inputs:
-                    norm_in = normalize_name(candidate["name"])
-                    if norm_out and (norm_out in norm_in or norm_in in norm_out):
-                        matched_input = candidate["index"]
-                        break
-                if matched_input is None and len(loopback_inputs) == 1:
-                    matched_input = loopback_inputs[0]["index"]
+                matched_input = self._resolve_loopback_match(name, loopback_inputs)
                 if matched_input is not None:
                     self.loopback_output_map[label] = matched_input
 
@@ -653,27 +669,7 @@ class TranslationApp:
         settings_window = tk.Toplevel(self.root)
         self.settings_window = settings_window
         settings_window.title("Settings")
-        settings_window.geometry("480x640")
-        settings_window.minsize(480, 640)
-        settings_window.update_idletasks()
-        if self.settings_geometry:
-            try:
-                settings_window.geometry(self.settings_geometry)
-            except Exception:
-                self.settings_geometry = None
-        if not self.settings_geometry:
-            if self.monitors:
-                idx = max(0, min(self.settings_monitor_index, len(self.monitors) - 1))
-                monitor = self.monitors[idx]
-                width = settings_window.winfo_width()
-                height = settings_window.winfo_height()
-                x = monitor["left"] + max(0, (monitor["right"] - monitor["left"] - width) // 2)
-                y = monitor["top"] + max(0, (monitor["bottom"] - monitor["top"] - height) // 2)
-                settings_window.geometry(f"+{x}+{y}")
-            else:
-                x = self.root.winfo_rootx() + (self.root.winfo_width() - settings_window.winfo_width()) // 2
-                y = self.root.winfo_rooty() + (self.root.winfo_height() - settings_window.winfo_height()) // 2
-                settings_window.geometry(f"+{x}+{y}")
+        self._apply_settings_geometry(settings_window)
         settings_bg = "#f7f7f7"
         section_bg = "#ffffff"
         settings_fg = "#222222"
@@ -681,8 +677,212 @@ class TranslationApp:
         label_opts = {"bg": settings_bg, "fg": settings_fg}
         section_font = (self.font_family, 12, "bold")
 
-        settings_window.protocol("WM_DELETE_WINDOW", self.close_settings_window)
+        settings_window.protocol("WM_DELETE_WINDOW", self.on_closing)
 
+        content = self._build_settings_canvas(settings_window, settings_bg)
+        display_vars, audio_vars, filters_vars, api_vars, translation_vars = self._build_settings_sections(
+            content,
+            settings_window,
+            label_opts,
+            section_bg,
+            settings_fg,
+            section_font,
+        )
+        
+        def save_settings():
+            self.max_lines = display_vars["lines_var"].get()
+            bad_words_str = filters_vars["bad_words_text"].get("1.0", tk.END).strip()
+            self.bad_words = {word.strip().lower() for word in bad_words_str.split(',') if word.strip()}
+            self.api_key = api_vars["api_key_var"].get().strip()
+            self.bg_color = display_vars["bg_color_var"].get()
+            self.text_color = display_vars["text_color_var"].get()
+            self.font_size = display_vars["font_size_var"].get()
+            self.text_font.configure(size=self.font_size)
+            if self.preview_font is not None:
+                preview_size = max(14, int(self.font_size * 0.5))
+                self.preview_font.configure(size=preview_size)
+            self.chunk_size = max(20, int(display_vars["chunk_size_var"].get()))
+            self.chunk_delay_ms = max(50, int(display_vars["chunk_delay_var"].get()))
+            self.scroll_speed_px = max(5, int(display_vars["scroll_speed_var"].get()))
+            self.enable_scrolling = bool(display_vars["scroll_enabled_var"].get())
+            monitor_labels = display_vars["monitor_labels"]
+            if display_vars["monitor_var"].get() in monitor_labels:
+                self.monitor_index = monitor_labels.index(display_vars["monitor_var"].get())
+            if display_vars["settings_monitor_var"].get() in monitor_labels:
+                self.settings_monitor_index = monitor_labels.index(display_vars["settings_monitor_var"].get())
+            self.source_lang = translation_vars["lang_map"].get(
+                translation_vars["source_lang_var"].get(),
+                "auto",
+            )
+            self.target_lang = translation_vars["lang_map"].get(
+                translation_vars["target_lang_var"].get(),
+                "en",
+            )
+            self.transcription_mode = audio_vars["transcription_map"].get(
+                audio_vars["transcription_var"].get(),
+                "google_free",
+            )
+            vocab_str = audio_vars["vocab_text"].get("1.0", tk.END).strip()
+            self.custom_vocabulary = [v.strip() for v in vocab_str.split(",") if v.strip()]
+            self.allow_loopback = bool(audio_vars["loopback_var"].get())
+            # Refresh device list if loopback setting changed.
+            self.devices = self.get_audio_devices()
+            if self.device_var.get() not in self.devices:
+                self.device_var.set(self.devices[0] if self.devices else "No devices")
+            if self.device_var.get() in self.device_indices:
+                self.microphone_index = self.devices.index(self.device_var.get())
+            else:
+                self.microphone_index = None
+            self.apply_colors()
+            self.update_display()
+            if self.is_fullscreen:
+                self.enter_fullscreen()
+            self.save_settings()
+            self.close_settings_window()
+
+        button_frame = tk.Frame(settings_window, bg=settings_bg)
+        button_frame.pack(fill=tk.X, side=tk.BOTTOM, padx=12, pady=(0, 12))
+
+        status_section = tk.LabelFrame(
+            button_frame,
+            text="Status",
+            bg=section_bg,
+            fg=settings_fg,
+            font=section_font,
+            padx=10,
+            pady=10,
+        )
+        status_section.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(0, 10), pady=6)
+
+        self.status_label = tk.Label(
+            status_section,
+            text="Status: ",
+            anchor="w",
+            bg=section_bg,
+            fg=settings_fg,
+            font=(self.font_family, 10),
+            bd=0,
+            highlightthickness=0,
+        )
+        self.status_label.pack(fill=tk.X)
+
+        self.pause_button = tk.Button(
+            status_section,
+            text="Pause",
+            command=self.toggle_pause,
+        )
+        self.pause_button.pack(anchor="w", pady=(8, 0))
+
+        save_button = tk.Button(button_frame, text="Apply", command=save_settings)
+        save_button.pack(side=tk.RIGHT, padx=10, pady=10)
+
+    def _apply_settings_geometry(self, settings_window):
+        settings_window.geometry("960x1280")
+        settings_window.minsize(960, 1280)
+        settings_window.update_idletasks()
+        if self.settings_geometry:
+            try:
+                settings_window.geometry(self.settings_geometry)
+            except Exception:
+                self.settings_geometry = None
+        if not self.settings_geometry:
+            self._position_settings_window(settings_window)
+
+    def _position_settings_window(self, settings_window):
+        if self.monitors:
+            idx = max(0, min(self.settings_monitor_index, len(self.monitors) - 1))
+            monitor = self.monitors[idx]
+            width = settings_window.winfo_width()
+            height = settings_window.winfo_height()
+            x = monitor["left"] + max(0, (monitor["right"] - monitor["left"] - width) // 2)
+            y = monitor["top"] + max(0, (monitor["bottom"] - monitor["top"] - height) // 2)
+            settings_window.geometry(f"+{x}+{y}")
+            return
+        x = self.root.winfo_rootx() + (self.root.winfo_width() - settings_window.winfo_width()) // 2
+        y = self.root.winfo_rooty() + (self.root.winfo_height() - settings_window.winfo_height()) // 2
+        settings_window.geometry(f"+{x}+{y}")
+
+    def _build_settings_sections(
+        self,
+        content,
+        settings_window,
+        label_opts,
+        section_bg,
+        settings_fg,
+        section_font,
+    ):
+        display_section = tk.LabelFrame(
+            content,
+            text="Display",
+            bg=section_bg,
+            fg=settings_fg,
+            font=section_font,
+            padx=10,
+            pady=10,
+        )
+        display_section.pack(fill=tk.X, pady=(0, 10))
+
+        display_vars = self._build_display_controls(
+            content,
+            display_section,
+            label_opts,
+            section_bg,
+            settings_fg,
+            section_font,
+            settings_window,
+        )
+
+        audio_section = tk.LabelFrame(
+            content,
+            text="Audio",
+            bg=section_bg,
+            fg=settings_fg,
+            font=section_font,
+            padx=10,
+            pady=10,
+        )
+        audio_section.pack(fill=tk.X, pady=(0, 10))
+        audio_vars = self._build_audio_section(audio_section, label_opts, section_bg, settings_fg)
+
+        filters_section = tk.LabelFrame(
+            content,
+            text="Filters",
+            bg=section_bg,
+            fg=settings_fg,
+            font=section_font,
+            padx=10,
+            pady=10,
+        )
+        filters_section.pack(fill=tk.BOTH, expand=True, pady=(0, 10))
+        filters_vars = self._build_filters_section(filters_section, label_opts, section_bg)
+
+        api_section = tk.LabelFrame(
+            content,
+            text="API",
+            bg=section_bg,
+            fg=settings_fg,
+            font=section_font,
+            padx=10,
+            pady=10,
+        )
+        api_section.pack(fill=tk.X)
+        api_vars = self._build_api_section(api_section, label_opts)
+
+        translation_section = tk.LabelFrame(
+            content,
+            text="Translation",
+            bg=section_bg,
+            fg=settings_fg,
+            font=section_font,
+            padx=10,
+            pady=10,
+        )
+        translation_section.pack(fill=tk.X, pady=(10, 0))
+        translation_vars = self._build_translation_section(translation_section, label_opts)
+
+        return display_vars, audio_vars, filters_vars, api_vars, translation_vars
+
+    def _build_settings_canvas(self, settings_window, settings_bg):
         scroll_frame = tk.Frame(settings_window, bg=settings_bg)
         scroll_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
@@ -701,8 +901,9 @@ class TranslationApp:
         def on_content_configure(event):
             canvas.configure(scrollregion=canvas.bbox("all"))
 
-        canvas.bind("<Configure>", on_canvas_configure)
-        content.bind("<Configure>", on_content_configure)
+        canvas.bind(self.CONFIGURE_EVENT, on_canvas_configure)
+        content.bind(self.CONFIGURE_EVENT, on_content_configure)
+
         def on_mousewheel(event):
             if event.delta:
                 canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
@@ -711,23 +912,22 @@ class TranslationApp:
             elif event.num == 5:
                 canvas.yview_scroll(1, "units")
 
-        settings_window.bind_all("<MouseWheel>", on_mousewheel)
-        settings_window.bind_all("<Button-4>", on_mousewheel)
-        settings_window.bind_all("<Button-5>", on_mousewheel)
+        for event_name in self.SCROLL_EVENTS:
+            settings_window.bind_all(event_name, on_mousewheel)
 
         content.configure(padx=12, pady=12)
+        return content
 
-        display_section = tk.LabelFrame(
-            content,
-            text="Display",
-            bg=section_bg,
-            fg=settings_fg,
-            font=section_font,
-            padx=10,
-            pady=10,
-        )
-        display_section.pack(fill=tk.X, pady=(0, 10))
-        
+    def _build_display_controls(
+        self,
+        content,
+        display_section,
+        label_opts,
+        section_bg,
+        settings_fg,
+        section_font,
+        settings_window,
+    ):
         tk.Label(display_section, text="Number of lines to show:", **label_opts).pack(anchor="w", pady=(0, 4))
         lines_var = tk.IntVar(value=self.max_lines)
         lines_spinbox = tk.Spinbox(display_section, from_=1, to=10, textvariable=lines_var)
@@ -745,7 +945,7 @@ class TranslationApp:
             command=lambda: self.choose_color(bg_color_var, "background", settings_window),
         )
         bg_button.pack(side=tk.LEFT, padx=(8, 0))
-        
+
         tk.Label(display_section, text="Text Color:", **label_opts).pack(anchor="w", pady=(10, 4))
         text_frame = tk.Frame(display_section, bg=section_bg)
         text_frame.pack(fill=tk.X)
@@ -758,7 +958,7 @@ class TranslationApp:
             command=lambda: self.choose_color(text_color_var, "text", settings_window),
         )
         text_button.pack(side=tk.LEFT, padx=(8, 0))
-        
+
         tk.Label(display_section, text="Font Size:", **label_opts).pack(anchor="w", pady=(10, 4))
         font_size_var = tk.IntVar(value=self.font_size)
         font_size_scale = tk.Scale(display_section, from_=12, to=72, orient=tk.HORIZONTAL, variable=font_size_var)
@@ -815,6 +1015,19 @@ class TranslationApp:
         )
         monitor_id_button.pack(anchor="w", pady=(8, 0))
 
+        def start_fullscreen():
+            if not self.is_fullscreen:
+                self.is_fullscreen = True
+            self.enter_fullscreen()
+            self.hide_status()
+
+        start_fullscreen_button = tk.Button(
+            display_section,
+            text="Start Fullscreen",
+            command=start_fullscreen,
+        )
+        start_fullscreen_button.pack(anchor="w", pady=(8, 0))
+
         preview_section = tk.LabelFrame(
             content,
             text="Output Preview",
@@ -848,7 +1061,7 @@ class TranslationApp:
             if widget and widget.winfo_exists():
                 widget.config(wraplength=max(1, event.width - 10))
 
-        self.preview_widget.bind("<Configure>", update_preview_wrap)
+        self.preview_widget.bind(self.CONFIGURE_EVENT, update_preview_wrap)
 
         tk.Label(display_section, text="Text Chunk Size (chars):", **label_opts).pack(anchor="w", pady=(10, 4))
         chunk_size_var = tk.IntVar(value=self.chunk_size)
@@ -877,17 +1090,21 @@ class TranslationApp:
         )
         scroll_enabled_check.pack(anchor="w", pady=(6, 0))
 
-        audio_section = tk.LabelFrame(
-            content,
-            text="Audio",
-            bg=section_bg,
-            fg=settings_fg,
-            font=section_font,
-            padx=10,
-            pady=10,
-        )
-        audio_section.pack(fill=tk.X, pady=(0, 10))
-        
+        return {
+            "lines_var": lines_var,
+            "bg_color_var": bg_color_var,
+            "text_color_var": text_color_var,
+            "font_size_var": font_size_var,
+            "monitor_var": monitor_var,
+            "settings_monitor_var": settings_monitor_var,
+            "monitor_labels": monitor_labels,
+            "chunk_size_var": chunk_size_var,
+            "chunk_delay_var": chunk_delay_var,
+            "scroll_speed_var": scroll_speed_var,
+            "scroll_enabled_var": scroll_enabled_var,
+        }
+
+    def _build_audio_section(self, audio_section, label_opts, section_bg, settings_fg):
         tk.Label(audio_section, text="Audio Device:", **label_opts).pack(anchor="w", pady=(0, 4))
         self.device_var = tk.StringVar(value=self.devices[self.microphone_index] if self.devices else "No devices")
         device_menu = tk.OptionMenu(audio_section, self.device_var, *self.devices)
@@ -924,17 +1141,14 @@ class TranslationApp:
         vocab_text.insert(tk.END, ", ".join(self.custom_vocabulary))
         vocab_text.pack(fill=tk.X)
 
-        filters_section = tk.LabelFrame(
-            content,
-            text="Filters",
-            bg=section_bg,
-            fg=settings_fg,
-            font=section_font,
-            padx=10,
-            pady=10,
-        )
-        filters_section.pack(fill=tk.BOTH, expand=True, pady=(0, 10))
+        return {
+            "loopback_var": loopback_var,
+            "transcription_var": transcription_var,
+            "transcription_map": transcription_map,
+            "vocab_text": vocab_text,
+        }
 
+    def _build_filters_section(self, filters_section, label_opts, section_bg):
         tk.Label(filters_section, text="Bad words filter:", **label_opts).pack(anchor="w", pady=(0, 4))
         toggle_var = tk.BooleanVar(value=False)
 
@@ -954,36 +1168,23 @@ class TranslationApp:
                 bad_words_container.pack_forget()
                 toggle_button.config(text="Show list")
 
-        toggle_button = tk.Button(filters_section, text="Edit filter", command=lambda: toggle_var.set(not toggle_var.get()) or toggle_bad_words())
+        toggle_button = tk.Button(
+            filters_section,
+            text="Edit filter",
+            command=lambda: toggle_var.set(not toggle_var.get()) or toggle_bad_words(),
+        )
         toggle_button.pack(anchor="w")
 
-        api_section = tk.LabelFrame(
-            content,
-            text="API",
-            bg=section_bg,
-            fg=settings_fg,
-            font=section_font,
-            padx=10,
-            pady=10,
-        )
-        api_section.pack(fill=tk.X)
-        
+        return {"bad_words_text": bad_words_text}
+
+    def _build_api_section(self, api_section, label_opts):
         tk.Label(api_section, text="Google STT API Key (optional):", **label_opts).pack(anchor="w", pady=(0, 4))
         api_key_var = tk.StringVar(value=self.api_key)
         api_key_entry = tk.Entry(api_section, textvariable=api_key_var, width=50)
         api_key_entry.pack(fill=tk.X)
+        return {"api_key_var": api_key_var}
 
-        translation_section = tk.LabelFrame(
-            content,
-            text="Translation",
-            bg=section_bg,
-            fg=settings_fg,
-            font=section_font,
-            padx=10,
-            pady=10,
-        )
-        translation_section.pack(fill=tk.X, pady=(10, 0))
-
+    def _build_translation_section(self, translation_section, label_opts):
         tk.Label(translation_section, text="Translate from:", **label_opts).pack(anchor="w", pady=(0, 4))
         lang_options = [
             ("Auto Detect", "auto"),
@@ -1011,59 +1212,12 @@ class TranslationApp:
         target_lang_var = tk.StringVar(value=rev_lang_map.get(self.target_lang, "English"))
         target_menu = tk.OptionMenu(translation_section, target_lang_var, *lang_display)
         target_menu.pack(fill=tk.X)
-        
-        def save_settings():
-            self.max_lines = lines_var.get()
-            bad_words_str = bad_words_text.get("1.0", tk.END).strip()
-            self.bad_words = set(word.strip().lower() for word in bad_words_str.split(',') if word.strip())
-            self.api_key = api_key_var.get().strip()
-            self.bg_color = bg_color_var.get()
-            self.text_color = text_color_var.get()
-            self.font_size = font_size_var.get()
-            self.text_font.configure(size=self.font_size)
-            if self.preview_font is not None:
-                preview_size = max(14, int(self.font_size * 0.5))
-                self.preview_font.configure(size=preview_size)
-            self.chunk_size = max(20, int(chunk_size_var.get()))
-            self.chunk_delay_ms = max(50, int(chunk_delay_var.get()))
-            self.scroll_speed_px = max(5, int(scroll_speed_var.get()))
-            self.enable_scrolling = bool(scroll_enabled_var.get())
-            if monitor_var.get() in monitor_labels:
-                self.monitor_index = monitor_labels.index(monitor_var.get())
-            if settings_monitor_var.get() in monitor_labels:
-                self.settings_monitor_index = monitor_labels.index(settings_monitor_var.get())
-            self.source_lang = lang_map.get(source_lang_var.get(), "auto")
-            self.target_lang = lang_map.get(target_lang_var.get(), "en")
-            self.transcription_mode = transcription_map.get(
-                transcription_var.get(),
-                "google_free",
-            )
-            vocab_str = vocab_text.get("1.0", tk.END).strip()
-            self.custom_vocabulary = [v.strip() for v in vocab_str.split(",") if v.strip()]
-            self.allow_loopback = bool(loopback_var.get())
-            # Refresh device list if loopback setting changed.
-            self.devices = self.get_audio_devices()
-            if self.device_var.get() not in self.devices:
-                self.device_var.set(self.devices[0] if self.devices else "No devices")
-            if self.device_var.get() in self.device_indices:
-                self.microphone_index = self.devices.index(self.device_var.get())
-            else:
-                self.microphone_index = None
-            self.apply_colors()
-            self.update_display()
-            if self.is_fullscreen:
-                self.enter_fullscreen()
-            self.save_settings()
-            self.close_settings_window()
 
-        button_frame = tk.Frame(settings_window, bg=settings_bg)
-        button_frame.pack(fill=tk.X, side=tk.BOTTOM, padx=12, pady=(0, 12))
-
-        save_button = tk.Button(button_frame, text="Save", command=save_settings)
-        save_button.pack(side=tk.LEFT, padx=10, pady=10)
-        
-        close_button = tk.Button(button_frame, text="Close", command=self.close_settings_window)
-        close_button.pack(side=tk.RIGHT, padx=10, pady=10)
+        return {
+            "source_lang_var": source_lang_var,
+            "target_lang_var": target_lang_var,
+            "lang_map": lang_map,
+        }
         
     def choose_color(self, color_var, color_type, parent):
         color = colorchooser.askcolor(title=f"Choose {color_type} color", parent=parent)
@@ -1073,10 +1227,6 @@ class TranslationApp:
     def apply_colors(self):
         self.text_canvas.config(bg=self.bg_color)
         self.text_canvas.itemconfigure(self.text_item, fill=self.text_color)
-        if hasattr(self, "status_label"):
-            self.status_label.config(bg=self.bg_color, fg=self.text_color)
-        if hasattr(self, "controls_frame"):
-            self.controls_frame.config(bg=self.bg_color)
         if self.preview_widget is not None and self.preview_widget.winfo_exists():
             self.preview_widget.config(bg=self.bg_color, fg=self.text_color)
     
@@ -1116,7 +1266,7 @@ class TranslationApp:
                 # Use microphone input
                 with sr.Microphone(device_index=device_index, sample_rate=16000) as source:
                     self.recognizer.adjust_for_ambient_noise(source, duration=0.5)
-                    self.update_status("Listening...")
+                    self.update_status(self.STATUS_LISTENING)
                     audio = self.recognizer.listen(source, timeout=1, phrase_time_limit=10)
                     self.process_audio(audio)
                         
@@ -1156,7 +1306,7 @@ class TranslationApp:
             self.update_status(f"Translation error: {e}")
             translated = text
         self.update_text(translated)
-        self.update_status("Listening...")
+        self.update_status(self.STATUS_LISTENING)
     
     def recognize_google_rest(self, audio, api_key):
         url = f"https://speech.googleapis.com/v1/speech:recognize?key={api_key}"
@@ -1397,7 +1547,7 @@ class TranslationApp:
     def toggle_pause(self):
         self.is_paused = not self.is_paused
         self.pause_button.config(text="Resume" if self.is_paused else "Pause")
-        self.update_status("Paused" if self.is_paused else "Listening...")
+        self.update_status("Paused" if self.is_paused else self.STATUS_LISTENING)
 
     def on_canvas_resize(self, event):
         width = max(10, event.width - (self.text_padding * 2))
