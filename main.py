@@ -258,32 +258,80 @@ class TranslationApp:
         p = pyaudio.PyAudio()
         input_devices = []
         output_devices = []
-        
+        device_infos = []
+
         for i in range(p.get_device_count()):
             device_info = p.get_device_info_by_index(i)
-            if device_info.get('maxInputChannels', 0) > 0:
-                input_devices.append((i, device_info.get('name', 'Unknown')))
-            elif device_info.get('maxOutputChannels', 0) > 0:
-                output_devices.append((i, device_info.get('name', 'Unknown')))
-        
+            host_api_index = device_info.get("hostApi")
+            host_api_name = ""
+            if host_api_index is not None:
+                try:
+                    host_api_name = p.get_host_api_info_by_index(host_api_index).get("name", "")
+                except Exception:
+                    host_api_name = ""
+            entry = {
+                "index": i,
+                "name": device_info.get("name", "Unknown"),
+                "max_input": device_info.get("maxInputChannels", 0),
+                "max_output": device_info.get("maxOutputChannels", 0),
+                "host_api": host_api_name,
+            }
+            device_infos.append(entry)
+            if entry["max_input"] > 0:
+                input_devices.append((i, entry["name"]))
+            elif entry["max_output"] > 0:
+                output_devices.append((i, entry["name"]))
+
         p.terminate()
-        
+
+        def is_loopback_name(name):
+            lowered = name.lower()
+            keywords = ["loopback", "stereo mix", "what u hear", "what you hear"]
+            return any(k in lowered for k in keywords)
+
+        def normalize_name(name):
+            lowered = name.lower()
+            lowered = re.sub(r"\(.*?\)", "", lowered)
+            lowered = re.sub(r"\b(loopback|stereo mix|what u hear|what you hear)\b", "", lowered)
+            lowered = re.sub(r"\s+", " ", lowered)
+            return lowered.strip()
+
+        loopback_inputs = []
+        for info in device_infos:
+            if info["max_input"] > 0 and is_loopback_name(info["name"]):
+                loopback_inputs.append(info)
+
         # Include input devices and optionally output devices (for loopback/monitor sources).
         devices = []
         self.device_indices = {}
         self.device_types = {}
+        self.loopback_output_map = {}
+
         for idx, name in input_devices:
             label = f"Input ({idx}): {name}"
             devices.append(label)
             self.device_indices[label] = idx
-            self.device_types[label] = 'input'
+            self.device_types[label] = "input"
+
         if self.allow_loopback:
             for idx, name in output_devices:
                 label = f"Output ({idx}): {name}"
                 devices.append(label)
                 self.device_indices[label] = idx
-                self.device_types[label] = 'output'
-            
+                self.device_types[label] = "output"
+
+                matched_input = None
+                norm_out = normalize_name(name)
+                for candidate in loopback_inputs:
+                    norm_in = normalize_name(candidate["name"])
+                    if norm_out and (norm_out in norm_in or norm_in in norm_out):
+                        matched_input = candidate["index"]
+                        break
+                if matched_input is None and len(loopback_inputs) == 1:
+                    matched_input = loopback_inputs[0]["index"]
+                if matched_input is not None:
+                    self.loopback_output_map[label] = matched_input
+
         return devices if devices else ["No devices found"]
     
     def open_settings(self):
@@ -632,14 +680,21 @@ class TranslationApp:
                     self.update_status("No audio device selected")
                     time.sleep(1)
                     continue
+                device_index = None
                 if self.device_types.get(device_name) != "input":
                     if not self.allow_loopback:
                         self.update_status("Selected device is output-only (enable loopback)")
                         time.sleep(1)
                         continue
+                    loopback_index = self.loopback_output_map.get(device_name)
+                    if loopback_index is None:
+                        self.update_status("No loopback input for selected output (enable Stereo Mix or install virtual cable)")
+                        time.sleep(1)
+                        continue
                     self.update_status("Loopback capture (output)")
-                    
-                device_index = self.device_indices.get(device_name, 0)
+                    device_index = loopback_index
+                else:
+                    device_index = self.device_indices.get(device_name, 0)
                 # Use microphone input
                 with sr.Microphone(device_index=device_index, sample_rate=16000) as source:
                     self.recognizer.adjust_for_ambient_noise(source, duration=0.5)
