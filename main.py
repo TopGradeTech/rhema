@@ -131,6 +131,8 @@ class TranslationApp:
         self.scroll_after_id = None
         self.text_bbox_height = 0
         self.enable_scrolling = False
+        self.preview_widget = None
+        self.preview_placeholder = "Preview will appear here."
 
         self.load_settings()
         self.text_font.configure(size=self.font_size)
@@ -480,6 +482,7 @@ class TranslationApp:
                 self.settings_window.unbind_all("<Button-5>")
                 self.settings_window.destroy()
                 self.settings_window = None
+                self.preview_widget = None
 
         settings_window.protocol("WM_DELETE_WINDOW", on_settings_close)
 
@@ -569,6 +572,23 @@ class TranslationApp:
         monitor_var = tk.StringVar(value=monitor_labels[min(self.monitor_index, len(monitor_labels) - 1)])
         monitor_menu = tk.OptionMenu(display_section, monitor_var, *monitor_labels)
         monitor_menu.pack(fill=tk.X)
+
+        preview_section = tk.LabelFrame(
+            content,
+            text="Output Preview",
+            bg=section_bg,
+            fg=settings_fg,
+            font=section_font,
+            padx=10,
+            pady=10,
+        )
+        preview_section.pack(fill=tk.X, pady=(0, 10))
+
+        tk.Label(preview_section, text="Current output:", **label_opts).pack(anchor="w", pady=(0, 4))
+        self.preview_widget = tk.Text(preview_section, height=4, wrap="word")
+        self.preview_widget.pack(fill=tk.X)
+        self.preview_widget.insert(tk.END, self.preview_placeholder)
+        self.preview_widget.config(state="disabled")
 
         tk.Label(display_section, text="Text Chunk Size (chars):", **label_opts).pack(anchor="w", pady=(10, 4))
         chunk_size_var = tk.IntVar(value=self.chunk_size)
@@ -1081,9 +1101,25 @@ class TranslationApp:
         display_text = '\n'.join(self.filter_bad_words(t) for t in display_lines)
         self.text_canvas.itemconfigure(self.text_item, text=display_text, font=self.text_font)
         self.text_canvas.update_idletasks()
+        self.update_preview(display_text)
         self.update_text_metrics()
         self.clamp_text_to_fit()
         self.update_text_position()
+
+    def update_preview(self, text):
+        if not self.preview_widget:
+            return
+
+        def update():
+            widget = self.preview_widget
+            if not widget or not widget.winfo_exists():
+                return
+            widget.config(state="normal")
+            widget.delete("1.0", tk.END)
+            widget.insert(tk.END, text if text else self.preview_placeholder)
+            widget.config(state="disabled")
+
+        self.root.after(0, update)
 
     def update_text_metrics(self):
         bbox = self.text_canvas.bbox(self.text_item)

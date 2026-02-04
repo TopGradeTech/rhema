@@ -212,5 +212,6 @@
   ],
   "scroll_speed_px": 20,
   "allow_loopback": true,
-  "enable_scrolling": false
+  "enable_scrolling": false,
+  "monitor_index": 0
 }
