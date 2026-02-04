@@ -28,8 +28,6 @@ class TranslationApp:
         self.preview_widget = None
         self.preview_font = None
         self.preview_placeholder = "Preview will appear here."
-        self.status_label = None
-        self.controls_frame = None
         self.settings_geometry = None
         self.settings_monitor_index = 0
         self.monitor_id_windows = []
@@ -41,7 +39,8 @@ class TranslationApp:
         # Restore window manager controls and menu for reliability.
         self.root.overrideredirect(False)
         self.empty_menubar = tk.Menu(self.root)
-        self.menubar = None
+        self.menubar = tk.Menu(self.root)
+        self.menubar.add_command(label="Settings", command=self.open_settings)
         self.root.config(menu=self.empty_menubar)
         
         self.root.grid_rowconfigure(0, weight=8)  # 80% height for text
@@ -67,24 +66,54 @@ class TranslationApp:
         )
         self.text_canvas.bind("<Configure>", self.on_canvas_resize)
         
+        self.status_label = tk.Label(
+            self.root,
+            text="",
+            anchor="w",
+            bg=self.bg_color,
+            fg=self.text_color,
+            font=(self.font_family, 10),
+            bd=0,
+            highlightthickness=0,
+        )
+        self.status_label.grid(row=1, column=0, sticky='sw', padx=10, pady=(0, 5))
+        self.status_label.grid_remove()
         self.status_hide_after_id = None
         self.overlay_visible = False
+
+        self.controls_frame = tk.Frame(self.root, bg=self.bg_color)
+        self.controls_frame.grid(row=2, column=0, pady=10)
+
+        self.fullscreen_button = tk.Button(
+            self.controls_frame,
+            text="Toggle Fullscreen",
+            command=self.toggle_fullscreen,
+        )
+        self.fullscreen_button.pack(side=tk.LEFT, padx=(0, 8))
+
+        self.pause_button = tk.Button(
+            self.controls_frame,
+            text="Pause",
+            command=self.toggle_pause,
+        )
+        self.pause_button.pack(side=tk.LEFT)
+        self.controls_frame.grid_remove()
 
         self.root.config(menu=self.empty_menubar)
         
         self.apply_colors()  # Apply default colors
         
-        self.is_fullscreen = True
+        self.is_fullscreen = False
         self.use_custom_fullscreen = os.name == "nt"
         self.prev_geometry = None
         self.prev_overrideredirect = None
         self.prev_topmost = None
-        self.root.after(0, self.enter_fullscreen)
+        self.root.after(0, self.maximize_window)
         self.root.after(50, self.show_status_temporarily)
-        self.root.after(0, self.open_settings)
         self.root.bind_all("<F11>", self.toggle_fullscreen_event)
         self.root.bind_all("<Control-Alt-f>", self.toggle_fullscreen_event)
         self.root.bind_all("<Escape>", self.toggle_fullscreen_event)
+        self.root.bind_all("<Control-s>", self.open_settings_event)
         self.root.bind_all("<Control-q>", self.close_app_event)
         self.root.focus_set()
         self.listening = True
@@ -141,15 +170,6 @@ class TranslationApp:
             self.exit_fullscreen()
             self.show_status_temporarily()
 
-    def start_fullscreen(self):
-        if self.is_fullscreen:
-            self.enter_fullscreen()
-            self.hide_status()
-            return
-        self.is_fullscreen = True
-        self.enter_fullscreen()
-        self.hide_status()
-
     def maximize_window(self):
         # Move to the selected output monitor before maximizing.
         try:
@@ -194,19 +214,22 @@ class TranslationApp:
         return "break"
 
     def show_status_temporarily(self, duration_ms=None):
-        if self.status_label is None or self.controls_frame is None:
+        if self.overlay_visible:
             return
         self.overlay_visible = True
-        try:
-            self.status_label.grid()
-            self.controls_frame.grid()
-        except Exception:
-            pass
+        self.status_label.grid()
+        self.controls_frame.grid()
+        if self.menubar is not None:
+            self.root.config(menu=self.menubar)
+        if duration_ms is not None:
+            if self.status_hide_after_id is not None:
+                self.root.after_cancel(self.status_hide_after_id)
+            self.status_hide_after_id = self.root.after(duration_ms, self.hide_status)
 
     def hide_status(self):
-        # Controller UI should stay visible.
-        if self.status_label is not None or self.controls_frame is not None:
-            return
+        self.status_label.grid_remove()
+        self.controls_frame.grid_remove()
+        self.root.config(menu=self.empty_menubar)
         if self.status_hide_after_id is not None:
             self.root.after_cancel(self.status_hide_after_id)
         self.status_hide_after_id = None
@@ -629,7 +652,7 @@ class TranslationApp:
 
         settings_window = tk.Toplevel(self.root)
         self.settings_window = settings_window
-        settings_window.title("Controller")
+        settings_window.title("Settings")
         settings_window.geometry("480x640")
         settings_window.minsize(480, 640)
         settings_window.update_idletasks()
@@ -658,35 +681,10 @@ class TranslationApp:
         label_opts = {"bg": settings_bg, "fg": settings_fg}
         section_font = (self.font_family, 12, "bold")
 
-        settings_window.protocol("WM_DELETE_WINDOW", self.on_closing)
-
-        controller_frame = tk.Frame(settings_window, bg=settings_bg)
-        controller_frame.pack(side=tk.TOP, fill=tk.X, padx=12, pady=(12, 0))
-
-        self.status_label = tk.Label(
-            controller_frame,
-            text="Status: Ready",
-            anchor="w",
-            bg=settings_bg,
-            fg=settings_fg,
-            font=(self.font_family, 10),
-            bd=0,
-            highlightthickness=0,
-        )
-        self.status_label.pack(side=tk.LEFT, fill=tk.X, expand=True)
-
-        self.controls_frame = tk.Frame(controller_frame, bg=settings_bg)
-        self.controls_frame.pack(side=tk.RIGHT)
-
-        self.pause_button = tk.Button(
-            self.controls_frame,
-            text="Pause",
-            command=self.toggle_pause,
-        )
-        self.pause_button.pack(side=tk.LEFT)
+        settings_window.protocol("WM_DELETE_WINDOW", self.close_settings_window)
 
         scroll_frame = tk.Frame(settings_window, bg=settings_bg)
-        scroll_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True, padx=0, pady=(8, 0))
+        scroll_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
         canvas = tk.Canvas(scroll_frame, bg=settings_bg, highlightthickness=0)
         scrollbar = tk.Scrollbar(scroll_frame, orient="vertical", command=canvas.yview)
@@ -816,13 +814,6 @@ class TranslationApp:
             command=self.show_monitor_ids,
         )
         monitor_id_button.pack(anchor="w", pady=(8, 0))
-
-        start_fullscreen_button = tk.Button(
-            display_section,
-            text="Start Fullscreen",
-            command=self.start_fullscreen,
-        )
-        start_fullscreen_button.pack(anchor="w", pady=(6, 0))
 
         preview_section = tk.LabelFrame(
             content,
@@ -1063,12 +1054,16 @@ class TranslationApp:
             if self.is_fullscreen:
                 self.enter_fullscreen()
             self.save_settings()
+            self.close_settings_window()
 
         button_frame = tk.Frame(settings_window, bg=settings_bg)
         button_frame.pack(fill=tk.X, side=tk.BOTTOM, padx=12, pady=(0, 12))
 
-        save_button = tk.Button(button_frame, text="Apply", command=save_settings)
+        save_button = tk.Button(button_frame, text="Save", command=save_settings)
         save_button.pack(side=tk.LEFT, padx=10, pady=10)
+        
+        close_button = tk.Button(button_frame, text="Close", command=self.close_settings_window)
+        close_button.pack(side=tk.RIGHT, padx=10, pady=10)
         
     def choose_color(self, color_var, color_type, parent):
         color = colorchooser.askcolor(title=f"Choose {color_type} color", parent=parent)
@@ -1078,10 +1073,10 @@ class TranslationApp:
     def apply_colors(self):
         self.text_canvas.config(bg=self.bg_color)
         self.text_canvas.itemconfigure(self.text_item, fill=self.text_color)
-        if self.status_label is not None and self.status_label.winfo_exists():
-            self.status_label.config(bg="#f7f7f7", fg="#222222")
-        if self.controls_frame is not None and self.controls_frame.winfo_exists():
-            self.controls_frame.config(bg="#f7f7f7")
+        if hasattr(self, "status_label"):
+            self.status_label.config(bg=self.bg_color, fg=self.text_color)
+        if hasattr(self, "controls_frame"):
+            self.controls_frame.config(bg=self.bg_color)
         if self.preview_widget is not None and self.preview_widget.winfo_exists():
             self.preview_widget.config(bg=self.bg_color, fg=self.text_color)
     
@@ -1396,8 +1391,6 @@ class TranslationApp:
     
     def update_status(self, msg):
         def update():
-            if self.status_label is None:
-                return
             self.status_label.config(text=f"Status: {msg}")
         self.root.after(0, update)
 
