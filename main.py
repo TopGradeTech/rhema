@@ -15,6 +15,7 @@ import os
 
 class TranslationApp:
     def __init__(self):
+        self.set_dpi_awareness()
         self.settings_path = os.path.join(os.path.dirname(__file__), "settings.json")
         self.root = tk.Tk()
         self.root.title("Python Translation App")
@@ -27,8 +28,11 @@ class TranslationApp:
         self.preview_widget = None
         self.preview_font = None
         self.preview_placeholder = "Preview will appear here."
+        self.status_label = None
+        self.controls_frame = None
         self.settings_geometry = None
         self.settings_monitor_index = 0
+        self.monitor_id_windows = []
         self.monitors = self.get_monitors()
         self.monitor_index = 0
         self.devices = self.get_audio_devices()
@@ -37,8 +41,7 @@ class TranslationApp:
         # Restore window manager controls and menu for reliability.
         self.root.overrideredirect(False)
         self.empty_menubar = tk.Menu(self.root)
-        self.menubar = tk.Menu(self.root)
-        self.menubar.add_command(label="Settings", command=self.open_settings)
+        self.menubar = None
         self.root.config(menu=self.empty_menubar)
         
         self.root.grid_rowconfigure(0, weight=8)  # 80% height for text
@@ -64,50 +67,24 @@ class TranslationApp:
         )
         self.text_canvas.bind("<Configure>", self.on_canvas_resize)
         
-        self.status_label = tk.Label(
-            self.root,
-            text="",
-            anchor="w",
-            bg=self.bg_color,
-            fg=self.text_color,
-            font=(self.font_family, 10),
-            bd=0,
-            highlightthickness=0,
-        )
-        self.status_label.grid(row=1, column=0, sticky='sw', padx=10, pady=(0, 5))
-        self.status_label.grid_remove()
         self.status_hide_after_id = None
         self.overlay_visible = False
-
-        self.controls_frame = tk.Frame(self.root, bg=self.bg_color)
-        self.controls_frame.grid(row=2, column=0, pady=10)
-
-        self.fullscreen_button = tk.Button(
-            self.controls_frame,
-            text="Toggle Fullscreen",
-            command=self.toggle_fullscreen,
-        )
-        self.fullscreen_button.pack(side=tk.LEFT, padx=(0, 8))
-
-        self.pause_button = tk.Button(
-            self.controls_frame,
-            text="Pause",
-            command=self.toggle_pause,
-        )
-        self.pause_button.pack(side=tk.LEFT)
-        self.controls_frame.grid_remove()
 
         self.root.config(menu=self.empty_menubar)
         
         self.apply_colors()  # Apply default colors
         
         self.is_fullscreen = True
+        self.use_custom_fullscreen = os.name == "nt"
         self.prev_geometry = None
+        self.prev_overrideredirect = None
+        self.prev_topmost = None
         self.root.after(0, self.enter_fullscreen)
+        self.root.after(50, self.show_status_temporarily)
+        self.root.after(0, self.open_settings)
         self.root.bind_all("<F11>", self.toggle_fullscreen_event)
         self.root.bind_all("<Control-Alt-f>", self.toggle_fullscreen_event)
         self.root.bind_all("<Escape>", self.toggle_fullscreen_event)
-        self.root.bind_all("<Control-s>", self.open_settings_event)
         self.root.bind_all("<Control-q>", self.close_app_event)
         self.root.focus_set()
         self.listening = True
@@ -164,6 +141,37 @@ class TranslationApp:
             self.exit_fullscreen()
             self.show_status_temporarily()
 
+    def start_fullscreen(self):
+        if self.is_fullscreen:
+            self.enter_fullscreen()
+            self.hide_status()
+            return
+        self.is_fullscreen = True
+        self.enter_fullscreen()
+        self.hide_status()
+
+    def maximize_window(self):
+        # Move to the selected output monitor before maximizing.
+        try:
+            try:
+                self.root.state("normal")
+            except Exception:
+                pass
+            self.move_window_to_monitor(self.root, self.monitor_index, keep_size=False)
+            self.root.update_idletasks()
+        except Exception:
+            pass
+        if os.name == "nt":
+            try:
+                self.root.state("zoomed")
+            except Exception:
+                pass
+        else:
+            try:
+                self.root.attributes("-zoomed", True)
+            except Exception:
+                pass
+
     def toggle_fullscreen_event(self, event):
         self.toggle_fullscreen()
 
@@ -186,22 +194,19 @@ class TranslationApp:
         return "break"
 
     def show_status_temporarily(self, duration_ms=None):
-        if self.overlay_visible:
+        if self.status_label is None or self.controls_frame is None:
             return
         self.overlay_visible = True
-        self.status_label.grid()
-        self.controls_frame.grid()
-        if self.menubar is not None:
-            self.root.config(menu=self.menubar)
-        if duration_ms is not None:
-            if self.status_hide_after_id is not None:
-                self.root.after_cancel(self.status_hide_after_id)
-            self.status_hide_after_id = self.root.after(duration_ms, self.hide_status)
+        try:
+            self.status_label.grid()
+            self.controls_frame.grid()
+        except Exception:
+            pass
 
     def hide_status(self):
-        self.status_label.grid_remove()
-        self.controls_frame.grid_remove()
-        self.root.config(menu=self.empty_menubar)
+        # Controller UI should stay visible.
+        if self.status_label is not None or self.controls_frame is not None:
+            return
         if self.status_hide_after_id is not None:
             self.root.after_cancel(self.status_hide_after_id)
         self.status_hide_after_id = None
@@ -377,6 +382,23 @@ class TranslationApp:
             height = 1080
         return [{"left": 0, "top": 0, "right": width, "bottom": height, "device": "", "primary": True}]
 
+    def set_dpi_awareness(self):
+        if os.name != "nt":
+            return
+        try:
+            import ctypes
+            try:
+                ctypes.windll.shcore.SetProcessDpiAwareness(2)
+                return
+            except Exception:
+                pass
+            try:
+                ctypes.windll.user32.SetProcessDPIAware()
+            except Exception:
+                pass
+        except Exception:
+            pass
+
     def get_monitor_labels(self):
         labels = []
         for i, monitor in enumerate(self.monitors):
@@ -387,9 +409,53 @@ class TranslationApp:
             labels.append(f"Monitor {i + 1} ({width}x{height} @ {origin}{primary})")
         return labels
 
-    def apply_monitor_geometry(self):
+    def show_monitor_ids(self, duration_ms=2000):
+        self.monitors = self.get_monitors()
         if not self.monitors:
             return
+        # Close any existing overlays.
+        for win in list(self.monitor_id_windows):
+            try:
+                win.destroy()
+            except Exception:
+                pass
+        self.monitor_id_windows = []
+
+        for i, monitor in enumerate(self.monitors):
+            width = max(1, monitor["right"] - monitor["left"])
+            height = max(1, monitor["bottom"] - monitor["top"])
+            x = monitor["left"]
+            y = monitor["top"]
+            overlay = tk.Toplevel(self.root)
+            overlay.overrideredirect(True)
+            overlay.attributes("-topmost", True)
+            overlay.configure(bg="#000000")
+            overlay.geometry(f"{width}x{height}+{x}+{y}")
+            label = tk.Label(
+                overlay,
+                text=str(i + 1),
+                fg="#ffffff",
+                bg="#000000",
+                font=(self.font_family, max(80, int(min(width, height) * 0.2)), "bold"),
+            )
+            label.place(relx=0.5, rely=0.5, anchor="center")
+            self.monitor_id_windows.append(overlay)
+
+        def close_overlays():
+            for win in list(self.monitor_id_windows):
+                try:
+                    win.destroy()
+                except Exception:
+                    pass
+            self.monitor_id_windows = []
+
+        self.root.after(duration_ms, close_overlays)
+
+    def apply_monitor_geometry(self):
+        self.monitors = self.get_monitors()
+        if not self.monitors:
+            return
+        self.monitor_index = max(0, min(self.monitor_index, len(self.monitors) - 1))
         idx = max(0, min(self.monitor_index, len(self.monitors) - 1))
         monitor = self.monitors[idx]
         width = monitor["right"] - monitor["left"]
@@ -398,20 +464,80 @@ class TranslationApp:
         y = monitor["top"]
         self.root.geometry(f"{width}x{height}+{x}+{y}")
 
+    def move_window_to_monitor(self, window, monitor_index, keep_size=True):
+        self.monitors = self.get_monitors()
+        if not self.monitors or window is None:
+            return
+        idx = max(0, min(monitor_index, len(self.monitors) - 1))
+        monitor = self.monitors[idx]
+        width = monitor["right"] - monitor["left"]
+        height = monitor["bottom"] - monitor["top"]
+        x = monitor["left"]
+        y = monitor["top"]
+
+        if keep_size:
+            try:
+                window.update_idletasks()
+                w = window.winfo_width()
+                h = window.winfo_height()
+            except Exception:
+                w, h = width, height
+            x = monitor["left"] + max(0, (width - w) // 2)
+            y = monitor["top"] + max(0, (height - h) // 2)
+            window.geometry(f"{w}x{h}+{x}+{y}")
+        else:
+            window.geometry(f"{width}x{height}+{x}+{y}")
+
     def enter_fullscreen(self):
         if not self.is_fullscreen:
             return
         if self.prev_geometry is None:
             self.prev_geometry = self.root.geometry()
-        # Some window managers ignore geometry changes while fullscreen is active.
-        if self.root.attributes("-fullscreen"):
+        if self.use_custom_fullscreen:
+            if self.prev_overrideredirect is None:
+                try:
+                    self.prev_overrideredirect = bool(self.root.overrideredirect())
+                except Exception:
+                    self.prev_overrideredirect = False
+            if self.prev_topmost is None:
+                try:
+                    self.prev_topmost = bool(self.root.attributes("-topmost"))
+                except Exception:
+                    self.prev_topmost = False
+            try:
+                self.root.state("normal")
+            except Exception:
+                pass
+            self.root.overrideredirect(True)
+            self.root.attributes("-topmost", True)
             self.root.attributes("-fullscreen", False)
-        self.apply_monitor_geometry()
-        self.root.update_idletasks()
-        self.root.attributes("-fullscreen", True)
+            self.move_window_to_monitor(self.root, self.monitor_index, keep_size=False)
+            self.root.update_idletasks()
+            # Apply twice to avoid position being offset by window manager.
+            self.move_window_to_monitor(self.root, self.monitor_index, keep_size=False)
+        else:
+            # Some window managers ignore geometry changes while fullscreen is active.
+            if self.root.attributes("-fullscreen"):
+                self.root.attributes("-fullscreen", False)
+            self.move_window_to_monitor(self.root, self.monitor_index, keep_size=False)
+            self.root.update_idletasks()
+            self.root.attributes("-fullscreen", True)
 
     def exit_fullscreen(self):
-        self.root.attributes("-fullscreen", False)
+        if self.use_custom_fullscreen:
+            self.root.attributes("-fullscreen", False)
+            if self.prev_overrideredirect is not None:
+                try:
+                    self.root.overrideredirect(self.prev_overrideredirect)
+                except Exception:
+                    pass
+            if self.prev_topmost is not None:
+                try:
+                    self.root.attributes("-topmost", self.prev_topmost)
+                except Exception:
+                    pass
+        else:
+            self.root.attributes("-fullscreen", False)
         if self.prev_geometry:
             self.root.geometry(self.prev_geometry)
         self.prev_geometry = None
@@ -503,7 +629,7 @@ class TranslationApp:
 
         settings_window = tk.Toplevel(self.root)
         self.settings_window = settings_window
-        settings_window.title("Settings")
+        settings_window.title("Controller")
         settings_window.geometry("480x640")
         settings_window.minsize(480, 640)
         settings_window.update_idletasks()
@@ -532,10 +658,38 @@ class TranslationApp:
         label_opts = {"bg": settings_bg, "fg": settings_fg}
         section_font = (self.font_family, 12, "bold")
 
-        settings_window.protocol("WM_DELETE_WINDOW", self.close_settings_window)
+        settings_window.protocol("WM_DELETE_WINDOW", self.on_closing)
 
-        canvas = tk.Canvas(settings_window, bg=settings_bg, highlightthickness=0)
-        scrollbar = tk.Scrollbar(settings_window, orient="vertical", command=canvas.yview)
+        controller_frame = tk.Frame(settings_window, bg=settings_bg)
+        controller_frame.pack(side=tk.TOP, fill=tk.X, padx=12, pady=(12, 0))
+
+        self.status_label = tk.Label(
+            controller_frame,
+            text="Status: Ready",
+            anchor="w",
+            bg=settings_bg,
+            fg=settings_fg,
+            font=(self.font_family, 10),
+            bd=0,
+            highlightthickness=0,
+        )
+        self.status_label.pack(side=tk.LEFT, fill=tk.X, expand=True)
+
+        self.controls_frame = tk.Frame(controller_frame, bg=settings_bg)
+        self.controls_frame.pack(side=tk.RIGHT)
+
+        self.pause_button = tk.Button(
+            self.controls_frame,
+            text="Pause",
+            command=self.toggle_pause,
+        )
+        self.pause_button.pack(side=tk.LEFT)
+
+        scroll_frame = tk.Frame(settings_window, bg=settings_bg)
+        scroll_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True, padx=0, pady=(8, 0))
+
+        canvas = tk.Canvas(scroll_frame, bg=settings_bg, highlightthickness=0)
+        scrollbar = tk.Scrollbar(scroll_frame, orient="vertical", command=canvas.yview)
         canvas.configure(yscrollcommand=scrollbar.set)
         canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
@@ -612,21 +766,63 @@ class TranslationApp:
         font_size_scale = tk.Scale(display_section, from_=12, to=72, orient=tk.HORIZONTAL, variable=font_size_var)
         font_size_scale.pack(fill=tk.X)
 
-        tk.Label(display_section, text="Fullscreen Monitor:", **label_opts).pack(anchor="w", pady=(10, 4))
+        tk.Label(display_section, text="Output Monitor:", **label_opts).pack(anchor="w", pady=(10, 4))
         self.monitors = self.get_monitors()
         monitor_labels = self.get_monitor_labels()
         if not monitor_labels:
             monitor_labels = ["Monitor 1"]
         monitor_var = tk.StringVar(value=monitor_labels[min(self.monitor_index, len(monitor_labels) - 1)])
-        monitor_menu = tk.OptionMenu(display_section, monitor_var, *monitor_labels)
+        monitor_menu = tk.OptionMenu(
+            display_section,
+            monitor_var,
+            *monitor_labels,
+            command=lambda _value: on_output_monitor_change(),
+        )
         monitor_menu.pack(fill=tk.X)
 
-        tk.Label(display_section, text="Settings Monitor (master):", **label_opts).pack(anchor="w", pady=(10, 4))
+        tk.Label(display_section, text="Controller Monitor:", **label_opts).pack(anchor="w", pady=(10, 4))
         settings_monitor_var = tk.StringVar(
             value=monitor_labels[min(self.settings_monitor_index, len(monitor_labels) - 1)]
         )
-        settings_monitor_menu = tk.OptionMenu(display_section, settings_monitor_var, *monitor_labels)
+        settings_monitor_menu = tk.OptionMenu(
+            display_section,
+            settings_monitor_var,
+            *monitor_labels,
+            command=lambda _value: on_settings_monitor_change(),
+        )
         settings_monitor_menu.pack(fill=tk.X)
+
+        def on_settings_monitor_change(*_args):
+            if settings_monitor_var.get() in monitor_labels:
+                self.settings_monitor_index = monitor_labels.index(settings_monitor_var.get())
+                self.move_window_to_monitor(settings_window, self.settings_monitor_index, keep_size=True)
+
+        def on_output_monitor_change(*_args):
+            if monitor_var.get() in monitor_labels:
+                self.monitor_index = monitor_labels.index(monitor_var.get())
+                if self.is_fullscreen:
+                    self.enter_fullscreen()
+                else:
+                    self.move_window_to_monitor(self.root, self.monitor_index, keep_size=False)
+                    self.root.after(0, self.maximize_window)
+
+        # Also handle programmatic changes.
+        settings_monitor_var.trace_add("write", lambda *_args: on_settings_monitor_change())
+        monitor_var.trace_add("write", lambda *_args: on_output_monitor_change())
+
+        monitor_id_button = tk.Button(
+            display_section,
+            text="Show Monitor Numbers",
+            command=self.show_monitor_ids,
+        )
+        monitor_id_button.pack(anchor="w", pady=(8, 0))
+
+        start_fullscreen_button = tk.Button(
+            display_section,
+            text="Start Fullscreen",
+            command=self.start_fullscreen,
+        )
+        start_fullscreen_button.pack(anchor="w", pady=(6, 0))
 
         preview_section = tk.LabelFrame(
             content,
@@ -867,17 +1063,13 @@ class TranslationApp:
             if self.is_fullscreen:
                 self.enter_fullscreen()
             self.save_settings()
-            self.close_settings_window()
-        
+
         button_frame = tk.Frame(settings_window, bg=settings_bg)
         button_frame.pack(fill=tk.X, side=tk.BOTTOM, padx=12, pady=(0, 12))
 
-        save_button = tk.Button(button_frame, text="Save", command=save_settings)
+        save_button = tk.Button(button_frame, text="Apply", command=save_settings)
         save_button.pack(side=tk.LEFT, padx=10, pady=10)
         
-        close_button = tk.Button(button_frame, text="Close", command=self.close_settings_window)
-        close_button.pack(side=tk.RIGHT, padx=10, pady=10)
-    
     def choose_color(self, color_var, color_type, parent):
         color = colorchooser.askcolor(title=f"Choose {color_type} color", parent=parent)
         if color[1]:  # color[1] is the hex value
@@ -886,10 +1078,10 @@ class TranslationApp:
     def apply_colors(self):
         self.text_canvas.config(bg=self.bg_color)
         self.text_canvas.itemconfigure(self.text_item, fill=self.text_color)
-        if hasattr(self, "status_label"):
-            self.status_label.config(bg=self.bg_color, fg=self.text_color)
-        if hasattr(self, "controls_frame"):
-            self.controls_frame.config(bg=self.bg_color)
+        if self.status_label is not None and self.status_label.winfo_exists():
+            self.status_label.config(bg="#f7f7f7", fg="#222222")
+        if self.controls_frame is not None and self.controls_frame.winfo_exists():
+            self.controls_frame.config(bg="#f7f7f7")
         if self.preview_widget is not None and self.preview_widget.winfo_exists():
             self.preview_widget.config(bg=self.bg_color, fg=self.text_color)
     
@@ -1204,6 +1396,8 @@ class TranslationApp:
     
     def update_status(self, msg):
         def update():
+            if self.status_label is None:
+                return
             self.status_label.config(text=f"Status: {msg}")
         self.root.after(0, update)
 
