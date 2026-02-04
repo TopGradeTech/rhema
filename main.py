@@ -24,6 +24,9 @@ class TranslationApp:
         self.translator = Translator()
         self.recognizer = sr.Recognizer()
         self.allow_loopback = False
+        self.preview_widget = None
+        self.preview_font = None
+        self.preview_placeholder = "Preview will appear here."
         self.monitors = self.get_monitors()
         self.monitor_index = 0
         self.devices = self.get_audio_devices()
@@ -114,6 +117,12 @@ class TranslationApp:
         self.settings_window = None
         self.text_queue = deque()
         self.is_flushing_queue = False
+        self.word_by_word = True
+        self.word_reveal_queue = deque()
+        self.is_revealing_words = False
+        self.live_line = ""
+        self.current_reveal_words = []
+        self.current_reveal_text = ""
         self.chunk_size = 65
         self.chunk_delay_ms = 300
         self.flush_timeout_ms = 2000
@@ -131,10 +140,6 @@ class TranslationApp:
         self.scroll_after_id = None
         self.text_bbox_height = 0
         self.enable_scrolling = False
-        self.preview_widget = None
-        self.preview_font = None
-        self.preview_placeholder = "Preview will appear here."
-
         self.load_settings()
         self.text_font.configure(size=self.font_size)
         self.apply_colors()
@@ -811,7 +816,7 @@ class TranslationApp:
             if self.is_fullscreen:
                 self.enter_fullscreen()
             self.save_settings()
-            # Don't destroy here, let user close manually
+            on_settings_close()
         
         button_frame = tk.Frame(settings_window, bg=settings_bg)
         button_frame.pack(fill=tk.X, side=tk.BOTTOM, padx=12, pady=(0, 12))
@@ -953,6 +958,10 @@ class TranslationApp:
             if not incoming:
                 return
 
+            if self.word_by_word:
+                self.enqueue_text(incoming)
+                return
+
             if self.pending_text:
                 self.pending_text = f"{self.pending_text} {incoming}"
             else:
@@ -968,10 +977,52 @@ class TranslationApp:
         self.root.after(0, update)
 
     def enqueue_text(self, text):
+        if self.word_by_word:
+            self.word_reveal_queue.append(text)
+            if not self.is_revealing_words:
+                self.start_word_reveal()
+            return
         for chunk in self.chunk_text(text, self.chunk_size):
             self.text_queue.append(chunk)
         if not self.is_flushing_queue:
             self.flush_text_queue()
+
+    def start_word_reveal(self):
+        if self.is_revealing_words:
+            return
+        self.is_revealing_words = True
+        self.current_reveal_words = []
+        self.current_reveal_text = ""
+        self.reveal_next_word()
+
+    def reveal_next_word(self):
+        if not self.current_reveal_words:
+            if not self.word_reveal_queue:
+                self.is_revealing_words = False
+                self.live_line = ""
+                return
+            sentence = self.word_reveal_queue.popleft()
+            self.current_reveal_words = re.findall(r"\S+", sentence)
+            self.current_reveal_text = ""
+
+        if self.current_reveal_words:
+            next_word = self.current_reveal_words.pop(0)
+            if self.current_reveal_text:
+                self.current_reveal_text = f"{self.current_reveal_text} {next_word}"
+            else:
+                self.current_reveal_text = next_word
+            self.live_line = self.current_reveal_text
+            self.render_text()
+            self.root.after(self.chunk_delay_ms, self.reveal_next_word)
+            return
+
+        if self.current_reveal_text:
+            self.translations.append(self.current_reveal_text)
+            if len(self.translations) > self.max_lines:
+                self.translations = self.translations[-self.max_lines:]
+        self.live_line = ""
+        self.current_reveal_text = ""
+        self.root.after(0, self.reveal_next_word)
 
     def flush_pending_text(self):
         self.flush_after_id = None
@@ -1122,6 +1173,9 @@ class TranslationApp:
 
     def render_text(self):
         display_lines = self.translations[-self.max_lines:]
+        if self.live_line:
+            display_lines = display_lines + [self.live_line]
+            display_lines = display_lines[-self.max_lines:]
         display_text = '\n'.join(self.filter_bad_words(t) for t in display_lines)
         self.text_canvas.itemconfigure(self.text_item, text=display_text, font=self.text_font)
         self.text_canvas.update_idletasks()
