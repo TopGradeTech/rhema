@@ -132,6 +132,7 @@ class TranslationApp:
         self.text_bbox_height = 0
         self.enable_scrolling = False
         self.preview_widget = None
+        self.preview_font = None
         self.preview_placeholder = "Preview will appear here."
 
         self.load_settings()
@@ -585,10 +586,28 @@ class TranslationApp:
         preview_section.pack(fill=tk.X, pady=(0, 10))
 
         tk.Label(preview_section, text="Current output:", **label_opts).pack(anchor="w", pady=(0, 4))
-        self.preview_widget = tk.Text(preview_section, height=4, wrap="word")
+        preview_size = max(14, int(self.font_size * 0.5))
+        self.preview_font = tkfont.Font(family=self.font_family, size=preview_size)
+        self.preview_widget = tk.Label(
+            preview_section,
+            text=self.preview_placeholder,
+            bg=self.bg_color,
+            fg=self.text_color,
+            font=self.preview_font,
+            justify="left",
+            anchor="nw",
+            height=4,
+            relief="solid",
+            borderwidth=1,
+        )
         self.preview_widget.pack(fill=tk.X)
-        self.preview_widget.insert(tk.END, self.preview_placeholder)
-        self.preview_widget.config(state="disabled")
+
+        def update_preview_wrap(event):
+            widget = self.preview_widget
+            if widget and widget.winfo_exists():
+                widget.config(wraplength=max(1, event.width - 10))
+
+        self.preview_widget.bind("<Configure>", update_preview_wrap)
 
         tk.Label(display_section, text="Text Chunk Size (chars):", **label_opts).pack(anchor="w", pady=(10, 4))
         chunk_size_var = tk.IntVar(value=self.chunk_size)
@@ -761,6 +780,9 @@ class TranslationApp:
             self.text_color = text_color_var.get()
             self.font_size = font_size_var.get()
             self.text_font.configure(size=self.font_size)
+            if self.preview_font is not None:
+                preview_size = max(14, int(self.font_size * 0.5))
+                self.preview_font.configure(size=preview_size)
             self.chunk_size = max(20, int(chunk_size_var.get()))
             self.chunk_delay_ms = max(50, int(chunk_delay_var.get()))
             self.scroll_speed_px = max(5, int(scroll_speed_var.get()))
@@ -812,6 +834,8 @@ class TranslationApp:
             self.status_label.config(bg=self.bg_color, fg=self.text_color)
         if hasattr(self, "controls_frame"):
             self.controls_frame.config(bg=self.bg_color)
+        if self.preview_widget is not None and self.preview_widget.winfo_exists():
+            self.preview_widget.config(bg=self.bg_color, fg=self.text_color)
     
     def listen_and_translate(self):
         while self.listening:
@@ -1114,10 +1138,7 @@ class TranslationApp:
             widget = self.preview_widget
             if not widget or not widget.winfo_exists():
                 return
-            widget.config(state="normal")
-            widget.delete("1.0", tk.END)
-            widget.insert(tk.END, text if text else self.preview_placeholder)
-            widget.config(state="disabled")
+            widget.config(text=text if text else self.preview_placeholder)
 
         self.root.after(0, update)
 
