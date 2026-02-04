@@ -24,6 +24,8 @@ class TranslationApp:
         self.translator = Translator()
         self.recognizer = sr.Recognizer()
         self.allow_loopback = False
+        self.monitors = self.get_monitors()
+        self.monitor_index = 0
         self.devices = self.get_audio_devices()
         self.microphone_index = 0 if self.devices else None
         
@@ -95,7 +97,8 @@ class TranslationApp:
         self.apply_colors()  # Apply default colors
         
         self.is_fullscreen = True
-        self.root.after(0, lambda: self.root.attributes("-fullscreen", True))
+        self.prev_geometry = None
+        self.root.after(0, self.enter_fullscreen)
         self.root.bind_all("<F11>", self.toggle_fullscreen_event)
         self.root.bind_all("<Control-Alt-f>", self.toggle_fullscreen_event)
         self.root.bind_all("<Escape>", self.exit_fullscreen_event)
@@ -145,7 +148,10 @@ class TranslationApp:
     
     def toggle_fullscreen(self):
         self.is_fullscreen = not self.is_fullscreen
-        self.root.attributes("-fullscreen", self.is_fullscreen)
+        if self.is_fullscreen:
+            self.enter_fullscreen()
+        else:
+            self.exit_fullscreen()
 
     def toggle_fullscreen_event(self, event):
         self.toggle_fullscreen()
@@ -153,7 +159,7 @@ class TranslationApp:
     def exit_fullscreen_event(self, event):
         if self.is_fullscreen:
             self.is_fullscreen = False
-            self.root.attributes("-fullscreen", False)
+            self.exit_fullscreen()
         return "break"
 
     def open_settings_event(self, event):
@@ -227,6 +233,11 @@ class TranslationApp:
         self.scroll_speed_px = data.get("scroll_speed_px", self.scroll_speed_px)
         self.allow_loopback = data.get("allow_loopback", self.allow_loopback)
         self.enable_scrolling = data.get("enable_scrolling", self.enable_scrolling)
+        self.monitor_index = int(data.get("monitor_index", self.monitor_index))
+        if not self.monitors:
+            self.monitors = self.get_monitors()
+        if self.monitors:
+            self.monitor_index = max(0, min(self.monitor_index, len(self.monitors) - 1))
 
     def save_settings(self):
         data = {
@@ -247,12 +258,119 @@ class TranslationApp:
             "scroll_speed_px": self.scroll_speed_px,
             "allow_loopback": self.allow_loopback,
             "enable_scrolling": self.enable_scrolling,
+            "monitor_index": self.monitor_index,
         }
         try:
             with open(self.settings_path, "w", encoding="utf-8") as f:
                 json.dump(data, f, indent=2)
         except Exception:
             pass
+
+    def get_monitors(self):
+        if os.name == "nt":
+            try:
+                import ctypes
+                from ctypes import wintypes
+
+                class RECT(ctypes.Structure):
+                    _fields_ = [
+                        ("left", wintypes.LONG),
+                        ("top", wintypes.LONG),
+                        ("right", wintypes.LONG),
+                        ("bottom", wintypes.LONG),
+                    ]
+
+                class MONITORINFOEXW(ctypes.Structure):
+                    _fields_ = [
+                        ("cbSize", wintypes.DWORD),
+                        ("rcMonitor", RECT),
+                        ("rcWork", RECT),
+                        ("dwFlags", wintypes.DWORD),
+                        ("szDevice", wintypes.WCHAR * 32),
+                    ]
+
+                user32 = ctypes.windll.user32
+                monitors = []
+
+                MONITORENUMPROC = ctypes.WINFUNCTYPE(
+                    wintypes.BOOL,
+                    wintypes.HMONITOR,
+                    wintypes.HDC,
+                    ctypes.POINTER(RECT),
+                    wintypes.LPARAM,
+                )
+
+                def _callback(h_monitor, hdc, lprc, lparam):
+                    info = MONITORINFOEXW()
+                    info.cbSize = ctypes.sizeof(MONITORINFOEXW)
+                    if user32.GetMonitorInfoW(h_monitor, ctypes.byref(info)):
+                        monitors.append(
+                            {
+                                "left": info.rcMonitor.left,
+                                "top": info.rcMonitor.top,
+                                "right": info.rcMonitor.right,
+                                "bottom": info.rcMonitor.bottom,
+                                "device": info.szDevice,
+                                "primary": bool(info.dwFlags & 1),
+                            }
+                        )
+                    return True
+
+                user32.EnumDisplayMonitors(
+                    0,
+                    0,
+                    MONITORENUMPROC(_callback),
+                    0,
+                )
+
+                if monitors:
+                    return monitors
+            except Exception:
+                pass
+
+        try:
+            self.root.update_idletasks()
+            width = self.root.winfo_screenwidth()
+            height = self.root.winfo_screenheight()
+        except Exception:
+            width = 1920
+            height = 1080
+        return [{"left": 0, "top": 0, "right": width, "bottom": height, "device": "", "primary": True}]
+
+    def get_monitor_labels(self):
+        labels = []
+        for i, monitor in enumerate(self.monitors):
+            width = monitor["right"] - monitor["left"]
+            height = monitor["bottom"] - monitor["top"]
+            origin = f'{monitor["left"]},{monitor["top"]}'
+            primary = " primary" if monitor.get("primary") else ""
+            labels.append(f"Monitor {i + 1} ({width}x{height} @ {origin}{primary})")
+        return labels
+
+    def apply_monitor_geometry(self):
+        if not self.monitors:
+            return
+        idx = max(0, min(self.monitor_index, len(self.monitors) - 1))
+        monitor = self.monitors[idx]
+        width = monitor["right"] - monitor["left"]
+        height = monitor["bottom"] - monitor["top"]
+        x = monitor["left"]
+        y = monitor["top"]
+        self.root.geometry(f"{width}x{height}+{x}+{y}")
+
+    def enter_fullscreen(self):
+        if not self.is_fullscreen:
+            return
+        if self.prev_geometry is None:
+            self.prev_geometry = self.root.geometry()
+        self.apply_monitor_geometry()
+        self.root.attributes("-fullscreen", True)
+
+    def exit_fullscreen(self):
+        self.root.attributes("-fullscreen", False)
+        if self.prev_geometry:
+            self.root.geometry(self.prev_geometry)
+        self.prev_geometry = None
     
     def get_audio_devices(self):
         p = pyaudio.PyAudio()
@@ -443,6 +561,15 @@ class TranslationApp:
         font_size_scale = tk.Scale(display_section, from_=12, to=72, orient=tk.HORIZONTAL, variable=font_size_var)
         font_size_scale.pack(fill=tk.X)
 
+        tk.Label(display_section, text="Fullscreen Monitor:", **label_opts).pack(anchor="w", pady=(10, 4))
+        self.monitors = self.get_monitors()
+        monitor_labels = self.get_monitor_labels()
+        if not monitor_labels:
+            monitor_labels = ["Monitor 1"]
+        monitor_var = tk.StringVar(value=monitor_labels[min(self.monitor_index, len(monitor_labels) - 1)])
+        monitor_menu = tk.OptionMenu(display_section, monitor_var, *monitor_labels)
+        monitor_menu.pack(fill=tk.X)
+
         tk.Label(display_section, text="Text Chunk Size (chars):", **label_opts).pack(anchor="w", pady=(10, 4))
         chunk_size_var = tk.IntVar(value=self.chunk_size)
         chunk_size_spin = tk.Spinbox(display_section, from_=20, to=300, textvariable=chunk_size_var)
@@ -618,6 +745,8 @@ class TranslationApp:
             self.chunk_delay_ms = max(50, int(chunk_delay_var.get()))
             self.scroll_speed_px = max(5, int(scroll_speed_var.get()))
             self.enable_scrolling = bool(scroll_enabled_var.get())
+            if monitor_var.get() in monitor_labels:
+                self.monitor_index = monitor_labels.index(monitor_var.get())
             self.source_lang = lang_map.get(source_lang_var.get(), "auto")
             self.target_lang = lang_map.get(target_lang_var.get(), "en")
             self.transcription_mode = transcription_map.get(
@@ -637,6 +766,8 @@ class TranslationApp:
                 self.microphone_index = None
             self.apply_colors()
             self.update_display()
+            if self.is_fullscreen:
+                self.enter_fullscreen()
             self.save_settings()
             # Don't destroy here, let user close manually
         
