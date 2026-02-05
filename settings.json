@@ -2,13 +2,14 @@
   "api_key": "AIzaSyCwt1DHm__L-gle-CyDk7ZAiibF1QcOne0",
   "bg_color": "#000000",
   "text_color": "#ffffff",
-  "font_size": 50,
+  "font_size": 60,
   "max_lines": 8,
   "bad_words": [
     "ass",
     "asshole",
     "bastard",
     "bitch",
+    "boner",
     "cock",
     "crap",
     "cunt",
@@ -23,7 +24,7 @@
     "tits",
     "whore"
   ],
-  "chunk_size": 100,
+  "chunk_size": 300,
   "chunk_delay_ms": 300,
   "flush_timeout_ms": 2000,
   "source_lang": "auto",
@@ -212,8 +213,11 @@
   ],
   "scroll_speed_px": 20,
   "allow_loopback": true,
+  "preferred_host_api": "Windows WASAPI",
+  "rms_gate_enabled": true,
+  "rms_gate_factor": 1.2,
   "enable_scrolling": false,
   "monitor_index": 0,
-  "settings_geometry": "960x1280+613+59",
-  "settings_monitor_index": 1
+  "settings_geometry": "2560x1334+-1459+217",
+  "settings_monitor_index": 2
 }
