@@ -22,7 +22,7 @@ class TranslationApp:
         self.set_dpi_awareness()
         self.settings_path = os.path.join(os.path.dirname(__file__), "settings.json")
         self.root = tk.Tk()
-        self.root.title("Python Translation App")
+        self.root.title("Translation Output")
         self.font_family = self.pick_font_family(
             ["DejaVu Sans", "Liberation Sans", "Arial", "Helvetica"]
         )
@@ -77,12 +77,15 @@ class TranslationApp:
         
         self.apply_colors()  # Apply default colors
         
-        self.is_fullscreen = False
+        self.is_fullscreen = True
         self.use_custom_fullscreen = os.name == "nt"
         self.prev_geometry = None
         self.prev_overrideredirect = None
         self.prev_topmost = None
-        self.root.after(0, self.maximize_window)
+        if self.is_fullscreen:
+            self.root.after(0, self.enter_fullscreen)
+        else:
+            self.root.after(0, self.maximize_window)
         self.root.after(50, self.show_status_temporarily)
         self.root.bind_all("<F11>", self.toggle_fullscreen_event)
         self.root.bind_all("<Control-Alt-f>", self.toggle_fullscreen_event)
@@ -147,6 +150,11 @@ class TranslationApp:
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
         
         self.open_settings()
+        if self.settings_window is not None and self.settings_window.winfo_exists():
+            try:
+                self.settings_window.focus_force()
+            except Exception:
+                pass
 
         self.thread = Thread(target=self.listen_and_translate)
         self.thread.daemon = True
@@ -668,7 +676,7 @@ class TranslationApp:
 
         settings_window = tk.Toplevel(self.root)
         self.settings_window = settings_window
-        settings_window.title("Settings")
+        settings_window.title("Translation Controller")
         self._apply_settings_geometry(settings_window)
         settings_bg = "#f7f7f7"
         section_bg = "#ffffff"
@@ -690,55 +698,13 @@ class TranslationApp:
         )
         
         def save_settings():
-            self.max_lines = display_vars["lines_var"].get()
-            bad_words_str = filters_vars["bad_words_text"].get("1.0", tk.END).strip()
-            self.bad_words = {word.strip().lower() for word in bad_words_str.split(',') if word.strip()}
-            self.api_key = api_vars["api_key_var"].get().strip()
-            self.bg_color = display_vars["bg_color_var"].get()
-            self.text_color = display_vars["text_color_var"].get()
-            self.font_size = display_vars["font_size_var"].get()
-            self.text_font.configure(size=self.font_size)
-            if self.preview_font is not None:
-                preview_size = max(14, int(self.font_size * 0.5))
-                self.preview_font.configure(size=preview_size)
-            self.chunk_size = max(20, int(display_vars["chunk_size_var"].get()))
-            self.chunk_delay_ms = max(50, int(display_vars["chunk_delay_var"].get()))
-            self.scroll_speed_px = max(5, int(display_vars["scroll_speed_var"].get()))
-            self.enable_scrolling = bool(display_vars["scroll_enabled_var"].get())
-            monitor_labels = display_vars["monitor_labels"]
-            if display_vars["monitor_var"].get() in monitor_labels:
-                self.monitor_index = monitor_labels.index(display_vars["monitor_var"].get())
-            if display_vars["settings_monitor_var"].get() in monitor_labels:
-                self.settings_monitor_index = monitor_labels.index(display_vars["settings_monitor_var"].get())
-            self.source_lang = translation_vars["lang_map"].get(
-                translation_vars["source_lang_var"].get(),
-                "auto",
+            self._apply_settings_vars(
+                display_vars,
+                audio_vars,
+                filters_vars,
+                api_vars,
+                translation_vars,
             )
-            self.target_lang = translation_vars["lang_map"].get(
-                translation_vars["target_lang_var"].get(),
-                "en",
-            )
-            self.transcription_mode = audio_vars["transcription_map"].get(
-                audio_vars["transcription_var"].get(),
-                "google_free",
-            )
-            vocab_str = audio_vars["vocab_text"].get("1.0", tk.END).strip()
-            self.custom_vocabulary = [v.strip() for v in vocab_str.split(",") if v.strip()]
-            self.allow_loopback = bool(audio_vars["loopback_var"].get())
-            # Refresh device list if loopback setting changed.
-            self.devices = self.get_audio_devices()
-            if self.device_var.get() not in self.devices:
-                self.device_var.set(self.devices[0] if self.devices else "No devices")
-            if self.device_var.get() in self.device_indices:
-                self.microphone_index = self.devices.index(self.device_var.get())
-            else:
-                self.microphone_index = None
-            self.apply_colors()
-            self.update_display()
-            if self.is_fullscreen:
-                self.enter_fullscreen()
-            self.save_settings()
-            self.close_settings_window()
 
         button_frame = tk.Frame(settings_window, bg=settings_bg)
         button_frame.pack(fill=tk.X, side=tk.BOTTOM, padx=12, pady=(0, 12))
@@ -775,6 +741,83 @@ class TranslationApp:
 
         save_button = tk.Button(button_frame, text="Apply", command=save_settings)
         save_button.pack(side=tk.RIGHT, padx=10, pady=10)
+
+    def _apply_settings_vars(
+        self,
+        display_vars,
+        audio_vars,
+        filters_vars,
+        api_vars,
+        translation_vars,
+    ):
+        self._apply_display_vars(display_vars)
+        self._apply_filter_vars(filters_vars)
+        self._apply_api_vars(api_vars)
+        self._apply_translation_vars(translation_vars)
+        self._apply_audio_vars(audio_vars)
+        self._refresh_audio_devices()
+        self.apply_colors()
+        self.update_display()
+        if self.is_fullscreen:
+            self.enter_fullscreen()
+        self.save_settings()
+
+    def _apply_display_vars(self, display_vars):
+        self.max_lines = display_vars["lines_var"].get()
+        self.bg_color = display_vars["bg_color_var"].get()
+        self.text_color = display_vars["text_color_var"].get()
+        self.font_size = display_vars["font_size_var"].get()
+        self.text_font.configure(size=self.font_size)
+        if self.preview_font is not None:
+            preview_size = max(14, int(self.font_size * 0.5))
+            self.preview_font.configure(size=preview_size)
+        self.chunk_size = max(20, int(display_vars["chunk_size_var"].get()))
+        self.chunk_delay_ms = max(50, int(display_vars["chunk_delay_var"].get()))
+        self.scroll_speed_px = max(5, int(display_vars["scroll_speed_var"].get()))
+        self.enable_scrolling = bool(display_vars["scroll_enabled_var"].get())
+        monitor_labels = display_vars["monitor_labels"]
+        monitor_value = display_vars["monitor_var"].get()
+        settings_monitor_value = display_vars["settings_monitor_var"].get()
+        if monitor_value in monitor_labels:
+            self.monitor_index = monitor_labels.index(monitor_value)
+        if settings_monitor_value in monitor_labels:
+            self.settings_monitor_index = monitor_labels.index(settings_monitor_value)
+
+    def _apply_filter_vars(self, filters_vars):
+        bad_words_str = filters_vars["bad_words_text"].get("1.0", tk.END).strip()
+        self.bad_words = {word.strip().lower() for word in bad_words_str.split(",") if word.strip()}
+
+    def _apply_api_vars(self, api_vars):
+        self.api_key = api_vars["api_key_var"].get().strip()
+
+    def _apply_translation_vars(self, translation_vars):
+        self.source_lang = translation_vars["lang_map"].get(
+            translation_vars["source_lang_var"].get(),
+            "auto",
+        )
+        self.target_lang = translation_vars["lang_map"].get(
+            translation_vars["target_lang_var"].get(),
+            "en",
+        )
+
+    def _apply_audio_vars(self, audio_vars):
+        self.transcription_mode = audio_vars["transcription_map"].get(
+            audio_vars["transcription_var"].get(),
+            "google_free",
+        )
+        vocab_str = audio_vars["vocab_text"].get("1.0", tk.END).strip()
+        self.custom_vocabulary = [v.strip() for v in vocab_str.split(",") if v.strip()]
+        self.allow_loopback = bool(audio_vars["loopback_var"].get())
+
+    def _refresh_audio_devices(self):
+        # Refresh device list if loopback setting changed.
+        self.devices = self.get_audio_devices()
+        if self.device_var.get() not in self.devices:
+            self.device_var.set(self.devices[0] if self.devices else "No devices")
+        if self.device_var.get() in self.device_indices:
+            self.microphone_index = self.devices.index(self.device_var.get())
+        else:
+            self.microphone_index = None
 
     def _apply_settings_geometry(self, settings_window):
         settings_window.geometry("960x1280")
@@ -1128,7 +1171,7 @@ class TranslationApp:
             ("Google Cloud (API Key)", "google_cloud"),
         ]
         transcription_display = [name for name, _ in transcription_options]
-        transcription_map = {name: code for name, code in transcription_options}
+        transcription_map = dict(transcription_options)
         rev_transcription_map = {code: name for name, code in transcription_options}
         transcription_var = tk.StringVar(
             value=rev_transcription_map.get(self.transcription_mode, "Google (Free)")
@@ -1201,7 +1244,7 @@ class TranslationApp:
             ("Chinese (Simplified)", "zh-cn"),
         ]
         lang_display = [name for name, _ in lang_options]
-        lang_map = {name: code for name, code in lang_options}
+        lang_map = dict(lang_options)
         rev_lang_map = {code: name for name, code in lang_options}
 
         source_lang_var = tk.StringVar(value=rev_lang_map.get(self.source_lang, "Auto Detect"))
@@ -1233,42 +1276,12 @@ class TranslationApp:
     def listen_and_translate(self):
         while self.listening:
             try:
-                if self.is_paused:
-                    self.update_status("Paused")
-                    time.sleep(0.2)
+                if self._pause_if_needed():
                     continue
-                device_name = None
-                if (
-                    self.microphone_index is not None
-                    and self.devices
-                    and self.microphone_index < len(self.devices)
-                ):
-                    device_name = self.devices[self.microphone_index]
-                if not device_name or device_name not in self.device_indices:
-                    self.update_status("No audio device selected")
-                    time.sleep(1)
+                device_index = self._resolve_capture_device()
+                if device_index is None:
                     continue
-                device_index = None
-                if self.device_types.get(device_name) != "input":
-                    if not self.allow_loopback:
-                        self.update_status("Selected device is output-only (enable loopback)")
-                        time.sleep(1)
-                        continue
-                    loopback_index = self.loopback_output_map.get(device_name)
-                    if loopback_index is None:
-                        self.update_status("No loopback input for selected output (enable Stereo Mix or install virtual cable)")
-                        time.sleep(1)
-                        continue
-                    self.update_status("Loopback capture (output)")
-                    device_index = loopback_index
-                else:
-                    device_index = self.device_indices.get(device_name, 0)
-                # Use microphone input
-                with sr.Microphone(device_index=device_index, sample_rate=16000) as source:
-                    self.recognizer.adjust_for_ambient_noise(source, duration=0.5)
-                    self.update_status(self.STATUS_LISTENING)
-                    audio = self.recognizer.listen(source, timeout=1, phrase_time_limit=10)
-                    self.process_audio(audio)
+                self._capture_and_process(device_index)
                         
             except sr.WaitTimeoutError:
                 time.sleep(0.1)
@@ -1278,13 +1291,62 @@ class TranslationApp:
                 self.update_status(f"API Error: {e}")
             except Exception as e:
                 self.update_status(f"Error: {e}")
+
+    def _pause_if_needed(self):
+        if not self.is_paused:
+            return False
+        self.update_status("Paused")
+        time.sleep(0.2)
+        return True
+
+    def _resolve_capture_device(self):
+        device_name = self._get_selected_device_name()
+        if not device_name:
+            self.update_status("No audio device selected")
+            time.sleep(1)
+            return None
+        if self.device_types.get(device_name) != "input":
+            return self._resolve_loopback_device(device_name)
+        return self.device_indices.get(device_name, 0)
+
+    def _get_selected_device_name(self):
+        if (
+            self.microphone_index is None
+            or not self.devices
+            or self.microphone_index >= len(self.devices)
+        ):
+            return None
+        return self.devices[self.microphone_index]
+
+    def _resolve_loopback_device(self, device_name):
+        if not self.allow_loopback:
+            self.update_status("Selected device is output-only (enable loopback)")
+            time.sleep(1)
+            return None
+        loopback_index = self.loopback_output_map.get(device_name)
+        if loopback_index is None:
+            self.update_status(
+                "No loopback input for selected output (enable Stereo Mix or install virtual cable)"
+            )
+            time.sleep(1)
+            return None
+        self.update_status("Loopback capture (output)")
+        return loopback_index
+
+    def _capture_and_process(self, device_index):
+        # Use microphone input
+        with sr.Microphone(device_index=device_index, sample_rate=16000) as source:
+            self.recognizer.adjust_for_ambient_noise(source, duration=0.5)
+            self.update_status(self.STATUS_LISTENING)
+            audio = self.recognizer.listen(source, timeout=1, phrase_time_limit=10)
+            self.process_audio(audio)
     
     def process_audio(self, audio):
         self.update_status("Processing speech...")
         try:
             if self.transcription_mode == "google_cloud":
                 if not self.api_key:
-                    raise Exception("Google Cloud selected but API key is empty")
+                    raise ValueError("Google Cloud selected but API key is empty")
                 text = self.recognize_google_rest(audio, self.api_key)
             else:
                 text = self.recognizer.recognize_google(audio)
@@ -1336,7 +1398,11 @@ class TranslationApp:
                 'transcript' in result['results'][0]['alternatives'][0]):
                 return result['results'][0]['alternatives'][0]['transcript']
             else:
-                raise Exception(f"No transcript in response: {result}, audio length: {len(audio_data)} bytes, sample rate: {audio.sample_rate}")
+                raise ValueError(
+                    "No transcript in response: "
+                    f"{result}, audio length: {len(audio_data)} bytes, "
+                    f"sample rate: {audio.sample_rate}"
+                )
         else:
             raise sr.RequestError(f"API error {response.status_code}: {response.text}")
     
