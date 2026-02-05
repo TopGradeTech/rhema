@@ -1,17 +1,78 @@
 import speech_recognition as sr
 from googletrans import Translator
 import tkinter as tk
+from tkinter import messagebox
 from tkinter import colorchooser
 from tkinter import font as tkfont
-from threading import Thread
+from threading import Thread, Lock
+import queue
 import time
 import re
 import requests
 import base64
+import audioop
 import json
 import pyaudio
 from collections import deque
 import os
+import sys
+import traceback
+
+class Tooltip:
+    def __init__(self, widget, text, delay_ms=400):
+        self.widget = widget
+        self.text = text
+        self.delay_ms = delay_ms
+        self.tipwindow = None
+        self.after_id = None
+        widget.bind("<Enter>", self._schedule)
+        widget.bind("<Leave>", self._hide)
+        widget.bind("<ButtonPress>", self._hide)
+
+    def _schedule(self, _event=None):
+        self._cancel()
+        self.after_id = self.widget.after(self.delay_ms, self._show)
+
+    def _cancel(self):
+        if self.after_id is not None:
+            try:
+                self.widget.after_cancel(self.after_id)
+            except Exception:
+                pass
+            self.after_id = None
+
+    def _show(self):
+        if self.tipwindow or not self.text:
+            return
+        try:
+            x = self.widget.winfo_rootx() + 12
+            y = self.widget.winfo_rooty() + self.widget.winfo_height() + 6
+        except Exception:
+            x, y = 0, 0
+        self.tipwindow = tw = tk.Toplevel(self.widget)
+        tw.wm_overrideredirect(True)
+        tw.wm_geometry(f"+{x}+{y}")
+        label = tk.Label(
+            tw,
+            text=self.text,
+            justify="left",
+            background="#111111",
+            foreground="#ffffff",
+            relief="solid",
+            borderwidth=1,
+            wraplength=320,
+            font=("TkDefaultFont", 9),
+        )
+        label.pack(ipadx=6, ipady=4)
+
+    def _hide(self, _event=None):
+        self._cancel()
+        if self.tipwindow is not None:
+            try:
+                self.tipwindow.destroy()
+            except Exception:
+                pass
+            self.tipwindow = None
 
 class TranslationApp:
     SCROLL_EVENTS = ("<MouseWheel>", "<Button-4>", "<Button-5>")
@@ -21,6 +82,18 @@ class TranslationApp:
     def __init__(self):
         self.set_dpi_awareness()
         self.settings_path = os.path.join(os.path.dirname(__file__), "settings.json")
+        self.error_log_path = self._get_error_log_path()
+        self.status_log_enabled = True  # TEMP: set False to disable status logging
+        self.status_log_lock = Lock()
+        self.last_status_message = None
+        self.last_status_log_time = 0.0
+        self.audio_queue = queue.Queue(maxsize=50)
+        self.capture_thread = None
+        self.capture_restart_requested = False
+        self.active_device_index = None
+        self.listener_restart_min_interval = 2.0
+        self.listener_restart_time = 0.0
+        self.last_audio_time = 0.0
         self.root = tk.Tk()
         self.root.title("Translation Output")
         self.font_family = self.pick_font_family(
@@ -29,6 +102,11 @@ class TranslationApp:
         self.translator = Translator()
         self.recognizer = sr.Recognizer()
         self.allow_loopback = False
+        self.preferred_host_api = ""
+        self.available_host_apis = []
+        self.device_menu = None
+        self.rms_gate_enabled = False
+        self.rms_gate_factor = 1.0
         self.preview_widget = None
         self.preview_font = None
         self.preview_placeholder = "Preview will appear here."
@@ -116,6 +194,7 @@ class TranslationApp:
         }
         self.api_key = ""  # Google STT API key
         self.settings_window = None
+        self.is_applying_settings = False
         self.text_queue = deque()
         self.is_flushing_queue = False
         self.word_by_word = True
@@ -148,6 +227,8 @@ class TranslationApp:
         self.start_scroll_loop()
         
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
+
+        self._install_exception_hook()
         
         self.open_settings()
         if self.settings_window is not None and self.settings_window.winfo_exists():
@@ -245,6 +326,49 @@ class TranslationApp:
         self.listening = False
         self.root.quit()
 
+    def _install_exception_hook(self):
+        def handle_exception(exc_type, exc, tb):
+            try:
+                with open(self.error_log_path, "a", encoding="utf-8") as f:
+                    f.write("\n--- Unhandled Exception ---\n")
+                    traceback.print_exception(exc_type, exc, tb, file=f)
+            except Exception:
+                pass
+            try:
+                messagebox.showerror("Unhandled Error", f"{exc}")
+            except Exception:
+                pass
+        sys.excepthook = handle_exception
+
+    def _get_error_log_path(self):
+        base_dir = os.path.dirname(__file__)
+        if os.name == "nt":
+            logs_dir = os.path.join(base_dir, "logs")
+            try:
+                os.makedirs(logs_dir, exist_ok=True)
+            except Exception:
+                pass
+            timestamp = time.strftime("%Y%m%d-%H%M%S")
+            return os.path.join(logs_dir, f"error-{timestamp}.log")
+        return os.path.join(base_dir, "error.log")
+
+    def _log_status(self, msg):
+        if not self.status_log_enabled:
+            return
+        now = time.time()
+        if msg == self.last_status_message:
+            return
+        self.last_status_message = msg
+        self.last_status_log_time = now
+        try:
+            timestamp = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(now))
+            ms = int((now - int(now)) * 1000)
+            with self.status_log_lock:
+                with open(self.error_log_path, "a", encoding="utf-8") as f:
+                    f.write(f"[{timestamp}.{ms:03d}] STATUS: {msg}\n")
+        except Exception:
+            pass
+
     def load_settings(self):
         if not os.path.exists(self.settings_path):
             return
@@ -269,6 +393,9 @@ class TranslationApp:
         self.biblical_books = data.get("biblical_books", self.biblical_books)
         self.scroll_speed_px = data.get("scroll_speed_px", self.scroll_speed_px)
         self.allow_loopback = data.get("allow_loopback", self.allow_loopback)
+        self.preferred_host_api = data.get("preferred_host_api", self.preferred_host_api)
+        self.rms_gate_enabled = bool(data.get("rms_gate_enabled", self.rms_gate_enabled))
+        self.rms_gate_factor = float(data.get("rms_gate_factor", self.rms_gate_factor))
         self.enable_scrolling = data.get("enable_scrolling", self.enable_scrolling)
         self.settings_geometry = data.get("settings_geometry", self.settings_geometry)
         self.settings_monitor_index = int(data.get("settings_monitor_index", self.settings_monitor_index))
@@ -302,6 +429,9 @@ class TranslationApp:
             "biblical_books": self.biblical_books,
             "scroll_speed_px": self.scroll_speed_px,
             "allow_loopback": self.allow_loopback,
+            "preferred_host_api": self.preferred_host_api,
+            "rms_gate_enabled": self.rms_gate_enabled,
+            "rms_gate_factor": self.rms_gate_factor,
             "enable_scrolling": self.enable_scrolling,
             "monitor_index": self.monitor_index,
             "settings_geometry": self.settings_geometry,
@@ -574,7 +704,17 @@ class TranslationApp:
     
     def get_audio_devices(self):
         device_infos, input_devices, output_devices = self._get_device_infos()
+        self.available_host_apis = self._get_available_host_apis(device_infos)
         loopback_inputs = self._get_loopback_inputs(device_infos)
+        preferred_api = self._normalize_host_api(self.preferred_host_api)
+        if preferred_api:
+            filtered_inputs = self._filter_entries_by_host_api(input_devices, preferred_api)
+            filtered_outputs = self._filter_entries_by_host_api(output_devices, preferred_api)
+            filtered_loopbacks = self._filter_entries_by_host_api(loopback_inputs, preferred_api)
+            if filtered_inputs or filtered_outputs:
+                input_devices = filtered_inputs
+                output_devices = filtered_outputs
+                loopback_inputs = filtered_loopbacks
         return self._build_device_list(input_devices, output_devices, loopback_inputs)
 
     def _get_device_infos(self):
@@ -583,23 +723,27 @@ class TranslationApp:
         output_devices = []
         device_infos = []
 
-        for i in range(p.get_device_count()):
-            device_info = p.get_device_info_by_index(i)
-            host_api_name = self._get_host_api_name(p, device_info)
-            entry = {
-                "index": i,
-                "name": device_info.get("name", "Unknown"),
-                "max_input": device_info.get("maxInputChannels", 0),
-                "max_output": device_info.get("maxOutputChannels", 0),
-                "host_api": host_api_name,
-            }
-            device_infos.append(entry)
-            if entry["max_input"] > 0:
-                input_devices.append((i, entry["name"]))
-            elif entry["max_output"] > 0:
-                output_devices.append((i, entry["name"]))
-
-        p.terminate()
+        try:
+            for i in range(p.get_device_count()):
+                try:
+                    device_info = p.get_device_info_by_index(i)
+                except OSError:
+                    continue
+                host_api_name = self._get_host_api_name(p, device_info)
+                entry = {
+                    "index": i,
+                    "name": device_info.get("name", "Unknown"),
+                    "max_input": device_info.get("maxInputChannels", 0),
+                    "max_output": device_info.get("maxOutputChannels", 0),
+                    "host_api": host_api_name,
+                }
+                device_infos.append(entry)
+                if entry["max_input"] > 0:
+                    input_devices.append(entry)
+                elif entry["max_output"] > 0:
+                    output_devices.append(entry)
+        finally:
+            p.terminate()
         return device_infos, input_devices, output_devices
 
     def _get_host_api_name(self, pyaudio_instance, device_info):
@@ -610,6 +754,53 @@ class TranslationApp:
             return pyaudio_instance.get_host_api_info_by_index(host_api_index).get("name", "")
         except Exception:
             return ""
+
+    def _get_available_host_apis(self, device_infos):
+        host_apis = {info.get("host_api") for info in device_infos if info.get("host_api")}
+        return sorted(host_apis, key=lambda name: name.lower())
+
+    def _pick_recommended_host_api(self, host_api_values):
+        values = [v for v in host_api_values if v and v != "Any"]
+        lowered = {v.lower(): v for v in values}
+        if os.name == "nt":
+            for key, value in lowered.items():
+                if "wasapi" in key:
+                    return value
+            for key, value in lowered.items():
+                if "asio" in key:
+                    return value
+            for key, value in lowered.items():
+                if "wdm" in key or "ks" in key:
+                    return value
+            return ""
+        if sys.platform == "darwin":
+            for key, value in lowered.items():
+                if "core" in key and "audio" in key:
+                    return value
+            return ""
+        for key, value in lowered.items():
+            if "pipewire" in key:
+                return value
+        for key, value in lowered.items():
+            if "alsa" in key:
+                return value
+        for key, value in lowered.items():
+            if "pulse" in key:
+                return value
+        return ""
+
+    def _normalize_host_api(self, name):
+        return (name or "").strip().lower()
+
+    def _filter_entries_by_host_api(self, entries, preferred_api):
+        preferred = self._normalize_host_api(preferred_api)
+        if not preferred:
+            return entries
+        return [
+            entry
+            for entry in entries
+            if self._normalize_host_api(entry.get("host_api")) == preferred
+        ]
 
     def _is_loopback_name(self, name):
         lowered = name.lower()
@@ -635,6 +826,36 @@ class TranslationApp:
         self.device_indices[label] = idx
         self.device_types[label] = device_type
 
+    def _format_device_label(self, device_type, entry):
+        host_api = entry.get("host_api") or "Unknown"
+        index = entry.get("index", 0)
+        name = entry.get("name", "Unknown")
+        return f"{device_type} ({index}) [{host_api}]: {name}"
+
+    def _group_device_entries(self, entries):
+        grouped = {}
+        order = []
+        for entry in entries:
+            name = entry.get("name", "")
+            key = self._normalize_device_name(name) or name.lower()
+            if key not in grouped:
+                grouped[key] = []
+                order.append(key)
+            grouped[key].append(entry)
+
+        grouped_entries = []
+        for key in order:
+            grouped_entries.extend(
+                sorted(
+                    grouped[key],
+                    key=lambda item: (
+                        item.get("host_api") or "",
+                        item.get("index", 0),
+                    ),
+                )
+            )
+        return grouped_entries
+
     def _resolve_loopback_match(self, output_name, loopback_inputs):
         matched_input = None
         norm_out = self._normalize_device_name(output_name)
@@ -654,16 +875,16 @@ class TranslationApp:
         self.device_types = {}
         self.loopback_output_map = {}
 
-        for idx, name in input_devices:
-            label = f"Input ({idx}): {name}"
-            self._register_device_label(devices, label, idx, "input")
+        for entry in self._group_device_entries(input_devices):
+            label = self._format_device_label("Input", entry)
+            self._register_device_label(devices, label, entry.get("index", 0), "input")
 
         if self.allow_loopback:
-            for idx, name in output_devices:
-                label = f"Output ({idx}): {name}"
-                self._register_device_label(devices, label, idx, "output")
+            for entry in self._group_device_entries(output_devices):
+                label = self._format_device_label("Output", entry)
+                self._register_device_label(devices, label, entry.get("index", 0), "output")
 
-                matched_input = self._resolve_loopback_match(name, loopback_inputs)
+                matched_input = self._resolve_loopback_match(entry.get("name", ""), loopback_inputs)
                 if matched_input is not None:
                     self.loopback_output_map[label] = matched_input
 
@@ -698,13 +919,34 @@ class TranslationApp:
         )
         
         def save_settings():
-            self._apply_settings_vars(
-                display_vars,
-                audio_vars,
-                filters_vars,
-                api_vars,
-                translation_vars,
-            )
+            if self.is_applying_settings:
+                return
+            self.is_applying_settings = True
+            save_button.config(state=tk.DISABLED)
+            try:
+                self._apply_settings_vars(
+                    display_vars,
+                    audio_vars,
+                    filters_vars,
+                    api_vars,
+                    translation_vars,
+                )
+                self._show_apply_success()
+            except Exception as exc:
+                try:
+                    traceback.print_exc()
+                except Exception:
+                    pass
+                try:
+                    messagebox.showerror("Apply Failed", f"{exc}")
+                except Exception:
+                    pass
+            finally:
+                self.is_applying_settings = False
+                try:
+                    save_button.config(state=tk.NORMAL)
+                except Exception:
+                    pass
 
         button_frame = tk.Frame(settings_window, bg=settings_bg)
         button_frame.pack(fill=tk.X, side=tk.BOTTOM, padx=12, pady=(0, 12))
@@ -762,6 +1004,19 @@ class TranslationApp:
             self.enter_fullscreen()
         self.save_settings()
 
+    def _show_apply_success(self):
+        self.update_status("Settings applied")
+        try:
+            self.root.after(2000, self._restore_status_label)
+        except Exception:
+            pass
+
+    def _restore_status_label(self):
+        if self.is_paused:
+            self.update_status("Paused")
+        else:
+            self.update_status(self.STATUS_LISTENING)
+
     def _apply_display_vars(self, display_vars):
         self.max_lines = display_vars["lines_var"].get()
         self.bg_color = display_vars["bg_color_var"].get()
@@ -808,21 +1063,46 @@ class TranslationApp:
         vocab_str = audio_vars["vocab_text"].get("1.0", tk.END).strip()
         self.custom_vocabulary = [v.strip() for v in vocab_str.split(",") if v.strip()]
         self.allow_loopback = bool(audio_vars["loopback_var"].get())
+        host_api_label = audio_vars["host_api_var"].get().strip()
+        host_api_value = audio_vars.get("host_api_map", {}).get(host_api_label, host_api_label)
+        self.preferred_host_api = "" if host_api_value == "Any" else host_api_value
+        self.rms_gate_enabled = bool(audio_vars["rms_gate_var"].get())
+        try:
+            self.rms_gate_factor = float(audio_vars["rms_gate_factor_var"].get())
+        except Exception:
+            pass
+        self.rms_gate_factor = max(0.5, min(self.rms_gate_factor, 5.0))
 
     def _refresh_audio_devices(self):
         # Refresh device list if loopback setting changed.
         self.devices = self.get_audio_devices()
+        if self.device_menu is not None:
+            menu = self.device_menu["menu"]
+            menu.delete(0, "end")
+            for device in self.devices:
+                menu.add_command(
+                    label=device,
+                    command=tk._setit(self.device_var, device),
+                )
         if self.device_var.get() not in self.devices:
             self.device_var.set(self.devices[0] if self.devices else "No devices")
         if self.device_var.get() in self.device_indices:
             self.microphone_index = self.devices.index(self.device_var.get())
         else:
             self.microphone_index = None
+        self._request_capture_restart()
 
     def _apply_settings_geometry(self, settings_window):
         settings_window.geometry("960x1280")
         settings_window.minsize(960, 1280)
         settings_window.update_idletasks()
+        try:
+            if os.name == "nt":
+                settings_window.state("zoomed")
+            else:
+                settings_window.attributes("-zoomed", True)
+        except Exception:
+            pass
         if self.settings_geometry:
             try:
                 settings_window.geometry(self.settings_geometry)
@@ -844,6 +1124,28 @@ class TranslationApp:
         x = self.root.winfo_rootx() + (self.root.winfo_width() - settings_window.winfo_width()) // 2
         y = self.root.winfo_rooty() + (self.root.winfo_height() - settings_window.winfo_height()) // 2
         settings_window.geometry(f"+{x}+{y}")
+
+    def _create_help_icon(self, parent, help_text, bg, fg):
+        icon = tk.Label(
+            parent,
+            text="?",
+            bg=bg,
+            fg=fg,
+            font=(self.font_family, 10, "bold"),
+            cursor="question_arrow",
+        )
+        icon.pack(side=tk.LEFT, padx=(6, 0))
+        Tooltip(icon, help_text)
+        return icon
+
+    def _add_setting_label(self, parent, text, help_text, label_opts, pady=(0, 4)):
+        row = tk.Frame(parent, bg=label_opts["bg"])
+        row.pack(fill=tk.X, pady=pady)
+        label = tk.Label(row, text=text, **label_opts)
+        label.pack(side=tk.LEFT)
+        if help_text:
+            self._create_help_icon(row, help_text, label_opts["bg"], label_opts["fg"])
+        return row
 
     def _build_settings_sections(
         self,
@@ -971,12 +1273,24 @@ class TranslationApp:
         section_font,
         settings_window,
     ):
-        tk.Label(display_section, text="Number of lines to show:", **label_opts).pack(anchor="w", pady=(0, 4))
+        self._add_setting_label(
+            display_section,
+            "Number of lines to show:",
+            "Maximum number of translated lines kept on screen.",
+            label_opts,
+            pady=(0, 4),
+        )
         lines_var = tk.IntVar(value=self.max_lines)
         lines_spinbox = tk.Spinbox(display_section, from_=1, to=10, textvariable=lines_var)
         lines_spinbox.pack(fill=tk.X)
 
-        tk.Label(display_section, text="Background Color:", **label_opts).pack(anchor="w", pady=(10, 4))
+        self._add_setting_label(
+            display_section,
+            "Background Color:",
+            "Background color for the output overlay and preview.",
+            label_opts,
+            pady=(10, 4),
+        )
         bg_frame = tk.Frame(display_section, bg=section_bg)
         bg_frame.pack(fill=tk.X)
         bg_color_var = tk.StringVar(value=self.bg_color)
@@ -989,7 +1303,13 @@ class TranslationApp:
         )
         bg_button.pack(side=tk.LEFT, padx=(8, 0))
 
-        tk.Label(display_section, text="Text Color:", **label_opts).pack(anchor="w", pady=(10, 4))
+        self._add_setting_label(
+            display_section,
+            "Text Color:",
+            "Text color for the output overlay and preview.",
+            label_opts,
+            pady=(10, 4),
+        )
         text_frame = tk.Frame(display_section, bg=section_bg)
         text_frame.pack(fill=tk.X)
         text_color_var = tk.StringVar(value=self.text_color)
@@ -1002,12 +1322,24 @@ class TranslationApp:
         )
         text_button.pack(side=tk.LEFT, padx=(8, 0))
 
-        tk.Label(display_section, text="Font Size:", **label_opts).pack(anchor="w", pady=(10, 4))
+        self._add_setting_label(
+            display_section,
+            "Font Size:",
+            "Font size used in the output overlay.",
+            label_opts,
+            pady=(10, 4),
+        )
         font_size_var = tk.IntVar(value=self.font_size)
         font_size_scale = tk.Scale(display_section, from_=12, to=72, orient=tk.HORIZONTAL, variable=font_size_var)
         font_size_scale.pack(fill=tk.X)
 
-        tk.Label(display_section, text="Output Monitor:", **label_opts).pack(anchor="w", pady=(10, 4))
+        self._add_setting_label(
+            display_section,
+            "Output Monitor:",
+            "Monitor where the fullscreen translation output appears.",
+            label_opts,
+            pady=(10, 4),
+        )
         self.monitors = self.get_monitors()
         monitor_labels = self.get_monitor_labels()
         if not monitor_labels:
@@ -1021,7 +1353,13 @@ class TranslationApp:
         )
         monitor_menu.pack(fill=tk.X)
 
-        tk.Label(display_section, text="Controller Monitor:", **label_opts).pack(anchor="w", pady=(10, 4))
+        self._add_setting_label(
+            display_section,
+            "Controller Monitor:",
+            "Monitor where the settings window opens.",
+            label_opts,
+            pady=(10, 4),
+        )
         settings_monitor_var = tk.StringVar(
             value=monitor_labels[min(self.settings_monitor_index, len(monitor_labels) - 1)]
         )
@@ -1106,24 +1444,44 @@ class TranslationApp:
 
         self.preview_widget.bind(self.CONFIGURE_EVENT, update_preview_wrap)
 
-        tk.Label(display_section, text="Text Chunk Size (chars):", **label_opts).pack(anchor="w", pady=(10, 4))
+        self._add_setting_label(
+            display_section,
+            "Text Chunk Size (chars):",
+            "Target character length before batching text into a line.",
+            label_opts,
+            pady=(10, 4),
+        )
         chunk_size_var = tk.IntVar(value=self.chunk_size)
         chunk_size_spin = tk.Spinbox(display_section, from_=20, to=300, textvariable=chunk_size_var)
         chunk_size_spin.pack(fill=tk.X)
 
-        tk.Label(display_section, text="Chunk Delay (ms):", **label_opts).pack(anchor="w", pady=(10, 4))
+        self._add_setting_label(
+            display_section,
+            "Chunk Delay (ms):",
+            "Delay between displaying chunks or lines.",
+            label_opts,
+            pady=(10, 4),
+        )
         chunk_delay_var = tk.IntVar(value=self.chunk_delay_ms)
         chunk_delay_spin = tk.Spinbox(display_section, from_=50, to=2000, increment=50, textvariable=chunk_delay_var)
         chunk_delay_spin.pack(fill=tk.X)
 
-        tk.Label(display_section, text="Scroll Speed (px/sec):", **label_opts).pack(anchor="w", pady=(10, 4))
+        self._add_setting_label(
+            display_section,
+            "Scroll Speed (px/sec):",
+            "Pixels per second when scrolling is enabled.",
+            label_opts,
+            pady=(10, 4),
+        )
         scroll_speed_var = tk.IntVar(value=self.scroll_speed_px)
         scroll_speed_spin = tk.Spinbox(display_section, from_=5, to=200, increment=5, textvariable=scroll_speed_var)
         scroll_speed_spin.pack(fill=tk.X)
 
         scroll_enabled_var = tk.BooleanVar(value=self.enable_scrolling)
+        scroll_row = tk.Frame(display_section, bg=section_bg)
+        scroll_row.pack(anchor="w", pady=(6, 0), fill=tk.X)
         scroll_enabled_check = tk.Checkbutton(
-            display_section,
+            scroll_row,
             text="Enable scrolling (beta)",
             variable=scroll_enabled_var,
             bg=section_bg,
@@ -1131,7 +1489,13 @@ class TranslationApp:
             selectcolor=section_bg,
             activebackground=section_bg,
         )
-        scroll_enabled_check.pack(anchor="w", pady=(6, 0))
+        scroll_enabled_check.pack(side=tk.LEFT)
+        self._create_help_icon(
+            scroll_row,
+            "Scroll lines upward as new text arrives.",
+            section_bg,
+            settings_fg,
+        )
 
         return {
             "lines_var": lines_var,
@@ -1148,14 +1512,60 @@ class TranslationApp:
         }
 
     def _build_audio_section(self, audio_section, label_opts, section_bg, settings_fg):
-        tk.Label(audio_section, text="Audio Device:", **label_opts).pack(anchor="w", pady=(0, 4))
+        self._add_setting_label(
+            audio_section,
+            "Audio Device:",
+            "Input or loopback device used for speech capture.",
+            label_opts,
+            pady=(0, 4),
+        )
         self.device_var = tk.StringVar(value=self.devices[self.microphone_index] if self.devices else "No devices")
-        device_menu = tk.OptionMenu(audio_section, self.device_var, *self.devices)
-        device_menu.pack(fill=tk.X)
+        self.device_menu = tk.OptionMenu(audio_section, self.device_var, *self.devices)
+        self.device_menu.pack(fill=tk.X)
+
+        host_api_values = ["Any"]
+        if self.available_host_apis:
+            host_api_values.extend(self.available_host_apis)
+        if self.preferred_host_api and self.preferred_host_api not in host_api_values:
+            host_api_values.append(self.preferred_host_api)
+        recommended_api = self._pick_recommended_host_api(host_api_values)
+        host_api_labels = []
+        host_api_map = {}
+        for value in host_api_values:
+            label = value
+            if recommended_api and value == recommended_api:
+                label = f"{value} (Recommended)"
+            host_api_labels.append(label)
+            host_api_map[label] = value
+        host_api_value = self.preferred_host_api or "Any"
+        host_api_label = next(
+            (label for label, value in host_api_map.items() if value == host_api_value),
+            host_api_value,
+        )
+
+        self._add_setting_label(
+            audio_section,
+            "Preferred Host API (optional):",
+            "Filter devices to a specific host API (for example, Windows WASAPI).",
+            label_opts,
+            pady=(10, 4),
+        )
+        host_api_var = tk.StringVar(value=host_api_label)
+        host_api_menu = tk.OptionMenu(audio_section, host_api_var, *host_api_labels)
+        host_api_menu.pack(fill=tk.X)
+        def on_host_api_change(*_args):
+            host_api_label_value = host_api_var.get().strip()
+            host_api_value = host_api_map.get(host_api_label_value, host_api_label_value)
+            self.preferred_host_api = "" if host_api_value == "Any" else host_api_value
+            self._refresh_audio_devices()
+
+        host_api_var.trace_add("write", on_host_api_change)
 
         loopback_var = tk.BooleanVar(value=self.allow_loopback)
+        loopback_row = tk.Frame(audio_section, bg=section_bg)
+        loopback_row.pack(anchor="w", pady=(6, 0), fill=tk.X)
         loopback_check = tk.Checkbutton(
-            audio_section,
+            loopback_row,
             text="Allow output/loopback capture (PipeWire/WASAPI)",
             variable=loopback_var,
             bg=section_bg,
@@ -1163,9 +1573,58 @@ class TranslationApp:
             selectcolor=section_bg,
             activebackground=section_bg,
         )
-        loopback_check.pack(anchor="w", pady=(6, 0))
+        loopback_check.pack(side=tk.LEFT)
+        self._create_help_icon(
+            loopback_row,
+            "Allow choosing output devices and capture via loopback inputs.",
+            section_bg,
+            settings_fg,
+        )
 
-        tk.Label(audio_section, text="Transcription Engine:", **label_opts).pack(anchor="w", pady=(10, 4))
+        gate_row = tk.Frame(audio_section, bg=section_bg)
+        gate_row.pack(anchor="w", pady=(6, 0), fill=tk.X)
+        rms_gate_var = tk.BooleanVar(value=self.rms_gate_enabled)
+        rms_gate_check = tk.Checkbutton(
+            gate_row,
+            text="Ignore low-energy audio (RMS gate)",
+            variable=rms_gate_var,
+            bg=section_bg,
+            fg=settings_fg,
+            selectcolor=section_bg,
+            activebackground=section_bg,
+        )
+        rms_gate_check.pack(side=tk.LEFT)
+        self._create_help_icon(
+            gate_row,
+            "Skip recognition when audio energy is below the ambient noise threshold.",
+            section_bg,
+            settings_fg,
+        )
+
+        self._add_setting_label(
+            audio_section,
+            "RMS Gate Factor:",
+            "Multiplier on the ambient noise energy threshold. Higher = stricter.",
+            label_opts,
+            pady=(10, 4),
+        )
+        rms_gate_factor_var = tk.DoubleVar(value=self.rms_gate_factor)
+        rms_gate_spin = tk.Spinbox(
+            audio_section,
+            from_=0.5,
+            to=5.0,
+            increment=0.1,
+            textvariable=rms_gate_factor_var,
+        )
+        rms_gate_spin.pack(fill=tk.X)
+
+        self._add_setting_label(
+            audio_section,
+            "Transcription Engine:",
+            "Speech-to-text backend used for recognition.",
+            label_opts,
+            pady=(10, 4),
+        )
         transcription_options = [
             ("Google (Free)", "google_free"),
             ("Google Cloud (API Key)", "google_cloud"),
@@ -1179,7 +1638,13 @@ class TranslationApp:
         transcription_menu = tk.OptionMenu(audio_section, transcription_var, *transcription_display)
         transcription_menu.pack(fill=tk.X)
 
-        tk.Label(audio_section, text="Custom Vocabulary (comma-separated):", **label_opts).pack(anchor="w", pady=(10, 4))
+        self._add_setting_label(
+            audio_section,
+            "Custom Vocabulary (comma-separated):",
+            "Words or phrases to bias recognition and preserve capitalization.",
+            label_opts,
+            pady=(10, 4),
+        )
         vocab_text = tk.Text(audio_section, height=4, width=50)
         vocab_text.insert(tk.END, ", ".join(self.custom_vocabulary))
         vocab_text.pack(fill=tk.X)
@@ -1189,10 +1654,20 @@ class TranslationApp:
             "transcription_var": transcription_var,
             "transcription_map": transcription_map,
             "vocab_text": vocab_text,
+            "host_api_var": host_api_var,
+            "host_api_map": host_api_map,
+            "rms_gate_var": rms_gate_var,
+            "rms_gate_factor_var": rms_gate_factor_var,
         }
 
     def _build_filters_section(self, filters_section, label_opts, section_bg):
-        tk.Label(filters_section, text="Bad words filter:", **label_opts).pack(anchor="w", pady=(0, 4))
+        self._add_setting_label(
+            filters_section,
+            "Bad words filter:",
+            "Words to mask with *** in the output.",
+            label_opts,
+            pady=(0, 4),
+        )
         toggle_var = tk.BooleanVar(value=False)
 
         bad_words_container = tk.Frame(filters_section, bg=section_bg)
@@ -1221,14 +1696,52 @@ class TranslationApp:
         return {"bad_words_text": bad_words_text}
 
     def _build_api_section(self, api_section, label_opts):
-        tk.Label(api_section, text="Google STT API Key (optional):", **label_opts).pack(anchor="w", pady=(0, 4))
+        self._add_setting_label(
+            api_section,
+            "Google STT API Key (optional):",
+            "API key for Google Cloud Speech-to-Text (used when engine is Google Cloud).",
+            label_opts,
+            pady=(0, 4),
+        )
         api_key_var = tk.StringVar(value=self.api_key)
-        api_key_entry = tk.Entry(api_section, textvariable=api_key_var, width=50)
-        api_key_entry.pack(fill=tk.X)
+        api_key_frame = tk.Frame(api_section, bg=label_opts["bg"])
+        api_key_frame.pack(fill=tk.X)
+        api_key_entry = tk.Entry(api_key_frame, textvariable=api_key_var, width=50, show="*")
+        api_key_entry.pack(side=tk.LEFT, fill=tk.X, expand=True)
+
+        show_var = tk.BooleanVar(value=False)
+
+        def toggle_show():
+            show = "" if show_var.get() else "*"
+            api_key_entry.config(show=show)
+
+        show_button = tk.Checkbutton(
+            api_key_frame,
+            text="Show",
+            variable=show_var,
+            command=toggle_show,
+            bg=label_opts["bg"],
+            fg=label_opts["fg"],
+            selectcolor=label_opts["bg"],
+            activebackground=label_opts["bg"],
+        )
+        show_button.pack(side=tk.LEFT, padx=(8, 0))
+        self._create_help_icon(
+            api_key_frame,
+            "Reveal or hide the API key in this field.",
+            label_opts["bg"],
+            label_opts["fg"],
+        )
         return {"api_key_var": api_key_var}
 
     def _build_translation_section(self, translation_section, label_opts):
-        tk.Label(translation_section, text="Translate from:", **label_opts).pack(anchor="w", pady=(0, 4))
+        self._add_setting_label(
+            translation_section,
+            "Translate from:",
+            "Source language for the speech text (auto-detect available).",
+            label_opts,
+            pady=(0, 4),
+        )
         lang_options = [
             ("Auto Detect", "auto"),
             ("English", "en"),
@@ -1251,7 +1764,13 @@ class TranslationApp:
         source_menu = tk.OptionMenu(translation_section, source_lang_var, *lang_display)
         source_menu.pack(fill=tk.X)
 
-        tk.Label(translation_section, text="Translate to:", **label_opts).pack(anchor="w", pady=(10, 4))
+        self._add_setting_label(
+            translation_section,
+            "Translate to:",
+            "Target language for translation output.",
+            label_opts,
+            pady=(10, 4),
+        )
         target_lang_var = tk.StringVar(value=rev_lang_map.get(self.target_lang, "English"))
         target_menu = tk.OptionMenu(translation_section, target_lang_var, *lang_display)
         target_menu.pack(fill=tk.X)
@@ -1274,19 +1793,20 @@ class TranslationApp:
             self.preview_widget.config(bg=self.bg_color, fg=self.text_color)
     
     def listen_and_translate(self):
+        self._start_capture_thread()
         while self.listening:
             try:
                 if self._pause_if_needed():
                     continue
-                device_index = self._resolve_capture_device()
-                if device_index is None:
+                if self.capture_thread is None or not self.capture_thread.is_alive():
+                    self._start_capture_thread()
+                    time.sleep(0.2)
                     continue
-                self._capture_and_process(device_index)
-                        
-            except sr.WaitTimeoutError:
-                time.sleep(0.1)
-            except sr.UnknownValueError:
-                self.update_status("Could not understand audio")
+                try:
+                    audio = self.audio_queue.get(timeout=0.1)
+                except queue.Empty:
+                    continue
+                self.process_audio(audio)
             except sr.RequestError as e:
                 self.update_status(f"API Error: {e}")
             except Exception as e:
@@ -1296,6 +1816,11 @@ class TranslationApp:
         if not self.is_paused:
             return False
         self.update_status("Paused")
+        try:
+            while True:
+                self.audio_queue.get_nowait()
+        except Exception:
+            pass
         time.sleep(0.2)
         return True
 
@@ -1340,9 +1865,89 @@ class TranslationApp:
             self.update_status(self.STATUS_LISTENING)
             audio = self.recognizer.listen(source, timeout=1, phrase_time_limit=10)
             self.process_audio(audio)
+
+    def _audio_callback(self, _recognizer, audio):
+        if not self.listening or self.is_paused:
+            return
+        self.last_audio_time = time.time()
+        try:
+            self.audio_queue.put_nowait(audio)
+        except queue.Full:
+            try:
+                self.audio_queue.get_nowait()
+            except queue.Empty:
+                return
+            try:
+                self.audio_queue.put_nowait(audio)
+            except queue.Full:
+                pass
+
+    def _start_capture_thread(self):
+        if self.capture_thread is not None and self.capture_thread.is_alive():
+            return
+        self.capture_thread = Thread(target=self._capture_loop, daemon=True)
+        self.capture_thread.start()
+
+    def _request_capture_restart(self):
+        now = time.time()
+        if now - self.listener_restart_time < self.listener_restart_min_interval:
+            return
+        self.listener_restart_time = now
+        self.capture_restart_requested = True
+
+    def _capture_loop(self):
+        while self.listening:
+            if self.is_paused:
+                time.sleep(0.2)
+                continue
+            if self.capture_restart_requested:
+                self.capture_restart_requested = False
+            device_label = self._get_selected_device_name()
+            device_index = self._resolve_capture_device()
+            if device_index is None:
+                time.sleep(0.2)
+                continue
+            self.active_device_index = device_index
+            try:
+                with sr.Microphone(device_index=device_index, sample_rate=16000) as source:
+                    try:
+                        self.recognizer.adjust_for_ambient_noise(source, duration=0.5)
+                    except Exception:
+                        pass
+                    self.update_status(self.STATUS_LISTENING)
+                    while self.listening and not self.is_paused:
+                        if self.capture_restart_requested:
+                            self.capture_restart_requested = False
+                            break
+                        if self._get_selected_device_name() != device_label:
+                            break
+                        try:
+                            audio = self.recognizer.listen(source, timeout=1, phrase_time_limit=10)
+                        except sr.WaitTimeoutError:
+                            continue
+                        except OSError as exc:
+                            self.update_status(f"Audio device error: {exc}")
+                            break
+                        except Exception as exc:
+                            self.update_status(f"Audio error: {exc}")
+                            break
+                        self._audio_callback(self.recognizer, audio)
+            except Exception as exc:
+                self.update_status(f"Audio listener error: {exc}")
+                time.sleep(0.5)
     
     def process_audio(self, audio):
-        self.update_status("Processing speech...")
+        if self.rms_gate_enabled:
+            try:
+                raw = audio.get_raw_data()
+                if not raw:
+                    return
+                rms = audioop.rms(raw, audio.sample_width)
+                threshold = self.recognizer.energy_threshold * self.rms_gate_factor
+                if rms < threshold:
+                    return
+            except Exception:
+                pass
         try:
             if self.transcription_mode == "google_cloud":
                 if not self.api_key:
@@ -1350,6 +1955,10 @@ class TranslationApp:
                 text = self.recognize_google_rest(audio, self.api_key)
             else:
                 text = self.recognizer.recognize_google(audio)
+            if not text or not text.strip():
+                return
+        except sr.UnknownValueError:
+            return
         except Exception as e:
             self.update_status(f"Speech error: {e}")
             return
@@ -1397,12 +2006,7 @@ class TranslationApp:
                 result['results'][0]['alternatives'] and
                 'transcript' in result['results'][0]['alternatives'][0]):
                 return result['results'][0]['alternatives'][0]['transcript']
-            else:
-                raise ValueError(
-                    "No transcript in response: "
-                    f"{result}, audio length: {len(audio_data)} bytes, "
-                    f"sample rate: {audio.sample_rate}"
-                )
+            return ""
         else:
             raise sr.RequestError(f"API error {response.status_code}: {response.text}")
     
@@ -1432,7 +2036,8 @@ class TranslationApp:
 
     def enqueue_text(self, text):
         if self.word_by_word:
-            self.word_reveal_queue.append(text)
+            for chunk in self.chunk_text(text, self.chunk_size):
+                self.word_reveal_queue.append(chunk)
             if not self.is_revealing_words:
                 self.start_word_reveal()
             return
@@ -1606,6 +2211,7 @@ class TranslationApp:
         self.root.after(0, update)
     
     def update_status(self, msg):
+        self._log_status(msg)
         def update():
             self.status_label.config(text=f"Status: {msg}")
         self.root.after(0, update)
