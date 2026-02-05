@@ -214,6 +214,6 @@
   "allow_loopback": true,
   "enable_scrolling": false,
   "monitor_index": 0,
-  "settings_geometry": "480x640+1040+400",
+  "settings_geometry": "960x1280+613+59",
   "settings_monitor_index": 1
 }
