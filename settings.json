@@ -1,8 +1,8 @@
 {
-  "api_key": "AIzaSyCwt1DHm__L-gle-CyDk7ZAiibF1QcOne0",
+  "api_key": "",
+  "openai_api_key": "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",
   "bg_color": "#000000",
   "text_color": "#ffffff",
-  "font_size": 60,
   "max_lines": 8,
   "bad_words": [
     "ass",
@@ -24,12 +24,15 @@
     "tits",
     "whore"
   ],
-  "chunk_size": 300,
-  "chunk_delay_ms": 300,
+  "chunk_size": 100,
+  "chunk_delay_ms": 200,
   "flush_timeout_ms": 2000,
-  "source_lang": "auto",
+  "sentence_flush_ms": 1000,
+  "source_lang": "en",
   "target_lang": "en",
-  "transcription_mode": "google_cloud",
+  "translation_enabled": false,
+  "transcription_mode": "openai_whisper",
+  "cloud_auto_punct": false,
   "custom_vocabulary": [
     "Genesis",
     "Exodus",
@@ -212,12 +215,14 @@
     "Revelation"
   ],
   "scroll_speed_px": 20,
-  "allow_loopback": true,
+  "allow_loopback": false,
+  "preferred_device_label": "Input (35) [Windows WASAPI]: Headset Microphone (Arctis Pro Wireless Chat)",
+  "loopback_chunk_seconds": 1.0,
   "preferred_host_api": "Windows WASAPI",
-  "rms_gate_enabled": true,
+  "rms_gate_enabled": false,
   "rms_gate_factor": 1.2,
   "enable_scrolling": false,
   "monitor_index": 0,
-  "settings_geometry": "2560x1334+-1459+217",
+  "settings_geometry": "2560x1334+-1520+201",
   "settings_monitor_index": 2
 }
