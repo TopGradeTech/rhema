@@ -1,0 +1,283 @@
+[2026-02-05 16:29:15.182] STATUS: Listening...
+[2026-02-05 16:29:34.941] STATUS: Apply clicked
+[2026-02-05 16:29:36.076] STATUS: Settings applied
+[2026-02-05 16:29:36.076] STATUS: Apply finished
+[2026-02-05 16:29:36.771] STATUS: Listening...
+[2026-02-05 16:30:35.834] STATUS: No speech detected. Check mic level or device.
+[2026-02-05 16:30:53.319] STATUS: Apply clicked
+[2026-02-05 16:30:54.775] STATUS: Settings applied
+[2026-02-05 16:30:54.776] STATUS: Apply finished
+[2026-02-05 16:30:55.512] STATUS: Listening...
+[2026-02-05 16:31:00.909] STATUS: Speech error: OpenAI API error 429: {
+    "error": {
+        "message": "You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.",
+        "type": "insufficient_quota",
+        "param": null,
+        "code": "insufficient_quota"
+    }
+}
+
+[2026-02-05 16:31:20.162] STATUS: Speech error: OpenAI API error 500: {
+    "error": {
+        "message": "Internal server error",
+        "type": "internal_error",
+        "param": null,
+        "code": "internal_error"
+    }
+}
+
+[2026-02-05 16:32:56.160] STATUS: Speech error: OpenAI API error 429: {
+    "error": {
+        "message": "You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.",
+        "type": "insufficient_quota",
+        "param": null,
+        "code": "insufficient_quota"
+    }
+}
+
+[2026-02-05 16:33:27.699] STATUS: No speech detected. Check mic level or device.
+[2026-02-05 16:33:30.321] STATUS: Speech error: OpenAI API error 429: {
+    "error": {
+        "message": "You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.",
+        "type": "insufficient_quota",
+        "param": null,
+        "code": "insufficient_quota"
+    }
+}
+
+[2026-02-05 16:34:15.610] STATUS: No speech detected. Check mic level or device.
+[2026-02-05 16:35:24.673] STATUS: Speech error: OpenAI API error 429: {
+    "error": {
+        "message": "You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.",
+        "type": "insufficient_quota",
+        "param": null,
+        "code": "insufficient_quota"
+    }
+}
+
+[2026-02-05 16:38:03.600] STATUS: Translating...
+[2026-02-05 16:38:03.723] STATUS: Listening...
+[2026-02-05 16:38:05.687] STATUS: Translating...
+[2026-02-05 16:38:05.805] STATUS: Listening...
+[2026-02-05 16:38:07.934] STATUS: Translating...
+[2026-02-05 16:38:08.069] STATUS: Listening...
+[2026-02-05 16:38:08.668] STATUS: Speech error: OpenAI API error 429: {
+    "error": {
+        "message": "Rate limit reached for gpt-4o-mini in organization org-jTiPvUwOVCRz4L3tETww3ivm on requests per min (RPM): Limit 3, Used 3, Requested 1. Please try again in 20s. Visit https://platform.openai.com/account/rate-limits to learn more. You can increase your rate limit by adding a payment method to your account at https://platform.openai.com/account/billing.",
+        "type": "requests",
+        "param": null,
+        "code": "rate_limit_exceeded"
+    }
+}
+
+[2026-02-05 16:38:38.664] STATUS: Translating...
+[2026-02-05 16:38:38.750] STATUS: Listening...
+[2026-02-05 16:38:45.541] STATUS: Translating...
+[2026-02-05 16:38:45.629] STATUS: Listening...
+[2026-02-05 16:38:48.217] STATUS: Speech error: OpenAI API error 429: {
+    "error": {
+        "message": "You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.",
+        "type": "insufficient_quota",
+        "param": null,
+        "code": "insufficient_quota"
+    }
+}
+
+[2026-02-05 16:38:50.051] STATUS: Speech error: OpenAI API error 429: {
+    "error": {
+        "message": "Rate limit reached for gpt-4o-mini in organization org-jTiPvUwOVCRz4L3tETww3ivm on requests per min (RPM): Limit 3, Used 3, Requested 1. Please try again in 20s. Visit https://platform.openai.com/account/rate-limits to learn more. You can increase your rate limit by adding a payment method to your account at https://platform.openai.com/account/billing.",
+        "type": "requests",
+        "param": null,
+        "code": "rate_limit_exceeded"
+    }
+}
+
+[2026-02-05 16:38:54.885] STATUS: Speech error: OpenAI API error 429: {
+    "error": {
+        "message": "You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.",
+        "type": "insufficient_quota",
+        "param": null,
+        "code": "insufficient_quota"
+    }
+}
+
+[2026-02-05 16:38:58.945] STATUS: Speech error: OpenAI API error 429: {
+    "error": {
+        "message": "Rate limit reached for gpt-4o-mini in organization org-jTiPvUwOVCRz4L3tETww3ivm on requests per min (RPM): Limit 3, Used 3, Requested 1. Please try again in 20s. Visit https://platform.openai.com/account/rate-limits to learn more. You can increase your rate limit by adding a payment method to your account at https://platform.openai.com/account/billing.",
+        "type": "requests",
+        "param": null,
+        "code": "rate_limit_exceeded"
+    }
+}
+
+[2026-02-05 16:39:04.776] STATUS: Translating...
+[2026-02-05 16:39:04.868] STATUS: Listening...
+[2026-02-05 16:39:06.405] STATUS: Speech error: OpenAI API error 429: {
+    "error": {
+        "message": "Rate limit reached for gpt-4o-mini in organization org-jTiPvUwOVCRz4L3tETww3ivm on requests per min (RPM): Limit 3, Used 3, Requested 1. Please try again in 20s. Visit https://platform.openai.com/account/rate-limits to learn more. You can increase your rate limit by adding a payment method to your account at https://platform.openai.com/account/billing.",
+        "type": "requests",
+        "param": null,
+        "code": "rate_limit_exceeded"
+    }
+}
+
+[2026-02-05 16:39:13.748] STATUS: Speech error: OpenAI API error 429: {
+    "error": {
+        "message": "You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.",
+        "type": "insufficient_quota",
+        "param": null,
+        "code": "insufficient_quota"
+    }
+}
+
+[2026-02-05 16:39:17.917] STATUS: Speech error: OpenAI API error 429: {
+    "error": {
+        "message": "Rate limit reached for gpt-4o-mini in organization org-jTiPvUwOVCRz4L3tETww3ivm on requests per min (RPM): Limit 3, Used 3, Requested 1. Please try again in 20s. Visit https://platform.openai.com/account/rate-limits to learn more. You can increase your rate limit by adding a payment method to your account at https://platform.openai.com/account/billing.",
+        "type": "requests",
+        "param": null,
+        "code": "rate_limit_exceeded"
+    }
+}
+
+[2026-02-05 16:39:24.574] STATUS: Translating...
+[2026-02-05 16:39:24.715] STATUS: Listening...
+[2026-02-05 16:39:36.409] STATUS: Speech error: OpenAI API error 429: {
+    "error": {
+        "message": "Rate limit reached for gpt-4o-mini in organization org-jTiPvUwOVCRz4L3tETww3ivm on requests per min (RPM): Limit 3, Used 3, Requested 1. Please try again in 20s. Visit https://platform.openai.com/account/rate-limits to learn more. You can increase your rate limit by adding a payment method to your account at https://platform.openai.com/account/billing.",
+        "type": "requests",
+        "param": null,
+        "code": "rate_limit_exceeded"
+    }
+}
+
+[2026-02-05 16:39:43.929] STATUS: Translating...
+[2026-02-05 16:39:44.014] STATUS: Listening...
+[2026-02-05 16:39:44.869] STATUS: Speech error: OpenAI API error 429: {
+    "error": {
+        "message": "Rate limit reached for gpt-4o-mini in organization org-jTiPvUwOVCRz4L3tETww3ivm on requests per min (RPM): Limit 3, Used 3, Requested 1. Please try again in 20s. Visit https://platform.openai.com/account/rate-limits to learn more. You can increase your rate limit by adding a payment method to your account at https://platform.openai.com/account/billing.",
+        "type": "requests",
+        "param": null,
+        "code": "rate_limit_exceeded"
+    }
+}
+
+[2026-02-05 16:39:55.401] STATUS: Speech error: OpenAI API error 429: {
+    "error": {
+        "message": "You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.",
+        "type": "insufficient_quota",
+        "param": null,
+        "code": "insufficient_quota"
+    }
+}
+
+[2026-02-05 16:39:57.356] STATUS: Speech error: OpenAI API error 429: {
+    "error": {
+        "message": "Rate limit reached for gpt-4o-mini in organization org-jTiPvUwOVCRz4L3tETww3ivm on requests per min (RPM): Limit 3, Used 3, Requested 1. Please try again in 20s. Visit https://platform.openai.com/account/rate-limits to learn more. You can increase your rate limit by adding a payment method to your account at https://platform.openai.com/account/billing.",
+        "type": "requests",
+        "param": null,
+        "code": "rate_limit_exceeded"
+    }
+}
+
+[2026-02-05 16:40:10.844] STATUS: Speech error: OpenAI API error 429: {
+    "error": {
+        "message": "You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.",
+        "type": "insufficient_quota",
+        "param": null,
+        "code": "insufficient_quota"
+    }
+}
+
+[2026-02-05 16:40:17.796] STATUS: Translating...
+[2026-02-05 16:40:17.939] STATUS: Listening...
+[2026-02-05 16:40:18.210] STATUS: Speech error: OpenAI API error 429: {
+    "error": {
+        "message": "Rate limit reached for gpt-4o-mini in organization org-jTiPvUwOVCRz4L3tETww3ivm on requests per min (RPM): Limit 3, Used 3, Requested 1. Please try again in 20s. Visit https://platform.openai.com/account/rate-limits to learn more. You can increase your rate limit by adding a payment method to your account at https://platform.openai.com/account/billing.",
+        "type": "requests",
+        "param": null,
+        "code": "rate_limit_exceeded"
+    }
+}
+
+[2026-02-05 16:40:24.726] STATUS: Translating...
+[2026-02-05 16:40:24.811] STATUS: Listening...
+[2026-02-05 16:40:26.829] STATUS: Speech error: OpenAI API error 429: {
+    "error": {
+        "message": "Rate limit reached for gpt-4o-mini in organization org-jTiPvUwOVCRz4L3tETww3ivm on requests per min (RPM): Limit 3, Used 3, Requested 1. Please try again in 20s. Visit https://platform.openai.com/account/rate-limits to learn more. You can increase your rate limit by adding a payment method to your account at https://platform.openai.com/account/billing.",
+        "type": "requests",
+        "param": null,
+        "code": "rate_limit_exceeded"
+    }
+}
+
+[2026-02-05 16:40:33.084] STATUS: Speech error: OpenAI API error 429: {
+    "error": {
+        "message": "You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.",
+        "type": "insufficient_quota",
+        "param": null,
+        "code": "insufficient_quota"
+    }
+}
+
+[2026-02-05 16:40:44.145] STATUS: Translating...
+[2026-02-05 16:40:44.235] STATUS: Listening...
+[2026-02-05 16:40:50.166] STATUS: Speech error: OpenAI API error 429: {
+    "error": {
+        "message": "Rate limit reached for gpt-4o-mini in organization org-jTiPvUwOVCRz4L3tETww3ivm on requests per min (RPM): Limit 3, Used 3, Requested 1. Please try again in 20s. Visit https://platform.openai.com/account/rate-limits to learn more. You can increase your rate limit by adding a payment method to your account at https://platform.openai.com/account/billing.",
+        "type": "requests",
+        "param": null,
+        "code": "rate_limit_exceeded"
+    }
+}
+
+[2026-02-05 16:41:14.388] STATUS: Translating...
+[2026-02-05 16:41:14.472] STATUS: Listening...
+[2026-02-05 16:41:17.158] STATUS: Speech error: OpenAI API error 429: {
+    "error": {
+        "message": "Rate limit reached for gpt-4o-mini in organization org-jTiPvUwOVCRz4L3tETww3ivm on requests per min (RPM): Limit 3, Used 3, Requested 1. Please try again in 20s. Visit https://platform.openai.com/account/rate-limits to learn more. You can increase your rate limit by adding a payment method to your account at https://platform.openai.com/account/billing.",
+        "type": "requests",
+        "param": null,
+        "code": "rate_limit_exceeded"
+    }
+}
+
+[2026-02-05 16:41:39.469] STATUS: No speech detected. Check mic level or device.
+[2026-02-05 16:42:03.304] STATUS: Speech error: OpenAI API error 429: {
+    "error": {
+        "message": "You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.",
+        "type": "insufficient_quota",
+        "param": null,
+        "code": "insufficient_quota"
+    }
+}
+
+[2026-02-05 16:42:51.122] STATUS: No speech detected. Check mic level or device.
+[2026-02-05 16:44:22.109] STATUS: Translating...
+[2026-02-05 16:44:22.289] STATUS: Listening...
+[2026-02-05 16:44:26.734] STATUS: Speech error: OpenAI API error 429: {
+    "error": {
+        "message": "You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.",
+        "type": "insufficient_quota",
+        "param": null,
+        "code": "insufficient_quota"
+    }
+}
+
+[2026-02-05 16:45:40.544] STATUS: App closing requested
+
+--- Close Requested ---
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\main.py", line 2969, in <module>
+    self.scroll_after_id = self.root.after(16, self.scroll_tick)
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\main.py", line 272, in __init__
+    self.root.mainloop()
+  File "C:\Users\zachary.price\AppData\Local\Programs\Python\Python310\lib\tkinter\__init__.py", line 1458, in mainloop
+    self.tk.mainloop(n)
+  File "C:\Users\zachary.price\AppData\Local\Programs\Python\Python310\lib\tkinter\__init__.py", line 1921, in __call__
+    return self.func(*args)
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\main.py", line 358, in on_closing
+    f.write("".join(traceback.format_stack(limit=10)))
+[2026-02-05 16:45:40.548] STATUS: Process exiting
+
+--- Process Exit ---
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\main.py", line 421, in _log_process_exit
+    f.write("".join(traceback.format_stack(limit=10)))
