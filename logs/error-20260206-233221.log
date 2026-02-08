@@ -1,0 +1,18 @@
+[2026-02-06 23:32:22.981] STATUS: Listening (English)
+[2026-02-06 23:32:58.005] STATUS: App closing requested
+
+--- Close Requested ---
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\main.py", line 3632, in <module>
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\main.py", line 309, in __init__
+    self.root.mainloop()
+  File "C:\Users\zachary.price\AppData\Local\Programs\Python\Python310\lib\tkinter\__init__.py", line 1458, in mainloop
+    self.tk.mainloop(n)
+  File "C:\Users\zachary.price\AppData\Local\Programs\Python\Python310\lib\tkinter\__init__.py", line 1921, in __call__
+    return self.func(*args)
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\main.py", line 395, in on_closing
+    f.write("".join(traceback.format_stack(limit=10)))
+[2026-02-06 23:32:58.013] STATUS: Process exiting
+
+--- Process Exit ---
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\main.py", line 458, in _log_process_exit
+    f.write("".join(traceback.format_stack(limit=10)))

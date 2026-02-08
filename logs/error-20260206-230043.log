@@ -1,0 +1,28 @@
+[2026-02-06 23:00:45.515] STATUS: Listening...
+[2026-02-06 23:01:10.580] STATUS: Apply clicked
+[2026-02-06 23:01:12.424] STATUS: Settings applied
+[2026-02-06 23:01:12.428] STATUS: Apply finished
+[2026-02-06 23:01:13.255] STATUS: Listening...
+[2026-02-06 23:01:17.575] STATUS: Apply clicked
+[2026-02-06 23:01:18.000] STATUS: Settings applied
+[2026-02-06 23:01:18.001] STATUS: Apply finished
+[2026-02-06 23:01:18.791] STATUS: Listening...
+[2026-02-06 23:01:20.055] STATUS: Paused
+[2026-02-06 23:01:27.541] STATUS: App closing requested
+
+--- Close Requested ---
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\main.py", line 3473, in <module>
+    app = TranslationApp()
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\main.py", line 289, in __init__
+    self.root.mainloop()
+  File "C:\Users\zachary.price\AppData\Local\Programs\Python\Python310\lib\tkinter\__init__.py", line 1458, in mainloop
+    self.tk.mainloop(n)
+  File "C:\Users\zachary.price\AppData\Local\Programs\Python\Python310\lib\tkinter\__init__.py", line 1921, in __call__
+    return self.func(*args)
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\main.py", line 375, in on_closing
+    f.write("".join(traceback.format_stack(limit=10)))
+[2026-02-06 23:01:27.550] STATUS: Process exiting
+
+--- Process Exit ---
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\main.py", line 438, in _log_process_exit
+    f.write("".join(traceback.format_stack(limit=10)))
