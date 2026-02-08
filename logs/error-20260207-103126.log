@@ -1,0 +1,29 @@
+[2026-02-07 10:31:28.001] STATUS: Listening (English)
+[2026-02-07 10:31:33.991] STATUS: No speech detected. Check mic level or device.
+[2026-02-07 10:31:47.805] STATUS: Listening (English)
+[2026-02-07 10:31:50.729] STATUS: No speech detected. Check mic level or device.
+[2026-02-07 10:31:59.487] STATUS: Apply clicked
+[2026-02-07 10:31:59.811] STATUS: Settings applied
+[2026-02-07 10:31:59.813] STATUS: Apply finished
+[2026-02-07 10:32:00.634] STATUS: Listening (English)
+[2026-02-07 10:32:01.613] STATUS: No speech detected. Check mic level or device.
+[2026-02-07 10:32:01.816] STATUS: Listening (English)
+[2026-02-07 10:32:07.489] STATUS: No speech detected. Check mic level or device.
+[2026-02-07 10:32:23.361] STATUS: App closing requested
+
+--- Close Requested ---
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\main.py", line 3660, in <module>
+    app = TranslationApp()
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\main.py", line 326, in __init__
+    self.root.mainloop()
+  File "C:\Users\zachary.price\AppData\Local\Programs\Python\Python310\lib\tkinter\__init__.py", line 1458, in mainloop
+    self.tk.mainloop(n)
+  File "C:\Users\zachary.price\AppData\Local\Programs\Python\Python310\lib\tkinter\__init__.py", line 1921, in __call__
+    return self.func(*args)
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\main.py", line 412, in on_closing
+    f.write("".join(traceback.format_stack(limit=10)))
+[2026-02-07 10:32:23.368] STATUS: Process exiting
+
+--- Process Exit ---
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\main.py", line 475, in _log_process_exit
+    f.write("".join(traceback.format_stack(limit=10)))

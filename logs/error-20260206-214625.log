@@ -1,0 +1,27 @@
+[2026-02-06 21:46:26.749] STATUS: Listening...
+[2026-02-06 21:46:32.739] STATUS: No speech detected. Check mic level or device.
+[2026-02-06 21:47:25.195] STATUS: Transcribing...
+[2026-02-06 21:47:25.201] STATUS: Listening...
+[2026-02-06 21:47:32.679] STATUS: Transcribing...
+[2026-02-06 21:47:32.681] STATUS: Listening...
+[2026-02-06 21:47:41.095] STATUS: Transcribing...
+[2026-02-06 21:47:41.100] STATUS: Listening...
+[2026-02-06 21:48:00.239] STATUS: No speech detected. Check mic level or device.
+[2026-02-06 22:17:10.806] STATUS: App closing requested
+
+--- Close Requested ---
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\main.py", line 2974, in <module>
+    "puta",
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\main.py", line 297, in __init__
+    def maximize_window(self):
+  File "C:\Users\zachary.price\AppData\Local\Programs\Python\Python310\lib\tkinter\__init__.py", line 1458, in mainloop
+    self.tk.mainloop(n)
+  File "C:\Users\zachary.price\AppData\Local\Programs\Python\Python310\lib\tkinter\__init__.py", line 1921, in __call__
+    return self.func(*args)
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\main.py", line 383, in on_closing
+    traceback.print_exception(exc_type, exc, tb, file=f)
+[2026-02-06 22:17:10.818] STATUS: Process exiting
+
+--- Process Exit ---
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\main.py", line 446, in _log_process_exit
+    pass

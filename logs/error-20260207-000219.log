@@ -1,0 +1,36 @@
+[2026-02-07 00:02:20.972] STATUS: Listening (English)
+[2026-02-07 00:02:27.875] STATUS: Translating...
+[2026-02-07 00:02:28.962] STATUS: Listening (English)
+[2026-02-07 00:02:30.863] STATUS: Translating...
+[2026-02-07 00:02:33.532] STATUS: Listening (English)
+[2026-02-07 00:02:33.540] STATUS: Translating...
+[2026-02-07 00:02:34.714] STATUS: Listening (English)
+[2026-02-07 00:02:35.917] STATUS: Translating...
+[2026-02-07 00:02:36.384] STATUS: Listening (English)
+[2026-02-07 00:02:42.805] STATUS: Translating...
+[2026-02-07 00:02:43.973] STATUS: Listening (English)
+[2026-02-07 00:02:46.254] STATUS: Translating...
+[2026-02-07 00:02:47.008] STATUS: Listening (English)
+[2026-02-07 00:02:53.435] STATUS: Translating...
+[2026-02-07 00:02:53.879] STATUS: Listening (English)
+[2026-02-07 00:02:58.246] STATUS: Translating...
+[2026-02-07 00:02:58.742] STATUS: Listening (English)
+[2026-02-07 00:03:01.707] STATUS: Translating...
+[2026-02-07 00:03:03.108] STATUS: App closing requested
+
+--- Close Requested ---
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\main.py", line 3634, in <module>
+    app = TranslationApp()
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\main.py", line 309, in __init__
+    self.root.mainloop()
+  File "C:\Users\zachary.price\AppData\Local\Programs\Python\Python310\lib\tkinter\__init__.py", line 1458, in mainloop
+    self.tk.mainloop(n)
+  File "C:\Users\zachary.price\AppData\Local\Programs\Python\Python310\lib\tkinter\__init__.py", line 1921, in __call__
+    return self.func(*args)
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\main.py", line 395, in on_closing
+    f.write("".join(traceback.format_stack(limit=10)))
+[2026-02-07 00:03:03.115] STATUS: Process exiting
+
+--- Process Exit ---
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\main.py", line 458, in _log_process_exit
+    f.write("".join(traceback.format_stack(limit=10)))

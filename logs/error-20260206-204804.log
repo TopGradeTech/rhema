@@ -1,0 +1,19 @@
+[2026-02-06 20:48:06.505] STATUS: Listening...
+[2026-02-06 20:48:12.494] STATUS: No speech detected. Check mic level or device.
+[2026-02-06 20:49:42.016] STATUS: App closing requested
+
+--- Close Requested ---
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\main.py", line 2902, in <module>
+    def truncate_text_to_fit(self, available_height):
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\main.py", line 272, in __init__
+  File "C:\Users\zachary.price\AppData\Local\Programs\Python\Python310\lib\tkinter\__init__.py", line 1458, in mainloop
+    self.tk.mainloop(n)
+  File "C:\Users\zachary.price\AppData\Local\Programs\Python\Python310\lib\tkinter\__init__.py", line 1921, in __call__
+    return self.func(*args)
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\main.py", line 358, in on_closing
+    return "TkDefaultFont"
+[2026-02-06 20:49:42.024] STATUS: Process exiting
+
+--- Process Exit ---
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\main.py", line 421, in _log_process_exit
+    pass
