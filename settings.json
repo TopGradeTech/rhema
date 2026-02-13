@@ -1,12 +1,12 @@
 {
-  "openai_api_key": "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",
+  "openai_api_key": "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",
   "speech_engine": "faster-whisper",
-  "faster_whisper_model_name": "tiny",
+  "faster_whisper_model_name": "medium",
   "faster_whisper_compute_type": "float16",
   "faster_whisper_device": "cuda",
   "bg_color": "#000000",
   "text_color": "#ffffff",
-  "max_lines": 6,
+  "max_lines": 8,
   "bad_words_by_lang": {
     "en": [
       "ass",
@@ -286,15 +286,14 @@
     "es"
   ],
   "chunk_size": 30,
-  "chunk_delay_ms": 200,
+  "chunk_delay_ms": 80,
   "flush_timeout_ms": 2000,
-  "sentence_flush_ms": 1000,
-  "source_lang": "en",
-  "target_lang": "es",
+  "sentence_flush_ms": 300,
+  "display_speed_factor": 1.0,
+  "source_lang": "es",
+  "target_lang": "en",
   "translation_enabled": true,
-  "auto_switch_translation": true,
-  "readability_preset": "medium",
-  "viewing_distance_ft": 10.0,
+  "auto_switch_translation": false,
   "biblical_books": [
     "Genesis",
     "Exodus",
@@ -364,13 +363,13 @@
     "Revelation"
   ],
   "preferred_device_label": "Input (0) [MME]: Microsoft Sound Mapper - Input",
-  "rms_gate_enabled": false,
-  "rms_gate_factor": 1.2,
+  "rms_gate_enabled": true,
+  "rms_gate_factor": 1.4,
   "monitor_index": 2,
-  "monitor_device": "\\\\.\\DISPLAY1",
+  "monitor_device": "\\\\.\\DISPLAY2",
   "monitor_origin": "-1920,234",
-  "settings_geometry": "1920x1280+476+26",
+  "settings_geometry": "1920x1094+2560+234",
   "settings_monitor_index": 0,
-  "settings_monitor_device": "\\\\.\\DISPLAY2",
+  "settings_monitor_device": "\\\\.\\DISPLAY1",
   "settings_monitor_origin": "2560,234"
 }

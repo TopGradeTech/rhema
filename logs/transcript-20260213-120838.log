@@ -1,0 +1,361 @@
+{"ts": "2026-02-13 12:08:52.075", "stage": "stt_raw", "chars": 51, "text": "Here's the thing, it creates actual victims, right?", "meta": {"engine": "openai", "stt_openai_ms": 925}}
+{"ts": "2026-02-13 12:08:52.078", "stage": "stt_sanitized", "chars": 51, "text": "Here's the thing, it creates actual victims, right?", "meta": {"engine": "openai", "stt_openai_ms": 925}}
+{"ts": "2026-02-13 12:08:52.081", "stage": "stt_boundary_trim", "chars": 51, "text": "Here's the thing, it creates actual victims, right?", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-13 12:08:52.412", "stage": "sentence_buffer_timeout_flush", "chars": 51, "text": "Here's the thing, it creates actual victims, right?", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-13 12:08:52.414", "stage": "sentence_enqueued", "chars": 51, "text": "Here's the thing, it creates actual victims, right?", "meta": {"queue_size": 1, "stt_openai_ms": 925, "translate_openai_ms": null}}
+{"ts": "2026-02-13 12:08:52.416", "stage": "translation_input", "chars": 51, "text": "Here's the thing, it creates actual victims, right?", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 12:08:53.447", "stage": "translation_output", "chars": 49, "text": "Aquí está la cosa, crea víctimas reales, ¿verdad?", "meta": {"translation_enabled": true, "translate_openai_ms": 1024}}
+{"ts": "2026-02-13 12:08:53.448", "stage": "display_update_input", "chars": 49, "text": "Aquí está la cosa, crea víctimas reales, ¿verdad?", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 12:08:53.451", "stage": "display_chunk_enqueued", "chars": 23, "text": "Aquí está la cosa, crea", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 12:08:53.452", "stage": "display_chunk_enqueued", "chars": 25, "text": "víctimas reales, ¿verdad?", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 12:08:54.129", "stage": "display_word_reveal_complete", "chars": 23, "text": "Aquí está la cosa, crea"}
+{"ts": "2026-02-13 12:08:54.533", "stage": "display_word_reveal_complete", "chars": 25, "text": "víctimas reales, ¿verdad?"}
+{"ts": "2026-02-13 12:08:58.529", "stage": "stt_raw", "chars": 18, "text": "of those Olympics.", "meta": {"engine": "openai", "stt_openai_ms": 551}}
+{"ts": "2026-02-13 12:08:58.533", "stage": "stt_sanitized", "chars": 18, "text": "of those Olympics.", "meta": {"engine": "openai", "stt_openai_ms": 551}}
+{"ts": "2026-02-13 12:08:58.535", "stage": "stt_boundary_trim", "chars": 18, "text": "of those Olympics.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-13 12:08:58.868", "stage": "sentence_buffer_timeout_defer", "chars": 18, "text": "of those Olympics.", "meta": {"wait_ms": 300, "age_ms": 331, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:08:58.976", "stage": "sentence_buffer_timeout_defer", "chars": 18, "text": "of those Olympics.", "meta": {"wait_ms": 300, "age_ms": 439, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:08:59.085", "stage": "sentence_buffer_timeout_defer", "chars": 18, "text": "of those Olympics.", "meta": {"wait_ms": 300, "age_ms": 548, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:08:59.195", "stage": "sentence_buffer_timeout_defer", "chars": 18, "text": "of those Olympics.", "meta": {"wait_ms": 300, "age_ms": 658, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:08:59.305", "stage": "sentence_buffer_timeout_defer", "chars": 18, "text": "of those Olympics.", "meta": {"wait_ms": 300, "age_ms": 767, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:08:59.415", "stage": "sentence_buffer_timeout_defer", "chars": 18, "text": "of those Olympics.", "meta": {"wait_ms": 300, "age_ms": 878, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:08:59.525", "stage": "sentence_buffer_timeout_defer", "chars": 18, "text": "of those Olympics.", "meta": {"wait_ms": 300, "age_ms": 987, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:08:59.634", "stage": "sentence_buffer_timeout_defer", "chars": 18, "text": "of those Olympics.", "meta": {"wait_ms": 300, "age_ms": 1097, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:08:59.744", "stage": "sentence_buffer_timeout_flush", "chars": 18, "text": "of those Olympics.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-13 12:08:59.747", "stage": "sentence_enqueued", "chars": 18, "text": "of those Olympics.", "meta": {"queue_size": 1, "stt_openai_ms": 551, "translate_openai_ms": null}}
+{"ts": "2026-02-13 12:08:59.748", "stage": "translation_input", "chars": 18, "text": "of those Olympics.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 12:09:01.470", "stage": "translation_output", "chars": 25, "text": "de esos Juegos Olímpicos.", "meta": {"translation_enabled": true, "translate_openai_ms": 1718}}
+{"ts": "2026-02-13 12:09:01.474", "stage": "display_update_input", "chars": 25, "text": "de esos Juegos Olímpicos.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 12:09:01.476", "stage": "display_chunk_enqueued", "chars": 25, "text": "de esos Juegos Olímpicos.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-13 12:09:02.034", "stage": "display_word_reveal_complete", "chars": 25, "text": "de esos Juegos Olímpicos."}
+{"ts": "2026-02-13 12:09:08.065", "stage": "stt_raw", "chars": 38, "text": "Emblematic, that was a moment in time.", "meta": {"engine": "openai", "stt_openai_ms": 868}}
+{"ts": "2026-02-13 12:09:08.071", "stage": "stt_sanitized", "chars": 38, "text": "Emblematic, that was a moment in time.", "meta": {"engine": "openai", "stt_openai_ms": 868}}
+{"ts": "2026-02-13 12:09:08.075", "stage": "stt_boundary_trim", "chars": 38, "text": "Emblematic, that was a moment in time.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-13 12:09:08.409", "stage": "sentence_buffer_timeout_flush", "chars": 38, "text": "Emblematic, that was a moment in time.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-13 12:09:08.412", "stage": "sentence_enqueued", "chars": 38, "text": "Emblematic, that was a moment in time.", "meta": {"queue_size": 1, "stt_openai_ms": 868, "translate_openai_ms": null}}
+{"ts": "2026-02-13 12:09:08.414", "stage": "translation_input", "chars": 38, "text": "Emblematic, that was a moment in time.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 12:09:09.260", "stage": "translation_output", "chars": 45, "text": "Emblemático, ese fue un momento en el tiempo.", "meta": {"translation_enabled": true, "translate_openai_ms": 840}}
+{"ts": "2026-02-13 12:09:09.264", "stage": "display_update_input", "chars": 45, "text": "Emblemático, ese fue un momento en el tiempo.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 12:09:09.281", "stage": "display_chunk_enqueued", "chars": 23, "text": "Emblemático, ese fue un", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 12:09:09.286", "stage": "display_chunk_enqueued", "chars": 21, "text": "momento en el tiempo.", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 12:09:09.728", "stage": "display_word_reveal_complete", "chars": 23, "text": "Emblemático, ese fue un"}
+{"ts": "2026-02-13 12:09:10.286", "stage": "display_word_reveal_complete", "chars": 21, "text": "momento en el tiempo."}
+{"ts": "2026-02-13 12:09:12.707", "stage": "stt_raw", "chars": 73, "text": "The Black Power fist at the 68 Olympics. Here's what they don't tell you.", "meta": {"engine": "openai", "stt_openai_ms": 937}}
+{"ts": "2026-02-13 12:09:12.710", "stage": "stt_sanitized", "chars": 73, "text": "The Black Power fist at the 68 Olympics. Here's what they don't tell you.", "meta": {"engine": "openai", "stt_openai_ms": 937}}
+{"ts": "2026-02-13 12:09:12.712", "stage": "stt_boundary_trim", "chars": 73, "text": "The Black Power fist at the 68 Olympics. Here's what they don't tell you.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-13 12:09:13.061", "stage": "sentence_buffer_timeout_flush", "chars": 73, "text": "The Black Power fist at the 68 Olympics. Here's what they don't tell you.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-13 12:09:13.065", "stage": "sentence_enqueued", "chars": 73, "text": "The Black Power fist at the 68 Olympics. Here's what they don't tell you.", "meta": {"queue_size": 1, "stt_openai_ms": 937, "translate_openai_ms": null}}
+{"ts": "2026-02-13 12:09:13.068", "stage": "translation_input", "chars": 73, "text": "The Black Power fist at the 68 Olympics. Here's what they don't tell you.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 12:09:13.996", "stage": "translation_output", "chars": 78, "text": "El puño de Black Power en las Olimpiadas del 68. Esto es lo que no te cuentan.", "meta": {"translation_enabled": true, "translate_openai_ms": 922}}
+{"ts": "2026-02-13 12:09:14.000", "stage": "display_update_input", "chars": 78, "text": "El puño de Black Power en las Olimpiadas del 68. Esto es lo que no te cuentan.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 12:09:14.004", "stage": "display_chunk_enqueued", "chars": 29, "text": "El puño de Black Power en las", "meta": {"chunk_index": 0, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 12:09:14.007", "stage": "display_chunk_enqueued", "chars": 29, "text": "Olimpiadas del 68. Esto es lo", "meta": {"chunk_index": 1, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 12:09:14.010", "stage": "display_chunk_enqueued", "chars": 18, "text": "que no te cuentan.", "meta": {"chunk_index": 2, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 12:09:15.148", "stage": "display_word_reveal_complete", "chars": 29, "text": "El puño de Black Power en las"}
+{"ts": "2026-02-13 12:09:15.907", "stage": "display_word_reveal_complete", "chars": 29, "text": "Olimpiadas del 68. Esto es lo"}
+{"ts": "2026-02-13 12:09:16.405", "stage": "display_word_reveal_complete", "chars": 18, "text": "que no te cuentan."}
+{"ts": "2026-02-13 12:09:16.449", "stage": "stt_raw", "chars": 31, "text": "An actual angry young black man", "meta": {"engine": "openai", "stt_openai_ms": 751}}
+{"ts": "2026-02-13 12:09:16.453", "stage": "stt_sanitized", "chars": 31, "text": "An actual angry young black man", "meta": {"engine": "openai", "stt_openai_ms": 751}}
+{"ts": "2026-02-13 12:09:16.455", "stage": "stt_boundary_trim", "chars": 31, "text": "An actual angry young black man", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-13 12:09:16.793", "stage": "sentence_buffer_timeout_flush", "chars": 31, "text": "An actual angry young black man", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-13 12:09:16.800", "stage": "sentence_enqueued", "chars": 31, "text": "An actual angry young black man", "meta": {"queue_size": 1, "stt_openai_ms": 751, "translate_openai_ms": null}}
+{"ts": "2026-02-13 12:09:16.803", "stage": "translation_input", "chars": 31, "text": "An actual angry young black man", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 12:09:17.658", "stage": "translation_output", "chars": 32, "text": "Un verdadero joven negro enojado", "meta": {"translation_enabled": true, "translate_openai_ms": 848}}
+{"ts": "2026-02-13 12:09:17.662", "stage": "display_update_input", "chars": 32, "text": "Un verdadero joven negro enojado", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 12:09:17.669", "stage": "display_chunk_enqueued", "chars": 24, "text": "Un verdadero joven negro", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 12:09:17.671", "stage": "display_chunk_enqueued", "chars": 7, "text": "enojado", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 12:09:18.178", "stage": "display_word_reveal_complete", "chars": 24, "text": "Un verdadero joven negro"}
+{"ts": "2026-02-13 12:09:18.302", "stage": "display_word_reveal_complete", "chars": 7, "text": "enojado"}
+{"ts": "2026-02-13 12:09:21.890", "stage": "stt_raw", "chars": 57, "text": "who was raised poor, who had to fight his way to the top.", "meta": {"engine": "openai", "stt_openai_ms": 1290}}
+{"ts": "2026-02-13 12:09:21.894", "stage": "stt_sanitized", "chars": 57, "text": "who was raised poor, who had to fight his way to the top.", "meta": {"engine": "openai", "stt_openai_ms": 1290}}
+{"ts": "2026-02-13 12:09:21.897", "stage": "stt_boundary_trim", "chars": 57, "text": "who was raised poor, who had to fight his way to the top.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-13 12:09:22.218", "stage": "sentence_buffer_timeout_flush", "chars": 57, "text": "who was raised poor, who had to fight his way to the top.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-13 12:09:22.222", "stage": "sentence_enqueued", "chars": 57, "text": "who was raised poor, who had to fight his way to the top.", "meta": {"queue_size": 1, "stt_openai_ms": 1290, "translate_openai_ms": null}}
+{"ts": "2026-02-13 12:09:22.224", "stage": "translation_input", "chars": 57, "text": "who was raised poor, who had to fight his way to the top.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 12:09:23.122", "stage": "translation_output", "chars": 68, "text": "quien fue criado pobre, quien tuvo que luchar para llegar a la cima.", "meta": {"translation_enabled": true, "translate_openai_ms": 891}}
+{"ts": "2026-02-13 12:09:23.125", "stage": "display_update_input", "chars": 68, "text": "quien fue criado pobre, quien tuvo que luchar para llegar a la cima.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 12:09:23.129", "stage": "display_chunk_enqueued", "chars": 29, "text": "quien fue criado pobre, quien", "meta": {"chunk_index": 0, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 12:09:23.132", "stage": "display_chunk_enqueued", "chars": 29, "text": "tuvo que luchar para llegar a", "meta": {"chunk_index": 1, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 12:09:23.135", "stage": "display_chunk_enqueued", "chars": 8, "text": "la cima.", "meta": {"chunk_index": 2, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 12:09:23.760", "stage": "display_word_reveal_complete", "chars": 29, "text": "quien fue criado pobre, quien"}
+{"ts": "2026-02-13 12:09:24.538", "stage": "display_word_reveal_complete", "chars": 29, "text": "tuvo que luchar para llegar a"}
+{"ts": "2026-02-13 12:09:24.788", "stage": "display_word_reveal_complete", "chars": 8, "text": "la cima."}
+{"ts": "2026-02-13 12:09:26.886", "stage": "stt_raw", "chars": 93, "text": "and was grateful for his opportunities here in the United States that he knows would not have", "meta": {"engine": "openai", "stt_openai_ms": 1178}}
+{"ts": "2026-02-13 12:09:26.892", "stage": "stt_sanitized", "chars": 93, "text": "and was grateful for his opportunities here in the United States that he knows would not have", "meta": {"engine": "openai", "stt_openai_ms": 1178}}
+{"ts": "2026-02-13 12:09:26.897", "stage": "stt_boundary_trim", "chars": 93, "text": "and was grateful for his opportunities here in the United States that he knows would not have", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-13 12:09:27.230", "stage": "sentence_buffer_timeout_flush", "chars": 93, "text": "and was grateful for his opportunities here in the United States that he knows would not have", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-13 12:09:27.234", "stage": "sentence_enqueued", "chars": 93, "text": "and was grateful for his opportunities here in the United States that he knows would not have", "meta": {"queue_size": 1, "stt_openai_ms": 1178, "translate_openai_ms": null}}
+{"ts": "2026-02-13 12:09:27.236", "stage": "translation_input", "chars": 93, "text": "and was grateful for his opportunities here in the United States that he knows would not have", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 12:09:28.121", "stage": "translation_output", "chars": 98, "text": "y estaba agradecido por sus oportunidades aquí en los Estados Unidos que sabe que no habría tenido", "meta": {"translation_enabled": true, "translate_openai_ms": 878}}
+{"ts": "2026-02-13 12:09:28.125", "stage": "display_update_input", "chars": 98, "text": "y estaba agradecido por sus oportunidades aquí en los Estados Unidos que sabe que no habría tenido", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 12:09:28.129", "stage": "display_chunk_enqueued", "chars": 27, "text": "y estaba agradecido por sus", "meta": {"chunk_index": 0, "chunk_count": 4, "word_by_word": true}}
+{"ts": "2026-02-13 12:09:28.132", "stage": "display_chunk_enqueued", "chars": 25, "text": "oportunidades aquí en los", "meta": {"chunk_index": 1, "chunk_count": 4, "word_by_word": true}}
+{"ts": "2026-02-13 12:09:28.135", "stage": "display_chunk_enqueued", "chars": 30, "text": "Estados Unidos que sabe que no", "meta": {"chunk_index": 2, "chunk_count": 4, "word_by_word": true}}
+{"ts": "2026-02-13 12:09:28.138", "stage": "display_chunk_enqueued", "chars": 13, "text": "habría tenido", "meta": {"chunk_index": 3, "chunk_count": 4, "word_by_word": true}}
+{"ts": "2026-02-13 12:09:28.464", "stage": "stt_raw", "chars": 36, "text": "afforded to him in any other nation?", "meta": {"engine": "openai", "stt_openai_ms": 596}}
+{"ts": "2026-02-13 12:09:28.467", "stage": "stt_sanitized", "chars": 36, "text": "afforded to him in any other nation?", "meta": {"engine": "openai", "stt_openai_ms": 596}}
+{"ts": "2026-02-13 12:09:28.470", "stage": "stt_boundary_trim", "chars": 36, "text": "afforded to him in any other nation?", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-13 12:09:28.770", "stage": "display_word_reveal_complete", "chars": 27, "text": "y estaba agradecido por sus"}
+{"ts": "2026-02-13 12:09:28.800", "stage": "sentence_buffer_timeout_flush", "chars": 36, "text": "afforded to him in any other nation?", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-13 12:09:28.804", "stage": "sentence_enqueued", "chars": 36, "text": "afforded to him in any other nation?", "meta": {"queue_size": 1, "stt_openai_ms": 596, "translate_openai_ms": null}}
+{"ts": "2026-02-13 12:09:28.814", "stage": "translation_input", "chars": 36, "text": "afforded to him in any other nation?", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 12:09:29.285", "stage": "display_word_reveal_complete", "chars": 25, "text": "oportunidades aquí en los"}
+{"ts": "2026-02-13 12:09:29.694", "stage": "translation_output", "chars": 44, "text": "proporcionado a él en cualquier otra nación?", "meta": {"translation_enabled": true, "translate_openai_ms": 874}}
+{"ts": "2026-02-13 12:09:29.700", "stage": "display_update_input", "chars": 44, "text": "proporcionado a él en cualquier otra nación?", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 12:09:29.704", "stage": "display_chunk_enqueued", "chars": 21, "text": "proporcionado a él en", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 12:09:29.708", "stage": "display_chunk_enqueued", "chars": 22, "text": "cualquier otra nación?", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 12:09:30.034", "stage": "display_word_reveal_complete", "chars": 30, "text": "Estados Unidos que sabe que no"}
+{"ts": "2026-02-13 12:09:30.296", "stage": "display_word_reveal_complete", "chars": 13, "text": "habría tenido"}
+{"ts": "2026-02-13 12:09:30.633", "stage": "stt_raw", "chars": 16, "text": "Man named George", "meta": {"engine": "openai", "stt_openai_ms": 795}}
+{"ts": "2026-02-13 12:09:30.637", "stage": "stt_sanitized", "chars": 16, "text": "Man named George", "meta": {"engine": "openai", "stt_openai_ms": 795}}
+{"ts": "2026-02-13 12:09:30.640", "stage": "stt_boundary_trim", "chars": 16, "text": "Man named George", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-13 12:09:30.797", "stage": "display_word_reveal_complete", "chars": 21, "text": "proporcionado a él en"}
+{"ts": "2026-02-13 12:09:30.969", "stage": "sentence_buffer_timeout_defer", "chars": 16, "text": "Man named George", "meta": {"wait_ms": 300, "age_ms": 326, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:09:31.078", "stage": "sentence_buffer_timeout_defer", "chars": 16, "text": "Man named George", "meta": {"wait_ms": 300, "age_ms": 435, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:09:31.187", "stage": "display_word_reveal_complete", "chars": 22, "text": "cualquier otra nación?"}
+{"ts": "2026-02-13 12:09:31.187", "stage": "sentence_buffer_timeout_defer", "chars": 16, "text": "Man named George", "meta": {"wait_ms": 300, "age_ms": 543, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:09:31.310", "stage": "sentence_buffer_timeout_defer", "chars": 16, "text": "Man named George", "meta": {"wait_ms": 300, "age_ms": 667, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:09:31.434", "stage": "sentence_buffer_timeout_defer", "chars": 16, "text": "Man named George", "meta": {"wait_ms": 300, "age_ms": 791, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:09:31.558", "stage": "sentence_buffer_timeout_defer", "chars": 16, "text": "Man named George", "meta": {"wait_ms": 300, "age_ms": 915, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:09:31.684", "stage": "sentence_buffer_timeout_defer", "chars": 16, "text": "Man named George", "meta": {"wait_ms": 300, "age_ms": 1041, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:09:31.809", "stage": "sentence_buffer_timeout_defer", "chars": 16, "text": "Man named George", "meta": {"wait_ms": 300, "age_ms": 1165, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:09:31.934", "stage": "sentence_buffer_timeout_flush", "chars": 16, "text": "Man named George", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-13 12:09:31.938", "stage": "sentence_enqueued", "chars": 16, "text": "Man named George", "meta": {"queue_size": 1, "stt_openai_ms": 795, "translate_openai_ms": null}}
+{"ts": "2026-02-13 12:09:31.940", "stage": "translation_input", "chars": 16, "text": "Man named George", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 12:09:32.640", "stage": "translation_output", "chars": 21, "text": "Hombre llamado George", "meta": {"translation_enabled": true, "translate_openai_ms": 693}}
+{"ts": "2026-02-13 12:09:32.643", "stage": "display_update_input", "chars": 21, "text": "Hombre llamado George", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 12:09:32.647", "stage": "display_chunk_enqueued", "chars": 21, "text": "Hombre llamado George", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-13 12:09:33.027", "stage": "display_word_reveal_complete", "chars": 21, "text": "Hombre llamado George"}
+{"ts": "2026-02-13 12:09:47.363", "stage": "stt_raw", "chars": 3, "text": "###", "meta": {"engine": "openai", "stt_openai_ms": 2083}}
+{"ts": "2026-02-13 12:09:47.365", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 2083}}
+{"ts": "2026-02-13 12:09:51.115", "stage": "stt_raw", "chars": 35, "text": "Billions more of television viewers", "meta": {"engine": "openai", "stt_openai_ms": 815}}
+{"ts": "2026-02-13 12:09:51.118", "stage": "stt_sanitized", "chars": 35, "text": "Billions more of television viewers", "meta": {"engine": "openai", "stt_openai_ms": 815}}
+{"ts": "2026-02-13 12:09:51.121", "stage": "stt_boundary_trim", "chars": 35, "text": "Billions more of television viewers", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-13 12:09:51.465", "stage": "sentence_buffer_timeout_defer", "chars": 35, "text": "Billions more of television viewers", "meta": {"wait_ms": 300, "age_ms": 340, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:09:51.590", "stage": "sentence_buffer_timeout_defer", "chars": 35, "text": "Billions more of television viewers", "meta": {"wait_ms": 300, "age_ms": 465, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:09:51.715", "stage": "sentence_buffer_timeout_defer", "chars": 35, "text": "Billions more of television viewers", "meta": {"wait_ms": 300, "age_ms": 589, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:09:51.839", "stage": "sentence_buffer_timeout_defer", "chars": 35, "text": "Billions more of television viewers", "meta": {"wait_ms": 300, "age_ms": 714, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:09:51.964", "stage": "sentence_buffer_timeout_defer", "chars": 35, "text": "Billions more of television viewers", "meta": {"wait_ms": 300, "age_ms": 839, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:09:52.089", "stage": "sentence_buffer_timeout_defer", "chars": 35, "text": "Billions more of television viewers", "meta": {"wait_ms": 300, "age_ms": 963, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:09:52.213", "stage": "sentence_buffer_timeout_defer", "chars": 35, "text": "Billions more of television viewers", "meta": {"wait_ms": 300, "age_ms": 1088, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:09:52.336", "stage": "sentence_buffer_timeout_flush", "chars": 35, "text": "Billions more of television viewers", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-13 12:09:52.340", "stage": "sentence_enqueued", "chars": 35, "text": "Billions more of television viewers", "meta": {"queue_size": 1, "stt_openai_ms": 815, "translate_openai_ms": null}}
+{"ts": "2026-02-13 12:09:52.342", "stage": "translation_input", "chars": 35, "text": "Billions more of television viewers", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 12:09:53.092", "stage": "translation_output", "chars": 37, "text": "Miles de millones más de televidentes", "meta": {"translation_enabled": true, "translate_openai_ms": 744}}
+{"ts": "2026-02-13 12:09:53.097", "stage": "display_update_input", "chars": 37, "text": "Miles de millones más de televidentes", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 12:09:53.101", "stage": "display_chunk_enqueued", "chars": 24, "text": "Miles de millones más de", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 12:09:53.105", "stage": "display_chunk_enqueued", "chars": 12, "text": "televidentes", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 12:09:53.792", "stage": "display_word_reveal_complete", "chars": 24, "text": "Miles de millones más de"}
+{"ts": "2026-02-13 12:09:53.916", "stage": "display_word_reveal_complete", "chars": 12, "text": "televidentes"}
+{"ts": "2026-02-13 12:09:57.055", "stage": "stt_raw", "chars": 31, "text": "And he faced backlash for that.", "meta": {"engine": "openai", "stt_openai_ms": 1254}}
+{"ts": "2026-02-13 12:09:57.058", "stage": "stt_sanitized", "chars": 31, "text": "And he faced backlash for that.", "meta": {"engine": "openai", "stt_openai_ms": 1254}}
+{"ts": "2026-02-13 12:09:57.063", "stage": "stt_boundary_trim", "chars": 31, "text": "And he faced backlash for that.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-13 12:09:57.399", "stage": "sentence_buffer_timeout_flush", "chars": 31, "text": "And he faced backlash for that.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-13 12:09:57.403", "stage": "sentence_enqueued", "chars": 31, "text": "And he faced backlash for that.", "meta": {"queue_size": 1, "stt_openai_ms": 1254, "translate_openai_ms": null}}
+{"ts": "2026-02-13 12:09:57.406", "stage": "translation_input", "chars": 31, "text": "And he faced backlash for that.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 12:09:58.180", "stage": "translation_output", "chars": 28, "text": "Y enfrentó críticas por eso.", "meta": {"translation_enabled": true, "translate_openai_ms": 767}}
+{"ts": "2026-02-13 12:09:58.184", "stage": "display_update_input", "chars": 28, "text": "Y enfrentó críticas por eso.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 12:09:58.188", "stage": "display_chunk_enqueued", "chars": 28, "text": "Y enfrentó críticas por eso.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-13 12:09:58.811", "stage": "display_word_reveal_complete", "chars": 28, "text": "Y enfrentó críticas por eso."}
+{"ts": "2026-02-13 12:10:00.969", "stage": "stt_raw", "chars": 30, "text": "who were happy to support him,", "meta": {"engine": "openai", "stt_openai_ms": 668}}
+{"ts": "2026-02-13 12:10:00.974", "stage": "stt_sanitized", "chars": 30, "text": "who were happy to support him,", "meta": {"engine": "openai", "stt_openai_ms": 668}}
+{"ts": "2026-02-13 12:10:00.978", "stage": "stt_boundary_trim", "chars": 30, "text": "who were happy to support him,", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-13 12:10:01.312", "stage": "sentence_buffer_timeout_flush", "chars": 30, "text": "who were happy to support him,", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-13 12:10:01.316", "stage": "sentence_enqueued", "chars": 30, "text": "who were happy to support him,", "meta": {"queue_size": 1, "stt_openai_ms": 668, "translate_openai_ms": null}}
+{"ts": "2026-02-13 12:10:01.319", "stage": "translation_input", "chars": 30, "text": "who were happy to support him,", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 12:10:01.861", "stage": "translation_output", "chars": 36, "text": "quienes estaban felices de apoyarlo,", "meta": {"translation_enabled": true, "translate_openai_ms": 534}}
+{"ts": "2026-02-13 12:10:01.869", "stage": "display_update_input", "chars": 36, "text": "quienes estaban felices de apoyarlo,", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 12:10:01.875", "stage": "display_chunk_enqueued", "chars": 26, "text": "quienes estaban felices de", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 12:10:01.880", "stage": "display_chunk_enqueued", "chars": 9, "text": "apoyarlo,", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 12:10:02.490", "stage": "display_word_reveal_complete", "chars": 26, "text": "quienes estaban felices de"}
+{"ts": "2026-02-13 12:10:02.643", "stage": "display_word_reveal_complete", "chars": 9, "text": "apoyarlo,"}
+{"ts": "2026-02-13 12:10:03.242", "stage": "stt_raw", "chars": 10, "text": "The hippie", "meta": {"engine": "openai", "stt_openai_ms": 1432}}
+{"ts": "2026-02-13 12:10:03.246", "stage": "stt_sanitized", "chars": 10, "text": "The hippie", "meta": {"engine": "openai", "stt_openai_ms": 1432}}
+{"ts": "2026-02-13 12:10:03.251", "stage": "stt_boundary_trim", "chars": 10, "text": "The hippie", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-13 12:10:03.592", "stage": "sentence_buffer_timeout_defer", "chars": 10, "text": "The hippie", "meta": {"wait_ms": 300, "age_ms": 335, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:10:03.716", "stage": "sentence_buffer_timeout_defer", "chars": 10, "text": "The hippie", "meta": {"wait_ms": 300, "age_ms": 460, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:10:03.842", "stage": "sentence_buffer_timeout_defer", "chars": 10, "text": "The hippie", "meta": {"wait_ms": 300, "age_ms": 586, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:10:03.966", "stage": "sentence_buffer_timeout_defer", "chars": 10, "text": "The hippie", "meta": {"wait_ms": 300, "age_ms": 710, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:10:04.090", "stage": "sentence_buffer_timeout_defer", "chars": 10, "text": "The hippie", "meta": {"wait_ms": 300, "age_ms": 834, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:10:04.214", "stage": "sentence_buffer_timeout_defer", "chars": 10, "text": "The hippie", "meta": {"wait_ms": 300, "age_ms": 957, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:10:04.321", "stage": "sentence_buffer_timeout_defer", "chars": 10, "text": "The hippie", "meta": {"wait_ms": 300, "age_ms": 1065, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:10:04.430", "stage": "sentence_buffer_timeout_defer", "chars": 10, "text": "The hippie", "meta": {"wait_ms": 300, "age_ms": 1174, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:10:04.538", "stage": "sentence_buffer_timeout_flush", "chars": 10, "text": "The hippie", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-13 12:10:04.544", "stage": "sentence_enqueued", "chars": 10, "text": "The hippie", "meta": {"queue_size": 1, "stt_openai_ms": 1432, "translate_openai_ms": null}}
+{"ts": "2026-02-13 12:10:04.548", "stage": "translation_input", "chars": 10, "text": "The hippie", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 12:10:05.714", "stage": "translation_output", "chars": 9, "text": "El hippie", "meta": {"translation_enabled": true, "translate_openai_ms": 1158}}
+{"ts": "2026-02-13 12:10:05.719", "stage": "display_update_input", "chars": 9, "text": "El hippie", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 12:10:05.723", "stage": "display_chunk_enqueued", "chars": 9, "text": "El hippie", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-13 12:10:05.979", "stage": "display_word_reveal_complete", "chars": 9, "text": "El hippie"}
+{"ts": "2026-02-13 12:10:11.013", "stage": "stt_raw", "chars": 7, "text": "No hay.", "meta": {"engine": "openai", "stt_openai_ms": 614}}
+{"ts": "2026-02-13 12:10:11.017", "stage": "stt_sanitized", "chars": 7, "text": "No hay.", "meta": {"engine": "openai", "stt_openai_ms": 614}}
+{"ts": "2026-02-13 12:10:11.020", "stage": "stt_boundary_trim", "chars": 7, "text": "No hay.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-13 12:10:11.344", "stage": "sentence_buffer_timeout_defer", "chars": 7, "text": "No hay.", "meta": {"wait_ms": 300, "age_ms": 319, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:10:11.453", "stage": "sentence_buffer_timeout_defer", "chars": 7, "text": "No hay.", "meta": {"wait_ms": 300, "age_ms": 428, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:10:11.562", "stage": "sentence_buffer_timeout_defer", "chars": 7, "text": "No hay.", "meta": {"wait_ms": 300, "age_ms": 537, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:10:11.672", "stage": "sentence_buffer_timeout_defer", "chars": 7, "text": "No hay.", "meta": {"wait_ms": 300, "age_ms": 646, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:10:11.780", "stage": "sentence_buffer_timeout_defer", "chars": 7, "text": "No hay.", "meta": {"wait_ms": 300, "age_ms": 755, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:10:11.904", "stage": "sentence_buffer_timeout_defer", "chars": 7, "text": "No hay.", "meta": {"wait_ms": 300, "age_ms": 879, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:10:12.027", "stage": "sentence_buffer_timeout_defer", "chars": 7, "text": "No hay.", "meta": {"wait_ms": 300, "age_ms": 1002, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:10:12.151", "stage": "sentence_buffer_timeout_defer", "chars": 7, "text": "No hay.", "meta": {"wait_ms": 300, "age_ms": 1126, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:10:12.275", "stage": "sentence_buffer_timeout_flush", "chars": 7, "text": "No hay.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-13 12:10:12.280", "stage": "sentence_enqueued", "chars": 7, "text": "No hay.", "meta": {"queue_size": 1, "stt_openai_ms": 614, "translate_openai_ms": null}}
+{"ts": "2026-02-13 12:10:12.283", "stage": "translation_input", "chars": 7, "text": "No hay.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 12:10:13.026", "stage": "translation_output", "chars": 16, "text": "There isn't any.", "meta": {"translation_enabled": true, "translate_openai_ms": 736}}
+{"ts": "2026-02-13 12:10:13.031", "stage": "display_update_input", "chars": 16, "text": "There isn't any.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 12:10:13.035", "stage": "display_chunk_enqueued", "chars": 16, "text": "There isn't any.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-13 12:10:13.441", "stage": "display_word_reveal_complete", "chars": 16, "text": "There isn't any."}
+{"ts": "2026-02-13 12:10:14.843", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 475}}
+{"ts": "2026-02-13 12:10:14.847", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 475}}
+{"ts": "2026-02-13 12:10:22.671", "stage": "stt_raw", "chars": 3, "text": "###", "meta": {"engine": "openai", "stt_openai_ms": 592}}
+{"ts": "2026-02-13 12:10:22.674", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 592}}
+{"ts": "2026-02-13 12:10:27.970", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 781}}
+{"ts": "2026-02-13 12:10:27.974", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 781}}
+{"ts": "2026-02-13 12:10:29.356", "stage": "stt_raw", "chars": 12, "text": "No hay duda.", "meta": {"engine": "openai", "stt_openai_ms": 467}}
+{"ts": "2026-02-13 12:10:29.363", "stage": "stt_sanitized", "chars": 12, "text": "No hay duda.", "meta": {"engine": "openai", "stt_openai_ms": 467}}
+{"ts": "2026-02-13 12:10:29.367", "stage": "stt_boundary_trim", "chars": 12, "text": "No hay duda.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-13 12:10:29.694", "stage": "sentence_buffer_timeout_defer", "chars": 12, "text": "No hay duda.", "meta": {"wait_ms": 300, "age_ms": 321, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:10:29.804", "stage": "sentence_buffer_timeout_defer", "chars": 12, "text": "No hay duda.", "meta": {"wait_ms": 300, "age_ms": 431, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:10:29.914", "stage": "sentence_buffer_timeout_defer", "chars": 12, "text": "No hay duda.", "meta": {"wait_ms": 300, "age_ms": 541, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:10:30.022", "stage": "sentence_buffer_timeout_defer", "chars": 12, "text": "No hay duda.", "meta": {"wait_ms": 300, "age_ms": 649, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:10:30.132", "stage": "sentence_buffer_timeout_defer", "chars": 12, "text": "No hay duda.", "meta": {"wait_ms": 300, "age_ms": 759, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:10:30.241", "stage": "sentence_buffer_timeout_defer", "chars": 12, "text": "No hay duda.", "meta": {"wait_ms": 300, "age_ms": 868, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:10:30.350", "stage": "sentence_buffer_timeout_defer", "chars": 12, "text": "No hay duda.", "meta": {"wait_ms": 300, "age_ms": 977, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:10:30.460", "stage": "sentence_buffer_timeout_defer", "chars": 12, "text": "No hay duda.", "meta": {"wait_ms": 300, "age_ms": 1087, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:10:30.569", "stage": "sentence_buffer_timeout_defer", "chars": 12, "text": "No hay duda.", "meta": {"wait_ms": 300, "age_ms": 1196, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:10:30.678", "stage": "sentence_buffer_timeout_flush", "chars": 12, "text": "No hay duda.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-13 12:10:30.684", "stage": "sentence_enqueued", "chars": 12, "text": "No hay duda.", "meta": {"queue_size": 1, "stt_openai_ms": 467, "translate_openai_ms": null}}
+{"ts": "2026-02-13 12:10:30.687", "stage": "translation_input", "chars": 12, "text": "No hay duda.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 12:10:31.361", "stage": "translation_output", "chars": 18, "text": "There is no doubt.", "meta": {"translation_enabled": true, "translate_openai_ms": 665}}
+{"ts": "2026-02-13 12:10:31.369", "stage": "display_update_input", "chars": 18, "text": "There is no doubt.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 12:10:31.374", "stage": "display_chunk_enqueued", "chars": 18, "text": "There is no doubt.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-13 12:10:31.546", "stage": "stt_raw", "chars": 2, "text": "No", "meta": {"engine": "openai", "stt_openai_ms": 457}}
+{"ts": "2026-02-13 12:10:31.550", "stage": "stt_sanitized", "chars": 2, "text": "No", "meta": {"engine": "openai", "stt_openai_ms": 457}}
+{"ts": "2026-02-13 12:10:31.557", "stage": "stt_boundary_trim", "chars": 2, "text": "No", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-13 12:10:31.891", "stage": "sentence_buffer_timeout_defer", "chars": 2, "text": "No", "meta": {"wait_ms": 300, "age_ms": 330, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:10:31.938", "stage": "display_word_reveal_complete", "chars": 18, "text": "There is no doubt."}
+{"ts": "2026-02-13 12:10:32.001", "stage": "sentence_buffer_timeout_defer", "chars": 2, "text": "No", "meta": {"wait_ms": 300, "age_ms": 440, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:10:32.110", "stage": "sentence_buffer_timeout_defer", "chars": 2, "text": "No", "meta": {"wait_ms": 300, "age_ms": 549, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:10:32.219", "stage": "sentence_buffer_timeout_defer", "chars": 2, "text": "No", "meta": {"wait_ms": 300, "age_ms": 659, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:10:32.328", "stage": "sentence_buffer_timeout_defer", "chars": 2, "text": "No", "meta": {"wait_ms": 300, "age_ms": 768, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:10:32.438", "stage": "sentence_buffer_timeout_defer", "chars": 2, "text": "No", "meta": {"wait_ms": 300, "age_ms": 877, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:10:32.547", "stage": "sentence_buffer_timeout_defer", "chars": 2, "text": "No", "meta": {"wait_ms": 300, "age_ms": 986, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:10:32.656", "stage": "sentence_buffer_timeout_defer", "chars": 2, "text": "No", "meta": {"wait_ms": 300, "age_ms": 1096, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:10:32.765", "stage": "sentence_buffer_timeout_flush", "chars": 2, "text": "No", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-13 12:10:32.770", "stage": "sentence_enqueued", "chars": 2, "text": "No", "meta": {"queue_size": 1, "stt_openai_ms": 457, "translate_openai_ms": null}}
+{"ts": "2026-02-13 12:10:32.773", "stage": "translation_input", "chars": 2, "text": "No", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 12:10:33.228", "stage": "translation_output", "chars": 2, "text": "No", "meta": {"translation_enabled": true, "translate_openai_ms": 449}}
+{"ts": "2026-02-13 12:10:33.233", "stage": "display_update_input", "chars": 2, "text": "No", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 12:10:33.237", "stage": "display_chunk_enqueued", "chars": 2, "text": "No", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-13 12:10:33.370", "stage": "display_word_reveal_complete", "chars": 2, "text": "No"}
+{"ts": "2026-02-13 12:10:37.398", "stage": "stt_raw", "chars": 1, "text": ".", "meta": {"engine": "openai", "stt_openai_ms": 969}}
+{"ts": "2026-02-13 12:10:37.406", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 969}}
+{"ts": "2026-02-13 12:10:54.783", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 655}}
+{"ts": "2026-02-13 12:10:54.788", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 655}}
+{"ts": "2026-02-13 12:11:01.357", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 618}}
+{"ts": "2026-02-13 12:11:01.364", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 618}}
+{"ts": "2026-02-13 12:11:16.582", "stage": "stt_raw", "chars": 3, "text": "No.", "meta": {"engine": "openai", "stt_openai_ms": 533}}
+{"ts": "2026-02-13 12:11:16.588", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 533}}
+{"ts": "2026-02-13 12:11:20.594", "stage": "stt_raw", "chars": 3, "text": "###", "meta": {"engine": "openai", "stt_openai_ms": 857}}
+{"ts": "2026-02-13 12:11:20.599", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 857}}
+{"ts": "2026-02-13 12:11:24.740", "stage": "stt_raw", "chars": 6, "text": "No sé.", "meta": {"engine": "openai", "stt_openai_ms": 472}}
+{"ts": "2026-02-13 12:11:24.745", "stage": "stt_sanitized", "chars": 6, "text": "No sé.", "meta": {"engine": "openai", "stt_openai_ms": 472}}
+{"ts": "2026-02-13 12:11:24.749", "stage": "stt_boundary_trim", "chars": 6, "text": "No sé.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-13 12:11:25.080", "stage": "sentence_buffer_timeout_defer", "chars": 6, "text": "No sé.", "meta": {"wait_ms": 300, "age_ms": 325, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:11:25.189", "stage": "sentence_buffer_timeout_defer", "chars": 6, "text": "No sé.", "meta": {"wait_ms": 300, "age_ms": 434, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:11:25.298", "stage": "sentence_buffer_timeout_defer", "chars": 6, "text": "No sé.", "meta": {"wait_ms": 300, "age_ms": 542, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:11:25.407", "stage": "sentence_buffer_timeout_defer", "chars": 6, "text": "No sé.", "meta": {"wait_ms": 300, "age_ms": 651, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:11:25.517", "stage": "sentence_buffer_timeout_defer", "chars": 6, "text": "No sé.", "meta": {"wait_ms": 300, "age_ms": 761, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:11:25.626", "stage": "sentence_buffer_timeout_defer", "chars": 6, "text": "No sé.", "meta": {"wait_ms": 300, "age_ms": 871, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:11:25.736", "stage": "sentence_buffer_timeout_defer", "chars": 6, "text": "No sé.", "meta": {"wait_ms": 300, "age_ms": 980, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:11:25.844", "stage": "sentence_buffer_timeout_defer", "chars": 6, "text": "No sé.", "meta": {"wait_ms": 300, "age_ms": 1088, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:11:25.953", "stage": "sentence_buffer_timeout_defer", "chars": 6, "text": "No sé.", "meta": {"wait_ms": 300, "age_ms": 1197, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:11:26.062", "stage": "sentence_buffer_timeout_flush", "chars": 6, "text": "No sé.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-13 12:11:26.067", "stage": "sentence_enqueued", "chars": 6, "text": "No sé.", "meta": {"queue_size": 1, "stt_openai_ms": 472, "translate_openai_ms": null}}
+{"ts": "2026-02-13 12:11:26.075", "stage": "translation_input", "chars": 6, "text": "No sé.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 12:11:26.648", "stage": "translation_output", "chars": 13, "text": "I don't know.", "meta": {"translation_enabled": true, "translate_openai_ms": 566}}
+{"ts": "2026-02-13 12:11:26.655", "stage": "display_update_input", "chars": 13, "text": "I don't know.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 12:11:26.660", "stage": "display_chunk_enqueued", "chars": 13, "text": "I don't know.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-13 12:11:27.043", "stage": "display_word_reveal_complete", "chars": 13, "text": "I don't know."}
+{"ts": "2026-02-13 12:11:49.956", "stage": "stt_raw", "chars": 2, "text": "No", "meta": {"engine": "openai", "stt_openai_ms": 1218}}
+{"ts": "2026-02-13 12:11:49.961", "stage": "stt_sanitized", "chars": 2, "text": "No", "meta": {"engine": "openai", "stt_openai_ms": 1218}}
+{"ts": "2026-02-13 12:11:49.965", "stage": "stt_boundary_trim", "chars": 2, "text": "No", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-13 12:11:50.296", "stage": "sentence_buffer_timeout_defer", "chars": 2, "text": "No", "meta": {"wait_ms": 300, "age_ms": 325, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:11:50.405", "stage": "sentence_buffer_timeout_defer", "chars": 2, "text": "No", "meta": {"wait_ms": 300, "age_ms": 435, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:11:50.516", "stage": "sentence_buffer_timeout_defer", "chars": 2, "text": "No", "meta": {"wait_ms": 300, "age_ms": 545, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:11:50.624", "stage": "sentence_buffer_timeout_defer", "chars": 2, "text": "No", "meta": {"wait_ms": 300, "age_ms": 653, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:11:50.733", "stage": "sentence_buffer_timeout_defer", "chars": 2, "text": "No", "meta": {"wait_ms": 300, "age_ms": 762, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:11:50.857", "stage": "sentence_buffer_timeout_defer", "chars": 2, "text": "No", "meta": {"wait_ms": 300, "age_ms": 887, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:11:50.980", "stage": "sentence_buffer_timeout_defer", "chars": 2, "text": "No", "meta": {"wait_ms": 300, "age_ms": 1010, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:11:51.106", "stage": "sentence_buffer_timeout_defer", "chars": 2, "text": "No", "meta": {"wait_ms": 300, "age_ms": 1135, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:11:51.231", "stage": "sentence_buffer_timeout_flush", "chars": 2, "text": "No", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-13 12:11:51.236", "stage": "sentence_enqueued", "chars": 2, "text": "No", "meta": {"queue_size": 1, "stt_openai_ms": 1218, "translate_openai_ms": null}}
+{"ts": "2026-02-13 12:11:51.240", "stage": "translation_input", "chars": 2, "text": "No", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 12:11:51.709", "stage": "translation_output", "chars": 2, "text": "No", "meta": {"translation_enabled": true, "translate_openai_ms": 462}}
+{"ts": "2026-02-13 12:11:51.714", "stage": "display_update_input", "chars": 2, "text": "No", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 12:11:51.719", "stage": "display_chunk_enqueued", "chars": 2, "text": "No", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-13 12:11:51.858", "stage": "display_word_reveal_complete", "chars": 2, "text": "No"}
+{"ts": "2026-02-13 12:11:53.341", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 812}}
+{"ts": "2026-02-13 12:11:53.347", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 812}}
+{"ts": "2026-02-13 12:11:54.494", "stage": "stt_raw", "chars": 3, "text": "###", "meta": {"engine": "openai", "stt_openai_ms": 505}}
+{"ts": "2026-02-13 12:11:54.499", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 505}}
+{"ts": "2026-02-13 12:11:55.774", "stage": "stt_raw", "chars": 2, "text": "No", "meta": {"engine": "openai", "stt_openai_ms": 466}}
+{"ts": "2026-02-13 12:11:55.778", "stage": "stt_sanitized", "chars": 2, "text": "No", "meta": {"engine": "openai", "stt_openai_ms": 466}}
+{"ts": "2026-02-13 12:11:55.782", "stage": "stt_boundary_trim", "chars": 2, "text": "No", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-13 12:11:56.115", "stage": "sentence_buffer_timeout_defer", "chars": 2, "text": "No", "meta": {"wait_ms": 300, "age_ms": 328, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:11:56.223", "stage": "sentence_buffer_timeout_defer", "chars": 2, "text": "No", "meta": {"wait_ms": 300, "age_ms": 436, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:11:56.332", "stage": "sentence_buffer_timeout_defer", "chars": 2, "text": "No", "meta": {"wait_ms": 300, "age_ms": 545, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:11:56.442", "stage": "sentence_buffer_timeout_defer", "chars": 2, "text": "No", "meta": {"wait_ms": 300, "age_ms": 655, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:11:56.551", "stage": "sentence_buffer_timeout_defer", "chars": 2, "text": "No", "meta": {"wait_ms": 300, "age_ms": 763, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:11:56.661", "stage": "sentence_buffer_timeout_defer", "chars": 2, "text": "No", "meta": {"wait_ms": 300, "age_ms": 873, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:11:56.770", "stage": "sentence_buffer_timeout_defer", "chars": 2, "text": "No", "meta": {"wait_ms": 300, "age_ms": 982, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:11:56.879", "stage": "sentence_buffer_timeout_defer", "chars": 2, "text": "No", "meta": {"wait_ms": 300, "age_ms": 1092, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:11:56.988", "stage": "sentence_buffer_timeout_flush", "chars": 2, "text": "No", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-13 12:11:56.994", "stage": "sentence_enqueued", "chars": 2, "text": "No", "meta": {"queue_size": 1, "stt_openai_ms": 466, "translate_openai_ms": null}}
+{"ts": "2026-02-13 12:11:56.997", "stage": "translation_input", "chars": 2, "text": "No", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 12:11:57.546", "stage": "translation_output", "chars": 2, "text": "No", "meta": {"translation_enabled": true, "translate_openai_ms": 542}}
+{"ts": "2026-02-13 12:11:57.551", "stage": "display_update_input", "chars": 2, "text": "No", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 12:11:57.556", "stage": "display_chunk_enqueued", "chars": 2, "text": "No", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-13 12:11:57.691", "stage": "display_word_reveal_complete", "chars": 2, "text": "No"}
+{"ts": "2026-02-13 12:11:57.823", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 535}}
+{"ts": "2026-02-13 12:11:57.829", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 535}}
+{"ts": "2026-02-13 12:12:02.977", "stage": "stt_raw", "chars": 3, "text": "###", "meta": {"engine": "openai", "stt_openai_ms": 657}}
+{"ts": "2026-02-13 12:12:02.982", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 657}}
+{"ts": "2026-02-13 12:12:04.512", "stage": "stt_raw", "chars": 8, "text": "context:", "meta": {"engine": "openai", "stt_openai_ms": 563}}
+{"ts": "2026-02-13 12:12:04.518", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 563}}
+{"ts": "2026-02-13 12:12:08.981", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 940}}
+{"ts": "2026-02-13 12:12:08.985", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 940}}
+{"ts": "2026-02-13 12:12:10.408", "stage": "stt_raw", "chars": 8, "text": "context:", "meta": {"engine": "openai", "stt_openai_ms": 589}}
+{"ts": "2026-02-13 12:12:10.414", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 589}}
+{"ts": "2026-02-13 12:12:16.002", "stage": "stt_raw", "chars": 8, "text": "context:", "meta": {"engine": "openai", "stt_openai_ms": 533}}
+{"ts": "2026-02-13 12:12:16.008", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 533}}
+{"ts": "2026-02-13 12:12:21.075", "stage": "stt_raw", "chars": 3, "text": "###", "meta": {"engine": "openai", "stt_openai_ms": 945}}
+{"ts": "2026-02-13 12:12:21.080", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 945}}
+{"ts": "2026-02-13 12:12:26.020", "stage": "stt_raw", "chars": 12, "text": "No hay nada.", "meta": {"engine": "openai", "stt_openai_ms": 871}}
+{"ts": "2026-02-13 12:12:26.025", "stage": "stt_sanitized", "chars": 12, "text": "No hay nada.", "meta": {"engine": "openai", "stt_openai_ms": 871}}
+{"ts": "2026-02-13 12:12:26.030", "stage": "stt_boundary_trim", "chars": 12, "text": "No hay nada.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-13 12:12:26.366", "stage": "sentence_buffer_timeout_defer", "chars": 12, "text": "No hay nada.", "meta": {"wait_ms": 300, "age_ms": 331, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:12:26.491", "stage": "sentence_buffer_timeout_defer", "chars": 12, "text": "No hay nada.", "meta": {"wait_ms": 300, "age_ms": 455, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:12:26.598", "stage": "sentence_buffer_timeout_defer", "chars": 12, "text": "No hay nada.", "meta": {"wait_ms": 300, "age_ms": 562, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:12:26.706", "stage": "sentence_buffer_timeout_defer", "chars": 12, "text": "No hay nada.", "meta": {"wait_ms": 300, "age_ms": 670, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:12:26.814", "stage": "sentence_buffer_timeout_defer", "chars": 12, "text": "No hay nada.", "meta": {"wait_ms": 300, "age_ms": 779, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:12:26.922", "stage": "sentence_buffer_timeout_defer", "chars": 12, "text": "No hay nada.", "meta": {"wait_ms": 300, "age_ms": 887, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:12:27.030", "stage": "sentence_buffer_timeout_defer", "chars": 12, "text": "No hay nada.", "meta": {"wait_ms": 300, "age_ms": 995, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:12:27.139", "stage": "sentence_buffer_timeout_defer", "chars": 12, "text": "No hay nada.", "meta": {"wait_ms": 300, "age_ms": 1103, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 12:12:27.262", "stage": "sentence_buffer_timeout_flush", "chars": 12, "text": "No hay nada.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-13 12:12:27.269", "stage": "sentence_enqueued", "chars": 12, "text": "No hay nada.", "meta": {"queue_size": 1, "stt_openai_ms": 871, "translate_openai_ms": null}}
+{"ts": "2026-02-13 12:12:27.272", "stage": "translation_input", "chars": 12, "text": "No hay nada.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 12:12:27.973", "stage": "translation_output", "chars": 17, "text": "There is nothing.", "meta": {"translation_enabled": true, "translate_openai_ms": 690}}
+{"ts": "2026-02-13 12:12:27.977", "stage": "display_update_input", "chars": 17, "text": "There is nothing.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 12:12:27.983", "stage": "display_chunk_enqueued", "chars": 17, "text": "There is nothing.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-13 12:12:28.445", "stage": "display_word_reveal_complete", "chars": 17, "text": "There is nothing."}
+{"ts": "2026-02-13 12:12:36.667", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 627}}
+{"ts": "2026-02-13 12:12:36.672", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 627}}
+{"ts": "2026-02-13 12:12:40.107", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 608}}
+{"ts": "2026-02-13 12:12:40.115", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 608}}
+{"ts": "2026-02-13 12:12:45.755", "stage": "stt_raw", "chars": 3, "text": "###", "meta": {"engine": "openai", "stt_openai_ms": 655}}
+{"ts": "2026-02-13 12:12:45.760", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 655}}
+{"ts": "2026-02-13 12:12:51.252", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 983}}
+{"ts": "2026-02-13 12:12:51.257", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 983}}
+{"ts": "2026-02-13 12:12:59.386", "stage": "stt_raw", "chars": 3, "text": "###", "meta": {"engine": "openai", "stt_openai_ms": 846}}
+{"ts": "2026-02-13 12:12:59.391", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 846}}

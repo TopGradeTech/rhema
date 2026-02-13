@@ -1,0 +1,38 @@
+{"ts": "2026-02-12 19:20:38.263", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 875}}
+{"ts": "2026-02-12 19:20:38.265", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 875}}
+{"ts": "2026-02-12 19:20:42.066", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 618}}
+{"ts": "2026-02-12 19:20:42.069", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 618}}
+{"ts": "2026-02-12 19:20:54.330", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 783}}
+{"ts": "2026-02-12 19:20:54.333", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 783}}
+{"ts": "2026-02-12 19:21:02.262", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 726}}
+{"ts": "2026-02-12 19:21:02.265", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 726}}
+{"ts": "2026-02-12 19:21:33.013", "stage": "stt_raw", "chars": 1, "text": ".", "meta": {"engine": "openai", "stt_openai_ms": 805}}
+{"ts": "2026-02-12 19:21:33.015", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 805}}
+{"ts": "2026-02-12 19:21:35.773", "stage": "stt_raw", "chars": 13, "text": "I don't know.", "meta": {"engine": "openai", "stt_openai_ms": 1987}}
+{"ts": "2026-02-12 19:21:35.776", "stage": "stt_sanitized", "chars": 13, "text": "I don't know.", "meta": {"engine": "openai", "stt_openai_ms": 1987}}
+{"ts": "2026-02-12 19:21:35.777", "stage": "stt_boundary_trim", "chars": 13, "text": "I don't know.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:21:36.221", "stage": "stt_raw", "chars": 1, "text": ".", "meta": {"engine": "openai", "stt_openai_ms": 440}}
+{"ts": "2026-02-12 19:21:36.223", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 440}}
+{"ts": "2026-02-12 19:21:36.225", "stage": "sentence_buffer_timeout_flush", "chars": 13, "text": "I don't know.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:21:36.227", "stage": "sentence_enqueued", "chars": 13, "text": "I don't know.", "meta": {"queue_size": 1, "stt_openai_ms": 440}}
+{"ts": "2026-02-12 19:21:36.229", "stage": "translation_input", "chars": 13, "text": "I don't know.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:21:36.234", "stage": "translation_output", "chars": 13, "text": "I don't know.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:21:36.236", "stage": "display_update_input", "chars": 13, "text": "I don't know.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:21:36.238", "stage": "display_chunk_enqueued", "chars": 13, "text": "I don't know.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:21:36.722", "stage": "display_word_reveal_complete", "chars": 13, "text": "I don't know."}
+{"ts": "2026-02-12 19:21:38.494", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 616}}
+{"ts": "2026-02-12 19:21:38.496", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 616}}
+{"ts": "2026-02-12 19:21:41.525", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 538}}
+{"ts": "2026-02-12 19:21:41.527", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 538}}
+{"ts": "2026-02-12 19:21:44.677", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 669}}
+{"ts": "2026-02-12 19:21:44.680", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 669}}
+{"ts": "2026-02-12 19:21:47.461", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 663}}
+{"ts": "2026-02-12 19:21:47.462", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 663}}
+{"ts": "2026-02-12 19:21:53.063", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 725}}
+{"ts": "2026-02-12 19:21:53.066", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 725}}
+{"ts": "2026-02-12 19:21:55.051", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 783}}
+{"ts": "2026-02-12 19:21:55.052", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 783}}
+{"ts": "2026-02-12 19:21:57.666", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 1609}}
+{"ts": "2026-02-12 19:21:57.668", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 1609}}
+{"ts": "2026-02-12 19:22:04.134", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 437}}
+{"ts": "2026-02-12 19:22:04.136", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 437}}

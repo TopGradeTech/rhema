@@ -1,0 +1,27 @@
+[2026-02-12 16:48:55.523] STATUS: Listening (English)
+[2026-02-12 16:48:59.532] STATUS: Loading faster-whisper model (first run can take a few minutes)...
+[2026-02-12 16:49:01.829] STATUS: Local model ready
+[2026-02-12 16:49:03.332] STATUS: Listening (English)
+[2026-02-12 16:49:03.983] STATUS: Transcribing...
+[2026-02-12 16:49:04.059] STATUS: Listening (English)
+[2026-02-12 16:49:12.967] STATUS: Transcribing...
+[2026-02-12 16:49:13.000] STATUS: Listening (English)
+[2026-02-12 16:49:35.649] STATUS: Heard audio but could not recognize speech.
+[2026-02-12 16:49:42.073] STATUS: App closing requested
+
+--- Close Requested ---
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\main.py", line 4458, in <module>
+    app = TranslationApp()
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\main.py", line 352, in __init__
+    self.root.mainloop()
+  File "C:\Users\zachary.price\AppData\Local\Programs\Python\Python310\lib\tkinter\__init__.py", line 1458, in mainloop
+    self.tk.mainloop(n)
+  File "C:\Users\zachary.price\AppData\Local\Programs\Python\Python310\lib\tkinter\__init__.py", line 1921, in __call__
+    return self.func(*args)
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\main.py", line 438, in on_closing
+    f.write("".join(traceback.format_stack(limit=10)))
+[2026-02-12 16:49:42.084] STATUS: Process exiting
+
+--- Process Exit ---
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\main.py", line 501, in _log_process_exit
+    f.write("".join(traceback.format_stack(limit=10)))

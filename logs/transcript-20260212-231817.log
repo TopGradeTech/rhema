@@ -1,0 +1,169 @@
+{"ts": "2026-02-12 23:18:24.091", "stage": "stt_error", "chars": 0, "text": "", "meta": {"engine": "openai", "error": "OpenAI API key is empty. Enter it in Settings."}}
+{"ts": "2026-02-12 23:18:44.043", "stage": "stt_error", "chars": 0, "text": "", "meta": {"engine": "openai", "error": "OpenAI API key is empty. Enter it in Settings."}}
+{"ts": "2026-02-12 23:18:50.559", "stage": "stt_error", "chars": 0, "text": "", "meta": {"engine": "openai", "error": "OpenAI API key is empty. Enter it in Settings."}}
+{"ts": "2026-02-12 23:18:57.432", "stage": "stt_raw", "chars": 3, "text": "###", "meta": {"engine": "openai", "stt_openai_ms": 1392}}
+{"ts": "2026-02-12 23:18:57.437", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 1392}}
+{"ts": "2026-02-12 23:19:00.874", "stage": "stt_raw", "chars": 8, "text": "context:", "meta": {"engine": "openai", "stt_openai_ms": 1642}}
+{"ts": "2026-02-12 23:19:00.878", "stage": "stt_sanitized", "chars": 8, "text": "context:", "meta": {"engine": "openai", "stt_openai_ms": 1642}}
+{"ts": "2026-02-12 23:19:00.880", "stage": "stt_boundary_trim", "chars": 8, "text": "context:", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 23:19:01.213", "stage": "sentence_buffer_timeout_flush", "chars": 8, "text": "context:", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 23:19:01.218", "stage": "sentence_enqueued", "chars": 8, "text": "context:", "meta": {"queue_size": 1, "stt_openai_ms": 1642, "translate_openai_ms": null}}
+{"ts": "2026-02-12 23:19:01.221", "stage": "translation_input", "chars": 8, "text": "context:", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 23:19:02.941", "stage": "translation_output", "chars": 82, "text": "I'm sorry, I need the text you want translated to provide an accurate translation.", "meta": {"translation_enabled": true, "translate_openai_ms": 1712}}
+{"ts": "2026-02-12 23:19:02.944", "stage": "display_update_input", "chars": 82, "text": "I'm sorry, I need the text you want translated to provide an accurate translation.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 23:19:02.946", "stage": "display_chunk_enqueued", "chars": 30, "text": "I'm sorry, I need the text you", "meta": {"chunk_index": 0, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-12 23:19:02.950", "stage": "display_chunk_enqueued", "chars": 29, "text": "want translated to provide an", "meta": {"chunk_index": 1, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-12 23:19:02.952", "stage": "display_chunk_enqueued", "chars": 21, "text": "accurate translation.", "meta": {"chunk_index": 2, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-12 23:19:04.330", "stage": "display_word_reveal_complete", "chars": 30, "text": "I'm sorry, I need the text you"}
+{"ts": "2026-02-12 23:19:05.336", "stage": "display_word_reveal_complete", "chars": 29, "text": "want translated to provide an"}
+{"ts": "2026-02-12 23:19:05.723", "stage": "display_word_reveal_complete", "chars": 21, "text": "accurate translation."}
+{"ts": "2026-02-12 23:19:05.852", "stage": "stt_raw", "chars": 12, "text": "No hay duda.", "meta": {"engine": "openai", "stt_openai_ms": 1171}}
+{"ts": "2026-02-12 23:19:05.856", "stage": "stt_sanitized", "chars": 12, "text": "No hay duda.", "meta": {"engine": "openai", "stt_openai_ms": 1171}}
+{"ts": "2026-02-12 23:19:05.861", "stage": "stt_boundary_trim", "chars": 12, "text": "No hay duda.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 23:19:06.204", "stage": "sentence_buffer_timeout_flush", "chars": 12, "text": "No hay duda.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 23:19:06.209", "stage": "sentence_enqueued", "chars": 12, "text": "No hay duda.", "meta": {"queue_size": 1, "stt_openai_ms": 1171, "translate_openai_ms": null}}
+{"ts": "2026-02-12 23:19:06.213", "stage": "translation_input", "chars": 12, "text": "No hay duda.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 23:19:07.914", "stage": "translation_output", "chars": 18, "text": "There is no doubt.", "meta": {"translation_enabled": true, "translate_openai_ms": 1696}}
+{"ts": "2026-02-12 23:19:07.933", "stage": "display_update_input", "chars": 18, "text": "There is no doubt.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 23:19:07.956", "stage": "display_chunk_enqueued", "chars": 18, "text": "There is no doubt.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 23:19:09.460", "stage": "display_word_reveal_complete", "chars": 18, "text": "There is no doubt."}
+{"ts": "2026-02-12 23:19:12.925", "stage": "stt_raw", "chars": 3, "text": "###", "meta": {"engine": "openai", "stt_openai_ms": 941}}
+{"ts": "2026-02-12 23:19:12.929", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 941}}
+{"ts": "2026-02-12 23:19:14.202", "stage": "stt_raw", "chars": 3, "text": "###", "meta": {"engine": "openai", "stt_openai_ms": 448}}
+{"ts": "2026-02-12 23:19:14.209", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 448}}
+{"ts": "2026-02-12 23:19:27.979", "stage": "stt_raw", "chars": 3, "text": "###", "meta": {"engine": "openai", "stt_openai_ms": 1136}}
+{"ts": "2026-02-12 23:19:27.982", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 1136}}
+{"ts": "2026-02-12 23:19:36.876", "stage": "stt_raw", "chars": 16, "text": "No hay problema.", "meta": {"engine": "openai", "stt_openai_ms": 534}}
+{"ts": "2026-02-12 23:19:36.878", "stage": "stt_sanitized", "chars": 16, "text": "No hay problema.", "meta": {"engine": "openai", "stt_openai_ms": 534}}
+{"ts": "2026-02-12 23:19:36.881", "stage": "stt_boundary_trim", "chars": 16, "text": "No hay problema.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 23:19:37.214", "stage": "sentence_buffer_timeout_flush", "chars": 16, "text": "No hay problema.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 23:19:37.218", "stage": "sentence_enqueued", "chars": 16, "text": "No hay problema.", "meta": {"queue_size": 1, "stt_openai_ms": 534, "translate_openai_ms": null}}
+{"ts": "2026-02-12 23:19:37.220", "stage": "translation_input", "chars": 16, "text": "No hay problema.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 23:19:40.421", "stage": "translation_output", "chars": 11, "text": "No problem.", "meta": {"translation_enabled": true, "translate_openai_ms": 3195}}
+{"ts": "2026-02-12 23:19:40.424", "stage": "display_update_input", "chars": 11, "text": "No problem.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 23:19:40.428", "stage": "display_chunk_enqueued", "chars": 11, "text": "No problem.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 23:19:40.804", "stage": "display_word_reveal_complete", "chars": 11, "text": "No problem."}
+{"ts": "2026-02-12 23:19:41.727", "stage": "stt_raw", "chars": 8, "text": "context:", "meta": {"engine": "openai", "stt_openai_ms": 1695}}
+{"ts": "2026-02-12 23:19:41.732", "stage": "stt_sanitized", "chars": 8, "text": "context:", "meta": {"engine": "openai", "stt_openai_ms": 1695}}
+{"ts": "2026-02-12 23:19:41.739", "stage": "stt_boundary_trim", "chars": 8, "text": "context:", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 23:19:42.074", "stage": "sentence_buffer_timeout_flush", "chars": 8, "text": "context:", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 23:19:42.079", "stage": "sentence_enqueued", "chars": 8, "text": "context:", "meta": {"queue_size": 1, "stt_openai_ms": 1695, "translate_openai_ms": null}}
+{"ts": "2026-02-12 23:19:42.083", "stage": "translation_input", "chars": 8, "text": "context:", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 23:19:43.008", "stage": "translation_output", "chars": 55, "text": "Of course! Please provide the text you need translated.", "meta": {"translation_enabled": true, "translate_openai_ms": 918}}
+{"ts": "2026-02-12 23:19:43.012", "stage": "display_update_input", "chars": 55, "text": "Of course! Please provide the text you need translated.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 23:19:43.014", "stage": "display_chunk_enqueued", "chars": 29, "text": "Of course! Please provide the", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 23:19:43.018", "stage": "display_chunk_enqueued", "chars": 25, "text": "text you need translated.", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 23:19:43.948", "stage": "display_word_reveal_complete", "chars": 29, "text": "Of course! Please provide the"}
+{"ts": "2026-02-12 23:19:44.646", "stage": "display_word_reveal_complete", "chars": 25, "text": "text you need translated."}
+{"ts": "2026-02-12 23:22:31.957", "stage": "stt_raw", "chars": 12, "text": "No hay nada.", "meta": {"engine": "openai", "stt_openai_ms": 606}}
+{"ts": "2026-02-12 23:22:31.962", "stage": "stt_sanitized", "chars": 12, "text": "No hay nada.", "meta": {"engine": "openai", "stt_openai_ms": 606}}
+{"ts": "2026-02-12 23:22:31.966", "stage": "stt_boundary_trim", "chars": 12, "text": "No hay nada.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 23:22:32.298", "stage": "sentence_buffer_timeout_flush", "chars": 12, "text": "No hay nada.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 23:22:32.303", "stage": "sentence_enqueued", "chars": 12, "text": "No hay nada.", "meta": {"queue_size": 1, "stt_openai_ms": 606, "translate_openai_ms": null}}
+{"ts": "2026-02-12 23:22:32.306", "stage": "translation_input", "chars": 12, "text": "No hay nada.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 23:22:33.006", "stage": "translation_output", "chars": 17, "text": "There is nothing.", "meta": {"translation_enabled": true, "translate_openai_ms": 695}}
+{"ts": "2026-02-12 23:22:33.011", "stage": "display_update_input", "chars": 17, "text": "There is nothing.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 23:22:33.016", "stage": "display_chunk_enqueued", "chars": 17, "text": "There is nothing.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 23:22:33.574", "stage": "display_word_reveal_complete", "chars": 17, "text": "There is nothing."}
+{"ts": "2026-02-12 23:23:55.718", "stage": "stt_raw", "chars": 3, "text": "No.", "meta": {"engine": "openai", "stt_openai_ms": 726}}
+{"ts": "2026-02-12 23:23:55.724", "stage": "stt_sanitized", "chars": 3, "text": "No.", "meta": {"engine": "openai", "stt_openai_ms": 726}}
+{"ts": "2026-02-12 23:23:55.727", "stage": "stt_boundary_trim", "chars": 3, "text": "No.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 23:23:56.061", "stage": "sentence_buffer_timeout_flush", "chars": 3, "text": "No.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 23:23:56.064", "stage": "sentence_enqueued", "chars": 3, "text": "No.", "meta": {"queue_size": 1, "stt_openai_ms": 726, "translate_openai_ms": null}}
+{"ts": "2026-02-12 23:23:56.066", "stage": "translation_input", "chars": 3, "text": "No.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 23:23:57.669", "stage": "translation_output", "chars": 3, "text": "No.", "meta": {"translation_enabled": true, "translate_openai_ms": 1596}}
+{"ts": "2026-02-12 23:23:57.675", "stage": "display_update_input", "chars": 3, "text": "No.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 23:23:57.679", "stage": "display_chunk_enqueued", "chars": 3, "text": "No.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 23:23:57.874", "stage": "display_word_reveal_complete", "chars": 3, "text": "No."}
+{"ts": "2026-02-12 23:24:01.614", "stage": "stt_raw", "chars": 3, "text": "###", "meta": {"engine": "openai", "stt_openai_ms": 661}}
+{"ts": "2026-02-12 23:24:01.618", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 661}}
+{"ts": "2026-02-12 23:24:06.979", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 827}}
+{"ts": "2026-02-12 23:24:06.984", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 827}}
+{"ts": "2026-02-12 23:24:13.035", "stage": "stt_raw", "chars": 6, "text": "No hay", "meta": {"engine": "openai", "stt_openai_ms": 724}}
+{"ts": "2026-02-12 23:24:13.039", "stage": "stt_sanitized", "chars": 6, "text": "No hay", "meta": {"engine": "openai", "stt_openai_ms": 724}}
+{"ts": "2026-02-12 23:24:13.042", "stage": "stt_boundary_trim", "chars": 6, "text": "No hay", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 23:24:13.368", "stage": "sentence_buffer_timeout_flush", "chars": 6, "text": "No hay", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 23:24:13.371", "stage": "sentence_enqueued", "chars": 6, "text": "No hay", "meta": {"queue_size": 1, "stt_openai_ms": 724, "translate_openai_ms": null}}
+{"ts": "2026-02-12 23:24:13.375", "stage": "translation_input", "chars": 6, "text": "No hay", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 23:24:14.985", "stage": "translation_output", "chars": 11, "text": "There isn't", "meta": {"translation_enabled": true, "translate_openai_ms": 1605}}
+{"ts": "2026-02-12 23:24:14.989", "stage": "display_update_input", "chars": 11, "text": "There isn't", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 23:24:14.994", "stage": "display_chunk_enqueued", "chars": 11, "text": "There isn't", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 23:24:15.384", "stage": "display_word_reveal_complete", "chars": 11, "text": "There isn't"}
+{"ts": "2026-02-12 23:24:31.963", "stage": "stt_raw", "chars": 3, "text": "###", "meta": {"engine": "openai", "stt_openai_ms": 1050}}
+{"ts": "2026-02-12 23:24:31.973", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 1050}}
+{"ts": "2026-02-12 23:24:35.683", "stage": "stt_raw", "chars": 16, "text": "No hay problema.", "meta": {"engine": "openai", "stt_openai_ms": 501}}
+{"ts": "2026-02-12 23:24:35.687", "stage": "stt_sanitized", "chars": 16, "text": "No hay problema.", "meta": {"engine": "openai", "stt_openai_ms": 501}}
+{"ts": "2026-02-12 23:24:35.692", "stage": "stt_boundary_trim", "chars": 16, "text": "No hay problema.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 23:24:36.030", "stage": "sentence_buffer_timeout_flush", "chars": 16, "text": "No hay problema.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 23:24:36.036", "stage": "sentence_enqueued", "chars": 16, "text": "No hay problema.", "meta": {"queue_size": 1, "stt_openai_ms": 501, "translate_openai_ms": null}}
+{"ts": "2026-02-12 23:24:36.041", "stage": "translation_input", "chars": 16, "text": "No hay problema.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 23:24:36.628", "stage": "translation_output", "chars": 11, "text": "No problem.", "meta": {"translation_enabled": true, "translate_openai_ms": 580}}
+{"ts": "2026-02-12 23:24:36.632", "stage": "display_update_input", "chars": 11, "text": "No problem.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 23:24:36.637", "stage": "display_chunk_enqueued", "chars": 11, "text": "No problem.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 23:24:37.021", "stage": "display_word_reveal_complete", "chars": 11, "text": "No problem."}
+{"ts": "2026-02-12 23:24:42.899", "stage": "stt_raw", "chars": 3, "text": "###", "meta": {"engine": "openai", "stt_openai_ms": 519}}
+{"ts": "2026-02-12 23:24:42.904", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 519}}
+{"ts": "2026-02-12 23:25:23.095", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 523}}
+{"ts": "2026-02-12 23:25:23.099", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 523}}
+{"ts": "2026-02-12 23:25:33.538", "stage": "stt_raw", "chars": 2, "text": "Sí", "meta": {"engine": "openai", "stt_openai_ms": 725}}
+{"ts": "2026-02-12 23:25:33.543", "stage": "stt_sanitized", "chars": 2, "text": "Sí", "meta": {"engine": "openai", "stt_openai_ms": 725}}
+{"ts": "2026-02-12 23:25:33.551", "stage": "stt_boundary_trim", "chars": 2, "text": "Sí", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 23:25:33.893", "stage": "sentence_buffer_timeout_flush", "chars": 2, "text": "Sí", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 23:25:33.897", "stage": "sentence_enqueued", "chars": 2, "text": "Sí", "meta": {"queue_size": 1, "stt_openai_ms": 725, "translate_openai_ms": null}}
+{"ts": "2026-02-12 23:25:33.901", "stage": "translation_input", "chars": 2, "text": "Sí", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 23:25:34.379", "stage": "translation_output", "chars": 3, "text": "Yes", "meta": {"translation_enabled": true, "translate_openai_ms": 472}}
+{"ts": "2026-02-12 23:25:34.383", "stage": "display_update_input", "chars": 3, "text": "Yes", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 23:25:34.386", "stage": "display_chunk_enqueued", "chars": 3, "text": "Yes", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 23:25:34.575", "stage": "display_word_reveal_complete", "chars": 3, "text": "Yes"}
+{"ts": "2026-02-12 23:26:36.290", "stage": "stt_raw", "chars": 7, "text": "Esquema", "meta": {"engine": "openai", "stt_openai_ms": 827}}
+{"ts": "2026-02-12 23:26:36.294", "stage": "stt_sanitized", "chars": 7, "text": "Esquema", "meta": {"engine": "openai", "stt_openai_ms": 827}}
+{"ts": "2026-02-12 23:26:36.299", "stage": "stt_boundary_trim", "chars": 7, "text": "Esquema", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 23:26:36.622", "stage": "sentence_buffer_timeout_flush", "chars": 7, "text": "Esquema", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 23:26:36.625", "stage": "sentence_enqueued", "chars": 7, "text": "Esquema", "meta": {"queue_size": 1, "stt_openai_ms": 827, "translate_openai_ms": null}}
+{"ts": "2026-02-12 23:26:36.628", "stage": "translation_input", "chars": 7, "text": "Esquema", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 23:26:38.104", "stage": "stt_raw", "chars": 5, "text": "What?", "meta": {"engine": "openai", "stt_openai_ms": 852}}
+{"ts": "2026-02-12 23:26:38.108", "stage": "stt_sanitized", "chars": 5, "text": "What?", "meta": {"engine": "openai", "stt_openai_ms": 852}}
+{"ts": "2026-02-12 23:26:38.114", "stage": "stt_boundary_trim", "chars": 5, "text": "What?", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 23:26:38.183", "stage": "translation_output", "chars": 7, "text": "Outline", "meta": {"translation_enabled": true, "translate_openai_ms": 1548}}
+{"ts": "2026-02-12 23:26:38.188", "stage": "display_update_input", "chars": 7, "text": "Outline", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 23:26:38.191", "stage": "display_chunk_enqueued", "chars": 7, "text": "Outline", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 23:26:38.375", "stage": "display_word_reveal_complete", "chars": 7, "text": "Outline"}
+{"ts": "2026-02-12 23:26:38.452", "stage": "sentence_buffer_timeout_flush", "chars": 5, "text": "What?", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 23:26:38.456", "stage": "sentence_enqueued", "chars": 5, "text": "What?", "meta": {"queue_size": 1, "stt_openai_ms": 852, "translate_openai_ms": null}}
+{"ts": "2026-02-12 23:26:38.458", "stage": "translation_input", "chars": 5, "text": "What?", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 23:26:39.482", "stage": "translation_output", "chars": 5, "text": "¿Qué?", "meta": {"translation_enabled": true, "translate_openai_ms": 1016}}
+{"ts": "2026-02-12 23:26:39.497", "stage": "display_update_input", "chars": 5, "text": "¿Qué?", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 23:26:39.510", "stage": "display_chunk_enqueued", "chars": 5, "text": "¿Qué?", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 23:26:39.768", "stage": "display_word_reveal_complete", "chars": 5, "text": "¿Qué?"}
+{"ts": "2026-02-12 23:26:45.269", "stage": "stt_raw", "chars": 2, "text": "Oh", "meta": {"engine": "openai", "stt_openai_ms": 587}}
+{"ts": "2026-02-12 23:26:45.273", "stage": "stt_sanitized", "chars": 2, "text": "Oh", "meta": {"engine": "openai", "stt_openai_ms": 587}}
+{"ts": "2026-02-12 23:26:45.277", "stage": "stt_boundary_trim", "chars": 2, "text": "Oh", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 23:26:45.615", "stage": "sentence_buffer_timeout_flush", "chars": 2, "text": "Oh", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 23:26:45.620", "stage": "sentence_enqueued", "chars": 2, "text": "Oh", "meta": {"queue_size": 1, "stt_openai_ms": 587, "translate_openai_ms": null}}
+{"ts": "2026-02-12 23:26:45.623", "stage": "translation_input", "chars": 2, "text": "Oh", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 23:26:46.123", "stage": "translation_output", "chars": 2, "text": "Oh", "meta": {"translation_enabled": true, "translate_openai_ms": 493}}
+{"ts": "2026-02-12 23:26:46.130", "stage": "display_update_input", "chars": 2, "text": "Oh", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 23:26:46.134", "stage": "display_chunk_enqueued", "chars": 2, "text": "Oh", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 23:26:46.325", "stage": "display_word_reveal_complete", "chars": 2, "text": "Oh"}
+{"ts": "2026-02-12 23:26:52.867", "stage": "stt_raw", "chars": 12, "text": "That's lame.", "meta": {"engine": "openai", "stt_openai_ms": 456}}
+{"ts": "2026-02-12 23:26:52.870", "stage": "stt_sanitized", "chars": 12, "text": "That's lame.", "meta": {"engine": "openai", "stt_openai_ms": 456}}
+{"ts": "2026-02-12 23:26:52.874", "stage": "stt_boundary_trim", "chars": 12, "text": "That's lame.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 23:26:53.202", "stage": "sentence_buffer_timeout_flush", "chars": 12, "text": "That's lame.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 23:26:53.207", "stage": "sentence_enqueued", "chars": 12, "text": "That's lame.", "meta": {"queue_size": 1, "stt_openai_ms": 456, "translate_openai_ms": null}}
+{"ts": "2026-02-12 23:26:53.211", "stage": "translation_input", "chars": 12, "text": "That's lame.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 23:26:54.840", "stage": "translation_output", "chars": 16, "text": "Eso es patético.", "meta": {"translation_enabled": true, "translate_openai_ms": 1622}}
+{"ts": "2026-02-12 23:26:54.847", "stage": "display_update_input", "chars": 16, "text": "Eso es patético.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 23:26:54.852", "stage": "display_chunk_enqueued", "chars": 16, "text": "Eso es patético.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 23:26:55.438", "stage": "display_word_reveal_complete", "chars": 16, "text": "Eso es patético."}
+{"ts": "2026-02-12 23:27:00.495", "stage": "stt_raw", "chars": 2, "text": "No", "meta": {"engine": "openai", "stt_openai_ms": 533}}
+{"ts": "2026-02-12 23:27:00.499", "stage": "stt_sanitized", "chars": 2, "text": "No", "meta": {"engine": "openai", "stt_openai_ms": 533}}
+{"ts": "2026-02-12 23:27:00.504", "stage": "stt_boundary_trim", "chars": 2, "text": "No", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 23:27:00.850", "stage": "sentence_buffer_timeout_flush", "chars": 2, "text": "No", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 23:27:00.855", "stage": "sentence_enqueued", "chars": 2, "text": "No", "meta": {"queue_size": 1, "stt_openai_ms": 533, "translate_openai_ms": null}}
+{"ts": "2026-02-12 23:27:00.859", "stage": "translation_input", "chars": 2, "text": "No", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 23:27:01.522", "stage": "translation_output", "chars": 2, "text": "No", "meta": {"translation_enabled": true, "translate_openai_ms": 655}}
+{"ts": "2026-02-12 23:27:01.528", "stage": "display_update_input", "chars": 2, "text": "No", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 23:27:01.534", "stage": "display_chunk_enqueued", "chars": 2, "text": "No", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 23:27:01.752", "stage": "display_word_reveal_complete", "chars": 2, "text": "No"}
+{"ts": "2026-02-12 23:27:03.892", "stage": "stt_raw", "chars": 3, "text": "###", "meta": {"engine": "openai", "stt_openai_ms": 780}}
+{"ts": "2026-02-12 23:27:03.896", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 780}}

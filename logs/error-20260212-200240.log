@@ -1,0 +1,89 @@
+[2026-02-12 20:02:41.989] STATUS: Listening (Detecting: English/Spanish)
+[2026-02-12 20:02:47.759] STATUS: Translating...
+[2026-02-12 20:02:48.795] STATUS: Listening (Detecting: English/Spanish)
+[2026-02-12 20:02:50.963] STATUS: Translating...
+[2026-02-12 20:02:51.911] STATUS: Listening (Detecting: English/Spanish)
+[2026-02-12 20:02:56.764] STATUS: Translating...
+[2026-02-12 20:02:57.214] STATUS: Listening (Detecting: English/Spanish)
+[2026-02-12 20:02:59.804] STATUS: Apply clicked
+[2026-02-12 20:03:00.863] STATUS: Settings applied
+[2026-02-12 20:03:00.864] STATUS: Apply finished
+[2026-02-12 20:03:01.321] STATUS: Listening (Detecting: English/Spanish)
+[2026-02-12 20:03:06.723] STATUS: Translating...
+[2026-02-12 20:03:07.446] STATUS: Listening (Detecting: English/Spanish)
+[2026-02-12 20:03:13.896] STATUS: Translating...
+[2026-02-12 20:03:14.413] STATUS: Listening (Detecting: English/Spanish)
+[2026-02-12 20:03:17.114] STATUS: Apply clicked
+[2026-02-12 20:03:17.604] STATUS: Settings applied
+[2026-02-12 20:03:17.606] STATUS: Apply finished
+[2026-02-12 20:03:18.070] STATUS: Listening (Detecting: English/Spanish)
+[2026-02-12 20:03:18.621] STATUS: Translating...
+[2026-02-12 20:03:19.259] STATUS: Listening (Detecting: English/Spanish)
+[2026-02-12 20:03:23.830] STATUS: Translating...
+[2026-02-12 20:03:24.486] STATUS: Listening (Detecting: English/Spanish)
+[2026-02-12 20:03:29.430] STATUS: No speech detected. Check mic level or device.
+[2026-02-12 20:03:55.156] STATUS: Apply clicked
+[2026-02-12 20:03:56.326] STATUS: Settings applied
+[2026-02-12 20:03:56.328] STATUS: Apply finished
+[2026-02-12 20:03:56.952] STATUS: Listening (Spanish)
+[2026-02-12 20:04:13.399] STATUS: Translating...
+[2026-02-12 20:04:14.237] STATUS: Listening (Spanish)
+[2026-02-12 20:04:15.234] STATUS: Translating...
+[2026-02-12 20:04:15.914] STATUS: Listening (Spanish)
+[2026-02-12 20:04:21.433] STATUS: No speech detected. Check mic level or device.
+[2026-02-12 20:04:33.989] STATUS: Translating...
+[2026-02-12 20:04:34.613] STATUS: Listening (Spanish)
+[2026-02-12 20:04:38.612] STATUS: Translating...
+[2026-02-12 20:04:39.777] STATUS: Listening (Spanish)
+[2026-02-12 20:04:55.152] STATUS: Translating...
+[2026-02-12 20:04:55.710] STATUS: Listening (Spanish)
+[2026-02-12 20:05:01.543] STATUS: Translating...
+[2026-02-12 20:05:02.097] STATUS: Listening (Spanish)
+[2026-02-12 20:05:09.036] STATUS: Translating...
+[2026-02-12 20:05:09.624] STATUS: Listening (Spanish)
+[2026-02-12 20:05:16.163] STATUS: No speech detected. Check mic level or device.
+[2026-02-12 20:05:33.188] STATUS: Translating...
+[2026-02-12 20:05:33.815] STATUS: Listening (Spanish)
+[2026-02-12 20:05:38.856] STATUS: Translating...
+[2026-02-12 20:05:39.924] STATUS: Listening (Spanish)
+[2026-02-12 20:05:54.359] STATUS: Translating...
+[2026-02-12 20:05:54.967] STATUS: Listening (Spanish)
+[2026-02-12 20:05:58.388] STATUS: Translating...
+[2026-02-12 20:05:59.482] STATUS: Listening (Spanish)
+[2026-02-12 20:06:38.754] STATUS: Translating...
+[2026-02-12 20:06:39.931] STATUS: Listening (Spanish)
+[2026-02-12 20:06:50.246] STATUS: Translating...
+[2026-02-12 20:06:51.083] STATUS: Listening (Spanish)
+[2026-02-12 20:07:00.587] STATUS: Translating...
+[2026-02-12 20:07:01.429] STATUS: Listening (Spanish)
+[2026-02-12 20:07:17.503] STATUS: No speech detected. Check mic level or device.
+[2026-02-12 20:07:55.653] STATUS: Translating...
+[2026-02-12 20:07:56.074] STATUS: Apply clicked
+[2026-02-12 20:07:58.871] STATUS: Settings applied
+[2026-02-12 20:07:58.873] STATUS: Apply finished
+[2026-02-12 20:07:58.877] STATUS: Listening (Spanish)
+[2026-02-12 20:08:21.080] STATUS: Translating...
+[2026-02-12 20:08:22.061] STATUS: Listening (Spanish)
+[2026-02-12 20:08:25.945] STATUS: Translating...
+[2026-02-12 20:08:26.685] STATUS: Listening (Spanish)
+[2026-02-12 20:08:28.275] STATUS: Translating...
+[2026-02-12 20:08:28.836] STATUS: Listening (Spanish)
+[2026-02-12 20:08:36.636] STATUS: No speech detected. Check mic level or device.
+[2026-02-12 20:09:20.718] STATUS: App closing requested
+
+--- Close Requested ---
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\main.py", line 5064, in <module>
+    self.update_text_metrics()
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\main.py", line 375, in __init__
+    self.root.mainloop()
+  File "C:\Users\zachary.price\AppData\Local\Programs\Python\Python310\lib\tkinter\__init__.py", line 1458, in mainloop
+    self.tk.mainloop(n)
+  File "C:\Users\zachary.price\AppData\Local\Programs\Python\Python310\lib\tkinter\__init__.py", line 1921, in __call__
+    return self.func(*args)
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\main.py", line 461, in on_closing
+    f.write("".join(traceback.format_stack(limit=10)))
+[2026-02-12 20:09:20.727] STATUS: Process exiting
+
+--- Process Exit ---
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\main.py", line 524, in _log_process_exit
+    f.write("".join(traceback.format_stack(limit=10)))

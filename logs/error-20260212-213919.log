@@ -1,0 +1,27 @@
+[2026-02-12 21:39:21.317] STATUS: Listening (Spanish)
+[2026-02-12 21:39:27.307] STATUS: No speech detected. Check mic level or device.
+[2026-02-12 21:39:31.577] STATUS: Apply clicked
+[2026-02-12 21:39:32.307] STATUS: No speech detected. Check mic level or device.
+[2026-02-12 21:39:35.626] STATUS: Capture suspend timed out
+[2026-02-12 21:39:35.627] STATUS: Skipping device refresh while capture is active
+[2026-02-12 21:39:35.666] STATUS: Settings applied
+[2026-02-12 21:39:35.669] STATUS: Apply finished
+[2026-02-12 21:39:37.676] STATUS: Listening (Spanish)
+[2026-02-12 21:41:25.561] STATUS: App closing requested
+
+--- Close Requested ---
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\main.py", line 5212, in <module>
+    app = TranslationApp()
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\main.py", line 378, in __init__
+    self.root.mainloop()
+  File "C:\Users\zachary.price\AppData\Local\Programs\Python\Python310\lib\tkinter\__init__.py", line 1458, in mainloop
+    self.tk.mainloop(n)
+  File "C:\Users\zachary.price\AppData\Local\Programs\Python\Python310\lib\tkinter\__init__.py", line 1921, in __call__
+    return self.func(*args)
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\main.py", line 464, in on_closing
+    f.write("".join(traceback.format_stack(limit=10)))
+[2026-02-12 21:41:25.573] STATUS: Process exiting
+
+--- Process Exit ---
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\main.py", line 527, in _log_process_exit
+    f.write("".join(traceback.format_stack(limit=10)))

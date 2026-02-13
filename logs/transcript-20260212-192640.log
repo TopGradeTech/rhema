@@ -1,0 +1,14 @@
+{"ts": "2026-02-12 19:27:03.941", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 932}}
+{"ts": "2026-02-12 19:27:03.942", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 932}}
+{"ts": "2026-02-12 19:27:07.942", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 1034}}
+{"ts": "2026-02-12 19:27:07.944", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 1034}}
+{"ts": "2026-02-12 19:27:11.478", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 710}}
+{"ts": "2026-02-12 19:27:11.479", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 710}}
+{"ts": "2026-02-12 19:27:14.504", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 696}}
+{"ts": "2026-02-12 19:27:14.506", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 696}}
+{"ts": "2026-02-12 19:27:16.905", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 688}}
+{"ts": "2026-02-12 19:27:16.907", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 688}}
+{"ts": "2026-02-12 19:27:18.968", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 791}}
+{"ts": "2026-02-12 19:27:18.971", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 791}}
+{"ts": "2026-02-12 19:27:23.878", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 811}}
+{"ts": "2026-02-12 19:27:23.880", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 811}}
