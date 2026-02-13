@@ -1,0 +1,2 @@
+{"ts": "2026-02-13 00:28:20.223", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 1106}}
+{"ts": "2026-02-13 00:28:20.226", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 1106}}

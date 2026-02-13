@@ -1,0 +1,84 @@
+{"ts": "2026-02-12 21:27:42.201", "stage": "stt_raw", "chars": 16, "text": "No hay problema.", "meta": {"engine": "openai", "stt_openai_ms": 639}}
+{"ts": "2026-02-12 21:27:42.204", "stage": "stt_sanitized", "chars": 16, "text": "No hay problema.", "meta": {"engine": "openai", "stt_openai_ms": 639}}
+{"ts": "2026-02-12 21:27:42.210", "stage": "stt_boundary_trim", "chars": 16, "text": "No hay problema.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 21:27:42.544", "stage": "sentence_buffer_timeout_flush", "chars": 16, "text": "No hay problema.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 21:27:42.546", "stage": "sentence_enqueued", "chars": 16, "text": "No hay problema.", "meta": {"queue_size": 1, "stt_openai_ms": 639}}
+{"ts": "2026-02-12 21:27:42.547", "stage": "translation_input", "chars": 16, "text": "No hay problema.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 21:27:43.061", "stage": "translation_output", "chars": 11, "text": "No problem.", "meta": {"translation_enabled": true, "translate_openai_ms": 507}}
+{"ts": "2026-02-12 21:27:43.063", "stage": "display_update_input", "chars": 11, "text": "No problem.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 21:27:43.064", "stage": "display_chunk_enqueued", "chars": 11, "text": "No problem.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 21:27:43.398", "stage": "display_word_reveal_complete", "chars": 11, "text": "No problem."}
+{"ts": "2026-02-12 21:27:51.096", "stage": "stt_raw", "chars": 16, "text": "Se la come viva.", "meta": {"engine": "openai", "stt_openai_ms": 1289}}
+{"ts": "2026-02-12 21:27:51.103", "stage": "stt_sanitized", "chars": 16, "text": "Se la come viva.", "meta": {"engine": "openai", "stt_openai_ms": 1289}}
+{"ts": "2026-02-12 21:27:51.104", "stage": "stt_boundary_trim", "chars": 16, "text": "Se la come viva.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 21:27:51.981", "stage": "sentence_buffer_timeout_flush", "chars": 16, "text": "Se la come viva.", "meta": {"wait_ms": 800}}
+{"ts": "2026-02-12 21:27:51.983", "stage": "sentence_enqueued", "chars": 16, "text": "Se la come viva.", "meta": {"queue_size": 1, "stt_openai_ms": 1289}}
+{"ts": "2026-02-12 21:27:51.985", "stage": "translation_input", "chars": 16, "text": "Se la come viva.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 21:27:52.797", "stage": "translation_output", "chars": 15, "text": "Eats her alive.", "meta": {"translation_enabled": true, "translate_openai_ms": 809}}
+{"ts": "2026-02-12 21:27:52.799", "stage": "display_update_input", "chars": 15, "text": "Eats her alive.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 21:27:52.801", "stage": "display_chunk_enqueued", "chars": 15, "text": "Eats her alive.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 21:27:53.301", "stage": "display_word_reveal_complete", "chars": 15, "text": "Eats her alive."}
+{"ts": "2026-02-12 21:28:13.771", "stage": "stt_raw", "chars": 17, "text": "Bueno, casi nada.", "meta": {"engine": "openai", "stt_openai_ms": 675}}
+{"ts": "2026-02-12 21:28:13.775", "stage": "stt_sanitized", "chars": 17, "text": "Bueno, casi nada.", "meta": {"engine": "openai", "stt_openai_ms": 675}}
+{"ts": "2026-02-12 21:28:13.777", "stage": "stt_boundary_trim", "chars": 17, "text": "Bueno, casi nada.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 21:28:14.662", "stage": "sentence_buffer_timeout_flush", "chars": 17, "text": "Bueno, casi nada.", "meta": {"wait_ms": 800}}
+{"ts": "2026-02-12 21:28:14.665", "stage": "sentence_enqueued", "chars": 17, "text": "Bueno, casi nada.", "meta": {"queue_size": 1, "stt_openai_ms": 675}}
+{"ts": "2026-02-12 21:28:14.669", "stage": "translation_input", "chars": 17, "text": "Bueno, casi nada.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 21:28:15.237", "stage": "translation_output", "chars": 21, "text": "Well, almost nothing.", "meta": {"translation_enabled": true, "translate_openai_ms": 563}}
+{"ts": "2026-02-12 21:28:15.242", "stage": "display_update_input", "chars": 21, "text": "Well, almost nothing.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 21:28:15.244", "stage": "display_chunk_enqueued", "chars": 21, "text": "Well, almost nothing.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 21:28:15.800", "stage": "display_word_reveal_complete", "chars": 21, "text": "Well, almost nothing."}
+{"ts": "2026-02-12 21:28:15.973", "stage": "stt_raw", "chars": 12, "text": "La evolución", "meta": {"engine": "openai", "stt_openai_ms": 618}}
+{"ts": "2026-02-12 21:28:15.976", "stage": "stt_sanitized", "chars": 12, "text": "La evolución", "meta": {"engine": "openai", "stt_openai_ms": 618}}
+{"ts": "2026-02-12 21:28:15.977", "stage": "stt_boundary_trim", "chars": 12, "text": "La evolución", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 21:28:16.854", "stage": "sentence_buffer_timeout_flush", "chars": 12, "text": "La evolución", "meta": {"wait_ms": 800}}
+{"ts": "2026-02-12 21:28:16.856", "stage": "sentence_enqueued", "chars": 12, "text": "La evolución", "meta": {"queue_size": 1, "stt_openai_ms": 618}}
+{"ts": "2026-02-12 21:28:16.858", "stage": "translation_input", "chars": 12, "text": "La evolución", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 21:28:17.437", "stage": "translation_output", "chars": 13, "text": "The evolution", "meta": {"translation_enabled": true, "translate_openai_ms": 575}}
+{"ts": "2026-02-12 21:28:17.439", "stage": "display_update_input", "chars": 13, "text": "The evolution", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 21:28:17.441", "stage": "display_chunk_enqueued", "chars": 13, "text": "The evolution", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 21:28:17.770", "stage": "display_word_reveal_complete", "chars": 13, "text": "The evolution"}
+{"ts": "2026-02-12 21:28:37.806", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 580}}
+{"ts": "2026-02-12 21:28:37.808", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 580}}
+{"ts": "2026-02-12 21:28:51.059", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 531}}
+{"ts": "2026-02-12 21:28:51.061", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 531}}
+{"ts": "2026-02-12 21:28:54.074", "stage": "stt_raw", "chars": 29, "text": "Aquí la flor, aquí la mantis.", "meta": {"engine": "openai", "stt_openai_ms": 529}}
+{"ts": "2026-02-12 21:28:54.076", "stage": "stt_sanitized", "chars": 29, "text": "Aquí la flor, aquí la mantis.", "meta": {"engine": "openai", "stt_openai_ms": 529}}
+{"ts": "2026-02-12 21:28:54.078", "stage": "stt_boundary_trim", "chars": 29, "text": "Aquí la flor, aquí la mantis.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 21:28:54.954", "stage": "sentence_buffer_timeout_flush", "chars": 29, "text": "Aquí la flor, aquí la mantis.", "meta": {"wait_ms": 800}}
+{"ts": "2026-02-12 21:28:54.956", "stage": "sentence_enqueued", "chars": 29, "text": "Aquí la flor, aquí la mantis.", "meta": {"queue_size": 1, "stt_openai_ms": 529}}
+{"ts": "2026-02-12 21:28:54.958", "stage": "translation_input", "chars": 29, "text": "Aquí la flor, aquí la mantis.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 21:28:55.504", "stage": "translation_output", "chars": 33, "text": "Here the flower, here the mantis.", "meta": {"translation_enabled": true, "translate_openai_ms": 542}}
+{"ts": "2026-02-12 21:28:55.506", "stage": "display_update_input", "chars": 33, "text": "Here the flower, here the mantis.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 21:28:55.509", "stage": "display_chunk_enqueued", "chars": 25, "text": "Here the flower, here the", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 21:28:55.510", "stage": "display_chunk_enqueued", "chars": 7, "text": "mantis.", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 21:28:56.417", "stage": "display_word_reveal_complete", "chars": 25, "text": "Here the flower, here the"}
+{"ts": "2026-02-12 21:28:56.619", "stage": "display_word_reveal_complete", "chars": 7, "text": "mantis."}
+{"ts": "2026-02-12 21:29:05.850", "stage": "stt_raw", "chars": 22, "text": "de la especialización.", "meta": {"engine": "openai", "stt_openai_ms": 524}}
+{"ts": "2026-02-12 21:29:05.852", "stage": "stt_sanitized", "chars": 22, "text": "de la especialización.", "meta": {"engine": "openai", "stt_openai_ms": 524}}
+{"ts": "2026-02-12 21:29:05.854", "stage": "stt_boundary_trim", "chars": 22, "text": "de la especialización.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 21:29:06.732", "stage": "sentence_buffer_timeout_flush", "chars": 22, "text": "de la especialización.", "meta": {"wait_ms": 800}}
+{"ts": "2026-02-12 21:29:06.735", "stage": "sentence_enqueued", "chars": 22, "text": "de la especialización.", "meta": {"queue_size": 1, "stt_openai_ms": 524}}
+{"ts": "2026-02-12 21:29:06.737", "stage": "translation_input", "chars": 22, "text": "de la especialización.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 21:29:07.410", "stage": "translation_output", "chars": 22, "text": "of the specialization.", "meta": {"translation_enabled": true, "translate_openai_ms": 665}}
+{"ts": "2026-02-12 21:29:07.413", "stage": "display_update_input", "chars": 22, "text": "of the specialization.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 21:29:07.415", "stage": "display_chunk_enqueued", "chars": 22, "text": "of the specialization.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 21:29:07.926", "stage": "display_word_reveal_complete", "chars": 22, "text": "of the specialization."}
+{"ts": "2026-02-12 21:29:40.968", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 841}}
+{"ts": "2026-02-12 21:29:40.971", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 841}}
+{"ts": "2026-02-12 21:29:48.005", "stage": "stt_raw", "chars": 3, "text": "###", "meta": {"engine": "openai", "stt_openai_ms": 657}}
+{"ts": "2026-02-12 21:29:48.012", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 657}}
+{"ts": "2026-02-12 21:30:22.299", "stage": "stt_raw", "chars": 3, "text": "###", "meta": {"engine": "openai", "stt_openai_ms": 462}}
+{"ts": "2026-02-12 21:30:22.302", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 462}}
+{"ts": "2026-02-12 21:30:42.119", "stage": "stt_raw", "chars": 3, "text": "###", "meta": {"engine": "openai", "stt_openai_ms": 643}}
+{"ts": "2026-02-12 21:30:42.123", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 643}}
+{"ts": "2026-02-12 21:31:49.392", "stage": "stt_raw", "chars": 12, "text": "No hay duda.", "meta": {"engine": "openai", "stt_openai_ms": 876}}
+{"ts": "2026-02-12 21:31:49.395", "stage": "stt_sanitized", "chars": 12, "text": "No hay duda.", "meta": {"engine": "openai", "stt_openai_ms": 876}}
+{"ts": "2026-02-12 21:31:49.399", "stage": "stt_boundary_trim", "chars": 12, "text": "No hay duda.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 21:31:50.276", "stage": "sentence_buffer_timeout_flush", "chars": 12, "text": "No hay duda.", "meta": {"wait_ms": 800}}
+{"ts": "2026-02-12 21:31:50.279", "stage": "sentence_enqueued", "chars": 12, "text": "No hay duda.", "meta": {"queue_size": 1, "stt_openai_ms": 876}}
+{"ts": "2026-02-12 21:31:50.282", "stage": "translation_input", "chars": 12, "text": "No hay duda.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 21:31:51.531", "stage": "translation_output", "chars": 18, "text": "There is no doubt.", "meta": {"translation_enabled": true, "translate_openai_ms": 1245}}
+{"ts": "2026-02-12 21:31:51.535", "stage": "display_update_input", "chars": 18, "text": "There is no doubt.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 21:31:51.537", "stage": "display_chunk_enqueued", "chars": 18, "text": "There is no doubt.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 21:31:52.228", "stage": "display_word_reveal_complete", "chars": 18, "text": "There is no doubt."}

@@ -1,0 +1,107 @@
+[2026-02-12 15:46:58.314] STATUS: Listening (English)
+[2026-02-12 15:47:11.108] STATUS: Transcribing...
+[2026-02-12 15:47:11.145] STATUS: Listening (English)
+[2026-02-12 15:47:13.957] STATUS: Transcribing...
+[2026-02-12 15:47:13.993] STATUS: Listening (English)
+[2026-02-12 15:47:23.012] STATUS: Transcribing...
+[2026-02-12 15:47:23.047] STATUS: Listening (English)
+[2026-02-12 15:47:28.926] STATUS: Transcribing...
+[2026-02-12 15:47:28.965] STATUS: Listening (English)
+[2026-02-12 15:47:31.701] STATUS: Transcribing...
+[2026-02-12 15:47:31.734] STATUS: Listening (English)
+[2026-02-12 15:47:40.973] STATUS: Transcribing...
+[2026-02-12 15:47:41.030] STATUS: Listening (English)
+[2026-02-12 15:47:51.240] STATUS: Transcribing...
+[2026-02-12 15:47:51.276] STATUS: Listening (English)
+[2026-02-12 15:48:01.382] STATUS: Transcribing...
+[2026-02-12 15:48:01.420] STATUS: Listening (English)
+[2026-02-12 15:48:05.301] STATUS: Apply clicked
+[2026-02-12 15:48:06.628] STATUS: Settings applied
+[2026-02-12 15:48:06.629] STATUS: Apply finished
+[2026-02-12 15:48:06.745] STATUS: Loading faster-whisper model (first run can take a few minutes)...
+[2026-02-12 15:48:07.423] STATUS: Listening (English)
+[2026-02-12 15:48:07.502] STATUS: Local model ready
+[2026-02-12 15:48:08.633] STATUS: Listening (English)
+[2026-02-12 15:48:09.028] STATUS: Transcribing...
+[2026-02-12 15:48:09.068] STATUS: Listening (English)
+[2026-02-12 15:48:16.522] STATUS: Transcribing...
+[2026-02-12 15:48:16.562] STATUS: Listening (English)
+[2026-02-12 15:48:28.138] STATUS: Transcribing...
+[2026-02-12 15:48:28.194] STATUS: Listening (English)
+[2026-02-12 15:48:37.434] STATUS: Transcribing...
+[2026-02-12 15:48:37.473] STATUS: Listening (English)
+[2026-02-12 15:48:42.617] STATUS: Transcribing...
+[2026-02-12 15:48:42.617] STATUS: Listening (English)
+[2026-02-12 15:48:44.420] STATUS: Transcribing...
+[2026-02-12 15:48:44.423] STATUS: Listening (English)
+[2026-02-12 15:48:50.963] STATUS: Transcribing...
+[2026-02-12 15:48:51.003] STATUS: Listening (English)
+[2026-02-12 15:48:55.236] STATUS: Transcribing...
+[2026-02-12 15:48:55.270] STATUS: Listening (English)
+[2026-02-12 15:49:05.750] STATUS: Transcribing...
+[2026-02-12 15:49:05.785] STATUS: Listening (English)
+[2026-02-12 15:49:15.121] STATUS: Transcribing...
+[2026-02-12 15:49:15.123] STATUS: Listening (English)
+[2026-02-12 15:49:18.166] STATUS: Transcribing...
+[2026-02-12 15:49:18.167] STATUS: Listening (English)
+[2026-02-12 15:49:28.013] STATUS: Transcribing...
+[2026-02-12 15:49:28.014] STATUS: Listening (English)
+[2026-02-12 15:49:32.218] STATUS: Transcribing...
+[2026-02-12 15:49:32.253] STATUS: Listening (English)
+[2026-02-12 15:49:34.398] STATUS: Transcribing...
+[2026-02-12 15:49:34.420] STATUS: Listening (English)
+[2026-02-12 15:49:39.237] STATUS: Transcribing...
+[2026-02-12 15:49:39.275] STATUS: Listening (English)
+[2026-02-12 15:49:40.349] STATUS: Apply clicked
+Fatal Python error: Aborted
+
+Thread 0x00008484 (most recent call first):
+  File "C:\Users\zachary.price\AppData\Local\Programs\Python\Python310\lib\threading.py", line 324 in wait
+  File "C:\Users\zachary.price\AppData\Local\Programs\Python\Python310\lib\threading.py", line 607 in wait
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\.venv\lib\site-packages\tqdm\_monitor.py", line 60 in run
+  File "C:\Users\zachary.price\AppData\Local\Programs\Python\Python310\lib\threading.py", line 1016 in _bootstrap_inner
+  File "C:\Users\zachary.price\AppData\Local\Programs\Python\Python310\lib\threading.py", line 973 in _bootstrap
+
+Thread 0x00009e84 (most recent call first):
+  File "C:\Users\zachary.price\AppData\Local\Programs\Python\Python310\lib\threading.py", line 324 in wait
+  File "C:\Users\zachary.price\AppData\Local\Programs\Python\Python310\lib\threading.py", line 607 in wait
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\.venv\lib\site-packages\tqdm\_monitor.py", line 60 in run
+  File "C:\Users\zachary.price\AppData\Local\Programs\Python\Python310\lib\threading.py", line 1016 in _bootstrap_inner
+  File "C:\Users\zachary.price\AppData\Local\Programs\Python\Python310\lib\threading.py", line 973 in _bootstrap
+
+Thread 0x00009408 (most recent call first):
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\.venv\lib\site-packages\pyaudio\__init__.py", line 570 in read
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\.venv\lib\site-packages\speech_recognition\__init__.py", line 192 in read
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\.venv\lib\site-packages\speech_recognition\__init__.py", line 531 in _listen
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\.venv\lib\site-packages\speech_recognition\__init__.py", line 461 in listen
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\main.py", line 3179 in _capture_loop
+  File "C:\Users\zachary.price\AppData\Local\Programs\Python\Python310\lib\threading.py", line 953 in run
+  File "C:\Users\zachary.price\AppData\Local\Programs\Python\Python310\lib\threading.py", line 1016 in _bootstrap_inner
+  File "C:\Users\zachary.price\AppData\Local\Programs\Python\Python310\lib\threading.py", line 973 in _bootstrap
+
+Thread 0x0000a85c (most recent call first):
+  File "C:\Users\zachary.price\AppData\Local\Programs\Python\Python310\lib\threading.py", line 324 in wait
+  File "C:\Users\zachary.price\AppData\Local\Programs\Python\Python310\lib\queue.py", line 180 in get
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\main.py", line 3019 in listen_and_translate
+  File "C:\Users\zachary.price\AppData\Local\Programs\Python\Python310\lib\threading.py", line 953 in run
+  File "C:\Users\zachary.price\AppData\Local\Programs\Python\Python310\lib\threading.py", line 1016 in _bootstrap_inner
+  File "C:\Users\zachary.price\AppData\Local\Programs\Python\Python310\lib\threading.py", line 973 in _bootstrap
+
+Thread 0x0000aacc (most recent call first):
+  File "C:\Users\zachary.price\AppData\Local\Programs\Python\Python310\lib\threading.py", line 324 in wait
+  File "C:\Users\zachary.price\AppData\Local\Programs\Python\Python310\lib\queue.py", line 180 in get
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\main.py", line 3498 in _translation_worker
+  File "C:\Users\zachary.price\AppData\Local\Programs\Python\Python310\lib\threading.py", line 953 in run
+  File "C:\Users\zachary.price\AppData\Local\Programs\Python\Python310\lib\threading.py", line 1016 in _bootstrap_inner
+  File "C:\Users\zachary.price\AppData\Local\Programs\Python\Python310\lib\threading.py", line 973 in _bootstrap
+
+Thread 0x000073a8 (most recent call first):
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\main.py", line 1651 in _apply_api_vars
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\main.py", line 1550 in _apply_settings_vars
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\main.py", line 1393 in save_settings
+  File "C:\Users\zachary.price\AppData\Local\Programs\Python\Python310\lib\tkinter\__init__.py", line 1921 in __call__
+  File "C:\Users\zachary.price\AppData\Local\Programs\Python\Python310\lib\tkinter\__init__.py", line 1458 in mainloop
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\main.py", line 342 in __init__
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\main.py", line 4298 in <module>
+
+Extension modules: charset_normalizer.md, pyaudio._portaudio, PIL._imaging, PIL._imagingft, av._core, av.logging, av.bytesource, av.buffer, av.audio.format, av.error, av.dictionary, av.container.pyio, av.option, av.descriptor, av.format, av.utils, av.stream, av.container.streams, av.sidedata.encparams, av.sidedata.motionvectors, av.sidedata.sidedata, av.opaque, av.packet, av.container.input, av.container.output, av.container.core, av.codec.context, av.video.format, av.video.reformatter, av.plane, av.video.plane, av.video.frame, av.video.stream, av.codec.hwaccel, av.codec.codec, av.frame, av.audio.layout, av.audio.plane, av.audio.frame, av.audio.stream, av.filter.link, av.filter.context, av.filter.graph, av.filter.filter, av.filter.loudnorm, av.audio.resampler, av.audio.codeccontext, av.audio.fifo, av.bitstream, av.video.codeccontext, numpy._core._multiarray_umath, numpy.linalg._umath_linalg, yaml._yaml, av.subtitles.stream (total: 54)

@@ -1,0 +1,83 @@
+[2026-02-12 19:50:51.204] STATUS: Listening (Detecting: English/Spanish)
+[2026-02-12 19:50:57.644] STATUS: No speech detected. Check mic level or device.
+[2026-02-12 19:51:14.835] STATUS: Translating...
+[2026-02-12 19:51:15.319] STATUS: Listening (Detecting: English/Spanish)
+[2026-02-12 19:51:19.904] STATUS: No speech detected. Check mic level or device.
+[2026-02-12 19:51:36.818] STATUS: Translating...
+[2026-02-12 19:51:38.787] STATUS: Listening (Detecting: English/Spanish)
+[2026-02-12 19:51:48.521] STATUS: Translating...
+[2026-02-12 19:51:49.105] STATUS: Listening (Detected: Spanish)
+[2026-02-12 19:51:55.686] STATUS: Apply clicked
+[2026-02-12 19:51:57.246] STATUS: Settings applied
+[2026-02-12 19:51:57.248] STATUS: Apply finished
+[2026-02-12 19:51:57.875] STATUS: Listening (Detected: Spanish)
+[2026-02-12 19:52:03.741] STATUS: Translating...
+[2026-02-12 19:52:04.334] STATUS: Listening (Detected: Spanish)
+[2026-02-12 19:52:16.721] STATUS: Apply clicked
+[2026-02-12 19:52:16.843] STATUS: Settings applied
+[2026-02-12 19:52:16.844] STATUS: Apply finished
+[2026-02-12 19:52:17.319] STATUS: Listening (Detected: Spanish)
+[2026-02-12 19:53:36.744] STATUS: Translating...
+[2026-02-12 19:53:37.453] STATUS: Listening (Detected: Spanish)
+[2026-02-12 19:53:43.823] STATUS: Apply clicked
+[2026-02-12 19:53:45.129] STATUS: Settings applied
+[2026-02-12 19:53:45.130] STATUS: Apply finished
+[2026-02-12 19:53:45.757] STATUS: Listening (Detected: Spanish)
+[2026-02-12 19:53:52.098] STATUS: Translating...
+[2026-02-12 19:53:53.103] STATUS: Listening (Detected: Spanish)
+[2026-02-12 19:53:58.940] STATUS: Translating...
+[2026-02-12 19:53:59.547] STATUS: Listening (Detected: Spanish)
+[2026-02-12 19:54:06.123] STATUS: Translating...
+[2026-02-12 19:54:06.944] STATUS: Listening (Detected: Spanish)
+[2026-02-12 19:54:11.052] STATUS: Translating...
+[2026-02-12 19:54:11.695] STATUS: Listening (Detected: Spanish)
+[2026-02-12 19:54:12.141] STATUS: Apply clicked
+[2026-02-12 19:54:13.130] STATUS: Settings applied
+[2026-02-12 19:54:13.131] STATUS: Apply finished
+[2026-02-12 19:54:13.589] STATUS: Listening (Detected: Spanish)
+[2026-02-12 19:54:17.913] STATUS: Translating...
+[2026-02-12 19:54:18.574] STATUS: Listening (Detected: Spanish)
+[2026-02-12 19:54:28.347] STATUS: Translating...
+[2026-02-12 19:54:28.897] STATUS: Listening (Detected: Spanish)
+[2026-02-12 19:54:33.380] STATUS: Translating...
+[2026-02-12 19:54:33.848] STATUS: Listening (Detected: Spanish)
+[2026-02-12 19:54:46.157] STATUS: Translating...
+[2026-02-12 19:54:47.332] STATUS: Listening (Detected: Spanish)
+[2026-02-12 19:54:49.153] STATUS: Translating...
+[2026-02-12 19:54:49.694] STATUS: Listening (Detected: Spanish)
+[2026-02-12 19:55:04.503] STATUS: Translating...
+[2026-02-12 19:55:05.182] STATUS: Listening (Detected: Spanish)
+[2026-02-12 19:55:06.877] STATUS: Translating...
+[2026-02-12 19:55:07.713] STATUS: Listening (Detected: Spanish)
+[2026-02-12 19:55:12.407] STATUS: No speech detected. Check mic level or device.
+[2026-02-12 19:55:31.122] STATUS: Translating...
+[2026-02-12 19:55:31.796] STATUS: Listening (Detected: Spanish)
+[2026-02-12 19:55:35.701] STATUS: Translating...
+[2026-02-12 19:55:36.444] STATUS: Listening (Detected: Spanish)
+[2026-02-12 19:55:38.702] STATUS: Translating...
+[2026-02-12 19:55:39.481] STATUS: Listening (Detected: Spanish)
+[2026-02-12 19:55:46.077] STATUS: Translating...
+[2026-02-12 19:55:46.707] STATUS: Listening (Detected: Spanish)
+[2026-02-12 19:55:59.955] STATUS: Translating...
+[2026-02-12 19:56:00.644] STATUS: Listening (Detected: Spanish)
+[2026-02-12 19:56:06.507] STATUS: No speech detected. Check mic level or device.
+[2026-02-12 19:56:14.161] STATUS: Translating...
+[2026-02-12 19:56:15.010] STATUS: Listening (Detected: Spanish)
+[2026-02-12 19:56:34.662] STATUS: Translating...
+[2026-02-12 19:56:35.058] STATUS: App closing requested
+
+--- Close Requested ---
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\main.py", line 5109, in <module>
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\main.py", line 375, in __init__
+    self.root.mainloop()
+  File "C:\Users\zachary.price\AppData\Local\Programs\Python\Python310\lib\tkinter\__init__.py", line 1458, in mainloop
+    self.tk.mainloop(n)
+  File "C:\Users\zachary.price\AppData\Local\Programs\Python\Python310\lib\tkinter\__init__.py", line 1921, in __call__
+    return self.func(*args)
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\main.py", line 461, in on_closing
+    f.write("".join(traceback.format_stack(limit=10)))
+[2026-02-12 19:56:35.067] STATUS: Process exiting
+
+--- Process Exit ---
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\main.py", line 524, in _log_process_exit
+    f.write("".join(traceback.format_stack(limit=10)))

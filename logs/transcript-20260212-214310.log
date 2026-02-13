@@ -1,0 +1,3 @@
+{"ts": "2026-02-12 21:43:28.162", "stage": "fast_translation_fallback", "chars": 0, "text": "", "meta": {"error": "OpenAI API error 404: {\n  \"error\": {\n    \"code\": null,\n    \"message\": \"Invalid URL (POST /v1/audio/translations)\",\n    \"param\": null,\n    \"type\": \"invalid_request_error\"\n  }\n}\n"}}
+{"ts": "2026-02-12 21:43:29.128", "stage": "stt_raw", "chars": 3, "text": "###", "meta": {"engine": "openai", "stt_openai_ms": 962}}
+{"ts": "2026-02-12 21:43:29.130", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 962}}

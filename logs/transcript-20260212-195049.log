@@ -1,0 +1,256 @@
+{"ts": "2026-02-12 19:51:02.556", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 621}}
+{"ts": "2026-02-12 19:51:02.559", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 621}}
+{"ts": "2026-02-12 19:51:14.482", "stage": "stt_raw", "chars": 8, "text": "Nothing.", "meta": {"engine": "openai", "stt_openai_ms": 566}}
+{"ts": "2026-02-12 19:51:14.486", "stage": "stt_sanitized", "chars": 8, "text": "Nothing.", "meta": {"engine": "openai", "stt_openai_ms": 566}}
+{"ts": "2026-02-12 19:51:14.488", "stage": "stt_boundary_trim", "chars": 8, "text": "Nothing.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:51:14.832", "stage": "sentence_buffer_timeout_flush", "chars": 8, "text": "Nothing.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:51:14.835", "stage": "sentence_enqueued", "chars": 8, "text": "Nothing.", "meta": {"queue_size": 1, "stt_openai_ms": 566}}
+{"ts": "2026-02-12 19:51:14.836", "stage": "translation_input", "chars": 8, "text": "Nothing.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 19:51:15.316", "stage": "translation_output", "chars": 5, "text": "Nada.", "meta": {"translation_enabled": true, "translate_openai_ms": 472}}
+{"ts": "2026-02-12 19:51:15.319", "stage": "display_update_input", "chars": 5, "text": "Nada.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:51:15.321", "stage": "display_chunk_enqueued", "chars": 5, "text": "Nada.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:51:15.484", "stage": "display_word_reveal_complete", "chars": 5, "text": "Nada."}
+{"ts": "2026-02-12 19:51:36.472", "stage": "stt_raw", "chars": 33, "text": "de una manada de leones especial.", "meta": {"engine": "openai", "stt_openai_ms": 1164}}
+{"ts": "2026-02-12 19:51:36.474", "stage": "stt_sanitized", "chars": 33, "text": "de una manada de leones especial.", "meta": {"engine": "openai", "stt_openai_ms": 1164}}
+{"ts": "2026-02-12 19:51:36.476", "stage": "stt_boundary_trim", "chars": 33, "text": "de una manada de leones especial.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:51:36.815", "stage": "sentence_buffer_timeout_flush", "chars": 33, "text": "de una manada de leones especial.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:51:36.818", "stage": "sentence_enqueued", "chars": 33, "text": "de una manada de leones especial.", "meta": {"queue_size": 1, "stt_openai_ms": 1164}}
+{"ts": "2026-02-12 19:51:36.820", "stage": "translation_input", "chars": 33, "text": "de una manada de leones especial.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 19:51:38.785", "stage": "translation_output", "chars": 29, "text": "from a special pride of lions", "meta": {"translation_enabled": true, "translate_openai_ms": 1961}}
+{"ts": "2026-02-12 19:51:38.787", "stage": "display_update_input", "chars": 29, "text": "from a special pride of lions", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:51:38.789", "stage": "display_chunk_enqueued", "chars": 29, "text": "from a special pride of lions", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:51:39.727", "stage": "display_word_reveal_complete", "chars": 29, "text": "from a special pride of lions"}
+{"ts": "2026-02-12 19:51:48.175", "stage": "stt_raw", "chars": 25, "text": "Eran expertos en la caza.", "meta": {"engine": "openai", "stt_openai_ms": 729}}
+{"ts": "2026-02-12 19:51:48.179", "stage": "stt_sanitized", "chars": 25, "text": "Eran expertos en la caza.", "meta": {"engine": "openai", "stt_openai_ms": 729}}
+{"ts": "2026-02-12 19:51:48.181", "stage": "stt_boundary_trim", "chars": 25, "text": "Eran expertos en la caza.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:51:48.519", "stage": "sentence_buffer_timeout_flush", "chars": 25, "text": "Eran expertos en la caza.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:51:48.521", "stage": "sentence_enqueued", "chars": 25, "text": "Eran expertos en la caza.", "meta": {"queue_size": 1, "stt_openai_ms": 729}}
+{"ts": "2026-02-12 19:51:48.523", "stage": "translation_input", "chars": 25, "text": "Eran expertos en la caza.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 19:51:49.102", "stage": "translation_output", "chars": 29, "text": "They were experts in hunting.", "meta": {"translation_enabled": true, "translate_openai_ms": 573}}
+{"ts": "2026-02-12 19:51:49.105", "stage": "display_update_input", "chars": 29, "text": "They were experts in hunting.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:51:49.108", "stage": "display_chunk_enqueued", "chars": 29, "text": "They were experts in hunting.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:51:50.025", "stage": "display_word_reveal_complete", "chars": 29, "text": "They were experts in hunting."}
+{"ts": "2026-02-12 19:52:00.355", "stage": "stt_raw", "chars": 18, "text": "Distracción fatal.", "meta": {"engine": "openai", "stt_openai_ms": 498}}
+{"ts": "2026-02-12 19:52:00.358", "stage": "stt_sanitized", "chars": 18, "text": "Distracción fatal.", "meta": {"engine": "openai", "stt_openai_ms": 498}}
+{"ts": "2026-02-12 19:52:00.360", "stage": "stt_boundary_trim", "chars": 18, "text": "Distracción fatal.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:52:00.361", "stage": "noise_text_suppressed", "chars": 18, "text": "Distracción fatal.", "meta": {"rms": 192.0, "peak": 1813.0, "threshold": 125.03298514558588}}
+{"ts": "2026-02-12 19:52:03.391", "stage": "stt_raw", "chars": 29, "text": "de la que puede aprovecharse.", "meta": {"engine": "openai", "stt_openai_ms": 1033}}
+{"ts": "2026-02-12 19:52:03.393", "stage": "stt_sanitized", "chars": 29, "text": "de la que puede aprovecharse.", "meta": {"engine": "openai", "stt_openai_ms": 1033}}
+{"ts": "2026-02-12 19:52:03.395", "stage": "stt_boundary_trim", "chars": 29, "text": "de la que puede aprovecharse.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:52:03.738", "stage": "sentence_buffer_timeout_flush", "chars": 29, "text": "de la que puede aprovecharse.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:52:03.741", "stage": "sentence_enqueued", "chars": 29, "text": "de la que puede aprovecharse.", "meta": {"queue_size": 1, "stt_openai_ms": 1033}}
+{"ts": "2026-02-12 19:52:03.743", "stage": "translation_input", "chars": 29, "text": "de la que puede aprovecharse.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 19:52:04.332", "stage": "translation_output", "chars": 26, "text": "from which it can benefit.", "meta": {"translation_enabled": true, "translate_openai_ms": 586}}
+{"ts": "2026-02-12 19:52:04.334", "stage": "display_update_input", "chars": 26, "text": "from which it can benefit.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:52:04.337", "stage": "display_chunk_enqueued", "chars": 26, "text": "from which it can benefit.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:52:05.193", "stage": "display_word_reveal_complete", "chars": 26, "text": "from which it can benefit."}
+{"ts": "2026-02-12 19:52:39.080", "stage": "stt_raw", "chars": 3, "text": "###", "meta": {"engine": "openai", "stt_openai_ms": 877}}
+{"ts": "2026-02-12 19:52:39.082", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 877}}
+{"ts": "2026-02-12 19:53:36.401", "stage": "stt_raw", "chars": 12, "text": "de una caza.", "meta": {"engine": "openai", "stt_openai_ms": 590}}
+{"ts": "2026-02-12 19:53:36.404", "stage": "stt_sanitized", "chars": 12, "text": "de una caza.", "meta": {"engine": "openai", "stt_openai_ms": 590}}
+{"ts": "2026-02-12 19:53:36.407", "stage": "stt_boundary_trim", "chars": 12, "text": "de una caza.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:53:36.741", "stage": "sentence_buffer_timeout_flush", "chars": 12, "text": "de una caza.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:53:36.744", "stage": "sentence_enqueued", "chars": 12, "text": "de una caza.", "meta": {"queue_size": 1, "stt_openai_ms": 590}}
+{"ts": "2026-02-12 19:53:36.747", "stage": "translation_input", "chars": 12, "text": "de una caza.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 19:53:37.450", "stage": "translation_output", "chars": 10, "text": "of a hunt.", "meta": {"translation_enabled": true, "translate_openai_ms": 698}}
+{"ts": "2026-02-12 19:53:37.453", "stage": "display_update_input", "chars": 10, "text": "of a hunt.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:53:37.456", "stage": "display_chunk_enqueued", "chars": 10, "text": "of a hunt.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:53:37.953", "stage": "display_word_reveal_complete", "chars": 10, "text": "of a hunt."}
+{"ts": "2026-02-12 19:53:51.763", "stage": "stt_raw", "chars": 14, "text": "Rivales natos.", "meta": {"engine": "openai", "stt_openai_ms": 843}}
+{"ts": "2026-02-12 19:53:51.766", "stage": "stt_sanitized", "chars": 14, "text": "Rivales natos.", "meta": {"engine": "openai", "stt_openai_ms": 843}}
+{"ts": "2026-02-12 19:53:51.769", "stage": "stt_boundary_trim", "chars": 14, "text": "Rivales natos.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:53:52.095", "stage": "sentence_buffer_timeout_flush", "chars": 14, "text": "Rivales natos.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:53:52.098", "stage": "sentence_enqueued", "chars": 14, "text": "Rivales natos.", "meta": {"queue_size": 1, "stt_openai_ms": 843}}
+{"ts": "2026-02-12 19:53:52.100", "stage": "translation_input", "chars": 14, "text": "Rivales natos.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 19:53:53.101", "stage": "translation_output", "chars": 15, "text": "Natural rivals.", "meta": {"translation_enabled": true, "translate_openai_ms": 996}}
+{"ts": "2026-02-12 19:53:53.104", "stage": "display_update_input", "chars": 15, "text": "Natural rivals.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:53:53.107", "stage": "display_chunk_enqueued", "chars": 15, "text": "Natural rivals.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:53:53.447", "stage": "display_word_reveal_complete", "chars": 15, "text": "Natural rivals."}
+{"ts": "2026-02-12 19:53:58.607", "stage": "stt_raw", "chars": 31, "text": "En el claro hay un nuevo líder.", "meta": {"engine": "openai", "stt_openai_ms": 676}}
+{"ts": "2026-02-12 19:53:58.610", "stage": "stt_sanitized", "chars": 31, "text": "En el claro hay un nuevo líder.", "meta": {"engine": "openai", "stt_openai_ms": 676}}
+{"ts": "2026-02-12 19:53:58.613", "stage": "stt_boundary_trim", "chars": 31, "text": "En el claro hay un nuevo líder.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:53:58.937", "stage": "sentence_buffer_timeout_flush", "chars": 31, "text": "En el claro hay un nuevo líder.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:53:58.940", "stage": "sentence_enqueued", "chars": 31, "text": "En el claro hay un nuevo líder.", "meta": {"queue_size": 1, "stt_openai_ms": 676}}
+{"ts": "2026-02-12 19:53:58.941", "stage": "translation_input", "chars": 31, "text": "En el claro hay un nuevo líder.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 19:53:59.544", "stage": "translation_output", "chars": 39, "text": "In the clearing, there is a new leader.", "meta": {"translation_enabled": true, "translate_openai_ms": 599}}
+{"ts": "2026-02-12 19:53:59.547", "stage": "display_update_input", "chars": 39, "text": "In the clearing, there is a new leader.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:53:59.550", "stage": "display_chunk_enqueued", "chars": 27, "text": "In the clearing, there is a", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:53:59.553", "stage": "display_chunk_enqueued", "chars": 11, "text": "new leader.", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:54:00.546", "stage": "display_word_reveal_complete", "chars": 27, "text": "In the clearing, there is a"}
+{"ts": "2026-02-12 19:54:00.886", "stage": "display_word_reveal_complete", "chars": 11, "text": "new leader."}
+{"ts": "2026-02-12 19:54:05.778", "stage": "stt_raw", "chars": 22, "text": "de las leonas adultas.", "meta": {"engine": "openai", "stt_openai_ms": 577}}
+{"ts": "2026-02-12 19:54:05.781", "stage": "stt_sanitized", "chars": 22, "text": "de las leonas adultas.", "meta": {"engine": "openai", "stt_openai_ms": 577}}
+{"ts": "2026-02-12 19:54:05.784", "stage": "stt_boundary_trim", "chars": 22, "text": "de las leonas adultas.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:54:06.120", "stage": "sentence_buffer_timeout_flush", "chars": 22, "text": "de las leonas adultas.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:54:06.123", "stage": "sentence_enqueued", "chars": 22, "text": "de las leonas adultas.", "meta": {"queue_size": 1, "stt_openai_ms": 577}}
+{"ts": "2026-02-12 19:54:06.125", "stage": "translation_input", "chars": 22, "text": "de las leonas adultas.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 19:54:06.941", "stage": "translation_output", "chars": 23, "text": "of the adult lionesses.", "meta": {"translation_enabled": true, "translate_openai_ms": 811}}
+{"ts": "2026-02-12 19:54:06.944", "stage": "display_update_input", "chars": 23, "text": "of the adult lionesses.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:54:06.947", "stage": "display_chunk_enqueued", "chars": 23, "text": "of the adult lionesses.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:54:07.620", "stage": "display_word_reveal_complete", "chars": 23, "text": "of the adult lionesses."}
+{"ts": "2026-02-12 19:54:10.705", "stage": "stt_raw", "chars": 40, "text": "Este macho no es un extraño en el claro.", "meta": {"engine": "openai", "stt_openai_ms": 584}}
+{"ts": "2026-02-12 19:54:10.709", "stage": "stt_sanitized", "chars": 40, "text": "Este macho no es un extraño en el claro.", "meta": {"engine": "openai", "stt_openai_ms": 584}}
+{"ts": "2026-02-12 19:54:10.711", "stage": "stt_boundary_trim", "chars": 40, "text": "Este macho no es un extraño en el claro.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:54:11.049", "stage": "sentence_buffer_timeout_flush", "chars": 40, "text": "Este macho no es un extraño en el claro.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:54:11.052", "stage": "sentence_enqueued", "chars": 40, "text": "Este macho no es un extraño en el claro.", "meta": {"queue_size": 1, "stt_openai_ms": 584}}
+{"ts": "2026-02-12 19:54:11.055", "stage": "translation_input", "chars": 40, "text": "Este macho no es un extraño en el claro.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 19:54:11.691", "stage": "translation_output", "chars": 41, "text": "This male is no stranger in the clearing.", "meta": {"translation_enabled": true, "translate_openai_ms": 633}}
+{"ts": "2026-02-12 19:54:11.695", "stage": "display_update_input", "chars": 41, "text": "This male is no stranger in the clearing.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:54:11.698", "stage": "display_chunk_enqueued", "chars": 27, "text": "This male is no stranger in", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:54:11.701", "stage": "display_chunk_enqueued", "chars": 13, "text": "the clearing.", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:54:13.635", "stage": "display_word_reveal_complete", "chars": 27, "text": "This male is no stranger in"}
+{"ts": "2026-02-12 19:54:13.974", "stage": "display_word_reveal_complete", "chars": 13, "text": "the clearing."}
+{"ts": "2026-02-12 19:54:17.560", "stage": "stt_raw", "chars": 51, "text": "que los cachorros están a salvo porque es su padre.", "meta": {"engine": "openai", "stt_openai_ms": 790}}
+{"ts": "2026-02-12 19:54:17.563", "stage": "stt_sanitized", "chars": 51, "text": "que los cachorros están a salvo porque es su padre.", "meta": {"engine": "openai", "stt_openai_ms": 790}}
+{"ts": "2026-02-12 19:54:17.566", "stage": "stt_boundary_trim", "chars": 51, "text": "que los cachorros están a salvo porque es su padre.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:54:17.910", "stage": "sentence_buffer_timeout_flush", "chars": 51, "text": "que los cachorros están a salvo porque es su padre.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:54:17.913", "stage": "sentence_enqueued", "chars": 51, "text": "que los cachorros están a salvo porque es su padre.", "meta": {"queue_size": 1, "stt_openai_ms": 790}}
+{"ts": "2026-02-12 19:54:17.916", "stage": "translation_input", "chars": 51, "text": "que los cachorros están a salvo porque es su padre.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 19:54:18.571", "stage": "translation_output", "chars": 52, "text": "that the puppies are safe because it's their father.", "meta": {"translation_enabled": true, "translate_openai_ms": 650}}
+{"ts": "2026-02-12 19:54:18.574", "stage": "display_update_input", "chars": 52, "text": "that the puppies are safe because it's their father.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:54:18.578", "stage": "display_chunk_enqueued", "chars": 25, "text": "that the puppies are safe", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:54:18.581", "stage": "display_chunk_enqueued", "chars": 26, "text": "because it's their father.", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:54:19.416", "stage": "display_word_reveal_complete", "chars": 25, "text": "that the puppies are safe"}
+{"ts": "2026-02-12 19:54:20.099", "stage": "display_word_reveal_complete", "chars": 26, "text": "because it's their father."}
+{"ts": "2026-02-12 19:54:28.010", "stage": "stt_raw", "chars": 3, "text": "No.", "meta": {"engine": "openai", "stt_openai_ms": 810}}
+{"ts": "2026-02-12 19:54:28.013", "stage": "stt_sanitized", "chars": 3, "text": "No.", "meta": {"engine": "openai", "stt_openai_ms": 810}}
+{"ts": "2026-02-12 19:54:28.016", "stage": "stt_boundary_trim", "chars": 3, "text": "No.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:54:28.344", "stage": "sentence_buffer_timeout_flush", "chars": 3, "text": "No.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:54:28.347", "stage": "sentence_enqueued", "chars": 3, "text": "No.", "meta": {"queue_size": 1, "stt_openai_ms": 810}}
+{"ts": "2026-02-12 19:54:28.349", "stage": "translation_input", "chars": 3, "text": "No.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 19:54:28.893", "stage": "translation_output", "chars": 3, "text": "No.", "meta": {"translation_enabled": true, "translate_openai_ms": 538}}
+{"ts": "2026-02-12 19:54:28.897", "stage": "display_update_input", "chars": 3, "text": "No.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:54:28.900", "stage": "display_chunk_enqueued", "chars": 3, "text": "No.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:54:29.072", "stage": "display_word_reveal_complete", "chars": 3, "text": "No."}
+{"ts": "2026-02-12 19:54:33.043", "stage": "stt_raw", "chars": 14, "text": "Los cachorros.", "meta": {"engine": "openai", "stt_openai_ms": 664}}
+{"ts": "2026-02-12 19:54:33.046", "stage": "stt_sanitized", "chars": 14, "text": "Los cachorros.", "meta": {"engine": "openai", "stt_openai_ms": 664}}
+{"ts": "2026-02-12 19:54:33.049", "stage": "stt_boundary_trim", "chars": 14, "text": "Los cachorros.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:54:33.377", "stage": "sentence_buffer_timeout_flush", "chars": 14, "text": "Los cachorros.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:54:33.380", "stage": "sentence_enqueued", "chars": 14, "text": "Los cachorros.", "meta": {"queue_size": 1, "stt_openai_ms": 664}}
+{"ts": "2026-02-12 19:54:33.382", "stage": "translation_input", "chars": 14, "text": "Los cachorros.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 19:54:33.845", "stage": "translation_output", "chars": 12, "text": "The puppies.", "meta": {"translation_enabled": true, "translate_openai_ms": 456}}
+{"ts": "2026-02-12 19:54:33.848", "stage": "display_update_input", "chars": 12, "text": "The puppies.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:54:33.851", "stage": "display_chunk_enqueued", "chars": 12, "text": "The puppies.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:54:34.197", "stage": "display_word_reveal_complete", "chars": 12, "text": "The puppies."}
+{"ts": "2026-02-12 19:54:37.214", "stage": "stt_raw", "chars": 3, "text": "###", "meta": {"engine": "openai", "stt_openai_ms": 1424}}
+{"ts": "2026-02-12 19:54:37.217", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 1424}}
+{"ts": "2026-02-12 19:54:45.816", "stage": "stt_raw", "chars": 28, "text": "Con tres hermanos de sangre.", "meta": {"engine": "openai", "stt_openai_ms": 556}}
+{"ts": "2026-02-12 19:54:45.820", "stage": "stt_sanitized", "chars": 28, "text": "Con tres hermanos de sangre.", "meta": {"engine": "openai", "stt_openai_ms": 556}}
+{"ts": "2026-02-12 19:54:45.823", "stage": "stt_boundary_trim", "chars": 28, "text": "Con tres hermanos de sangre.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:54:46.154", "stage": "sentence_buffer_timeout_flush", "chars": 28, "text": "Con tres hermanos de sangre.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:54:46.157", "stage": "sentence_enqueued", "chars": 28, "text": "Con tres hermanos de sangre.", "meta": {"queue_size": 1, "stt_openai_ms": 556}}
+{"ts": "2026-02-12 19:54:46.159", "stage": "translation_input", "chars": 28, "text": "Con tres hermanos de sangre.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 19:54:47.329", "stage": "translation_output", "chars": 26, "text": "With three blood brothers.", "meta": {"translation_enabled": true, "translate_openai_ms": 1165}}
+{"ts": "2026-02-12 19:54:47.332", "stage": "display_update_input", "chars": 26, "text": "With three blood brothers.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:54:47.335", "stage": "display_chunk_enqueued", "chars": 26, "text": "With three blood brothers.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:54:48.014", "stage": "display_word_reveal_complete", "chars": 26, "text": "With three blood brothers."}
+{"ts": "2026-02-12 19:54:48.796", "stage": "stt_raw", "chars": 20, "text": "En busca de búfalos.", "meta": {"engine": "openai", "stt_openai_ms": 486}}
+{"ts": "2026-02-12 19:54:48.799", "stage": "stt_sanitized", "chars": 20, "text": "En busca de búfalos.", "meta": {"engine": "openai", "stt_openai_ms": 486}}
+{"ts": "2026-02-12 19:54:48.801", "stage": "stt_boundary_trim", "chars": 20, "text": "En busca de búfalos.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:54:49.147", "stage": "sentence_buffer_timeout_flush", "chars": 20, "text": "En busca de búfalos.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:54:49.153", "stage": "sentence_enqueued", "chars": 20, "text": "En busca de búfalos.", "meta": {"queue_size": 1, "stt_openai_ms": 486}}
+{"ts": "2026-02-12 19:54:49.157", "stage": "translation_input", "chars": 20, "text": "En busca de búfalos.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 19:54:49.691", "stage": "translation_output", "chars": 21, "text": "In search of buffalo.", "meta": {"translation_enabled": true, "translate_openai_ms": 522}}
+{"ts": "2026-02-12 19:54:49.694", "stage": "display_update_input", "chars": 21, "text": "In search of buffalo.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:54:49.699", "stage": "display_chunk_enqueued", "chars": 21, "text": "In search of buffalo.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:54:50.431", "stage": "display_word_reveal_complete", "chars": 21, "text": "In search of buffalo."}
+{"ts": "2026-02-12 19:54:54.191", "stage": "stt_raw", "chars": 14, "text": "Por su manada.", "meta": {"engine": "openai", "stt_openai_ms": 521}}
+{"ts": "2026-02-12 19:54:54.194", "stage": "stt_sanitized", "chars": 14, "text": "Por su manada.", "meta": {"engine": "openai", "stt_openai_ms": 521}}
+{"ts": "2026-02-12 19:54:54.197", "stage": "stt_boundary_trim", "chars": 14, "text": "Por su manada.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:54:54.199", "stage": "noise_text_suppressed", "chars": 14, "text": "Por su manada.", "meta": {"rms": 182.0, "peak": 1641.0, "threshold": 79.46224336762438}}
+{"ts": "2026-02-12 19:55:04.168", "stage": "stt_raw", "chars": 27, "text": "Para crear nuevos vínculos.", "meta": {"engine": "openai", "stt_openai_ms": 1470}}
+{"ts": "2026-02-12 19:55:04.171", "stage": "stt_sanitized", "chars": 27, "text": "Para crear nuevos vínculos.", "meta": {"engine": "openai", "stt_openai_ms": 1470}}
+{"ts": "2026-02-12 19:55:04.173", "stage": "stt_boundary_trim", "chars": 27, "text": "Para crear nuevos vínculos.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:55:04.500", "stage": "sentence_buffer_timeout_flush", "chars": 27, "text": "Para crear nuevos vínculos.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:55:04.503", "stage": "sentence_enqueued", "chars": 27, "text": "Para crear nuevos vínculos.", "meta": {"queue_size": 1, "stt_openai_ms": 1470}}
+{"ts": "2026-02-12 19:55:04.504", "stage": "translation_input", "chars": 27, "text": "Para crear nuevos vínculos.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 19:55:05.178", "stage": "translation_output", "chars": 26, "text": "To create new connections.", "meta": {"translation_enabled": true, "translate_openai_ms": 667}}
+{"ts": "2026-02-12 19:55:05.182", "stage": "display_update_input", "chars": 26, "text": "To create new connections.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:55:05.185", "stage": "display_chunk_enqueued", "chars": 26, "text": "To create new connections.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:55:05.864", "stage": "display_word_reveal_complete", "chars": 26, "text": "To create new connections."}
+{"ts": "2026-02-12 19:55:06.533", "stage": "stt_raw", "chars": 8, "text": "context:", "meta": {"engine": "openai", "stt_openai_ms": 623}}
+{"ts": "2026-02-12 19:55:06.536", "stage": "stt_sanitized", "chars": 8, "text": "context:", "meta": {"engine": "openai", "stt_openai_ms": 623}}
+{"ts": "2026-02-12 19:55:06.539", "stage": "stt_boundary_trim", "chars": 8, "text": "context:", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:55:06.874", "stage": "sentence_buffer_timeout_flush", "chars": 8, "text": "context:", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:55:06.877", "stage": "sentence_enqueued", "chars": 8, "text": "context:", "meta": {"queue_size": 1, "stt_openai_ms": 623}}
+{"ts": "2026-02-12 19:55:06.879", "stage": "translation_input", "chars": 8, "text": "context:", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 19:55:07.709", "stage": "translation_output", "chars": 50, "text": "Sure, please provide the text you need translated.", "meta": {"translation_enabled": true, "translate_openai_ms": 824}}
+{"ts": "2026-02-12 19:55:07.713", "stage": "display_update_input", "chars": 50, "text": "Sure, please provide the text you need translated.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:55:07.717", "stage": "display_chunk_enqueued", "chars": 29, "text": "Sure, please provide the text", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:55:07.720", "stage": "display_chunk_enqueued", "chars": 20, "text": "you need translated.", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:55:08.583", "stage": "display_word_reveal_complete", "chars": 29, "text": "Sure, please provide the text"}
+{"ts": "2026-02-12 19:55:09.095", "stage": "display_word_reveal_complete", "chars": 20, "text": "you need translated."}
+{"ts": "2026-02-12 19:55:24.248", "stage": "stt_raw", "chars": 3, "text": "###", "meta": {"engine": "openai", "stt_openai_ms": 669}}
+{"ts": "2026-02-12 19:55:24.251", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 669}}
+{"ts": "2026-02-12 19:55:30.782", "stage": "stt_raw", "chars": 23, "text": "de la manada del claro.", "meta": {"engine": "openai", "stt_openai_ms": 1003}}
+{"ts": "2026-02-12 19:55:30.786", "stage": "stt_sanitized", "chars": 23, "text": "de la manada del claro.", "meta": {"engine": "openai", "stt_openai_ms": 1003}}
+{"ts": "2026-02-12 19:55:30.789", "stage": "stt_boundary_trim", "chars": 23, "text": "de la manada del claro.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:55:31.119", "stage": "sentence_buffer_timeout_flush", "chars": 23, "text": "de la manada del claro.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:55:31.122", "stage": "sentence_enqueued", "chars": 23, "text": "de la manada del claro.", "meta": {"queue_size": 1, "stt_openai_ms": 1003}}
+{"ts": "2026-02-12 19:55:31.124", "stage": "translation_input", "chars": 23, "text": "de la manada del claro.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 19:55:31.793", "stage": "translation_output", "chars": 25, "text": "from the clearing's pack.", "meta": {"translation_enabled": true, "translate_openai_ms": 662}}
+{"ts": "2026-02-12 19:55:31.796", "stage": "display_update_input", "chars": 25, "text": "from the clearing's pack.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:55:31.800", "stage": "display_chunk_enqueued", "chars": 25, "text": "from the clearing's pack.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:55:32.489", "stage": "display_word_reveal_complete", "chars": 25, "text": "from the clearing's pack."}
+{"ts": "2026-02-12 19:55:35.358", "stage": "stt_raw", "chars": 8, "text": "context:", "meta": {"engine": "openai", "stt_openai_ms": 1377}}
+{"ts": "2026-02-12 19:55:35.362", "stage": "stt_sanitized", "chars": 8, "text": "context:", "meta": {"engine": "openai", "stt_openai_ms": 1377}}
+{"ts": "2026-02-12 19:55:35.365", "stage": "stt_boundary_trim", "chars": 8, "text": "context:", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:55:35.698", "stage": "sentence_buffer_timeout_flush", "chars": 8, "text": "context:", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:55:35.701", "stage": "sentence_enqueued", "chars": 8, "text": "context:", "meta": {"queue_size": 1, "stt_openai_ms": 1377}}
+{"ts": "2026-02-12 19:55:35.704", "stage": "translation_input", "chars": 8, "text": "context:", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 19:55:36.439", "stage": "translation_output", "chars": 50, "text": "Sure, please provide the text you need translated.", "meta": {"translation_enabled": true, "translate_openai_ms": 729}}
+{"ts": "2026-02-12 19:55:36.444", "stage": "display_update_input", "chars": 50, "text": "Sure, please provide the text you need translated.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:55:36.448", "stage": "display_chunk_enqueued", "chars": 29, "text": "Sure, please provide the text", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:55:36.452", "stage": "display_chunk_enqueued", "chars": 20, "text": "you need translated.", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:55:37.399", "stage": "display_word_reveal_complete", "chars": 29, "text": "Sure, please provide the text"}
+{"ts": "2026-02-12 19:55:37.923", "stage": "display_word_reveal_complete", "chars": 20, "text": "you need translated."}
+{"ts": "2026-02-12 19:55:38.368", "stage": "stt_raw", "chars": 27, "text": "Esta moneda está creciendo.", "meta": {"engine": "openai", "stt_openai_ms": 718}}
+{"ts": "2026-02-12 19:55:38.371", "stage": "stt_sanitized", "chars": 27, "text": "Esta moneda está creciendo.", "meta": {"engine": "openai", "stt_openai_ms": 718}}
+{"ts": "2026-02-12 19:55:38.375", "stage": "stt_boundary_trim", "chars": 27, "text": "Esta moneda está creciendo.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:55:38.699", "stage": "sentence_buffer_timeout_flush", "chars": 27, "text": "Esta moneda está creciendo.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:55:38.702", "stage": "sentence_enqueued", "chars": 27, "text": "Esta moneda está creciendo.", "meta": {"queue_size": 1, "stt_openai_ms": 718}}
+{"ts": "2026-02-12 19:55:38.704", "stage": "translation_input", "chars": 27, "text": "Esta moneda está creciendo.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 19:55:39.477", "stage": "translation_output", "chars": 25, "text": "This currency is growing.", "meta": {"translation_enabled": true, "translate_openai_ms": 768}}
+{"ts": "2026-02-12 19:55:39.481", "stage": "display_update_input", "chars": 25, "text": "This currency is growing.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:55:39.485", "stage": "display_chunk_enqueued", "chars": 25, "text": "This currency is growing.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:55:40.186", "stage": "display_word_reveal_complete", "chars": 25, "text": "This currency is growing."}
+{"ts": "2026-02-12 19:55:45.735", "stage": "stt_raw", "chars": 27, "text": "Una nueva camada de leones.", "meta": {"engine": "openai", "stt_openai_ms": 1514}}
+{"ts": "2026-02-12 19:55:45.739", "stage": "stt_sanitized", "chars": 27, "text": "Una nueva camada de leones.", "meta": {"engine": "openai", "stt_openai_ms": 1514}}
+{"ts": "2026-02-12 19:55:45.743", "stage": "stt_boundary_trim", "chars": 27, "text": "Una nueva camada de leones.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:55:46.074", "stage": "sentence_buffer_timeout_flush", "chars": 27, "text": "Una nueva camada de leones.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:55:46.077", "stage": "sentence_enqueued", "chars": 27, "text": "Una nueva camada de leones.", "meta": {"queue_size": 1, "stt_openai_ms": 1514}}
+{"ts": "2026-02-12 19:55:46.079", "stage": "translation_input", "chars": 27, "text": "Una nueva camada de leones.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 19:55:46.703", "stage": "translation_output", "chars": 22, "text": "A new litter of lions.", "meta": {"translation_enabled": true, "translate_openai_ms": 618}}
+{"ts": "2026-02-12 19:55:46.707", "stage": "display_update_input", "chars": 22, "text": "A new litter of lions.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:55:46.710", "stage": "display_chunk_enqueued", "chars": 22, "text": "A new litter of lions.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:55:47.596", "stage": "display_word_reveal_complete", "chars": 22, "text": "A new litter of lions."}
+{"ts": "2026-02-12 19:55:59.611", "stage": "stt_raw", "chars": 20, "text": "Y solo hay un macho.", "meta": {"engine": "openai", "stt_openai_ms": 711}}
+{"ts": "2026-02-12 19:55:59.615", "stage": "stt_sanitized", "chars": 20, "text": "Y solo hay un macho.", "meta": {"engine": "openai", "stt_openai_ms": 711}}
+{"ts": "2026-02-12 19:55:59.619", "stage": "stt_boundary_trim", "chars": 20, "text": "Y solo hay un macho.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:55:59.951", "stage": "sentence_buffer_timeout_flush", "chars": 20, "text": "Y solo hay un macho.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:55:59.955", "stage": "sentence_enqueued", "chars": 20, "text": "Y solo hay un macho.", "meta": {"queue_size": 1, "stt_openai_ms": 711}}
+{"ts": "2026-02-12 19:55:59.958", "stage": "translation_input", "chars": 20, "text": "Y solo hay un macho.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 19:56:00.636", "stage": "translation_output", "chars": 26, "text": "And there's only one male.", "meta": {"translation_enabled": true, "translate_openai_ms": 672}}
+{"ts": "2026-02-12 19:56:00.644", "stage": "display_update_input", "chars": 26, "text": "And there's only one male.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:56:00.648", "stage": "display_chunk_enqueued", "chars": 26, "text": "And there's only one male.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:56:01.513", "stage": "display_word_reveal_complete", "chars": 26, "text": "And there's only one male."}
+{"ts": "2026-02-12 19:56:13.812", "stage": "stt_raw", "chars": 41, "text": "¿A quién pondrán a prueba dentro de poco?", "meta": {"engine": "openai", "stt_openai_ms": 872}}
+{"ts": "2026-02-12 19:56:13.815", "stage": "stt_sanitized", "chars": 41, "text": "¿A quién pondrán a prueba dentro de poco?", "meta": {"engine": "openai", "stt_openai_ms": 872}}
+{"ts": "2026-02-12 19:56:13.819", "stage": "stt_boundary_trim", "chars": 41, "text": "¿A quién pondrán a prueba dentro de poco?", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:56:14.158", "stage": "sentence_buffer_timeout_flush", "chars": 41, "text": "¿A quién pondrán a prueba dentro de poco?", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:56:14.161", "stage": "sentence_enqueued", "chars": 41, "text": "¿A quién pondrán a prueba dentro de poco?", "meta": {"queue_size": 1, "stt_openai_ms": 872}}
+{"ts": "2026-02-12 19:56:14.164", "stage": "translation_input", "chars": 41, "text": "¿A quién pondrán a prueba dentro de poco?", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 19:56:15.005", "stage": "translation_output", "chars": 24, "text": "Who will they test soon?", "meta": {"translation_enabled": true, "translate_openai_ms": 836}}
+{"ts": "2026-02-12 19:56:15.010", "stage": "display_update_input", "chars": 24, "text": "Who will they test soon?", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:56:15.013", "stage": "display_chunk_enqueued", "chars": 24, "text": "Who will they test soon?", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:56:15.939", "stage": "display_word_reveal_complete", "chars": 24, "text": "Who will they test soon?"}
+{"ts": "2026-02-12 19:56:30.548", "stage": "stt_raw", "chars": 21, "text": "acuerdos con rapidez.", "meta": {"engine": "openai", "stt_openai_ms": 817}}
+{"ts": "2026-02-12 19:56:30.552", "stage": "stt_sanitized", "chars": 21, "text": "acuerdos con rapidez.", "meta": {"engine": "openai", "stt_openai_ms": 817}}
+{"ts": "2026-02-12 19:56:30.555", "stage": "stt_boundary_trim", "chars": 21, "text": "acuerdos con rapidez.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:56:30.559", "stage": "noise_text_suppressed", "chars": 21, "text": "acuerdos con rapidez.", "meta": {"rms": 205.0, "peak": 1750.0, "threshold": 90.71213483536118}}
+{"ts": "2026-02-12 19:56:34.320", "stage": "stt_raw", "chars": 33, "text": "El cachorro ya es un adolescente.", "meta": {"engine": "openai", "stt_openai_ms": 500}}
+{"ts": "2026-02-12 19:56:34.324", "stage": "stt_sanitized", "chars": 33, "text": "El cachorro ya es un adolescente.", "meta": {"engine": "openai", "stt_openai_ms": 500}}
+{"ts": "2026-02-12 19:56:34.327", "stage": "stt_boundary_trim", "chars": 33, "text": "El cachorro ya es un adolescente.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:56:34.659", "stage": "sentence_buffer_timeout_flush", "chars": 33, "text": "El cachorro ya es un adolescente.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:56:34.662", "stage": "sentence_enqueued", "chars": 33, "text": "El cachorro ya es un adolescente.", "meta": {"queue_size": 1, "stt_openai_ms": 500}}
+{"ts": "2026-02-12 19:56:34.665", "stage": "translation_input", "chars": 33, "text": "El cachorro ya es un adolescente.", "meta": {"translation_enabled": true}}

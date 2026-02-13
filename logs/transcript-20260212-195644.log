@@ -1,0 +1,198 @@
+{"ts": "2026-02-12 19:56:53.766", "stage": "stt_raw", "chars": 8, "text": "Nothing.", "meta": {"engine": "openai", "stt_openai_ms": 511}}
+{"ts": "2026-02-12 19:56:53.769", "stage": "stt_sanitized", "chars": 8, "text": "Nothing.", "meta": {"engine": "openai", "stt_openai_ms": 511}}
+{"ts": "2026-02-12 19:56:53.775", "stage": "stt_boundary_trim", "chars": 8, "text": "Nothing.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:56:54.110", "stage": "sentence_buffer_timeout_flush", "chars": 8, "text": "Nothing.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:56:54.112", "stage": "sentence_enqueued", "chars": 8, "text": "Nothing.", "meta": {"queue_size": 1, "stt_openai_ms": 511}}
+{"ts": "2026-02-12 19:56:54.115", "stage": "translation_input", "chars": 8, "text": "Nothing.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 19:56:54.634", "stage": "translation_output", "chars": 5, "text": "Nada.", "meta": {"translation_enabled": true, "translate_openai_ms": 514}}
+{"ts": "2026-02-12 19:56:54.636", "stage": "display_update_input", "chars": 5, "text": "Nada.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:56:54.639", "stage": "display_chunk_enqueued", "chars": 5, "text": "Nada.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:56:54.808", "stage": "display_word_reveal_complete", "chars": 5, "text": "Nada."}
+{"ts": "2026-02-12 19:57:04.763", "stage": "stt_raw", "chars": 9, "text": "y deseos.", "meta": {"engine": "openai", "stt_openai_ms": 548}}
+{"ts": "2026-02-12 19:57:04.766", "stage": "stt_sanitized", "chars": 9, "text": "y deseos.", "meta": {"engine": "openai", "stt_openai_ms": 548}}
+{"ts": "2026-02-12 19:57:04.768", "stage": "stt_boundary_trim", "chars": 9, "text": "y deseos.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:57:05.090", "stage": "sentence_buffer_timeout_flush", "chars": 9, "text": "y deseos.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:57:05.092", "stage": "sentence_enqueued", "chars": 9, "text": "y deseos.", "meta": {"queue_size": 1, "stt_openai_ms": 548}}
+{"ts": "2026-02-12 19:57:05.093", "stage": "translation_input", "chars": 9, "text": "y deseos.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 19:57:05.716", "stage": "translation_output", "chars": 9, "text": "y deseos.", "meta": {"translation_enabled": true, "translate_openai_ms": 620}}
+{"ts": "2026-02-12 19:57:05.719", "stage": "display_update_input", "chars": 9, "text": "y deseos.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:57:05.721", "stage": "display_chunk_enqueued", "chars": 9, "text": "y deseos.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:57:06.051", "stage": "display_word_reveal_complete", "chars": 9, "text": "y deseos."}
+{"ts": "2026-02-12 19:57:08.534", "stage": "stt_raw", "chars": 23, "text": "Deseos poco apropiados.", "meta": {"engine": "openai", "stt_openai_ms": 559}}
+{"ts": "2026-02-12 19:57:08.536", "stage": "stt_sanitized", "chars": 23, "text": "Deseos poco apropiados.", "meta": {"engine": "openai", "stt_openai_ms": 559}}
+{"ts": "2026-02-12 19:57:08.539", "stage": "stt_boundary_trim", "chars": 23, "text": "Deseos poco apropiados.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:57:08.898", "stage": "sentence_buffer_timeout_flush", "chars": 23, "text": "Deseos poco apropiados.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:57:08.900", "stage": "sentence_enqueued", "chars": 23, "text": "Deseos poco apropiados.", "meta": {"queue_size": 1, "stt_openai_ms": 559}}
+{"ts": "2026-02-12 19:57:08.902", "stage": "translation_input", "chars": 23, "text": "Deseos poco apropiados.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 19:57:09.605", "stage": "translation_output", "chars": 20, "text": "Deseos inapropiados.", "meta": {"translation_enabled": true, "translate_openai_ms": 700}}
+{"ts": "2026-02-12 19:57:09.607", "stage": "display_update_input", "chars": 20, "text": "Deseos inapropiados.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:57:09.610", "stage": "display_chunk_enqueued", "chars": 20, "text": "Deseos inapropiados.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:57:09.969", "stage": "display_word_reveal_complete", "chars": 20, "text": "Deseos inapropiados."}
+{"ts": "2026-02-12 19:57:14.934", "stage": "stt_raw", "chars": 19, "text": "un juego peligroso.", "meta": {"engine": "openai", "stt_openai_ms": 779}}
+{"ts": "2026-02-12 19:57:14.937", "stage": "stt_sanitized", "chars": 19, "text": "un juego peligroso.", "meta": {"engine": "openai", "stt_openai_ms": 779}}
+{"ts": "2026-02-12 19:57:14.940", "stage": "stt_boundary_trim", "chars": 19, "text": "un juego peligroso.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:57:15.267", "stage": "sentence_buffer_timeout_flush", "chars": 19, "text": "un juego peligroso.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:57:15.269", "stage": "sentence_enqueued", "chars": 19, "text": "un juego peligroso.", "meta": {"queue_size": 1, "stt_openai_ms": 779}}
+{"ts": "2026-02-12 19:57:15.271", "stage": "translation_input", "chars": 19, "text": "un juego peligroso.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 19:57:16.143", "stage": "translation_output", "chars": 19, "text": "un juego peligroso.", "meta": {"translation_enabled": true, "translate_openai_ms": 869}}
+{"ts": "2026-02-12 19:57:16.146", "stage": "display_update_input", "chars": 19, "text": "un juego peligroso.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:57:16.148", "stage": "display_chunk_enqueued", "chars": 19, "text": "un juego peligroso.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:57:16.664", "stage": "display_word_reveal_complete", "chars": 19, "text": "un juego peligroso."}
+{"ts": "2026-02-12 19:57:22.240", "stage": "stt_raw", "chars": 31, "text": "Está terminantemente prohibido.", "meta": {"engine": "openai", "stt_openai_ms": 656}}
+{"ts": "2026-02-12 19:57:22.243", "stage": "stt_sanitized", "chars": 31, "text": "Está terminantemente prohibido.", "meta": {"engine": "openai", "stt_openai_ms": 656}}
+{"ts": "2026-02-12 19:57:22.244", "stage": "stt_boundary_trim", "chars": 31, "text": "Está terminantemente prohibido.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:57:22.584", "stage": "sentence_buffer_timeout_flush", "chars": 31, "text": "Está terminantemente prohibido.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:57:22.586", "stage": "sentence_enqueued", "chars": 31, "text": "Está terminantemente prohibido.", "meta": {"queue_size": 1, "stt_openai_ms": 656}}
+{"ts": "2026-02-12 19:57:22.592", "stage": "translation_input", "chars": 31, "text": "Está terminantemente prohibido.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 19:57:23.646", "stage": "translation_output", "chars": 29, "text": "Está estrictamente prohibido.", "meta": {"translation_enabled": true, "translate_openai_ms": 1049}}
+{"ts": "2026-02-12 19:57:23.649", "stage": "display_update_input", "chars": 29, "text": "Está estrictamente prohibido.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:57:23.651", "stage": "display_chunk_enqueued", "chars": 29, "text": "Está estrictamente prohibido.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:57:24.172", "stage": "display_word_reveal_complete", "chars": 29, "text": "Está estrictamente prohibido."}
+{"ts": "2026-02-12 19:57:39.387", "stage": "stt_raw", "chars": 3, "text": "###", "meta": {"engine": "openai", "stt_openai_ms": 622}}
+{"ts": "2026-02-12 19:57:39.390", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 622}}
+{"ts": "2026-02-12 19:57:50.428", "stage": "stt_raw", "chars": 34, "text": "El joven macho se pasa de la raya.", "meta": {"engine": "openai", "stt_openai_ms": 683}}
+{"ts": "2026-02-12 19:57:50.431", "stage": "stt_sanitized", "chars": 34, "text": "El joven macho se pasa de la raya.", "meta": {"engine": "openai", "stt_openai_ms": 683}}
+{"ts": "2026-02-12 19:57:50.434", "stage": "stt_boundary_trim", "chars": 34, "text": "El joven macho se pasa de la raya.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:57:50.763", "stage": "sentence_buffer_timeout_flush", "chars": 34, "text": "El joven macho se pasa de la raya.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:57:50.765", "stage": "sentence_enqueued", "chars": 34, "text": "El joven macho se pasa de la raya.", "meta": {"queue_size": 1, "stt_openai_ms": 683}}
+{"ts": "2026-02-12 19:57:50.767", "stage": "translation_input", "chars": 34, "text": "El joven macho se pasa de la raya.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 19:57:51.430", "stage": "translation_output", "chars": 32, "text": "The young male crosses the line.", "meta": {"translation_enabled": true, "translate_openai_ms": 656}}
+{"ts": "2026-02-12 19:57:51.433", "stage": "display_update_input", "chars": 32, "text": "The young male crosses the line.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:57:51.436", "stage": "display_chunk_enqueued", "chars": 26, "text": "The young male crosses the", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:57:51.437", "stage": "display_chunk_enqueued", "chars": 5, "text": "line.", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:57:52.272", "stage": "display_word_reveal_complete", "chars": 26, "text": "The young male crosses the"}
+{"ts": "2026-02-12 19:57:52.443", "stage": "display_word_reveal_complete", "chars": 5, "text": "line."}
+{"ts": "2026-02-12 19:58:01.699", "stage": "stt_raw", "chars": 18, "text": "Todos en el claro.", "meta": {"engine": "openai", "stt_openai_ms": 782}}
+{"ts": "2026-02-12 19:58:01.702", "stage": "stt_sanitized", "chars": 18, "text": "Todos en el claro.", "meta": {"engine": "openai", "stt_openai_ms": 782}}
+{"ts": "2026-02-12 19:58:01.706", "stage": "stt_boundary_trim", "chars": 18, "text": "Todos en el claro.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:58:02.032", "stage": "sentence_buffer_timeout_flush", "chars": 18, "text": "Todos en el claro.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:58:02.034", "stage": "sentence_enqueued", "chars": 18, "text": "Todos en el claro.", "meta": {"queue_size": 1, "stt_openai_ms": 782}}
+{"ts": "2026-02-12 19:58:02.036", "stage": "translation_input", "chars": 18, "text": "Todos en el claro.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 19:58:02.673", "stage": "translation_output", "chars": 25, "text": "Everyone in the clearing.", "meta": {"translation_enabled": true, "translate_openai_ms": 632}}
+{"ts": "2026-02-12 19:58:02.676", "stage": "display_update_input", "chars": 25, "text": "Everyone in the clearing.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:58:02.679", "stage": "display_chunk_enqueued", "chars": 25, "text": "Everyone in the clearing.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:58:03.368", "stage": "display_word_reveal_complete", "chars": 25, "text": "Everyone in the clearing."}
+{"ts": "2026-02-12 19:58:06.034", "stage": "stt_raw", "chars": 6, "text": "Estas.", "meta": {"engine": "openai", "stt_openai_ms": 470}}
+{"ts": "2026-02-12 19:58:06.036", "stage": "stt_sanitized", "chars": 6, "text": "Estas.", "meta": {"engine": "openai", "stt_openai_ms": 470}}
+{"ts": "2026-02-12 19:58:06.039", "stage": "stt_boundary_trim", "chars": 6, "text": "Estas.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:58:06.369", "stage": "sentence_buffer_timeout_flush", "chars": 6, "text": "Estas.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:58:06.371", "stage": "sentence_enqueued", "chars": 6, "text": "Estas.", "meta": {"queue_size": 1, "stt_openai_ms": 470}}
+{"ts": "2026-02-12 19:58:06.373", "stage": "translation_input", "chars": 6, "text": "Estas.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 19:58:06.959", "stage": "translation_output", "chars": 8, "text": "You are.", "meta": {"translation_enabled": true, "translate_openai_ms": 583}}
+{"ts": "2026-02-12 19:58:06.962", "stage": "display_update_input", "chars": 8, "text": "You are.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:58:06.965", "stage": "display_chunk_enqueued", "chars": 8, "text": "You are.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:58:07.287", "stage": "display_word_reveal_complete", "chars": 8, "text": "You are."}
+{"ts": "2026-02-12 19:58:08.646", "stage": "stt_raw", "chars": 8, "text": "context:", "meta": {"engine": "openai", "stt_openai_ms": 853}}
+{"ts": "2026-02-12 19:58:08.650", "stage": "stt_sanitized", "chars": 8, "text": "context:", "meta": {"engine": "openai", "stt_openai_ms": 853}}
+{"ts": "2026-02-12 19:58:08.653", "stage": "stt_boundary_trim", "chars": 8, "text": "context:", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:58:08.990", "stage": "sentence_buffer_timeout_flush", "chars": 8, "text": "context:", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:58:08.993", "stage": "sentence_enqueued", "chars": 8, "text": "context:", "meta": {"queue_size": 1, "stt_openai_ms": 853}}
+{"ts": "2026-02-12 19:58:08.995", "stage": "translation_input", "chars": 8, "text": "context:", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 19:58:09.674", "stage": "translation_output", "chars": 50, "text": "Sure, please provide the text you need translated.", "meta": {"translation_enabled": true, "translate_openai_ms": 674}}
+{"ts": "2026-02-12 19:58:09.677", "stage": "display_update_input", "chars": 50, "text": "Sure, please provide the text you need translated.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:58:09.679", "stage": "display_chunk_enqueued", "chars": 29, "text": "Sure, please provide the text", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:58:09.682", "stage": "display_chunk_enqueued", "chars": 20, "text": "you need translated.", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:58:10.526", "stage": "display_word_reveal_complete", "chars": 29, "text": "Sure, please provide the text"}
+{"ts": "2026-02-12 19:58:11.022", "stage": "display_word_reveal_complete", "chars": 20, "text": "you need translated."}
+{"ts": "2026-02-12 19:58:11.352", "stage": "stt_raw", "chars": 15, "text": "Check this out.", "meta": {"engine": "openai", "stt_openai_ms": 817}}
+{"ts": "2026-02-12 19:58:11.356", "stage": "stt_sanitized", "chars": 15, "text": "Check this out.", "meta": {"engine": "openai", "stt_openai_ms": 817}}
+{"ts": "2026-02-12 19:58:11.358", "stage": "stt_boundary_trim", "chars": 15, "text": "Check this out.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:58:11.692", "stage": "sentence_buffer_timeout_flush", "chars": 15, "text": "Check this out.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:58:11.695", "stage": "sentence_enqueued", "chars": 15, "text": "Check this out.", "meta": {"queue_size": 1, "stt_openai_ms": 817}}
+{"ts": "2026-02-12 19:58:11.697", "stage": "translation_input", "chars": 15, "text": "Check this out.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 19:58:12.427", "stage": "translation_output", "chars": 50, "text": "Sure, please provide the text you want translated.", "meta": {"translation_enabled": true, "translate_openai_ms": 725}}
+{"ts": "2026-02-12 19:58:12.431", "stage": "display_update_input", "chars": 50, "text": "Sure, please provide the text you want translated.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:58:12.434", "stage": "display_chunk_enqueued", "chars": 29, "text": "Sure, please provide the text", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:58:12.435", "stage": "display_chunk_enqueued", "chars": 20, "text": "you want translated.", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:58:13.290", "stage": "display_word_reveal_complete", "chars": 29, "text": "Sure, please provide the text"}
+{"ts": "2026-02-12 19:58:13.329", "stage": "stt_raw", "chars": 6, "text": "That's", "meta": {"engine": "openai", "stt_openai_ms": 666}}
+{"ts": "2026-02-12 19:58:13.333", "stage": "stt_sanitized", "chars": 6, "text": "That's", "meta": {"engine": "openai", "stt_openai_ms": 666}}
+{"ts": "2026-02-12 19:58:13.335", "stage": "stt_boundary_trim", "chars": 6, "text": "That's", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:58:13.663", "stage": "sentence_buffer_timeout_flush", "chars": 6, "text": "That's", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:58:13.666", "stage": "sentence_enqueued", "chars": 6, "text": "That's", "meta": {"queue_size": 1, "stt_openai_ms": 666}}
+{"ts": "2026-02-12 19:58:13.676", "stage": "translation_input", "chars": 6, "text": "That's", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 19:58:13.802", "stage": "display_word_reveal_complete", "chars": 20, "text": "you want translated."}
+{"ts": "2026-02-12 19:58:14.505", "stage": "translation_output", "chars": 6, "text": "Eso es", "meta": {"translation_enabled": true, "translate_openai_ms": 825}}
+{"ts": "2026-02-12 19:58:14.511", "stage": "display_update_input", "chars": 6, "text": "Eso es", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:58:14.515", "stage": "display_chunk_enqueued", "chars": 6, "text": "Eso es", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:58:14.858", "stage": "display_word_reveal_complete", "chars": 6, "text": "Eso es"}
+{"ts": "2026-02-12 19:58:15.685", "stage": "stt_raw", "chars": 2, "text": "So", "meta": {"engine": "openai", "stt_openai_ms": 629}}
+{"ts": "2026-02-12 19:58:15.688", "stage": "stt_sanitized", "chars": 2, "text": "So", "meta": {"engine": "openai", "stt_openai_ms": 629}}
+{"ts": "2026-02-12 19:58:15.691", "stage": "stt_boundary_trim", "chars": 2, "text": "So", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:58:16.023", "stage": "sentence_buffer_timeout_flush", "chars": 2, "text": "So", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:58:16.026", "stage": "sentence_enqueued", "chars": 2, "text": "So", "meta": {"queue_size": 1, "stt_openai_ms": 629}}
+{"ts": "2026-02-12 19:58:16.029", "stage": "translation_input", "chars": 2, "text": "So", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 19:58:16.688", "stage": "translation_output", "chars": 5, "text": "I am.", "meta": {"translation_enabled": true, "translate_openai_ms": 654}}
+{"ts": "2026-02-12 19:58:16.691", "stage": "display_update_input", "chars": 5, "text": "I am.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:58:16.694", "stage": "display_chunk_enqueued", "chars": 5, "text": "I am.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:58:17.030", "stage": "display_word_reveal_complete", "chars": 5, "text": "I am."}
+{"ts": "2026-02-12 19:58:18.319", "stage": "stt_raw", "chars": 19, "text": "Estaba screwing up.", "meta": {"engine": "openai", "stt_openai_ms": 544}}
+{"ts": "2026-02-12 19:58:18.323", "stage": "stt_sanitized", "chars": 19, "text": "Estaba screwing up.", "meta": {"engine": "openai", "stt_openai_ms": 544}}
+{"ts": "2026-02-12 19:58:18.326", "stage": "stt_boundary_trim", "chars": 19, "text": "Estaba screwing up.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:58:18.657", "stage": "sentence_buffer_timeout_flush", "chars": 19, "text": "Estaba screwing up.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:58:18.660", "stage": "sentence_enqueued", "chars": 19, "text": "Estaba screwing up.", "meta": {"queue_size": 1, "stt_openai_ms": 544}}
+{"ts": "2026-02-12 19:58:18.662", "stage": "translation_input", "chars": 19, "text": "Estaba screwing up.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 19:58:19.198", "stage": "translation_output", "chars": 18, "text": "I was screwing up.", "meta": {"translation_enabled": true, "translate_openai_ms": 530}}
+{"ts": "2026-02-12 19:58:19.201", "stage": "display_update_input", "chars": 18, "text": "I was screwing up.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:58:19.204", "stage": "display_chunk_enqueued", "chars": 18, "text": "I was screwing up.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:58:19.886", "stage": "display_word_reveal_complete", "chars": 18, "text": "I was screwing up."}
+{"ts": "2026-02-12 19:58:22.296", "stage": "stt_raw", "chars": 20, "text": "Estoy tratando de...", "meta": {"engine": "openai", "stt_openai_ms": 801}}
+{"ts": "2026-02-12 19:58:22.300", "stage": "stt_sanitized", "chars": 20, "text": "Estoy tratando de...", "meta": {"engine": "openai", "stt_openai_ms": 801}}
+{"ts": "2026-02-12 19:58:22.303", "stage": "stt_boundary_trim", "chars": 20, "text": "Estoy tratando de...", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:58:22.637", "stage": "sentence_buffer_timeout_flush", "chars": 20, "text": "Estoy tratando de...", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:58:22.640", "stage": "sentence_enqueued", "chars": 20, "text": "Estoy tratando de...", "meta": {"queue_size": 1, "stt_openai_ms": 801}}
+{"ts": "2026-02-12 19:58:22.642", "stage": "translation_input", "chars": 20, "text": "Estoy tratando de...", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 19:58:23.112", "stage": "translation_output", "chars": 17, "text": "I am trying to...", "meta": {"translation_enabled": true, "translate_openai_ms": 463}}
+{"ts": "2026-02-12 19:58:23.115", "stage": "display_update_input", "chars": 17, "text": "I am trying to...", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:58:23.117", "stage": "display_chunk_enqueued", "chars": 17, "text": "I am trying to...", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:58:23.800", "stage": "display_word_reveal_complete", "chars": 17, "text": "I am trying to..."}
+{"ts": "2026-02-12 19:58:27.644", "stage": "stt_raw", "chars": 11, "text": "donde está.", "meta": {"engine": "openai", "stt_openai_ms": 949}}
+{"ts": "2026-02-12 19:58:27.647", "stage": "stt_sanitized", "chars": 11, "text": "donde está.", "meta": {"engine": "openai", "stt_openai_ms": 949}}
+{"ts": "2026-02-12 19:58:27.651", "stage": "stt_boundary_trim", "chars": 11, "text": "donde está.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:58:27.985", "stage": "sentence_buffer_timeout_flush", "chars": 11, "text": "donde está.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:58:27.988", "stage": "sentence_enqueued", "chars": 11, "text": "donde está.", "meta": {"queue_size": 1, "stt_openai_ms": 949}}
+{"ts": "2026-02-12 19:58:27.990", "stage": "translation_input", "chars": 11, "text": "donde está.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 19:58:28.601", "stage": "translation_output", "chars": 12, "text": "where is it?", "meta": {"translation_enabled": true, "translate_openai_ms": 605}}
+{"ts": "2026-02-12 19:58:28.604", "stage": "display_update_input", "chars": 12, "text": "where is it?", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:58:28.607", "stage": "display_chunk_enqueued", "chars": 12, "text": "where is it?", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:58:29.115", "stage": "display_word_reveal_complete", "chars": 12, "text": "where is it?"}
+{"ts": "2026-02-12 19:58:29.853", "stage": "stt_raw", "chars": 4, "text": "Dago", "meta": {"engine": "openai", "stt_openai_ms": 767}}
+{"ts": "2026-02-12 19:58:29.856", "stage": "stt_sanitized", "chars": 4, "text": "Dago", "meta": {"engine": "openai", "stt_openai_ms": 767}}
+{"ts": "2026-02-12 19:58:29.860", "stage": "stt_boundary_trim", "chars": 4, "text": "Dago", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:58:30.183", "stage": "sentence_buffer_timeout_flush", "chars": 4, "text": "Dago", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:58:30.186", "stage": "sentence_enqueued", "chars": 4, "text": "Dago", "meta": {"queue_size": 1, "stt_openai_ms": 767}}
+{"ts": "2026-02-12 19:58:30.189", "stage": "translation_input", "chars": 4, "text": "Dago", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 19:58:30.693", "stage": "translation_output", "chars": 4, "text": "Dago", "meta": {"translation_enabled": true, "translate_openai_ms": 498}}
+{"ts": "2026-02-12 19:58:30.696", "stage": "display_update_input", "chars": 4, "text": "Dago", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:58:30.700", "stage": "display_chunk_enqueued", "chars": 4, "text": "Dago", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:58:30.867", "stage": "display_word_reveal_complete", "chars": 4, "text": "Dago"}
+{"ts": "2026-02-12 19:58:31.601", "stage": "stt_raw", "chars": 14, "text": "Then it would.", "meta": {"engine": "openai", "stt_openai_ms": 495}}
+{"ts": "2026-02-12 19:58:31.606", "stage": "stt_sanitized", "chars": 14, "text": "Then it would.", "meta": {"engine": "openai", "stt_openai_ms": 495}}
+{"ts": "2026-02-12 19:58:31.609", "stage": "stt_boundary_trim", "chars": 14, "text": "Then it would.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:58:31.939", "stage": "sentence_buffer_timeout_flush", "chars": 14, "text": "Then it would.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:58:31.942", "stage": "sentence_enqueued", "chars": 14, "text": "Then it would.", "meta": {"queue_size": 1, "stt_openai_ms": 495}}
+{"ts": "2026-02-12 19:58:31.945", "stage": "translation_input", "chars": 14, "text": "Then it would.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 19:58:32.654", "stage": "translation_output", "chars": 18, "text": "Entonces lo haría.", "meta": {"translation_enabled": true, "translate_openai_ms": 705}}
+{"ts": "2026-02-12 19:58:32.656", "stage": "display_update_input", "chars": 18, "text": "Entonces lo haría.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:58:32.660", "stage": "display_chunk_enqueued", "chars": 18, "text": "Entonces lo haría.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:58:33.266", "stage": "display_word_reveal_complete", "chars": 18, "text": "Entonces lo haría."}
+{"ts": "2026-02-12 19:58:36.287", "stage": "stt_raw", "chars": 12, "text": "Freaked out.", "meta": {"engine": "openai", "stt_openai_ms": 631}}
+{"ts": "2026-02-12 19:58:36.291", "stage": "stt_sanitized", "chars": 12, "text": "Freaked out.", "meta": {"engine": "openai", "stt_openai_ms": 631}}
+{"ts": "2026-02-12 19:58:36.294", "stage": "stt_boundary_trim", "chars": 12, "text": "Freaked out.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:58:36.645", "stage": "sentence_buffer_timeout_flush", "chars": 12, "text": "Freaked out.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:58:36.649", "stage": "sentence_enqueued", "chars": 12, "text": "Freaked out.", "meta": {"queue_size": 1, "stt_openai_ms": 631}}
+{"ts": "2026-02-12 19:58:36.651", "stage": "translation_input", "chars": 12, "text": "Freaked out.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 19:58:37.201", "stage": "translation_output", "chars": 9, "text": "Asustado.", "meta": {"translation_enabled": true, "translate_openai_ms": 545}}
+{"ts": "2026-02-12 19:58:37.204", "stage": "display_update_input", "chars": 9, "text": "Asustado.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:58:37.208", "stage": "display_chunk_enqueued", "chars": 9, "text": "Asustado.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:58:37.375", "stage": "display_word_reveal_complete", "chars": 9, "text": "Asustado."}
+{"ts": "2026-02-12 19:58:38.773", "stage": "stt_raw", "chars": 29, "text": "I don't know what's going on.", "meta": {"engine": "openai", "stt_openai_ms": 818}}
+{"ts": "2026-02-12 19:58:38.777", "stage": "stt_sanitized", "chars": 29, "text": "I don't know what's going on.", "meta": {"engine": "openai", "stt_openai_ms": 818}}
+{"ts": "2026-02-12 19:58:38.780", "stage": "stt_boundary_trim", "chars": 29, "text": "I don't know what's going on.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:58:39.111", "stage": "sentence_buffer_timeout_flush", "chars": 29, "text": "I don't know what's going on.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:58:39.115", "stage": "sentence_enqueued", "chars": 29, "text": "I don't know what's going on.", "meta": {"queue_size": 1, "stt_openai_ms": 818}}
+{"ts": "2026-02-12 19:58:39.117", "stage": "translation_input", "chars": 29, "text": "I don't know what's going on.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 19:58:39.649", "stage": "translation_output", "chars": 23, "text": "No sé qué está pasando.", "meta": {"translation_enabled": true, "translate_openai_ms": 524}}
+{"ts": "2026-02-12 19:58:39.652", "stage": "display_update_input", "chars": 23, "text": "No sé qué está pasando.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:58:39.656", "stage": "display_chunk_enqueued", "chars": 23, "text": "No sé qué está pasando.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:58:40.494", "stage": "display_word_reveal_complete", "chars": 23, "text": "No sé qué está pasando."}

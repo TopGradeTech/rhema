@@ -1,0 +1,1111 @@
+{"ts": "2026-02-12 19:42:09.525", "stage": "stt_raw", "chars": 28, "text": "The Bible says both men win.", "meta": {"engine": "openai", "stt_openai_ms": 668}}
+{"ts": "2026-02-12 19:42:09.528", "stage": "stt_sanitized", "chars": 28, "text": "The Bible says both men win.", "meta": {"engine": "openai", "stt_openai_ms": 668}}
+{"ts": "2026-02-12 19:42:09.533", "stage": "stt_boundary_trim", "chars": 28, "text": "The Bible says both men win.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:42:09.862", "stage": "sentence_buffer_timeout_flush", "chars": 28, "text": "The Bible says both men win.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:42:09.864", "stage": "sentence_enqueued", "chars": 28, "text": "The Bible says both men win.", "meta": {"queue_size": 1, "stt_openai_ms": 668}}
+{"ts": "2026-02-12 19:42:09.866", "stage": "translation_input", "chars": 28, "text": "The Bible says both men win.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:42:09.872", "stage": "translation_output", "chars": 28, "text": "The Bible says both men win.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:42:09.873", "stage": "display_update_input", "chars": 28, "text": "The Bible says both men win.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:42:09.875", "stage": "display_chunk_enqueued", "chars": 28, "text": "The Bible says both men win.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:42:10.805", "stage": "display_word_reveal_complete", "chars": 28, "text": "The Bible says both men win."}
+{"ts": "2026-02-12 19:42:11.731", "stage": "stt_raw", "chars": 25, "text": "And both men are in here.", "meta": {"engine": "openai", "stt_openai_ms": 484}}
+{"ts": "2026-02-12 19:42:11.733", "stage": "stt_sanitized", "chars": 25, "text": "And both men are in here.", "meta": {"engine": "openai", "stt_openai_ms": 484}}
+{"ts": "2026-02-12 19:42:11.735", "stage": "stt_boundary_trim", "chars": 25, "text": "And both men are in here.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:42:12.063", "stage": "sentence_buffer_timeout_flush", "chars": 25, "text": "And both men are in here.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:42:12.065", "stage": "sentence_enqueued", "chars": 25, "text": "And both men are in here.", "meta": {"queue_size": 1, "stt_openai_ms": 484}}
+{"ts": "2026-02-12 19:42:12.066", "stage": "translation_input", "chars": 25, "text": "And both men are in here.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:42:12.068", "stage": "translation_output", "chars": 25, "text": "And both men are in here.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:42:12.069", "stage": "display_update_input", "chars": 25, "text": "And both men are in here.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:42:12.072", "stage": "display_chunk_enqueued", "chars": 25, "text": "And both men are in here.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:42:13.009", "stage": "display_word_reveal_complete", "chars": 25, "text": "And both men are in here."}
+{"ts": "2026-02-12 19:42:15.093", "stage": "stt_raw", "chars": 38, "text": "Hell is a place, it's a holding place.", "meta": {"engine": "openai", "stt_openai_ms": 716}}
+{"ts": "2026-02-12 19:42:15.097", "stage": "stt_sanitized", "chars": 38, "text": "Hell is a place, it's a holding place.", "meta": {"engine": "openai", "stt_openai_ms": 716}}
+{"ts": "2026-02-12 19:42:15.099", "stage": "stt_boundary_trim", "chars": 38, "text": "Hell is a place, it's a holding place.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:42:15.443", "stage": "sentence_buffer_timeout_flush", "chars": 38, "text": "Hell is a place, it's a holding place.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:42:15.444", "stage": "sentence_enqueued", "chars": 38, "text": "Hell is a place, it's a holding place.", "meta": {"queue_size": 1, "stt_openai_ms": 716}}
+{"ts": "2026-02-12 19:42:15.447", "stage": "translation_input", "chars": 38, "text": "Hell is a place, it's a holding place.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:42:15.450", "stage": "translation_output", "chars": 38, "text": "Hell is a place, it's a holding place.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:42:15.452", "stage": "display_update_input", "chars": 38, "text": "Hell is a place, it's a holding place.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:42:15.454", "stage": "display_chunk_enqueued", "chars": 23, "text": "Hell is a place, it's a", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:42:15.456", "stage": "display_chunk_enqueued", "chars": 14, "text": "holding place.", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:42:16.389", "stage": "display_word_reveal_complete", "chars": 23, "text": "Hell is a place, it's a"}
+{"ts": "2026-02-12 19:42:16.716", "stage": "display_word_reveal_complete", "chars": 14, "text": "holding place."}
+{"ts": "2026-02-12 19:42:17.966", "stage": "stt_raw", "chars": 37, "text": "It's not a place where bad people go.", "meta": {"engine": "openai", "stt_openai_ms": 569}}
+{"ts": "2026-02-12 19:42:17.969", "stage": "stt_sanitized", "chars": 37, "text": "It's not a place where bad people go.", "meta": {"engine": "openai", "stt_openai_ms": 569}}
+{"ts": "2026-02-12 19:42:17.972", "stage": "stt_boundary_trim", "chars": 37, "text": "It's not a place where bad people go.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:42:18.293", "stage": "sentence_buffer_timeout_flush", "chars": 37, "text": "It's not a place where bad people go.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:42:18.295", "stage": "sentence_enqueued", "chars": 37, "text": "It's not a place where bad people go.", "meta": {"queue_size": 1, "stt_openai_ms": 569}}
+{"ts": "2026-02-12 19:42:18.297", "stage": "translation_input", "chars": 37, "text": "It's not a place where bad people go.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:42:18.300", "stage": "translation_output", "chars": 37, "text": "It's not a place where bad people go.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:42:18.302", "stage": "display_update_input", "chars": 37, "text": "It's not a place where bad people go.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:42:18.304", "stage": "display_chunk_enqueued", "chars": 26, "text": "It's not a place where bad", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:42:18.306", "stage": "display_chunk_enqueued", "chars": 10, "text": "people go.", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:42:19.256", "stage": "display_word_reveal_complete", "chars": 26, "text": "It's not a place where bad"}
+{"ts": "2026-02-12 19:42:19.570", "stage": "display_word_reveal_complete", "chars": 10, "text": "people go."}
+{"ts": "2026-02-12 19:42:21.394", "stage": "stt_raw", "chars": 68, "text": "Get that out, whoever taught you that, wherever you heard that from.", "meta": {"engine": "openai", "stt_openai_ms": 606}}
+{"ts": "2026-02-12 19:42:21.399", "stage": "stt_sanitized", "chars": 68, "text": "Get that out, whoever taught you that, wherever you heard that from.", "meta": {"engine": "openai", "stt_openai_ms": 606}}
+{"ts": "2026-02-12 19:42:21.401", "stage": "stt_boundary_trim", "chars": 68, "text": "Get that out, whoever taught you that, wherever you heard that from.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:42:21.729", "stage": "sentence_buffer_timeout_flush", "chars": 68, "text": "Get that out, whoever taught you that, wherever you heard that from.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:42:21.731", "stage": "sentence_enqueued", "chars": 68, "text": "Get that out, whoever taught you that, wherever you heard that from.", "meta": {"queue_size": 1, "stt_openai_ms": 606}}
+{"ts": "2026-02-12 19:42:21.733", "stage": "translation_input", "chars": 68, "text": "Get that out, whoever taught you that, wherever you heard that from.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:42:21.736", "stage": "translation_output", "chars": 68, "text": "Get that out, whoever taught you that, wherever you heard that from.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:42:21.737", "stage": "display_update_input", "chars": 68, "text": "Get that out, whoever taught you that, wherever you heard that from.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:42:21.740", "stage": "display_chunk_enqueued", "chars": 28, "text": "Get that out, whoever taught", "meta": {"chunk_index": 0, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-12 19:42:21.741", "stage": "display_chunk_enqueued", "chars": 28, "text": "you that, wherever you heard", "meta": {"chunk_index": 1, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-12 19:42:21.744", "stage": "display_chunk_enqueued", "chars": 10, "text": "that from.", "meta": {"chunk_index": 2, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-12 19:42:22.536", "stage": "display_word_reveal_complete", "chars": 28, "text": "Get that out, whoever taught"}
+{"ts": "2026-02-12 19:42:23.343", "stage": "display_word_reveal_complete", "chars": 28, "text": "you that, wherever you heard"}
+{"ts": "2026-02-12 19:42:23.653", "stage": "display_word_reveal_complete", "chars": 10, "text": "that from."}
+{"ts": "2026-02-12 19:42:24.883", "stage": "stt_raw", "chars": 48, "text": "That's wrong. That's not what the Bible teaches.", "meta": {"engine": "openai", "stt_openai_ms": 635}}
+{"ts": "2026-02-12 19:42:24.886", "stage": "stt_sanitized", "chars": 48, "text": "That's wrong. That's not what the Bible teaches.", "meta": {"engine": "openai", "stt_openai_ms": 635}}
+{"ts": "2026-02-12 19:42:24.888", "stage": "stt_boundary_trim", "chars": 48, "text": "That's wrong. That's not what the Bible teaches.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:42:25.210", "stage": "sentence_buffer_timeout_flush", "chars": 48, "text": "That's wrong. That's not what the Bible teaches.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:42:25.213", "stage": "sentence_enqueued", "chars": 48, "text": "That's wrong. That's not what the Bible teaches.", "meta": {"queue_size": 1, "stt_openai_ms": 635}}
+{"ts": "2026-02-12 19:42:25.214", "stage": "translation_input", "chars": 48, "text": "That's wrong. That's not what the Bible teaches.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:42:25.218", "stage": "translation_output", "chars": 48, "text": "That's wrong. That's not what the Bible teaches.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:42:25.219", "stage": "display_update_input", "chars": 48, "text": "That's wrong. That's not what the Bible teaches.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:42:25.222", "stage": "display_chunk_enqueued", "chars": 29, "text": "That's wrong. That's not what", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:42:25.224", "stage": "display_chunk_enqueued", "chars": 18, "text": "the Bible teaches.", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:42:26.020", "stage": "display_word_reveal_complete", "chars": 29, "text": "That's wrong. That's not what"}
+{"ts": "2026-02-12 19:42:26.500", "stage": "display_word_reveal_complete", "chars": 18, "text": "the Bible teaches."}
+{"ts": "2026-02-12 19:42:28.048", "stage": "stt_raw", "chars": 38, "text": "Body that dies goes to the same place.", "meta": {"engine": "openai", "stt_openai_ms": 641}}
+{"ts": "2026-02-12 19:42:28.051", "stage": "stt_sanitized", "chars": 38, "text": "Body that dies goes to the same place.", "meta": {"engine": "openai", "stt_openai_ms": 641}}
+{"ts": "2026-02-12 19:42:28.053", "stage": "stt_boundary_trim", "chars": 38, "text": "Body that dies goes to the same place.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:42:28.396", "stage": "sentence_buffer_timeout_flush", "chars": 38, "text": "Body that dies goes to the same place.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:42:28.398", "stage": "sentence_enqueued", "chars": 38, "text": "Body that dies goes to the same place.", "meta": {"queue_size": 1, "stt_openai_ms": 641}}
+{"ts": "2026-02-12 19:42:28.400", "stage": "translation_input", "chars": 38, "text": "Body that dies goes to the same place.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:42:28.403", "stage": "translation_output", "chars": 38, "text": "Body that dies goes to the same place.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:42:28.406", "stage": "display_update_input", "chars": 38, "text": "Body that dies goes to the same place.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:42:28.408", "stage": "display_chunk_enqueued", "chars": 26, "text": "Body that dies goes to the", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:42:28.410", "stage": "display_chunk_enqueued", "chars": 11, "text": "same place.", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:42:29.373", "stage": "display_word_reveal_complete", "chars": 26, "text": "Body that dies goes to the"}
+{"ts": "2026-02-12 19:42:29.714", "stage": "display_word_reveal_complete", "chars": 11, "text": "same place."}
+{"ts": "2026-02-12 19:42:30.849", "stage": "stt_raw", "chars": 28, "text": "that goes to the same place.", "meta": {"engine": "openai", "stt_openai_ms": 492}}
+{"ts": "2026-02-12 19:42:30.852", "stage": "stt_sanitized", "chars": 28, "text": "that goes to the same place.", "meta": {"engine": "openai", "stt_openai_ms": 492}}
+{"ts": "2026-02-12 19:42:30.855", "stage": "stt_boundary_trim", "chars": 28, "text": "that goes to the same place.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:42:31.187", "stage": "sentence_buffer_timeout_flush", "chars": 28, "text": "that goes to the same place.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:42:31.190", "stage": "sentence_enqueued", "chars": 28, "text": "that goes to the same place.", "meta": {"queue_size": 1, "stt_openai_ms": 492}}
+{"ts": "2026-02-12 19:42:31.192", "stage": "translation_input", "chars": 28, "text": "that goes to the same place.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:42:31.196", "stage": "translation_output", "chars": 28, "text": "that goes to the same place.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:42:31.199", "stage": "display_update_input", "chars": 28, "text": "that goes to the same place.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:42:31.201", "stage": "display_chunk_enqueued", "chars": 28, "text": "that goes to the same place.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:42:32.182", "stage": "display_word_reveal_complete", "chars": 28, "text": "that goes to the same place."}
+{"ts": "2026-02-12 19:42:34.364", "stage": "stt_raw", "chars": 37, "text": "In that place, there's a distinction.", "meta": {"engine": "openai", "stt_openai_ms": 845}}
+{"ts": "2026-02-12 19:42:34.367", "stage": "stt_sanitized", "chars": 37, "text": "In that place, there's a distinction.", "meta": {"engine": "openai", "stt_openai_ms": 845}}
+{"ts": "2026-02-12 19:42:34.370", "stage": "stt_boundary_trim", "chars": 37, "text": "In that place, there's a distinction.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:42:34.706", "stage": "sentence_buffer_timeout_flush", "chars": 37, "text": "In that place, there's a distinction.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:42:34.709", "stage": "sentence_enqueued", "chars": 37, "text": "In that place, there's a distinction.", "meta": {"queue_size": 1, "stt_openai_ms": 845}}
+{"ts": "2026-02-12 19:42:34.711", "stage": "translation_input", "chars": 37, "text": "In that place, there's a distinction.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:42:34.715", "stage": "translation_output", "chars": 37, "text": "In that place, there's a distinction.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:42:34.717", "stage": "display_update_input", "chars": 37, "text": "In that place, there's a distinction.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:42:34.719", "stage": "display_chunk_enqueued", "chars": 24, "text": "In that place, there's a", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:42:34.725", "stage": "display_chunk_enqueued", "chars": 12, "text": "distinction.", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:42:35.545", "stage": "display_word_reveal_complete", "chars": 24, "text": "In that place, there's a"}
+{"ts": "2026-02-12 19:42:35.714", "stage": "display_word_reveal_complete", "chars": 12, "text": "distinction."}
+{"ts": "2026-02-12 19:42:36.714", "stage": "stt_raw", "chars": 10, "text": "and inhale", "meta": {"engine": "openai", "stt_openai_ms": 486}}
+{"ts": "2026-02-12 19:42:36.717", "stage": "stt_sanitized", "chars": 10, "text": "and inhale", "meta": {"engine": "openai", "stt_openai_ms": 486}}
+{"ts": "2026-02-12 19:42:36.720", "stage": "stt_boundary_trim", "chars": 10, "text": "and inhale", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:42:37.049", "stage": "sentence_buffer_timeout_flush", "chars": 10, "text": "and inhale", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:42:37.053", "stage": "sentence_enqueued", "chars": 10, "text": "and inhale", "meta": {"queue_size": 1, "stt_openai_ms": 486}}
+{"ts": "2026-02-12 19:42:37.054", "stage": "translation_input", "chars": 10, "text": "and inhale", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:42:37.058", "stage": "translation_output", "chars": 10, "text": "and inhale", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:42:37.062", "stage": "display_update_input", "chars": 10, "text": "and inhale", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:42:37.065", "stage": "display_chunk_enqueued", "chars": 10, "text": "and inhale", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:42:37.390", "stage": "display_word_reveal_complete", "chars": 10, "text": "and inhale"}
+{"ts": "2026-02-12 19:42:38.904", "stage": "stt_raw", "chars": 14, "text": "He lift up his", "meta": {"engine": "openai", "stt_openai_ms": 516}}
+{"ts": "2026-02-12 19:42:38.907", "stage": "stt_sanitized", "chars": 14, "text": "He lift up his", "meta": {"engine": "openai", "stt_openai_ms": 516}}
+{"ts": "2026-02-12 19:42:38.911", "stage": "stt_boundary_trim", "chars": 14, "text": "He lift up his", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:42:39.252", "stage": "sentence_buffer_timeout_flush", "chars": 14, "text": "He lift up his", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:42:39.256", "stage": "sentence_enqueued", "chars": 14, "text": "He lift up his", "meta": {"queue_size": 1, "stt_openai_ms": 516}}
+{"ts": "2026-02-12 19:42:39.258", "stage": "translation_input", "chars": 14, "text": "He lift up his", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:42:39.263", "stage": "translation_output", "chars": 14, "text": "He lift up his", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:42:39.266", "stage": "display_update_input", "chars": 14, "text": "He lift up his", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:42:39.270", "stage": "display_chunk_enqueued", "chars": 14, "text": "He lift up his", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:42:39.933", "stage": "display_word_reveal_complete", "chars": 14, "text": "He lift up his"}
+{"ts": "2026-02-12 19:42:40.635", "stage": "stt_raw", "chars": 16, "text": "being in torment", "meta": {"engine": "openai", "stt_openai_ms": 458}}
+{"ts": "2026-02-12 19:42:40.639", "stage": "stt_sanitized", "chars": 16, "text": "being in torment", "meta": {"engine": "openai", "stt_openai_ms": 458}}
+{"ts": "2026-02-12 19:42:40.642", "stage": "stt_boundary_trim", "chars": 16, "text": "being in torment", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:42:40.989", "stage": "sentence_buffer_timeout_flush", "chars": 16, "text": "being in torment", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:42:40.992", "stage": "sentence_enqueued", "chars": 16, "text": "being in torment", "meta": {"queue_size": 1, "stt_openai_ms": 458}}
+{"ts": "2026-02-12 19:42:40.995", "stage": "translation_input", "chars": 16, "text": "being in torment", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:42:40.998", "stage": "translation_output", "chars": 16, "text": "being in torment", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:42:41.000", "stage": "display_update_input", "chars": 16, "text": "being in torment", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:42:41.003", "stage": "display_chunk_enqueued", "chars": 16, "text": "being in torment", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:42:41.485", "stage": "display_word_reveal_complete", "chars": 16, "text": "being in torment"}
+{"ts": "2026-02-12 19:42:44.560", "stage": "stt_raw", "chars": 42, "text": "So the Bible's talking about the rich man.", "meta": {"engine": "openai", "stt_openai_ms": 922}}
+{"ts": "2026-02-12 19:42:44.563", "stage": "stt_sanitized", "chars": 42, "text": "So the Bible's talking about the rich man.", "meta": {"engine": "openai", "stt_openai_ms": 922}}
+{"ts": "2026-02-12 19:42:44.566", "stage": "stt_boundary_trim", "chars": 42, "text": "So the Bible's talking about the rich man.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:42:44.911", "stage": "sentence_buffer_timeout_flush", "chars": 42, "text": "So the Bible's talking about the rich man.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:42:44.914", "stage": "sentence_enqueued", "chars": 42, "text": "So the Bible's talking about the rich man.", "meta": {"queue_size": 1, "stt_openai_ms": 922}}
+{"ts": "2026-02-12 19:42:44.916", "stage": "translation_input", "chars": 42, "text": "So the Bible's talking about the rich man.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:42:44.921", "stage": "translation_output", "chars": 42, "text": "So the Bible's talking about the rich man.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:42:44.924", "stage": "display_update_input", "chars": 42, "text": "So the Bible's talking about the rich man.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:42:44.927", "stage": "display_chunk_enqueued", "chars": 28, "text": "So the Bible's talking about", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:42:44.930", "stage": "display_chunk_enqueued", "chars": 13, "text": "the rich man.", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:42:45.764", "stage": "display_word_reveal_complete", "chars": 28, "text": "So the Bible's talking about"}
+{"ts": "2026-02-12 19:42:46.294", "stage": "display_word_reveal_complete", "chars": 13, "text": "the rich man."}
+{"ts": "2026-02-12 19:42:48.253", "stage": "stt_raw", "chars": 36, "text": "Being in hell, he lifts up his eyes.", "meta": {"engine": "openai", "stt_openai_ms": 1064}}
+{"ts": "2026-02-12 19:42:48.256", "stage": "stt_sanitized", "chars": 36, "text": "Being in hell, he lifts up his eyes.", "meta": {"engine": "openai", "stt_openai_ms": 1064}}
+{"ts": "2026-02-12 19:42:48.258", "stage": "stt_boundary_trim", "chars": 36, "text": "Being in hell, he lifts up his eyes.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:42:48.596", "stage": "sentence_buffer_timeout_flush", "chars": 36, "text": "Being in hell, he lifts up his eyes.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:42:48.599", "stage": "sentence_enqueued", "chars": 36, "text": "Being in hell, he lifts up his eyes.", "meta": {"queue_size": 1, "stt_openai_ms": 1064}}
+{"ts": "2026-02-12 19:42:48.601", "stage": "translation_input", "chars": 36, "text": "Being in hell, he lifts up his eyes.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:42:48.605", "stage": "translation_output", "chars": 36, "text": "Being in hell, he lifts up his eyes.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:42:48.608", "stage": "display_update_input", "chars": 36, "text": "Being in hell, he lifts up his eyes.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:42:48.611", "stage": "display_chunk_enqueued", "chars": 30, "text": "Being in hell, he lifts up his", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:42:48.614", "stage": "display_chunk_enqueued", "chars": 5, "text": "eyes.", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:42:49.760", "stage": "display_word_reveal_complete", "chars": 30, "text": "Being in hell, he lifts up his"}
+{"ts": "2026-02-12 19:42:49.917", "stage": "display_word_reveal_complete", "chars": 5, "text": "eyes."}
+{"ts": "2026-02-12 19:42:51.956", "stage": "stt_raw", "chars": 27, "text": "and seeth Abraham afar off,", "meta": {"engine": "openai", "stt_openai_ms": 1588}}
+{"ts": "2026-02-12 19:42:51.959", "stage": "stt_sanitized", "chars": 27, "text": "and seeth Abraham afar off,", "meta": {"engine": "openai", "stt_openai_ms": 1588}}
+{"ts": "2026-02-12 19:42:51.962", "stage": "stt_boundary_trim", "chars": 27, "text": "and seeth Abraham afar off,", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:42:52.291", "stage": "sentence_buffer_timeout_flush", "chars": 27, "text": "and seeth Abraham afar off,", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:42:52.294", "stage": "sentence_enqueued", "chars": 27, "text": "and seeth Abraham afar off,", "meta": {"queue_size": 1, "stt_openai_ms": 1588}}
+{"ts": "2026-02-12 19:42:52.296", "stage": "translation_input", "chars": 27, "text": "and seeth Abraham afar off,", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:42:52.301", "stage": "translation_output", "chars": 27, "text": "and seeth Abraham afar off,", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:42:52.304", "stage": "display_update_input", "chars": 27, "text": "and seeth Abraham afar off,", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:42:52.308", "stage": "display_chunk_enqueued", "chars": 27, "text": "and seeth Abraham afar off,", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:42:53.147", "stage": "display_word_reveal_complete", "chars": 27, "text": "and seeth Abraham afar off,"}
+{"ts": "2026-02-12 19:42:53.750", "stage": "stt_raw", "chars": 11, "text": "And Lazarus", "meta": {"engine": "openai", "stt_openai_ms": 573}}
+{"ts": "2026-02-12 19:42:53.754", "stage": "stt_sanitized", "chars": 11, "text": "And Lazarus", "meta": {"engine": "openai", "stt_openai_ms": 573}}
+{"ts": "2026-02-12 19:42:53.757", "stage": "stt_boundary_trim", "chars": 11, "text": "And Lazarus", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:42:54.094", "stage": "sentence_buffer_timeout_flush", "chars": 11, "text": "And Lazarus", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:42:54.098", "stage": "sentence_enqueued", "chars": 11, "text": "And Lazarus", "meta": {"queue_size": 1, "stt_openai_ms": 573}}
+{"ts": "2026-02-12 19:42:54.100", "stage": "translation_input", "chars": 11, "text": "And Lazarus", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:42:54.105", "stage": "translation_output", "chars": 11, "text": "And Lazarus", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:42:54.108", "stage": "display_update_input", "chars": 11, "text": "And Lazarus", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:42:54.111", "stage": "display_chunk_enqueued", "chars": 11, "text": "And Lazarus", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:42:54.453", "stage": "display_word_reveal_complete", "chars": 11, "text": "And Lazarus"}
+{"ts": "2026-02-12 19:42:58.218", "stage": "stt_raw", "chars": 14, "text": "So this is the", "meta": {"engine": "openai", "stt_openai_ms": 691}}
+{"ts": "2026-02-12 19:42:58.223", "stage": "stt_sanitized", "chars": 14, "text": "So this is the", "meta": {"engine": "openai", "stt_openai_ms": 691}}
+{"ts": "2026-02-12 19:42:58.226", "stage": "stt_boundary_trim", "chars": 14, "text": "So this is the", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:42:58.561", "stage": "sentence_buffer_timeout_flush", "chars": 14, "text": "So this is the", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:42:58.564", "stage": "sentence_enqueued", "chars": 14, "text": "So this is the", "meta": {"queue_size": 1, "stt_openai_ms": 691}}
+{"ts": "2026-02-12 19:42:58.566", "stage": "translation_input", "chars": 14, "text": "So this is the", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:42:58.572", "stage": "translation_output", "chars": 14, "text": "So this is the", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:42:58.575", "stage": "display_update_input", "chars": 14, "text": "So this is the", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:42:58.578", "stage": "display_chunk_enqueued", "chars": 14, "text": "So this is the", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:42:59.228", "stage": "display_word_reveal_complete", "chars": 14, "text": "So this is the"}
+{"ts": "2026-02-12 19:43:01.679", "stage": "stt_raw", "chars": 36, "text": "The Bible says they're both in hell.", "meta": {"engine": "openai", "stt_openai_ms": 862}}
+{"ts": "2026-02-12 19:43:01.683", "stage": "stt_sanitized", "chars": 36, "text": "The Bible says they're both in hell.", "meta": {"engine": "openai", "stt_openai_ms": 862}}
+{"ts": "2026-02-12 19:43:01.687", "stage": "stt_boundary_trim", "chars": 36, "text": "The Bible says they're both in hell.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:43:02.010", "stage": "sentence_buffer_timeout_flush", "chars": 36, "text": "The Bible says they're both in hell.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:43:02.013", "stage": "sentence_enqueued", "chars": 36, "text": "The Bible says they're both in hell.", "meta": {"queue_size": 1, "stt_openai_ms": 862}}
+{"ts": "2026-02-12 19:43:02.016", "stage": "translation_input", "chars": 36, "text": "The Bible says they're both in hell.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:43:02.020", "stage": "translation_output", "chars": 36, "text": "The Bible says they're both in hell.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:43:02.023", "stage": "display_update_input", "chars": 36, "text": "The Bible says they're both in hell.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:43:02.027", "stage": "display_chunk_enqueued", "chars": 30, "text": "The Bible says they're both in", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:43:02.030", "stage": "display_chunk_enqueued", "chars": 5, "text": "hell.", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:43:03.021", "stage": "display_word_reveal_complete", "chars": 30, "text": "The Bible says they're both in"}
+{"ts": "2026-02-12 19:43:03.191", "stage": "display_word_reveal_complete", "chars": 5, "text": "hell."}
+{"ts": "2026-02-12 19:43:04.692", "stage": "stt_raw", "chars": 28, "text": "I want you to get the image.", "meta": {"engine": "openai", "stt_openai_ms": 694}}
+{"ts": "2026-02-12 19:43:04.696", "stage": "stt_sanitized", "chars": 28, "text": "I want you to get the image.", "meta": {"engine": "openai", "stt_openai_ms": 694}}
+{"ts": "2026-02-12 19:43:04.699", "stage": "stt_boundary_trim", "chars": 28, "text": "I want you to get the image.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:43:05.025", "stage": "sentence_buffer_timeout_flush", "chars": 28, "text": "I want you to get the image.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:43:05.028", "stage": "sentence_enqueued", "chars": 28, "text": "I want you to get the image.", "meta": {"queue_size": 1, "stt_openai_ms": 694}}
+{"ts": "2026-02-12 19:43:05.031", "stage": "translation_input", "chars": 28, "text": "I want you to get the image.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:43:05.035", "stage": "translation_output", "chars": 28, "text": "I want you to get the image.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:43:05.039", "stage": "display_update_input", "chars": 28, "text": "I want you to get the image.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:43:05.042", "stage": "display_chunk_enqueued", "chars": 28, "text": "I want you to get the image.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:43:06.217", "stage": "display_word_reveal_complete", "chars": 28, "text": "I want you to get the image."}
+{"ts": "2026-02-12 19:43:08.139", "stage": "stt_raw", "chars": 12, "text": "The rich man", "meta": {"engine": "openai", "stt_openai_ms": 632}}
+{"ts": "2026-02-12 19:43:08.143", "stage": "stt_sanitized", "chars": 12, "text": "The rich man", "meta": {"engine": "openai", "stt_openai_ms": 632}}
+{"ts": "2026-02-12 19:43:08.146", "stage": "stt_boundary_trim", "chars": 12, "text": "The rich man", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:43:08.490", "stage": "sentence_buffer_timeout_flush", "chars": 12, "text": "The rich man", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:43:08.494", "stage": "sentence_enqueued", "chars": 12, "text": "The rich man", "meta": {"queue_size": 1, "stt_openai_ms": 632}}
+{"ts": "2026-02-12 19:43:08.496", "stage": "translation_input", "chars": 12, "text": "The rich man", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:43:08.500", "stage": "translation_output", "chars": 12, "text": "The rich man", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:43:08.504", "stage": "display_update_input", "chars": 12, "text": "The rich man", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:43:08.507", "stage": "display_chunk_enqueued", "chars": 12, "text": "The rich man", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:43:09.007", "stage": "display_word_reveal_complete", "chars": 12, "text": "The rich man"}
+{"ts": "2026-02-12 19:43:10.315", "stage": "stt_raw", "chars": 16, "text": "can see the wood", "meta": {"engine": "openai", "stt_openai_ms": 578}}
+{"ts": "2026-02-12 19:43:10.319", "stage": "stt_sanitized", "chars": 16, "text": "can see the wood", "meta": {"engine": "openai", "stt_openai_ms": 578}}
+{"ts": "2026-02-12 19:43:10.323", "stage": "stt_boundary_trim", "chars": 16, "text": "can see the wood", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:43:10.657", "stage": "sentence_buffer_timeout_flush", "chars": 16, "text": "can see the wood", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:43:10.660", "stage": "sentence_enqueued", "chars": 16, "text": "can see the wood", "meta": {"queue_size": 1, "stt_openai_ms": 578}}
+{"ts": "2026-02-12 19:43:10.662", "stage": "translation_input", "chars": 16, "text": "can see the wood", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:43:10.668", "stage": "translation_output", "chars": 16, "text": "can see the wood", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:43:10.671", "stage": "display_update_input", "chars": 16, "text": "can see the wood", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:43:10.674", "stage": "display_chunk_enqueued", "chars": 16, "text": "can see the wood", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:43:11.337", "stage": "display_word_reveal_complete", "chars": 16, "text": "can see the wood"}
+{"ts": "2026-02-12 19:43:12.727", "stage": "stt_raw", "chars": 12, "text": "The poor man", "meta": {"engine": "openai", "stt_openai_ms": 788}}
+{"ts": "2026-02-12 19:43:12.732", "stage": "stt_sanitized", "chars": 12, "text": "The poor man", "meta": {"engine": "openai", "stt_openai_ms": 788}}
+{"ts": "2026-02-12 19:43:12.735", "stage": "stt_boundary_trim", "chars": 12, "text": "The poor man", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:43:13.072", "stage": "sentence_buffer_timeout_flush", "chars": 12, "text": "The poor man", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:43:13.076", "stage": "sentence_enqueued", "chars": 12, "text": "The poor man", "meta": {"queue_size": 1, "stt_openai_ms": 788}}
+{"ts": "2026-02-12 19:43:13.078", "stage": "translation_input", "chars": 12, "text": "The poor man", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:43:13.083", "stage": "translation_output", "chars": 12, "text": "The poor man", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:43:13.086", "stage": "display_update_input", "chars": 12, "text": "The poor man", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:43:13.091", "stage": "display_chunk_enqueued", "chars": 12, "text": "The poor man", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:43:13.585", "stage": "display_word_reveal_complete", "chars": 12, "text": "The poor man"}
+{"ts": "2026-02-12 19:43:14.744", "stage": "stt_raw", "chars": 12, "text": "With Abraham", "meta": {"engine": "openai", "stt_openai_ms": 476}}
+{"ts": "2026-02-12 19:43:14.748", "stage": "stt_sanitized", "chars": 12, "text": "With Abraham", "meta": {"engine": "openai", "stt_openai_ms": 476}}
+{"ts": "2026-02-12 19:43:14.751", "stage": "stt_boundary_trim", "chars": 12, "text": "With Abraham", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:43:15.076", "stage": "sentence_buffer_timeout_flush", "chars": 12, "text": "With Abraham", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:43:15.079", "stage": "sentence_enqueued", "chars": 12, "text": "With Abraham", "meta": {"queue_size": 1, "stt_openai_ms": 476}}
+{"ts": "2026-02-12 19:43:15.082", "stage": "translation_input", "chars": 12, "text": "With Abraham", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:43:15.087", "stage": "translation_output", "chars": 12, "text": "With Abraham", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:43:15.091", "stage": "display_update_input", "chars": 12, "text": "With Abraham", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:43:15.095", "stage": "display_chunk_enqueued", "chars": 12, "text": "With Abraham", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:43:15.433", "stage": "display_word_reveal_complete", "chars": 12, "text": "With Abraham"}
+{"ts": "2026-02-12 19:43:18.905", "stage": "stt_raw", "chars": 35, "text": "Y'all know who ain't VBS graduates?", "meta": {"engine": "openai", "stt_openai_ms": 557}}
+{"ts": "2026-02-12 19:43:18.909", "stage": "stt_sanitized", "chars": 35, "text": "Y'all know who ain't VBS graduates?", "meta": {"engine": "openai", "stt_openai_ms": 557}}
+{"ts": "2026-02-12 19:43:18.913", "stage": "stt_boundary_trim", "chars": 35, "text": "Y'all know who ain't VBS graduates?", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:43:19.245", "stage": "sentence_buffer_timeout_flush", "chars": 35, "text": "Y'all know who ain't VBS graduates?", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:43:19.249", "stage": "sentence_enqueued", "chars": 35, "text": "Y'all know who ain't VBS graduates?", "meta": {"queue_size": 1, "stt_openai_ms": 557}}
+{"ts": "2026-02-12 19:43:19.251", "stage": "translation_input", "chars": 35, "text": "Y'all know who ain't VBS graduates?", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:43:19.257", "stage": "translation_output", "chars": 35, "text": "Y'all know who ain't VBS graduates?", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:43:19.260", "stage": "display_update_input", "chars": 35, "text": "Y'all know who ain't VBS graduates?", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:43:19.264", "stage": "display_chunk_enqueued", "chars": 24, "text": "Y'all know who ain't VBS", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:43:19.267", "stage": "display_chunk_enqueued", "chars": 10, "text": "graduates?", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:43:20.069", "stage": "display_word_reveal_complete", "chars": 24, "text": "Y'all know who ain't VBS"}
+{"ts": "2026-02-12 19:43:20.225", "stage": "display_word_reveal_complete", "chars": 10, "text": "graduates?"}
+{"ts": "2026-02-12 19:43:23.182", "stage": "stt_raw", "chars": 26, "text": "Y'all know who Abraham is?", "meta": {"engine": "openai", "stt_openai_ms": 884}}
+{"ts": "2026-02-12 19:43:23.186", "stage": "stt_sanitized", "chars": 26, "text": "Y'all know who Abraham is?", "meta": {"engine": "openai", "stt_openai_ms": 884}}
+{"ts": "2026-02-12 19:43:23.189", "stage": "stt_boundary_trim", "chars": 26, "text": "Y'all know who Abraham is?", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:43:23.514", "stage": "sentence_buffer_timeout_flush", "chars": 26, "text": "Y'all know who Abraham is?", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:43:23.517", "stage": "sentence_enqueued", "chars": 26, "text": "Y'all know who Abraham is?", "meta": {"queue_size": 1, "stt_openai_ms": 884}}
+{"ts": "2026-02-12 19:43:23.519", "stage": "translation_input", "chars": 26, "text": "Y'all know who Abraham is?", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:43:23.523", "stage": "translation_output", "chars": 26, "text": "Y'all know who Abraham is?", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:43:23.527", "stage": "display_update_input", "chars": 26, "text": "Y'all know who Abraham is?", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:43:23.530", "stage": "display_chunk_enqueued", "chars": 26, "text": "Y'all know who Abraham is?", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:43:24.349", "stage": "display_word_reveal_complete", "chars": 26, "text": "Y'all know who Abraham is?"}
+{"ts": "2026-02-12 19:43:26.276", "stage": "stt_raw", "chars": 28, "text": "So hell can't be a bad place", "meta": {"engine": "openai", "stt_openai_ms": 888}}
+{"ts": "2026-02-12 19:43:26.279", "stage": "stt_sanitized", "chars": 28, "text": "So hell can't be a bad place", "meta": {"engine": "openai", "stt_openai_ms": 888}}
+{"ts": "2026-02-12 19:43:26.282", "stage": "stt_boundary_trim", "chars": 28, "text": "So hell can't be a bad place", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:43:26.631", "stage": "sentence_buffer_timeout_flush", "chars": 28, "text": "So hell can't be a bad place", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:43:26.634", "stage": "sentence_enqueued", "chars": 28, "text": "So hell can't be a bad place", "meta": {"queue_size": 1, "stt_openai_ms": 888}}
+{"ts": "2026-02-12 19:43:26.637", "stage": "translation_input", "chars": 28, "text": "So hell can't be a bad place", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:43:26.642", "stage": "translation_output", "chars": 28, "text": "So hell can't be a bad place", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:43:26.645", "stage": "display_update_input", "chars": 28, "text": "So hell can't be a bad place", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:43:26.649", "stage": "display_chunk_enqueued", "chars": 28, "text": "So hell can't be a bad place", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:43:27.782", "stage": "display_word_reveal_complete", "chars": 28, "text": "So hell can't be a bad place"}
+{"ts": "2026-02-12 19:43:29.039", "stage": "stt_raw", "chars": 21, "text": "We got Father Abraham", "meta": {"engine": "openai", "stt_openai_ms": 612}}
+{"ts": "2026-02-12 19:43:29.043", "stage": "stt_sanitized", "chars": 21, "text": "We got Father Abraham", "meta": {"engine": "openai", "stt_openai_ms": 612}}
+{"ts": "2026-02-12 19:43:29.046", "stage": "stt_boundary_trim", "chars": 21, "text": "We got Father Abraham", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:43:29.369", "stage": "sentence_buffer_timeout_flush", "chars": 21, "text": "We got Father Abraham", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:43:29.373", "stage": "sentence_enqueued", "chars": 21, "text": "We got Father Abraham", "meta": {"queue_size": 1, "stt_openai_ms": 612}}
+{"ts": "2026-02-12 19:43:29.375", "stage": "translation_input", "chars": 21, "text": "We got Father Abraham", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:43:29.380", "stage": "translation_output", "chars": 21, "text": "We got Father Abraham", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:43:29.383", "stage": "display_update_input", "chars": 21, "text": "We got Father Abraham", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:43:29.387", "stage": "display_chunk_enqueued", "chars": 21, "text": "We got Father Abraham", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:43:30.025", "stage": "display_word_reveal_complete", "chars": 21, "text": "We got Father Abraham"}
+{"ts": "2026-02-12 19:43:32.871", "stage": "stt_raw", "chars": 17, "text": "Hell is the place", "meta": {"engine": "openai", "stt_openai_ms": 1053}}
+{"ts": "2026-02-12 19:43:32.874", "stage": "stt_sanitized", "chars": 17, "text": "Hell is the place", "meta": {"engine": "openai", "stt_openai_ms": 1053}}
+{"ts": "2026-02-12 19:43:32.877", "stage": "stt_boundary_trim", "chars": 17, "text": "Hell is the place", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:43:33.212", "stage": "sentence_buffer_timeout_flush", "chars": 17, "text": "Hell is the place", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:43:33.216", "stage": "sentence_enqueued", "chars": 17, "text": "Hell is the place", "meta": {"queue_size": 1, "stt_openai_ms": 1053}}
+{"ts": "2026-02-12 19:43:33.217", "stage": "translation_input", "chars": 17, "text": "Hell is the place", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:43:33.222", "stage": "translation_output", "chars": 17, "text": "Hell is the place", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:43:33.225", "stage": "display_update_input", "chars": 17, "text": "Hell is the place", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:43:33.229", "stage": "display_chunk_enqueued", "chars": 17, "text": "Hell is the place", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:43:33.881", "stage": "display_word_reveal_complete", "chars": 17, "text": "Hell is the place"}
+{"ts": "2026-02-12 19:43:34.888", "stage": "stt_raw", "chars": 17, "text": "When a person die", "meta": {"engine": "openai", "stt_openai_ms": 421}}
+{"ts": "2026-02-12 19:43:34.891", "stage": "stt_sanitized", "chars": 17, "text": "When a person die", "meta": {"engine": "openai", "stt_openai_ms": 421}}
+{"ts": "2026-02-12 19:43:34.895", "stage": "stt_boundary_trim", "chars": 17, "text": "When a person die", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:43:35.237", "stage": "sentence_buffer_timeout_flush", "chars": 17, "text": "When a person die", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:43:35.241", "stage": "sentence_enqueued", "chars": 17, "text": "When a person die", "meta": {"queue_size": 1, "stt_openai_ms": 421}}
+{"ts": "2026-02-12 19:43:35.243", "stage": "translation_input", "chars": 17, "text": "When a person die", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:43:35.248", "stage": "translation_output", "chars": 17, "text": "When a person die", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:43:35.251", "stage": "display_update_input", "chars": 17, "text": "When a person die", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:43:35.256", "stage": "display_chunk_enqueued", "chars": 17, "text": "When a person die", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:43:35.922", "stage": "display_word_reveal_complete", "chars": 17, "text": "When a person die"}
+{"ts": "2026-02-12 19:43:37.756", "stage": "stt_raw", "chars": 20, "text": "We have the funeral.", "meta": {"engine": "openai", "stt_openai_ms": 809}}
+{"ts": "2026-02-12 19:43:37.760", "stage": "stt_sanitized", "chars": 20, "text": "We have the funeral.", "meta": {"engine": "openai", "stt_openai_ms": 809}}
+{"ts": "2026-02-12 19:43:37.764", "stage": "stt_boundary_trim", "chars": 20, "text": "We have the funeral.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:43:38.101", "stage": "sentence_buffer_timeout_flush", "chars": 20, "text": "We have the funeral.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:43:38.105", "stage": "sentence_enqueued", "chars": 20, "text": "We have the funeral.", "meta": {"queue_size": 1, "stt_openai_ms": 809}}
+{"ts": "2026-02-12 19:43:38.106", "stage": "translation_input", "chars": 20, "text": "We have the funeral.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:43:38.111", "stage": "translation_output", "chars": 20, "text": "We have the funeral.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:43:38.116", "stage": "display_update_input", "chars": 20, "text": "We have the funeral.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:43:38.119", "stage": "display_chunk_enqueued", "chars": 20, "text": "We have the funeral.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:43:38.769", "stage": "display_word_reveal_complete", "chars": 20, "text": "We have the funeral."}
+{"ts": "2026-02-12 19:43:40.713", "stage": "stt_raw", "chars": 41, "text": "We don't say that a person goes to heaven", "meta": {"engine": "openai", "stt_openai_ms": 486}}
+{"ts": "2026-02-12 19:43:40.716", "stage": "stt_sanitized", "chars": 41, "text": "We don't say that a person goes to heaven", "meta": {"engine": "openai", "stt_openai_ms": 486}}
+{"ts": "2026-02-12 19:43:40.720", "stage": "stt_boundary_trim", "chars": 41, "text": "We don't say that a person goes to heaven", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:43:41.049", "stage": "sentence_buffer_timeout_flush", "chars": 41, "text": "We don't say that a person goes to heaven", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:43:41.053", "stage": "sentence_enqueued", "chars": 41, "text": "We don't say that a person goes to heaven", "meta": {"queue_size": 1, "stt_openai_ms": 486}}
+{"ts": "2026-02-12 19:43:41.055", "stage": "translation_input", "chars": 41, "text": "We don't say that a person goes to heaven", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:43:41.059", "stage": "translation_output", "chars": 41, "text": "We don't say that a person goes to heaven", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:43:41.064", "stage": "display_update_input", "chars": 41, "text": "We don't say that a person goes to heaven", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:43:41.067", "stage": "display_chunk_enqueued", "chars": 26, "text": "We don't say that a person", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:43:41.071", "stage": "display_chunk_enqueued", "chars": 14, "text": "goes to heaven", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:43:42.065", "stage": "display_word_reveal_complete", "chars": 26, "text": "We don't say that a person"}
+{"ts": "2026-02-12 19:43:42.475", "stage": "stt_raw", "chars": 3, "text": "And", "meta": {"engine": "openai", "stt_openai_ms": 528}}
+{"ts": "2026-02-12 19:43:42.479", "stage": "stt_sanitized", "chars": 3, "text": "And", "meta": {"engine": "openai", "stt_openai_ms": 528}}
+{"ts": "2026-02-12 19:43:42.482", "stage": "stt_boundary_trim", "chars": 3, "text": "And", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:43:42.561", "stage": "display_word_reveal_complete", "chars": 14, "text": "goes to heaven"}
+{"ts": "2026-02-12 19:43:42.809", "stage": "sentence_buffer_timeout_flush", "chars": 3, "text": "And", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:43:42.813", "stage": "sentence_enqueued", "chars": 3, "text": "And", "meta": {"queue_size": 1, "stt_openai_ms": 528}}
+{"ts": "2026-02-12 19:43:42.815", "stage": "translation_input", "chars": 3, "text": "And", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:43:42.820", "stage": "translation_output", "chars": 3, "text": "And", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:43:42.824", "stage": "display_update_input", "chars": 3, "text": "And", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:43:42.828", "stage": "display_chunk_enqueued", "chars": 3, "text": "And", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:43:42.998", "stage": "display_word_reveal_complete", "chars": 3, "text": "And"}
+{"ts": "2026-02-12 19:43:46.718", "stage": "stt_raw", "chars": 24, "text": "Hell is not the opposite", "meta": {"engine": "openai", "stt_openai_ms": 970}}
+{"ts": "2026-02-12 19:43:46.722", "stage": "stt_sanitized", "chars": 24, "text": "Hell is not the opposite", "meta": {"engine": "openai", "stt_openai_ms": 970}}
+{"ts": "2026-02-12 19:43:46.727", "stage": "stt_boundary_trim", "chars": 24, "text": "Hell is not the opposite", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:43:47.067", "stage": "sentence_buffer_timeout_flush", "chars": 24, "text": "Hell is not the opposite", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:43:47.072", "stage": "sentence_enqueued", "chars": 24, "text": "Hell is not the opposite", "meta": {"queue_size": 1, "stt_openai_ms": 970}}
+{"ts": "2026-02-12 19:43:47.073", "stage": "translation_input", "chars": 24, "text": "Hell is not the opposite", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:43:47.080", "stage": "translation_output", "chars": 24, "text": "Hell is not the opposite", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:43:47.083", "stage": "display_update_input", "chars": 24, "text": "Hell is not the opposite", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:43:47.087", "stage": "display_chunk_enqueued", "chars": 24, "text": "Hell is not the opposite", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:43:47.935", "stage": "display_word_reveal_complete", "chars": 24, "text": "Hell is not the opposite"}
+{"ts": "2026-02-12 19:43:50.446", "stage": "stt_raw", "chars": 26, "text": "Hell is the holding place.", "meta": {"engine": "openai", "stt_openai_ms": 560}}
+{"ts": "2026-02-12 19:43:50.451", "stage": "stt_sanitized", "chars": 26, "text": "Hell is the holding place.", "meta": {"engine": "openai", "stt_openai_ms": 560}}
+{"ts": "2026-02-12 19:43:50.457", "stage": "stt_boundary_trim", "chars": 26, "text": "Hell is the holding place.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:43:50.791", "stage": "sentence_buffer_timeout_flush", "chars": 26, "text": "Hell is the holding place.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:43:50.795", "stage": "sentence_enqueued", "chars": 26, "text": "Hell is the holding place.", "meta": {"queue_size": 1, "stt_openai_ms": 560}}
+{"ts": "2026-02-12 19:43:50.797", "stage": "translation_input", "chars": 26, "text": "Hell is the holding place.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:43:50.803", "stage": "translation_output", "chars": 26, "text": "Hell is the holding place.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:43:50.807", "stage": "display_update_input", "chars": 26, "text": "Hell is the holding place.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:43:50.811", "stage": "display_chunk_enqueued", "chars": 26, "text": "Hell is the holding place.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:43:51.632", "stage": "display_word_reveal_complete", "chars": 26, "text": "Hell is the holding place."}
+{"ts": "2026-02-12 19:43:53.876", "stage": "stt_raw", "chars": 31, "text": "There is heaven or life eternal", "meta": {"engine": "openai", "stt_openai_ms": 488}}
+{"ts": "2026-02-12 19:43:53.880", "stage": "stt_sanitized", "chars": 31, "text": "There is heaven or life eternal", "meta": {"engine": "openai", "stt_openai_ms": 488}}
+{"ts": "2026-02-12 19:43:53.884", "stage": "stt_boundary_trim", "chars": 31, "text": "There is heaven or life eternal", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:43:54.211", "stage": "sentence_buffer_timeout_flush", "chars": 31, "text": "There is heaven or life eternal", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:43:54.215", "stage": "sentence_enqueued", "chars": 31, "text": "There is heaven or life eternal", "meta": {"queue_size": 1, "stt_openai_ms": 488}}
+{"ts": "2026-02-12 19:43:54.217", "stage": "translation_input", "chars": 31, "text": "There is heaven or life eternal", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:43:54.224", "stage": "translation_output", "chars": 31, "text": "There is heaven or life eternal", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:43:54.227", "stage": "display_update_input", "chars": 31, "text": "There is heaven or life eternal", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:43:54.232", "stage": "display_chunk_enqueued", "chars": 23, "text": "There is heaven or life", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:43:54.236", "stage": "display_chunk_enqueued", "chars": 7, "text": "eternal", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:43:55.096", "stage": "display_word_reveal_complete", "chars": 23, "text": "There is heaven or life"}
+{"ts": "2026-02-12 19:43:55.267", "stage": "display_word_reveal_complete", "chars": 7, "text": "eternal"}
+{"ts": "2026-02-12 19:43:56.732", "stage": "stt_raw", "chars": 41, "text": "And then there is everlasting punishment.", "meta": {"engine": "openai", "stt_openai_ms": 504}}
+{"ts": "2026-02-12 19:43:56.737", "stage": "stt_sanitized", "chars": 41, "text": "And then there is everlasting punishment.", "meta": {"engine": "openai", "stt_openai_ms": 504}}
+{"ts": "2026-02-12 19:43:56.741", "stage": "stt_boundary_trim", "chars": 41, "text": "And then there is everlasting punishment.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:43:57.081", "stage": "sentence_buffer_timeout_flush", "chars": 41, "text": "And then there is everlasting punishment.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:43:57.086", "stage": "sentence_enqueued", "chars": 41, "text": "And then there is everlasting punishment.", "meta": {"queue_size": 1, "stt_openai_ms": 504}}
+{"ts": "2026-02-12 19:43:57.089", "stage": "translation_input", "chars": 41, "text": "And then there is everlasting punishment.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:43:57.094", "stage": "translation_output", "chars": 41, "text": "And then there is everlasting punishment.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:43:57.098", "stage": "display_update_input", "chars": 41, "text": "And then there is everlasting punishment.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:43:57.102", "stage": "display_chunk_enqueued", "chars": 29, "text": "And then there is everlasting", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:43:57.106", "stage": "display_chunk_enqueued", "chars": 11, "text": "punishment.", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:43:57.950", "stage": "display_word_reveal_complete", "chars": 29, "text": "And then there is everlasting"}
+{"ts": "2026-02-12 19:43:58.120", "stage": "display_word_reveal_complete", "chars": 11, "text": "punishment."}
+{"ts": "2026-02-12 19:44:00.224", "stage": "stt_raw", "chars": 6, "text": "So, if", "meta": {"engine": "openai", "stt_openai_ms": 726}}
+{"ts": "2026-02-12 19:44:00.230", "stage": "stt_sanitized", "chars": 6, "text": "So, if", "meta": {"engine": "openai", "stt_openai_ms": 726}}
+{"ts": "2026-02-12 19:44:00.234", "stage": "stt_boundary_trim", "chars": 6, "text": "So, if", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:44:00.584", "stage": "sentence_buffer_timeout_flush", "chars": 6, "text": "So, if", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:44:00.588", "stage": "sentence_enqueued", "chars": 6, "text": "So, if", "meta": {"queue_size": 1, "stt_openai_ms": 726}}
+{"ts": "2026-02-12 19:44:00.591", "stage": "translation_input", "chars": 6, "text": "So, if", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:44:00.597", "stage": "translation_output", "chars": 6, "text": "So, if", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:44:00.604", "stage": "display_update_input", "chars": 6, "text": "So, if", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:44:00.608", "stage": "display_chunk_enqueued", "chars": 6, "text": "So, if", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:44:00.956", "stage": "display_word_reveal_complete", "chars": 6, "text": "So, if"}
+{"ts": "2026-02-12 19:44:03.061", "stage": "stt_raw", "chars": 33, "text": "Judgment Day. You don't do right.", "meta": {"engine": "openai", "stt_openai_ms": 523}}
+{"ts": "2026-02-12 19:44:03.067", "stage": "stt_sanitized", "chars": 33, "text": "Judgment Day. You don't do right.", "meta": {"engine": "openai", "stt_openai_ms": 523}}
+{"ts": "2026-02-12 19:44:03.070", "stage": "stt_boundary_trim", "chars": 33, "text": "Judgment Day. You don't do right.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:44:03.397", "stage": "sentence_buffer_timeout_flush", "chars": 33, "text": "Judgment Day. You don't do right.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:44:03.402", "stage": "sentence_enqueued", "chars": 33, "text": "Judgment Day. You don't do right.", "meta": {"queue_size": 1, "stt_openai_ms": 523}}
+{"ts": "2026-02-12 19:44:03.404", "stage": "translation_input", "chars": 33, "text": "Judgment Day. You don't do right.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:44:03.409", "stage": "translation_output", "chars": 33, "text": "Judgment Day. You don't do right.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:44:03.413", "stage": "display_update_input", "chars": 33, "text": "Judgment Day. You don't do right.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:44:03.418", "stage": "display_chunk_enqueued", "chars": 26, "text": "Judgment Day. You don't do", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:44:03.422", "stage": "display_chunk_enqueued", "chars": 6, "text": "right.", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:44:04.251", "stage": "display_word_reveal_complete", "chars": 26, "text": "Judgment Day. You don't do"}
+{"ts": "2026-02-12 19:44:04.422", "stage": "display_word_reveal_complete", "chars": 6, "text": "right."}
+{"ts": "2026-02-12 19:44:04.986", "stage": "stt_raw", "chars": 22, "text": "everlasting punishment", "meta": {"engine": "openai", "stt_openai_ms": 480}}
+{"ts": "2026-02-12 19:44:04.991", "stage": "stt_sanitized", "chars": 22, "text": "everlasting punishment", "meta": {"engine": "openai", "stt_openai_ms": 480}}
+{"ts": "2026-02-12 19:44:04.996", "stage": "stt_boundary_trim", "chars": 22, "text": "everlasting punishment", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:44:05.322", "stage": "sentence_buffer_timeout_flush", "chars": 22, "text": "everlasting punishment", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:44:05.326", "stage": "sentence_enqueued", "chars": 22, "text": "everlasting punishment", "meta": {"queue_size": 1, "stt_openai_ms": 480}}
+{"ts": "2026-02-12 19:44:05.328", "stage": "translation_input", "chars": 22, "text": "everlasting punishment", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:44:05.333", "stage": "translation_output", "chars": 22, "text": "everlasting punishment", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:44:05.336", "stage": "display_update_input", "chars": 22, "text": "everlasting punishment", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:44:05.341", "stage": "display_chunk_enqueued", "chars": 22, "text": "everlasting punishment", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:44:05.664", "stage": "display_word_reveal_complete", "chars": 22, "text": "everlasting punishment"}
+{"ts": "2026-02-12 19:44:07.980", "stage": "stt_raw", "chars": 27, "text": "Are you go to life eternal?", "meta": {"engine": "openai", "stt_openai_ms": 472}}
+{"ts": "2026-02-12 19:44:07.989", "stage": "stt_sanitized", "chars": 27, "text": "Are you go to life eternal?", "meta": {"engine": "openai", "stt_openai_ms": 472}}
+{"ts": "2026-02-12 19:44:07.995", "stage": "stt_boundary_trim", "chars": 27, "text": "Are you go to life eternal?", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:44:08.326", "stage": "sentence_buffer_timeout_flush", "chars": 27, "text": "Are you go to life eternal?", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:44:08.329", "stage": "sentence_enqueued", "chars": 27, "text": "Are you go to life eternal?", "meta": {"queue_size": 1, "stt_openai_ms": 472}}
+{"ts": "2026-02-12 19:44:08.331", "stage": "translation_input", "chars": 27, "text": "Are you go to life eternal?", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:44:08.339", "stage": "translation_output", "chars": 27, "text": "Are you go to life eternal?", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:44:08.343", "stage": "display_update_input", "chars": 27, "text": "Are you go to life eternal?", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:44:08.347", "stage": "display_chunk_enqueued", "chars": 27, "text": "Are you go to life eternal?", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:44:09.337", "stage": "display_word_reveal_complete", "chars": 27, "text": "Are you go to life eternal?"}
+{"ts": "2026-02-12 19:44:12.274", "stage": "stt_raw", "chars": 47, "text": "But after Judgment Day, nobody will be in hell.", "meta": {"engine": "openai", "stt_openai_ms": 677}}
+{"ts": "2026-02-12 19:44:12.278", "stage": "stt_sanitized", "chars": 47, "text": "But after Judgment Day, nobody will be in hell.", "meta": {"engine": "openai", "stt_openai_ms": 677}}
+{"ts": "2026-02-12 19:44:12.283", "stage": "stt_boundary_trim", "chars": 47, "text": "But after Judgment Day, nobody will be in hell.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:44:12.617", "stage": "sentence_buffer_timeout_flush", "chars": 47, "text": "But after Judgment Day, nobody will be in hell.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:44:12.622", "stage": "sentence_enqueued", "chars": 47, "text": "But after Judgment Day, nobody will be in hell.", "meta": {"queue_size": 1, "stt_openai_ms": 677}}
+{"ts": "2026-02-12 19:44:12.625", "stage": "translation_input", "chars": 47, "text": "But after Judgment Day, nobody will be in hell.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:44:12.632", "stage": "translation_output", "chars": 47, "text": "But after Judgment Day, nobody will be in hell.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:44:12.636", "stage": "display_update_input", "chars": 47, "text": "But after Judgment Day, nobody will be in hell.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:44:12.640", "stage": "display_chunk_enqueued", "chars": 30, "text": "But after Judgment Day, nobody", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:44:12.645", "stage": "display_chunk_enqueued", "chars": 16, "text": "will be in hell.", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:44:13.490", "stage": "display_word_reveal_complete", "chars": 30, "text": "But after Judgment Day, nobody"}
+{"ts": "2026-02-12 19:44:14.173", "stage": "display_word_reveal_complete", "chars": 16, "text": "will be in hell."}
+{"ts": "2026-02-12 19:44:16.043", "stage": "stt_raw", "chars": 28, "text": "Because hell is just a what?", "meta": {"engine": "openai", "stt_openai_ms": 595}}
+{"ts": "2026-02-12 19:44:16.048", "stage": "stt_sanitized", "chars": 28, "text": "Because hell is just a what?", "meta": {"engine": "openai", "stt_openai_ms": 595}}
+{"ts": "2026-02-12 19:44:16.052", "stage": "stt_boundary_trim", "chars": 28, "text": "Because hell is just a what?", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:44:16.395", "stage": "sentence_buffer_timeout_flush", "chars": 28, "text": "Because hell is just a what?", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:44:16.401", "stage": "sentence_enqueued", "chars": 28, "text": "Because hell is just a what?", "meta": {"queue_size": 1, "stt_openai_ms": 595}}
+{"ts": "2026-02-12 19:44:16.404", "stage": "translation_input", "chars": 28, "text": "Because hell is just a what?", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:44:16.412", "stage": "translation_output", "chars": 28, "text": "Because hell is just a what?", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:44:16.417", "stage": "display_update_input", "chars": 28, "text": "Because hell is just a what?", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:44:16.420", "stage": "display_chunk_enqueued", "chars": 28, "text": "Because hell is just a what?", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:44:17.450", "stage": "display_word_reveal_complete", "chars": 28, "text": "Because hell is just a what?"}
+{"ts": "2026-02-12 19:44:17.808", "stage": "stt_raw", "chars": 26, "text": "It's just a holding place.", "meta": {"engine": "openai", "stt_openai_ms": 519}}
+{"ts": "2026-02-12 19:44:17.813", "stage": "stt_sanitized", "chars": 26, "text": "It's just a holding place.", "meta": {"engine": "openai", "stt_openai_ms": 519}}
+{"ts": "2026-02-12 19:44:17.817", "stage": "stt_boundary_trim", "chars": 26, "text": "It's just a holding place.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:44:18.151", "stage": "sentence_buffer_timeout_flush", "chars": 26, "text": "It's just a holding place.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:44:18.155", "stage": "sentence_enqueued", "chars": 26, "text": "It's just a holding place.", "meta": {"queue_size": 1, "stt_openai_ms": 519}}
+{"ts": "2026-02-12 19:44:18.158", "stage": "translation_input", "chars": 26, "text": "It's just a holding place.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:44:18.165", "stage": "translation_output", "chars": 26, "text": "It's just a holding place.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:44:18.170", "stage": "display_update_input", "chars": 26, "text": "It's just a holding place.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:44:18.174", "stage": "display_chunk_enqueued", "chars": 26, "text": "It's just a holding place.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:44:19.022", "stage": "display_word_reveal_complete", "chars": 26, "text": "It's just a holding place."}
+{"ts": "2026-02-12 19:44:21.163", "stage": "stt_raw", "chars": 43, "text": "Because we're all waiting on who to return.", "meta": {"engine": "openai", "stt_openai_ms": 1066}}
+{"ts": "2026-02-12 19:44:21.169", "stage": "stt_sanitized", "chars": 43, "text": "Because we're all waiting on who to return.", "meta": {"engine": "openai", "stt_openai_ms": 1066}}
+{"ts": "2026-02-12 19:44:21.174", "stage": "stt_boundary_trim", "chars": 43, "text": "Because we're all waiting on who to return.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:44:21.507", "stage": "sentence_buffer_timeout_flush", "chars": 43, "text": "Because we're all waiting on who to return.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:44:21.512", "stage": "sentence_enqueued", "chars": 43, "text": "Because we're all waiting on who to return.", "meta": {"queue_size": 1, "stt_openai_ms": 1066}}
+{"ts": "2026-02-12 19:44:21.514", "stage": "translation_input", "chars": 43, "text": "Because we're all waiting on who to return.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:44:21.521", "stage": "translation_output", "chars": 43, "text": "Because we're all waiting on who to return.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:44:21.526", "stage": "display_update_input", "chars": 43, "text": "Because we're all waiting on who to return.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:44:21.531", "stage": "display_chunk_enqueued", "chars": 28, "text": "Because we're all waiting on", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:44:21.535", "stage": "display_chunk_enqueued", "chars": 14, "text": "who to return.", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:44:22.393", "stage": "display_word_reveal_complete", "chars": 28, "text": "Because we're all waiting on"}
+{"ts": "2026-02-12 19:44:22.904", "stage": "display_word_reveal_complete", "chars": 14, "text": "who to return."}
+{"ts": "2026-02-12 19:44:23.704", "stage": "stt_raw", "chars": 24, "text": "There is a judgment day.", "meta": {"engine": "openai", "stt_openai_ms": 965}}
+{"ts": "2026-02-12 19:44:23.708", "stage": "stt_sanitized", "chars": 24, "text": "There is a judgment day.", "meta": {"engine": "openai", "stt_openai_ms": 965}}
+{"ts": "2026-02-12 19:44:23.713", "stage": "stt_boundary_trim", "chars": 24, "text": "There is a judgment day.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:44:24.053", "stage": "sentence_buffer_timeout_flush", "chars": 24, "text": "There is a judgment day.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:44:24.059", "stage": "sentence_enqueued", "chars": 24, "text": "There is a judgment day.", "meta": {"queue_size": 1, "stt_openai_ms": 965}}
+{"ts": "2026-02-12 19:44:24.061", "stage": "translation_input", "chars": 24, "text": "There is a judgment day.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:44:24.068", "stage": "translation_output", "chars": 24, "text": "There is a judgment day.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:44:24.074", "stage": "display_update_input", "chars": 24, "text": "There is a judgment day.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:44:24.078", "stage": "display_chunk_enqueued", "chars": 24, "text": "There is a judgment day.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:44:24.935", "stage": "display_word_reveal_complete", "chars": 24, "text": "There is a judgment day."}
+{"ts": "2026-02-12 19:44:26.648", "stage": "stt_raw", "chars": 24, "text": "Don't skip judgment day.", "meta": {"engine": "openai", "stt_openai_ms": 681}}
+{"ts": "2026-02-12 19:44:26.654", "stage": "stt_sanitized", "chars": 24, "text": "Don't skip judgment day.", "meta": {"engine": "openai", "stt_openai_ms": 681}}
+{"ts": "2026-02-12 19:44:26.659", "stage": "stt_boundary_trim", "chars": 24, "text": "Don't skip judgment day.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:44:26.993", "stage": "sentence_buffer_timeout_flush", "chars": 24, "text": "Don't skip judgment day.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:44:26.998", "stage": "sentence_enqueued", "chars": 24, "text": "Don't skip judgment day.", "meta": {"queue_size": 1, "stt_openai_ms": 681}}
+{"ts": "2026-02-12 19:44:27.000", "stage": "translation_input", "chars": 24, "text": "Don't skip judgment day.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:44:27.006", "stage": "translation_output", "chars": 24, "text": "Don't skip judgment day.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:44:27.011", "stage": "display_update_input", "chars": 24, "text": "Don't skip judgment day.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:44:27.017", "stage": "display_chunk_enqueued", "chars": 24, "text": "Don't skip judgment day.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:44:27.705", "stage": "display_word_reveal_complete", "chars": 24, "text": "Don't skip judgment day."}
+{"ts": "2026-02-12 19:44:29.875", "stage": "stt_raw", "chars": 64, "text": "We like to skip judgment day and ship people straight to heaven.", "meta": {"engine": "openai", "stt_openai_ms": 816}}
+{"ts": "2026-02-12 19:44:29.879", "stage": "stt_sanitized", "chars": 64, "text": "We like to skip judgment day and ship people straight to heaven.", "meta": {"engine": "openai", "stt_openai_ms": 816}}
+{"ts": "2026-02-12 19:44:29.883", "stage": "stt_boundary_trim", "chars": 64, "text": "We like to skip judgment day and ship people straight to heaven.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:44:30.214", "stage": "sentence_buffer_timeout_flush", "chars": 64, "text": "We like to skip judgment day and ship people straight to heaven.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:44:30.219", "stage": "sentence_enqueued", "chars": 64, "text": "We like to skip judgment day and ship people straight to heaven.", "meta": {"queue_size": 1, "stt_openai_ms": 816}}
+{"ts": "2026-02-12 19:44:30.222", "stage": "translation_input", "chars": 64, "text": "We like to skip judgment day and ship people straight to heaven.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:44:30.228", "stage": "translation_output", "chars": 64, "text": "We like to skip judgment day and ship people straight to heaven.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:44:30.233", "stage": "display_update_input", "chars": 64, "text": "We like to skip judgment day and ship people straight to heaven.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:44:30.238", "stage": "display_chunk_enqueued", "chars": 28, "text": "We like to skip judgment day", "meta": {"chunk_index": 0, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-12 19:44:30.242", "stage": "display_chunk_enqueued", "chars": 27, "text": "and ship people straight to", "meta": {"chunk_index": 1, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-12 19:44:30.246", "stage": "display_chunk_enqueued", "chars": 7, "text": "heaven.", "meta": {"chunk_index": 2, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-12 19:44:31.269", "stage": "display_word_reveal_complete", "chars": 28, "text": "We like to skip judgment day"}
+{"ts": "2026-02-12 19:44:32.122", "stage": "display_word_reveal_complete", "chars": 27, "text": "and ship people straight to"}
+{"ts": "2026-02-12 19:44:32.293", "stage": "display_word_reveal_complete", "chars": 7, "text": "heaven."}
+{"ts": "2026-02-12 19:44:33.034", "stage": "stt_raw", "chars": 25, "text": "No, you can't skip Jesus.", "meta": {"engine": "openai", "stt_openai_ms": 706}}
+{"ts": "2026-02-12 19:44:33.038", "stage": "stt_sanitized", "chars": 25, "text": "No, you can't skip Jesus.", "meta": {"engine": "openai", "stt_openai_ms": 706}}
+{"ts": "2026-02-12 19:44:33.042", "stage": "stt_boundary_trim", "chars": 25, "text": "No, you can't skip Jesus.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:44:33.380", "stage": "sentence_buffer_timeout_flush", "chars": 25, "text": "No, you can't skip Jesus.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:44:33.385", "stage": "sentence_enqueued", "chars": 25, "text": "No, you can't skip Jesus.", "meta": {"queue_size": 1, "stt_openai_ms": 706}}
+{"ts": "2026-02-12 19:44:33.387", "stage": "translation_input", "chars": 25, "text": "No, you can't skip Jesus.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:44:33.394", "stage": "translation_output", "chars": 25, "text": "No, you can't skip Jesus.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:44:33.399", "stage": "display_update_input", "chars": 25, "text": "No, you can't skip Jesus.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:44:33.404", "stage": "display_chunk_enqueued", "chars": 25, "text": "No, you can't skip Jesus.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:44:34.264", "stage": "display_word_reveal_complete", "chars": 25, "text": "No, you can't skip Jesus."}
+{"ts": "2026-02-12 19:44:36.658", "stage": "stt_raw", "chars": 42, "text": "When Jesus comes back, he's gonna do what?", "meta": {"engine": "openai", "stt_openai_ms": 821}}
+{"ts": "2026-02-12 19:44:36.664", "stage": "stt_sanitized", "chars": 42, "text": "When Jesus comes back, he's gonna do what?", "meta": {"engine": "openai", "stt_openai_ms": 821}}
+{"ts": "2026-02-12 19:44:36.669", "stage": "stt_boundary_trim", "chars": 42, "text": "When Jesus comes back, he's gonna do what?", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:44:36.992", "stage": "sentence_buffer_timeout_flush", "chars": 42, "text": "When Jesus comes back, he's gonna do what?", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:44:36.997", "stage": "sentence_enqueued", "chars": 42, "text": "When Jesus comes back, he's gonna do what?", "meta": {"queue_size": 1, "stt_openai_ms": 821}}
+{"ts": "2026-02-12 19:44:36.998", "stage": "translation_input", "chars": 42, "text": "When Jesus comes back, he's gonna do what?", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:44:37.006", "stage": "translation_output", "chars": 42, "text": "When Jesus comes back, he's gonna do what?", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:44:37.010", "stage": "display_update_input", "chars": 42, "text": "When Jesus comes back, he's gonna do what?", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:44:37.015", "stage": "display_chunk_enqueued", "chars": 27, "text": "When Jesus comes back, he's", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:44:37.019", "stage": "display_chunk_enqueued", "chars": 14, "text": "gonna do what?", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:44:37.878", "stage": "display_word_reveal_complete", "chars": 27, "text": "When Jesus comes back, he's"}
+{"ts": "2026-02-12 19:44:38.391", "stage": "display_word_reveal_complete", "chars": 14, "text": "gonna do what?"}
+{"ts": "2026-02-12 19:44:40.539", "stage": "stt_raw", "chars": 38, "text": "He's gonna judge! Let the judge judge!", "meta": {"engine": "openai", "stt_openai_ms": 802}}
+{"ts": "2026-02-12 19:44:40.545", "stage": "stt_sanitized", "chars": 38, "text": "He's gonna judge! Let the judge judge!", "meta": {"engine": "openai", "stt_openai_ms": 802}}
+{"ts": "2026-02-12 19:44:40.550", "stage": "stt_boundary_trim", "chars": 38, "text": "He's gonna judge! Let the judge judge!", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:44:40.882", "stage": "sentence_buffer_timeout_flush", "chars": 38, "text": "He's gonna judge! Let the judge judge!", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:44:40.886", "stage": "sentence_enqueued", "chars": 38, "text": "He's gonna judge! Let the judge judge!", "meta": {"queue_size": 1, "stt_openai_ms": 802}}
+{"ts": "2026-02-12 19:44:40.888", "stage": "translation_input", "chars": 38, "text": "He's gonna judge! Let the judge judge!", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:44:40.895", "stage": "translation_output", "chars": 38, "text": "He's gonna judge! Let the judge judge!", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:44:40.899", "stage": "display_update_input", "chars": 38, "text": "He's gonna judge! Let the judge judge!", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:44:40.905", "stage": "display_chunk_enqueued", "chars": 25, "text": "He's gonna judge! Let the", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:44:40.910", "stage": "display_chunk_enqueued", "chars": 12, "text": "judge judge!", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:44:41.768", "stage": "display_word_reveal_complete", "chars": 25, "text": "He's gonna judge! Let the"}
+{"ts": "2026-02-12 19:44:42.108", "stage": "display_word_reveal_complete", "chars": 12, "text": "judge judge!"}
+{"ts": "2026-02-12 19:44:44.536", "stage": "stt_raw", "chars": 39, "text": "And sometimes we like to condemn people", "meta": {"engine": "openai", "stt_openai_ms": 777}}
+{"ts": "2026-02-12 19:44:44.541", "stage": "stt_sanitized", "chars": 39, "text": "And sometimes we like to condemn people", "meta": {"engine": "openai", "stt_openai_ms": 777}}
+{"ts": "2026-02-12 19:44:44.546", "stage": "stt_boundary_trim", "chars": 39, "text": "And sometimes we like to condemn people", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:44:44.882", "stage": "sentence_buffer_timeout_flush", "chars": 39, "text": "And sometimes we like to condemn people", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:44:44.887", "stage": "sentence_enqueued", "chars": 39, "text": "And sometimes we like to condemn people", "meta": {"queue_size": 1, "stt_openai_ms": 777}}
+{"ts": "2026-02-12 19:44:44.889", "stage": "translation_input", "chars": 39, "text": "And sometimes we like to condemn people", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:44:44.898", "stage": "translation_output", "chars": 39, "text": "And sometimes we like to condemn people", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:44:44.903", "stage": "display_update_input", "chars": 39, "text": "And sometimes we like to condemn people", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:44:44.908", "stage": "display_chunk_enqueued", "chars": 24, "text": "And sometimes we like to", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:44:44.914", "stage": "display_chunk_enqueued", "chars": 14, "text": "condemn people", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:44:45.765", "stage": "display_word_reveal_complete", "chars": 24, "text": "And sometimes we like to"}
+{"ts": "2026-02-12 19:44:46.124", "stage": "display_word_reveal_complete", "chars": 14, "text": "condemn people"}
+{"ts": "2026-02-12 19:44:47.713", "stage": "stt_raw", "chars": 42, "text": "For Jesus, you don't know on Judgment Day.", "meta": {"engine": "openai", "stt_openai_ms": 875}}
+{"ts": "2026-02-12 19:44:47.718", "stage": "stt_sanitized", "chars": 42, "text": "For Jesus, you don't know on Judgment Day.", "meta": {"engine": "openai", "stt_openai_ms": 875}}
+{"ts": "2026-02-12 19:44:47.722", "stage": "stt_boundary_trim", "chars": 42, "text": "For Jesus, you don't know on Judgment Day.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:44:48.069", "stage": "sentence_buffer_timeout_flush", "chars": 42, "text": "For Jesus, you don't know on Judgment Day.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:44:48.075", "stage": "sentence_enqueued", "chars": 42, "text": "For Jesus, you don't know on Judgment Day.", "meta": {"queue_size": 1, "stt_openai_ms": 875}}
+{"ts": "2026-02-12 19:44:48.078", "stage": "translation_input", "chars": 42, "text": "For Jesus, you don't know on Judgment Day.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:44:48.086", "stage": "translation_output", "chars": 42, "text": "For Jesus, you don't know on Judgment Day.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:44:48.091", "stage": "display_update_input", "chars": 42, "text": "For Jesus, you don't know on Judgment Day.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:44:48.095", "stage": "display_chunk_enqueued", "chars": 28, "text": "For Jesus, you don't know on", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:44:48.099", "stage": "display_chunk_enqueued", "chars": 13, "text": "Judgment Day.", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:44:49.122", "stage": "display_word_reveal_complete", "chars": 28, "text": "For Jesus, you don't know on"}
+{"ts": "2026-02-12 19:44:49.463", "stage": "display_word_reveal_complete", "chars": 13, "text": "Judgment Day."}
+{"ts": "2026-02-12 19:44:50.636", "stage": "stt_raw", "chars": 38, "text": "Come with an abundant amount of grace.", "meta": {"engine": "openai", "stt_openai_ms": 1010}}
+{"ts": "2026-02-12 19:44:50.642", "stage": "stt_sanitized", "chars": 38, "text": "Come with an abundant amount of grace.", "meta": {"engine": "openai", "stt_openai_ms": 1010}}
+{"ts": "2026-02-12 19:44:50.647", "stage": "stt_boundary_trim", "chars": 38, "text": "Come with an abundant amount of grace.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:44:50.987", "stage": "sentence_buffer_timeout_flush", "chars": 38, "text": "Come with an abundant amount of grace.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:44:50.991", "stage": "sentence_enqueued", "chars": 38, "text": "Come with an abundant amount of grace.", "meta": {"queue_size": 1, "stt_openai_ms": 1010}}
+{"ts": "2026-02-12 19:44:50.994", "stage": "translation_input", "chars": 38, "text": "Come with an abundant amount of grace.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:44:51.001", "stage": "translation_output", "chars": 38, "text": "Come with an abundant amount of grace.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:44:51.006", "stage": "display_update_input", "chars": 38, "text": "Come with an abundant amount of grace.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:44:51.011", "stage": "display_chunk_enqueued", "chars": 28, "text": "Come with an abundant amount", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:44:51.016", "stage": "display_chunk_enqueued", "chars": 9, "text": "of grace.", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:44:51.874", "stage": "display_word_reveal_complete", "chars": 28, "text": "Come with an abundant amount"}
+{"ts": "2026-02-12 19:44:52.015", "stage": "stt_raw", "chars": 20, "text": "that you didn't have", "meta": {"engine": "openai", "stt_openai_ms": 439}}
+{"ts": "2026-02-12 19:44:52.020", "stage": "stt_sanitized", "chars": 20, "text": "that you didn't have", "meta": {"engine": "openai", "stt_openai_ms": 439}}
+{"ts": "2026-02-12 19:44:52.025", "stage": "stt_boundary_trim", "chars": 20, "text": "that you didn't have", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:44:52.216", "stage": "display_word_reveal_complete", "chars": 9, "text": "of grace."}
+{"ts": "2026-02-12 19:44:52.356", "stage": "sentence_buffer_timeout_flush", "chars": 20, "text": "that you didn't have", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:44:52.361", "stage": "sentence_enqueued", "chars": 20, "text": "that you didn't have", "meta": {"queue_size": 1, "stt_openai_ms": 439}}
+{"ts": "2026-02-12 19:44:52.363", "stage": "translation_input", "chars": 20, "text": "that you didn't have", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:44:52.370", "stage": "translation_output", "chars": 20, "text": "that you didn't have", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:44:52.374", "stage": "display_update_input", "chars": 20, "text": "that you didn't have", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:44:52.379", "stage": "display_chunk_enqueued", "chars": 20, "text": "that you didn't have", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:44:53.114", "stage": "display_word_reveal_complete", "chars": 20, "text": "that you didn't have"}
+{"ts": "2026-02-12 19:44:57.228", "stage": "stt_raw", "chars": 22, "text": "You say good riddance.", "meta": {"engine": "openai", "stt_openai_ms": 840}}
+{"ts": "2026-02-12 19:44:57.234", "stage": "stt_sanitized", "chars": 22, "text": "You say good riddance.", "meta": {"engine": "openai", "stt_openai_ms": 840}}
+{"ts": "2026-02-12 19:44:57.238", "stage": "stt_boundary_trim", "chars": 22, "text": "You say good riddance.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:44:57.573", "stage": "sentence_buffer_timeout_flush", "chars": 22, "text": "You say good riddance.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:44:57.578", "stage": "sentence_enqueued", "chars": 22, "text": "You say good riddance.", "meta": {"queue_size": 1, "stt_openai_ms": 840}}
+{"ts": "2026-02-12 19:44:57.581", "stage": "translation_input", "chars": 22, "text": "You say good riddance.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:44:57.588", "stage": "translation_output", "chars": 22, "text": "You say good riddance.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:44:57.594", "stage": "display_update_input", "chars": 22, "text": "You say good riddance.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:44:57.599", "stage": "display_chunk_enqueued", "chars": 22, "text": "You say good riddance.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:44:58.288", "stage": "display_word_reveal_complete", "chars": 22, "text": "You say good riddance."}
+{"ts": "2026-02-12 19:44:58.933", "stage": "stt_raw", "chars": 16, "text": "that I can give.", "meta": {"engine": "openai", "stt_openai_ms": 735}}
+{"ts": "2026-02-12 19:44:58.938", "stage": "stt_sanitized", "chars": 16, "text": "that I can give.", "meta": {"engine": "openai", "stt_openai_ms": 735}}
+{"ts": "2026-02-12 19:44:58.943", "stage": "stt_boundary_trim", "chars": 16, "text": "that I can give.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:44:59.281", "stage": "sentence_buffer_timeout_flush", "chars": 16, "text": "that I can give.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:44:59.287", "stage": "sentence_enqueued", "chars": 16, "text": "that I can give.", "meta": {"queue_size": 1, "stt_openai_ms": 735}}
+{"ts": "2026-02-12 19:44:59.288", "stage": "translation_input", "chars": 16, "text": "that I can give.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:44:59.296", "stage": "translation_output", "chars": 16, "text": "that I can give.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:44:59.302", "stage": "display_update_input", "chars": 16, "text": "that I can give.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:44:59.306", "stage": "display_chunk_enqueued", "chars": 16, "text": "that I can give.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:44:59.994", "stage": "display_word_reveal_complete", "chars": 16, "text": "that I can give."}
+{"ts": "2026-02-12 19:45:02.803", "stage": "stt_raw", "chars": 41, "text": "There's a judgment day. So the Bible says", "meta": {"engine": "openai", "stt_openai_ms": 566}}
+{"ts": "2026-02-12 19:45:02.809", "stage": "stt_sanitized", "chars": 41, "text": "There's a judgment day. So the Bible says", "meta": {"engine": "openai", "stt_openai_ms": 566}}
+{"ts": "2026-02-12 19:45:02.814", "stage": "stt_boundary_trim", "chars": 41, "text": "There's a judgment day. So the Bible says", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:45:03.157", "stage": "sentence_buffer_timeout_flush", "chars": 41, "text": "There's a judgment day. So the Bible says", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:45:03.163", "stage": "sentence_enqueued", "chars": 41, "text": "There's a judgment day. So the Bible says", "meta": {"queue_size": 1, "stt_openai_ms": 566}}
+{"ts": "2026-02-12 19:45:03.165", "stage": "translation_input", "chars": 41, "text": "There's a judgment day. So the Bible says", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:45:03.175", "stage": "translation_output", "chars": 41, "text": "There's a judgment day. So the Bible says", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:45:03.182", "stage": "display_update_input", "chars": 41, "text": "There's a judgment day. So the Bible says", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:45:03.187", "stage": "display_chunk_enqueued", "chars": 30, "text": "There's a judgment day. So the", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:45:03.193", "stage": "display_chunk_enqueued", "chars": 10, "text": "Bible says", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:45:04.241", "stage": "display_word_reveal_complete", "chars": 30, "text": "There's a judgment day. So the"}
+{"ts": "2026-02-12 19:45:04.331", "stage": "stt_raw", "chars": 14, "text": "They both die.", "meta": {"engine": "openai", "stt_openai_ms": 464}}
+{"ts": "2026-02-12 19:45:04.338", "stage": "stt_sanitized", "chars": 14, "text": "They both die.", "meta": {"engine": "openai", "stt_openai_ms": 464}}
+{"ts": "2026-02-12 19:45:04.344", "stage": "stt_boundary_trim", "chars": 14, "text": "They both die.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:45:04.583", "stage": "display_word_reveal_complete", "chars": 10, "text": "Bible says"}
+{"ts": "2026-02-12 19:45:04.677", "stage": "sentence_buffer_timeout_flush", "chars": 14, "text": "They both die.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:45:04.688", "stage": "sentence_enqueued", "chars": 14, "text": "They both die.", "meta": {"queue_size": 1, "stt_openai_ms": 464}}
+{"ts": "2026-02-12 19:45:04.691", "stage": "translation_input", "chars": 14, "text": "They both die.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:45:04.699", "stage": "translation_output", "chars": 14, "text": "They both die.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:45:04.705", "stage": "display_update_input", "chars": 14, "text": "They both die.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:45:04.710", "stage": "display_chunk_enqueued", "chars": 14, "text": "They both die.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:45:05.236", "stage": "display_word_reveal_complete", "chars": 14, "text": "They both die."}
+{"ts": "2026-02-12 19:45:07.313", "stage": "stt_raw", "chars": 12, "text": "The rich man", "meta": {"engine": "openai", "stt_openai_ms": 526}}
+{"ts": "2026-02-12 19:45:07.318", "stage": "stt_sanitized", "chars": 12, "text": "The rich man", "meta": {"engine": "openai", "stt_openai_ms": 526}}
+{"ts": "2026-02-12 19:45:07.324", "stage": "stt_boundary_trim", "chars": 12, "text": "The rich man", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:45:07.658", "stage": "sentence_buffer_timeout_flush", "chars": 12, "text": "The rich man", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:45:07.663", "stage": "sentence_enqueued", "chars": 12, "text": "The rich man", "meta": {"queue_size": 1, "stt_openai_ms": 526}}
+{"ts": "2026-02-12 19:45:07.665", "stage": "translation_input", "chars": 12, "text": "The rich man", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:45:07.674", "stage": "translation_output", "chars": 12, "text": "The rich man", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:45:07.678", "stage": "display_update_input", "chars": 12, "text": "The rich man", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:45:07.684", "stage": "display_chunk_enqueued", "chars": 12, "text": "The rich man", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:45:08.202", "stage": "display_word_reveal_complete", "chars": 12, "text": "The rich man"}
+{"ts": "2026-02-12 19:45:09.250", "stage": "stt_raw", "chars": 17, "text": "could see Lazarus", "meta": {"engine": "openai", "stt_openai_ms": 492}}
+{"ts": "2026-02-12 19:45:09.255", "stage": "stt_sanitized", "chars": 17, "text": "could see Lazarus", "meta": {"engine": "openai", "stt_openai_ms": 492}}
+{"ts": "2026-02-12 19:45:09.260", "stage": "stt_boundary_trim", "chars": 17, "text": "could see Lazarus", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:45:09.600", "stage": "sentence_buffer_timeout_flush", "chars": 17, "text": "could see Lazarus", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:45:09.605", "stage": "sentence_enqueued", "chars": 17, "text": "could see Lazarus", "meta": {"queue_size": 1, "stt_openai_ms": 492}}
+{"ts": "2026-02-12 19:45:09.607", "stage": "translation_input", "chars": 17, "text": "could see Lazarus", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:45:09.617", "stage": "translation_output", "chars": 17, "text": "could see Lazarus", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:45:09.623", "stage": "display_update_input", "chars": 17, "text": "could see Lazarus", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:45:09.628", "stage": "display_chunk_enqueued", "chars": 17, "text": "could see Lazarus", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:45:10.140", "stage": "display_word_reveal_complete", "chars": 17, "text": "could see Lazarus"}
+{"ts": "2026-02-12 19:45:11.424", "stage": "stt_raw", "chars": 30, "text": "The rich man could see Lazarus", "meta": {"engine": "openai", "stt_openai_ms": 478}}
+{"ts": "2026-02-12 19:45:11.430", "stage": "stt_sanitized", "chars": 30, "text": "The rich man could see Lazarus", "meta": {"engine": "openai", "stt_openai_ms": 478}}
+{"ts": "2026-02-12 19:45:11.435", "stage": "stt_boundary_trim", "chars": 0, "text": "", "meta": {"loopback": false, "overlap_words": 6}}
+{"ts": "2026-02-12 19:45:14.215", "stage": "stt_raw", "chars": 19, "text": "It's also recording", "meta": {"engine": "openai", "stt_openai_ms": 719}}
+{"ts": "2026-02-12 19:45:14.220", "stage": "stt_sanitized", "chars": 19, "text": "It's also recording", "meta": {"engine": "openai", "stt_openai_ms": 719}}
+{"ts": "2026-02-12 19:45:14.224", "stage": "stt_boundary_trim", "chars": 19, "text": "It's also recording", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:45:14.568", "stage": "sentence_buffer_timeout_flush", "chars": 19, "text": "It's also recording", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:45:14.573", "stage": "sentence_enqueued", "chars": 19, "text": "It's also recording", "meta": {"queue_size": 1, "stt_openai_ms": 719}}
+{"ts": "2026-02-12 19:45:14.575", "stage": "translation_input", "chars": 19, "text": "It's also recording", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:45:14.583", "stage": "translation_output", "chars": 19, "text": "It's also recording", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:45:14.588", "stage": "display_update_input", "chars": 19, "text": "It's also recording", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:45:14.592", "stage": "display_chunk_enqueued", "chars": 19, "text": "It's also recording", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:45:15.110", "stage": "display_word_reveal_complete", "chars": 19, "text": "It's also recording"}
+{"ts": "2026-02-12 19:45:18.447", "stage": "stt_raw", "chars": 15, "text": "So it might be.", "meta": {"engine": "openai", "stt_openai_ms": 909}}
+{"ts": "2026-02-12 19:45:18.452", "stage": "stt_sanitized", "chars": 15, "text": "So it might be.", "meta": {"engine": "openai", "stt_openai_ms": 909}}
+{"ts": "2026-02-12 19:45:18.458", "stage": "stt_boundary_trim", "chars": 15, "text": "So it might be.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:45:18.800", "stage": "sentence_buffer_timeout_flush", "chars": 15, "text": "So it might be.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:45:18.804", "stage": "sentence_enqueued", "chars": 15, "text": "So it might be.", "meta": {"queue_size": 1, "stt_openai_ms": 909}}
+{"ts": "2026-02-12 19:45:18.806", "stage": "translation_input", "chars": 15, "text": "So it might be.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:45:18.814", "stage": "translation_output", "chars": 15, "text": "So it might be.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:45:18.819", "stage": "display_update_input", "chars": 15, "text": "So it might be.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:45:18.823", "stage": "display_chunk_enqueued", "chars": 15, "text": "So it might be.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:45:19.498", "stage": "display_word_reveal_complete", "chars": 15, "text": "So it might be."}
+{"ts": "2026-02-12 19:45:23.027", "stage": "stt_raw", "chars": 49, "text": "I'm wondering if it has microphone input directly", "meta": {"engine": "openai", "stt_openai_ms": 1559}}
+{"ts": "2026-02-12 19:45:23.032", "stage": "stt_sanitized", "chars": 49, "text": "I'm wondering if it has microphone input directly", "meta": {"engine": "openai", "stt_openai_ms": 1559}}
+{"ts": "2026-02-12 19:45:23.037", "stage": "stt_boundary_trim", "chars": 49, "text": "I'm wondering if it has microphone input directly", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:45:23.376", "stage": "sentence_buffer_timeout_flush", "chars": 49, "text": "I'm wondering if it has microphone input directly", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:45:23.381", "stage": "sentence_enqueued", "chars": 49, "text": "I'm wondering if it has microphone input directly", "meta": {"queue_size": 1, "stt_openai_ms": 1559}}
+{"ts": "2026-02-12 19:45:23.384", "stage": "translation_input", "chars": 49, "text": "I'm wondering if it has microphone input directly", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:45:23.391", "stage": "translation_output", "chars": 49, "text": "I'm wondering if it has microphone input directly", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:45:23.397", "stage": "display_update_input", "chars": 49, "text": "I'm wondering if it has microphone input directly", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:45:23.402", "stage": "display_chunk_enqueued", "chars": 23, "text": "I'm wondering if it has", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:45:23.407", "stage": "display_chunk_enqueued", "chars": 25, "text": "microphone input directly", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:45:24.247", "stage": "display_word_reveal_complete", "chars": 23, "text": "I'm wondering if it has"}
+{"ts": "2026-02-12 19:45:24.762", "stage": "display_word_reveal_complete", "chars": 25, "text": "microphone input directly"}
+{"ts": "2026-02-12 19:45:25.419", "stage": "stt_raw", "chars": 22, "text": "It's clear, it's loud.", "meta": {"engine": "openai", "stt_openai_ms": 661}}
+{"ts": "2026-02-12 19:45:25.424", "stage": "stt_sanitized", "chars": 22, "text": "It's clear, it's loud.", "meta": {"engine": "openai", "stt_openai_ms": 661}}
+{"ts": "2026-02-12 19:45:25.428", "stage": "stt_boundary_trim", "chars": 22, "text": "It's clear, it's loud.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:45:25.770", "stage": "sentence_buffer_timeout_flush", "chars": 22, "text": "It's clear, it's loud.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:45:25.778", "stage": "sentence_enqueued", "chars": 22, "text": "It's clear, it's loud.", "meta": {"queue_size": 1, "stt_openai_ms": 661}}
+{"ts": "2026-02-12 19:45:25.780", "stage": "translation_input", "chars": 22, "text": "It's clear, it's loud.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:45:25.788", "stage": "translation_output", "chars": 22, "text": "It's clear, it's loud.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:45:25.794", "stage": "display_update_input", "chars": 22, "text": "It's clear, it's loud.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:45:25.799", "stage": "display_chunk_enqueued", "chars": 22, "text": "It's clear, it's loud.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:45:26.486", "stage": "display_word_reveal_complete", "chars": 22, "text": "It's clear, it's loud."}
+{"ts": "2026-02-12 19:45:28.524", "stage": "stt_raw", "chars": 15, "text": "I'm hoping that", "meta": {"engine": "openai", "stt_openai_ms": 786}}
+{"ts": "2026-02-12 19:45:28.529", "stage": "stt_sanitized", "chars": 15, "text": "I'm hoping that", "meta": {"engine": "openai", "stt_openai_ms": 786}}
+{"ts": "2026-02-12 19:45:28.534", "stage": "stt_boundary_trim", "chars": 15, "text": "I'm hoping that", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:45:28.867", "stage": "sentence_buffer_timeout_flush", "chars": 15, "text": "I'm hoping that", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:45:28.873", "stage": "sentence_enqueued", "chars": 15, "text": "I'm hoping that", "meta": {"queue_size": 1, "stt_openai_ms": 786}}
+{"ts": "2026-02-12 19:45:28.876", "stage": "translation_input", "chars": 15, "text": "I'm hoping that", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:45:28.883", "stage": "translation_output", "chars": 15, "text": "I'm hoping that", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:45:28.889", "stage": "display_update_input", "chars": 15, "text": "I'm hoping that", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:45:28.894", "stage": "display_chunk_enqueued", "chars": 15, "text": "I'm hoping that", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:45:29.411", "stage": "display_word_reveal_complete", "chars": 15, "text": "I'm hoping that"}
+{"ts": "2026-02-12 19:45:30.805", "stage": "stt_raw", "chars": 15, "text": "It can keep up.", "meta": {"engine": "openai", "stt_openai_ms": 817}}
+{"ts": "2026-02-12 19:45:30.809", "stage": "stt_sanitized", "chars": 15, "text": "It can keep up.", "meta": {"engine": "openai", "stt_openai_ms": 817}}
+{"ts": "2026-02-12 19:45:30.815", "stage": "stt_boundary_trim", "chars": 15, "text": "It can keep up.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:45:31.154", "stage": "sentence_buffer_timeout_flush", "chars": 15, "text": "It can keep up.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:45:31.159", "stage": "sentence_enqueued", "chars": 15, "text": "It can keep up.", "meta": {"queue_size": 1, "stt_openai_ms": 817}}
+{"ts": "2026-02-12 19:45:31.161", "stage": "translation_input", "chars": 15, "text": "It can keep up.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:45:31.169", "stage": "translation_output", "chars": 15, "text": "It can keep up.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:45:31.174", "stage": "display_update_input", "chars": 15, "text": "It can keep up.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:45:31.179", "stage": "display_chunk_enqueued", "chars": 15, "text": "It can keep up.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:45:31.873", "stage": "display_word_reveal_complete", "chars": 15, "text": "It can keep up."}
+{"ts": "2026-02-12 19:45:37.915", "stage": "stt_raw", "chars": 30, "text": "Punctuation and the grammar is", "meta": {"engine": "openai", "stt_openai_ms": 548}}
+{"ts": "2026-02-12 19:45:37.920", "stage": "stt_sanitized", "chars": 30, "text": "Punctuation and the grammar is", "meta": {"engine": "openai", "stt_openai_ms": 548}}
+{"ts": "2026-02-12 19:45:37.925", "stage": "stt_boundary_trim", "chars": 30, "text": "Punctuation and the grammar is", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:45:38.268", "stage": "sentence_buffer_timeout_flush", "chars": 30, "text": "Punctuation and the grammar is", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:45:38.272", "stage": "sentence_enqueued", "chars": 30, "text": "Punctuation and the grammar is", "meta": {"queue_size": 1, "stt_openai_ms": 548}}
+{"ts": "2026-02-12 19:45:38.275", "stage": "translation_input", "chars": 30, "text": "Punctuation and the grammar is", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:45:38.286", "stage": "translation_output", "chars": 30, "text": "Punctuation and the grammar is", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:45:38.292", "stage": "display_update_input", "chars": 30, "text": "Punctuation and the grammar is", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:45:38.296", "stage": "display_chunk_enqueued", "chars": 30, "text": "Punctuation and the grammar is", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:45:39.153", "stage": "display_word_reveal_complete", "chars": 30, "text": "Punctuation and the grammar is"}
+{"ts": "2026-02-12 19:45:41.551", "stage": "stt_raw", "chars": 30, "text": "It's a lot better than it was.", "meta": {"engine": "openai", "stt_openai_ms": 864}}
+{"ts": "2026-02-12 19:45:41.557", "stage": "stt_sanitized", "chars": 30, "text": "It's a lot better than it was.", "meta": {"engine": "openai", "stt_openai_ms": 864}}
+{"ts": "2026-02-12 19:45:41.563", "stage": "stt_boundary_trim", "chars": 30, "text": "It's a lot better than it was.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:45:41.912", "stage": "sentence_buffer_timeout_flush", "chars": 30, "text": "It's a lot better than it was.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:45:41.918", "stage": "sentence_enqueued", "chars": 30, "text": "It's a lot better than it was.", "meta": {"queue_size": 1, "stt_openai_ms": 864}}
+{"ts": "2026-02-12 19:45:41.920", "stage": "translation_input", "chars": 30, "text": "It's a lot better than it was.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:45:41.929", "stage": "translation_output", "chars": 30, "text": "It's a lot better than it was.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:45:41.935", "stage": "display_update_input", "chars": 30, "text": "It's a lot better than it was.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:45:41.941", "stage": "display_chunk_enqueued", "chars": 30, "text": "It's a lot better than it was.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:45:43.152", "stage": "display_word_reveal_complete", "chars": 30, "text": "It's a lot better than it was."}
+{"ts": "2026-02-12 19:45:44.316", "stage": "stt_raw", "chars": 12, "text": "That's true.", "meta": {"engine": "openai", "stt_openai_ms": 519}}
+{"ts": "2026-02-12 19:45:44.322", "stage": "stt_sanitized", "chars": 12, "text": "That's true.", "meta": {"engine": "openai", "stt_openai_ms": 519}}
+{"ts": "2026-02-12 19:45:44.327", "stage": "stt_boundary_trim", "chars": 12, "text": "That's true.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:45:44.655", "stage": "sentence_buffer_timeout_flush", "chars": 12, "text": "That's true.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:45:44.661", "stage": "sentence_enqueued", "chars": 12, "text": "That's true.", "meta": {"queue_size": 1, "stt_openai_ms": 519}}
+{"ts": "2026-02-12 19:45:44.664", "stage": "translation_input", "chars": 12, "text": "That's true.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:45:44.673", "stage": "translation_output", "chars": 12, "text": "That's true.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:45:44.679", "stage": "display_update_input", "chars": 12, "text": "That's true.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:45:44.684", "stage": "display_chunk_enqueued", "chars": 12, "text": "That's true.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:45:45.027", "stage": "display_word_reveal_complete", "chars": 12, "text": "That's true."}
+{"ts": "2026-02-12 19:45:47.653", "stage": "stt_raw", "chars": 25, "text": "like shows where captions", "meta": {"engine": "openai", "stt_openai_ms": 675}}
+{"ts": "2026-02-12 19:45:47.659", "stage": "stt_sanitized", "chars": 25, "text": "like shows where captions", "meta": {"engine": "openai", "stt_openai_ms": 675}}
+{"ts": "2026-02-12 19:45:47.663", "stage": "stt_boundary_trim", "chars": 25, "text": "like shows where captions", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:45:47.992", "stage": "sentence_buffer_timeout_flush", "chars": 25, "text": "like shows where captions", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:45:47.999", "stage": "sentence_enqueued", "chars": 25, "text": "like shows where captions", "meta": {"queue_size": 1, "stt_openai_ms": 675}}
+{"ts": "2026-02-12 19:45:48.000", "stage": "translation_input", "chars": 25, "text": "like shows where captions", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:45:48.011", "stage": "translation_output", "chars": 25, "text": "like shows where captions", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:45:48.017", "stage": "display_update_input", "chars": 25, "text": "like shows where captions", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:45:48.022", "stage": "display_chunk_enqueued", "chars": 25, "text": "like shows where captions", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:45:48.723", "stage": "display_word_reveal_complete", "chars": 25, "text": "like shows where captions"}
+{"ts": "2026-02-12 19:45:51.289", "stage": "stt_raw", "chars": 27, "text": "The grammar's always wrong.", "meta": {"engine": "openai", "stt_openai_ms": 504}}
+{"ts": "2026-02-12 19:45:51.300", "stage": "stt_sanitized", "chars": 27, "text": "The grammar's always wrong.", "meta": {"engine": "openai", "stt_openai_ms": 504}}
+{"ts": "2026-02-12 19:45:51.306", "stage": "stt_boundary_trim", "chars": 27, "text": "The grammar's always wrong.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:45:51.635", "stage": "sentence_buffer_timeout_flush", "chars": 27, "text": "The grammar's always wrong.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:45:51.640", "stage": "sentence_enqueued", "chars": 27, "text": "The grammar's always wrong.", "meta": {"queue_size": 1, "stt_openai_ms": 504}}
+{"ts": "2026-02-12 19:45:51.643", "stage": "translation_input", "chars": 27, "text": "The grammar's always wrong.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:45:51.652", "stage": "translation_output", "chars": 27, "text": "The grammar's always wrong.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:45:51.658", "stage": "display_update_input", "chars": 27, "text": "The grammar's always wrong.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:45:51.664", "stage": "display_chunk_enqueued", "chars": 27, "text": "The grammar's always wrong.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:45:52.348", "stage": "display_word_reveal_complete", "chars": 27, "text": "The grammar's always wrong."}
+{"ts": "2026-02-12 19:45:55.506", "stage": "stt_raw", "chars": 29, "text": "Or punctuation, I should say.", "meta": {"engine": "openai", "stt_openai_ms": 769}}
+{"ts": "2026-02-12 19:45:55.516", "stage": "stt_sanitized", "chars": 29, "text": "Or punctuation, I should say.", "meta": {"engine": "openai", "stt_openai_ms": 769}}
+{"ts": "2026-02-12 19:45:55.522", "stage": "stt_boundary_trim", "chars": 29, "text": "Or punctuation, I should say.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:45:55.860", "stage": "sentence_buffer_timeout_flush", "chars": 29, "text": "Or punctuation, I should say.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:45:55.865", "stage": "sentence_enqueued", "chars": 29, "text": "Or punctuation, I should say.", "meta": {"queue_size": 1, "stt_openai_ms": 769}}
+{"ts": "2026-02-12 19:45:55.867", "stage": "translation_input", "chars": 29, "text": "Or punctuation, I should say.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:45:55.876", "stage": "translation_output", "chars": 29, "text": "Or punctuation, I should say.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:45:55.881", "stage": "display_update_input", "chars": 29, "text": "Or punctuation, I should say.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:45:55.886", "stage": "display_chunk_enqueued", "chars": 29, "text": "Or punctuation, I should say.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:45:56.745", "stage": "display_word_reveal_complete", "chars": 29, "text": "Or punctuation, I should say."}
+{"ts": "2026-02-12 19:45:57.387", "stage": "stt_raw", "chars": 19, "text": "I think when you're", "meta": {"engine": "openai", "stt_openai_ms": 580}}
+{"ts": "2026-02-12 19:45:57.392", "stage": "stt_sanitized", "chars": 19, "text": "I think when you're", "meta": {"engine": "openai", "stt_openai_ms": 580}}
+{"ts": "2026-02-12 19:45:57.398", "stage": "stt_boundary_trim", "chars": 19, "text": "I think when you're", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:45:57.740", "stage": "sentence_buffer_timeout_flush", "chars": 19, "text": "I think when you're", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:45:57.747", "stage": "sentence_enqueued", "chars": 19, "text": "I think when you're", "meta": {"queue_size": 1, "stt_openai_ms": 580}}
+{"ts": "2026-02-12 19:45:57.749", "stage": "translation_input", "chars": 19, "text": "I think when you're", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:45:57.757", "stage": "translation_output", "chars": 19, "text": "I think when you're", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:45:57.763", "stage": "display_update_input", "chars": 19, "text": "I think when you're", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:45:57.767", "stage": "display_chunk_enqueued", "chars": 19, "text": "I think when you're", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:45:58.456", "stage": "display_word_reveal_complete", "chars": 19, "text": "I think when you're"}
+{"ts": "2026-02-12 19:46:01.029", "stage": "stt_raw", "chars": 29, "text": "I'm not sure that deaf people", "meta": {"engine": "openai", "stt_openai_ms": 883}}
+{"ts": "2026-02-12 19:46:01.039", "stage": "stt_sanitized", "chars": 29, "text": "I'm not sure that deaf people", "meta": {"engine": "openai", "stt_openai_ms": 883}}
+{"ts": "2026-02-12 19:46:01.046", "stage": "stt_boundary_trim", "chars": 29, "text": "I'm not sure that deaf people", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:46:01.377", "stage": "sentence_buffer_timeout_flush", "chars": 29, "text": "I'm not sure that deaf people", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:46:01.382", "stage": "sentence_enqueued", "chars": 29, "text": "I'm not sure that deaf people", "meta": {"queue_size": 1, "stt_openai_ms": 883}}
+{"ts": "2026-02-12 19:46:01.383", "stage": "translation_input", "chars": 29, "text": "I'm not sure that deaf people", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:46:01.393", "stage": "translation_output", "chars": 29, "text": "I'm not sure that deaf people", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:46:01.400", "stage": "display_update_input", "chars": 29, "text": "I'm not sure that deaf people", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:46:01.405", "stage": "display_chunk_enqueued", "chars": 29, "text": "I'm not sure that deaf people", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:46:02.433", "stage": "display_word_reveal_complete", "chars": 29, "text": "I'm not sure that deaf people"}
+{"ts": "2026-02-12 19:46:05.802", "stage": "stt_raw", "chars": 42, "text": "Know the difference, you know what I mean?", "meta": {"engine": "openai", "stt_openai_ms": 875}}
+{"ts": "2026-02-12 19:46:05.807", "stage": "stt_sanitized", "chars": 42, "text": "Know the difference, you know what I mean?", "meta": {"engine": "openai", "stt_openai_ms": 875}}
+{"ts": "2026-02-12 19:46:05.811", "stage": "stt_boundary_trim", "chars": 42, "text": "Know the difference, you know what I mean?", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:46:06.146", "stage": "sentence_buffer_timeout_flush", "chars": 42, "text": "Know the difference, you know what I mean?", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:46:06.151", "stage": "sentence_enqueued", "chars": 42, "text": "Know the difference, you know what I mean?", "meta": {"queue_size": 1, "stt_openai_ms": 875}}
+{"ts": "2026-02-12 19:46:06.153", "stage": "translation_input", "chars": 42, "text": "Know the difference, you know what I mean?", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:46:06.164", "stage": "translation_output", "chars": 42, "text": "Know the difference, you know what I mean?", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:46:06.169", "stage": "display_update_input", "chars": 42, "text": "Know the difference, you know what I mean?", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:46:06.174", "stage": "display_chunk_enqueued", "chars": 29, "text": "Know the difference, you know", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:46:06.179", "stage": "display_chunk_enqueued", "chars": 12, "text": "what I mean?", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:46:07.035", "stage": "display_word_reveal_complete", "chars": 29, "text": "Know the difference, you know"}
+{"ts": "2026-02-12 19:46:07.549", "stage": "display_word_reveal_complete", "chars": 12, "text": "what I mean?"}
+{"ts": "2026-02-12 19:46:08.232", "stage": "stt_raw", "chars": 49, "text": "They kind of just know how to fill in the blanks.", "meta": {"engine": "openai", "stt_openai_ms": 745}}
+{"ts": "2026-02-12 19:46:08.238", "stage": "stt_sanitized", "chars": 49, "text": "They kind of just know how to fill in the blanks.", "meta": {"engine": "openai", "stt_openai_ms": 745}}
+{"ts": "2026-02-12 19:46:08.244", "stage": "stt_boundary_trim", "chars": 49, "text": "They kind of just know how to fill in the blanks.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:46:08.574", "stage": "sentence_buffer_timeout_flush", "chars": 49, "text": "They kind of just know how to fill in the blanks.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:46:08.580", "stage": "sentence_enqueued", "chars": 49, "text": "They kind of just know how to fill in the blanks.", "meta": {"queue_size": 1, "stt_openai_ms": 745}}
+{"ts": "2026-02-12 19:46:08.581", "stage": "translation_input", "chars": 49, "text": "They kind of just know how to fill in the blanks.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:46:08.591", "stage": "translation_output", "chars": 49, "text": "They kind of just know how to fill in the blanks.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:46:08.598", "stage": "display_update_input", "chars": 49, "text": "They kind of just know how to fill in the blanks.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:46:08.606", "stage": "display_chunk_enqueued", "chars": 29, "text": "They kind of just know how to", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:46:08.611", "stage": "display_chunk_enqueued", "chars": 19, "text": "fill in the blanks.", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:46:09.815", "stage": "stt_raw", "chars": 13, "text": "I don't know.", "meta": {"engine": "openai", "stt_openai_ms": 657}}
+{"ts": "2026-02-12 19:46:09.820", "stage": "stt_sanitized", "chars": 13, "text": "I don't know.", "meta": {"engine": "openai", "stt_openai_ms": 657}}
+{"ts": "2026-02-12 19:46:09.825", "stage": "stt_boundary_trim", "chars": 13, "text": "I don't know.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:46:09.828", "stage": "display_word_reveal_complete", "chars": 29, "text": "They kind of just know how to"}
+{"ts": "2026-02-12 19:46:10.153", "stage": "sentence_buffer_timeout_flush", "chars": 13, "text": "I don't know.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:46:10.160", "stage": "sentence_enqueued", "chars": 13, "text": "I don't know.", "meta": {"queue_size": 1, "stt_openai_ms": 657}}
+{"ts": "2026-02-12 19:46:10.162", "stage": "translation_input", "chars": 13, "text": "I don't know.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:46:10.173", "stage": "translation_output", "chars": 13, "text": "I don't know.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:46:10.219", "stage": "display_update_input", "chars": 13, "text": "I don't know.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:46:10.225", "stage": "display_chunk_enqueued", "chars": 13, "text": "I don't know.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:46:10.510", "stage": "display_word_reveal_complete", "chars": 19, "text": "fill in the blanks."}
+{"ts": "2026-02-12 19:46:11.025", "stage": "display_word_reveal_complete", "chars": 13, "text": "I don't know."}
+{"ts": "2026-02-12 19:46:14.161", "stage": "stt_raw", "chars": 40, "text": "Well, I'm pretty happy with it actually.", "meta": {"engine": "openai", "stt_openai_ms": 524}}
+{"ts": "2026-02-12 19:46:14.168", "stage": "stt_sanitized", "chars": 40, "text": "Well, I'm pretty happy with it actually.", "meta": {"engine": "openai", "stt_openai_ms": 524}}
+{"ts": "2026-02-12 19:46:14.174", "stage": "stt_boundary_trim", "chars": 40, "text": "Well, I'm pretty happy with it actually.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:46:14.514", "stage": "sentence_buffer_timeout_flush", "chars": 40, "text": "Well, I'm pretty happy with it actually.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:46:14.521", "stage": "sentence_enqueued", "chars": 40, "text": "Well, I'm pretty happy with it actually.", "meta": {"queue_size": 1, "stt_openai_ms": 524}}
+{"ts": "2026-02-12 19:46:14.523", "stage": "translation_input", "chars": 40, "text": "Well, I'm pretty happy with it actually.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-12 19:46:14.534", "stage": "translation_output", "chars": 40, "text": "Well, I'm pretty happy with it actually.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-12 19:46:14.540", "stage": "display_update_input", "chars": 40, "text": "Well, I'm pretty happy with it actually.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:46:14.547", "stage": "display_chunk_enqueued", "chars": 30, "text": "Well, I'm pretty happy with it", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:46:14.553", "stage": "display_chunk_enqueued", "chars": 9, "text": "actually.", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:46:15.586", "stage": "display_word_reveal_complete", "chars": 30, "text": "Well, I'm pretty happy with it"}
+{"ts": "2026-02-12 19:46:15.757", "stage": "display_word_reveal_complete", "chars": 9, "text": "actually."}
+{"ts": "2026-02-12 19:46:26.281", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 495}}
+{"ts": "2026-02-12 19:46:26.288", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 495}}
+{"ts": "2026-02-12 19:46:30.323", "stage": "stt_raw", "chars": 14, "text": "Ready for fun.", "meta": {"engine": "openai", "stt_openai_ms": 573}}
+{"ts": "2026-02-12 19:46:30.329", "stage": "stt_sanitized", "chars": 14, "text": "Ready for fun.", "meta": {"engine": "openai", "stt_openai_ms": 573}}
+{"ts": "2026-02-12 19:46:30.335", "stage": "stt_boundary_trim", "chars": 14, "text": "Ready for fun.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:46:30.664", "stage": "sentence_buffer_timeout_flush", "chars": 14, "text": "Ready for fun.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:46:30.669", "stage": "sentence_enqueued", "chars": 14, "text": "Ready for fun.", "meta": {"queue_size": 1, "stt_openai_ms": 573}}
+{"ts": "2026-02-12 19:46:30.672", "stage": "translation_input", "chars": 14, "text": "Ready for fun.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 19:46:32.368", "stage": "translation_output", "chars": 24, "text": "Listo para la diversión.", "meta": {"translation_enabled": true, "translate_openai_ms": 1684}}
+{"ts": "2026-02-12 19:46:32.374", "stage": "display_update_input", "chars": 24, "text": "Listo para la diversión.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:46:32.380", "stage": "display_chunk_enqueued", "chars": 24, "text": "Listo para la diversión.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:46:33.056", "stage": "display_word_reveal_complete", "chars": 24, "text": "Listo para la diversión."}
+{"ts": "2026-02-12 19:46:41.303", "stage": "stt_raw", "chars": 35, "text": "The audio is in English or Spanish.", "meta": {"engine": "openai", "stt_openai_ms": 623}}
+{"ts": "2026-02-12 19:46:41.309", "stage": "stt_sanitized", "chars": 35, "text": "The audio is in English or Spanish.", "meta": {"engine": "openai", "stt_openai_ms": 623}}
+{"ts": "2026-02-12 19:46:41.314", "stage": "stt_boundary_trim", "chars": 35, "text": "The audio is in English or Spanish.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:46:41.653", "stage": "sentence_buffer_timeout_flush", "chars": 35, "text": "The audio is in English or Spanish.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:46:41.658", "stage": "sentence_enqueued", "chars": 35, "text": "The audio is in English or Spanish.", "meta": {"queue_size": 1, "stt_openai_ms": 623}}
+{"ts": "2026-02-12 19:46:41.661", "stage": "translation_input", "chars": 35, "text": "The audio is in English or Spanish.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 19:46:43.254", "stage": "translation_output", "chars": 34, "text": "El audio está en inglés o español.", "meta": {"translation_enabled": true, "translate_openai_ms": 1583}}
+{"ts": "2026-02-12 19:46:43.260", "stage": "display_update_input", "chars": 34, "text": "El audio está en inglés o español.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:46:43.266", "stage": "display_chunk_enqueued", "chars": 25, "text": "El audio está en inglés o", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:46:43.272", "stage": "display_chunk_enqueued", "chars": 8, "text": "español.", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:46:44.276", "stage": "display_word_reveal_complete", "chars": 25, "text": "El audio está en inglés o"}
+{"ts": "2026-02-12 19:46:44.449", "stage": "display_word_reveal_complete", "chars": 8, "text": "español."}
+{"ts": "2026-02-12 19:46:47.427", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 516}}
+{"ts": "2026-02-12 19:46:47.434", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 516}}
+{"ts": "2026-02-12 19:46:54.982", "stage": "stt_raw", "chars": 13, "text": "I don't know.", "meta": {"engine": "openai", "stt_openai_ms": 801}}
+{"ts": "2026-02-12 19:46:54.988", "stage": "stt_sanitized", "chars": 13, "text": "I don't know.", "meta": {"engine": "openai", "stt_openai_ms": 801}}
+{"ts": "2026-02-12 19:46:54.994", "stage": "stt_boundary_trim", "chars": 13, "text": "I don't know.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:46:55.335", "stage": "sentence_buffer_timeout_flush", "chars": 13, "text": "I don't know.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:46:55.341", "stage": "sentence_enqueued", "chars": 13, "text": "I don't know.", "meta": {"queue_size": 1, "stt_openai_ms": 801}}
+{"ts": "2026-02-12 19:46:55.342", "stage": "translation_input", "chars": 13, "text": "I don't know.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 19:46:57.430", "stage": "translation_output", "chars": 9, "text": "No lo sé.", "meta": {"translation_enabled": true, "translate_openai_ms": 2074}}
+{"ts": "2026-02-12 19:46:57.436", "stage": "display_update_input", "chars": 9, "text": "No lo sé.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:46:57.442", "stage": "display_chunk_enqueued", "chars": 9, "text": "No lo sé.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:46:57.969", "stage": "display_word_reveal_complete", "chars": 9, "text": "No lo sé."}
+{"ts": "2026-02-12 19:47:02.386", "stage": "stt_raw", "chars": 3, "text": "No.", "meta": {"engine": "openai", "stt_openai_ms": 1154}}
+{"ts": "2026-02-12 19:47:02.393", "stage": "stt_sanitized", "chars": 3, "text": "No.", "meta": {"engine": "openai", "stt_openai_ms": 1154}}
+{"ts": "2026-02-12 19:47:02.399", "stage": "stt_boundary_trim", "chars": 3, "text": "No.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:47:02.730", "stage": "sentence_buffer_timeout_flush", "chars": 3, "text": "No.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:47:02.737", "stage": "sentence_enqueued", "chars": 3, "text": "No.", "meta": {"queue_size": 1, "stt_openai_ms": 1154}}
+{"ts": "2026-02-12 19:47:02.739", "stage": "translation_input", "chars": 3, "text": "No.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 19:47:03.327", "stage": "translation_output", "chars": 3, "text": "No.", "meta": {"translation_enabled": true, "translate_openai_ms": 576}}
+{"ts": "2026-02-12 19:47:03.334", "stage": "display_update_input", "chars": 3, "text": "No.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:47:03.342", "stage": "display_chunk_enqueued", "chars": 3, "text": "No.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:47:03.523", "stage": "display_word_reveal_complete", "chars": 3, "text": "No."}
+{"ts": "2026-02-12 19:47:03.683", "stage": "stt_raw", "chars": 7, "text": "I don't", "meta": {"engine": "openai", "stt_openai_ms": 731}}
+{"ts": "2026-02-12 19:47:03.689", "stage": "stt_sanitized", "chars": 7, "text": "I don't", "meta": {"engine": "openai", "stt_openai_ms": 731}}
+{"ts": "2026-02-12 19:47:03.694", "stage": "stt_boundary_trim", "chars": 7, "text": "I don't", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:47:04.036", "stage": "sentence_buffer_timeout_flush", "chars": 7, "text": "I don't", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:47:04.041", "stage": "sentence_enqueued", "chars": 7, "text": "I don't", "meta": {"queue_size": 1, "stt_openai_ms": 731}}
+{"ts": "2026-02-12 19:47:04.044", "stage": "translation_input", "chars": 7, "text": "I don't", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 19:47:06.242", "stage": "translation_output", "chars": 11, "text": "No lo hago.", "meta": {"translation_enabled": true, "translate_openai_ms": 2184}}
+{"ts": "2026-02-12 19:47:06.248", "stage": "display_update_input", "chars": 11, "text": "No lo hago.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:47:06.254", "stage": "display_chunk_enqueued", "chars": 11, "text": "No lo hago.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:47:06.766", "stage": "display_word_reveal_complete", "chars": 11, "text": "No lo hago."}
+{"ts": "2026-02-12 19:47:11.376", "stage": "stt_raw", "chars": 8, "text": "Nothing.", "meta": {"engine": "openai", "stt_openai_ms": 1015}}
+{"ts": "2026-02-12 19:47:11.384", "stage": "stt_sanitized", "chars": 8, "text": "Nothing.", "meta": {"engine": "openai", "stt_openai_ms": 1015}}
+{"ts": "2026-02-12 19:47:11.389", "stage": "stt_boundary_trim", "chars": 8, "text": "Nothing.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:47:11.718", "stage": "sentence_buffer_timeout_flush", "chars": 8, "text": "Nothing.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:47:11.725", "stage": "sentence_enqueued", "chars": 8, "text": "Nothing.", "meta": {"queue_size": 1, "stt_openai_ms": 1015}}
+{"ts": "2026-02-12 19:47:11.728", "stage": "translation_input", "chars": 8, "text": "Nothing.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 19:47:14.504", "stage": "translation_output", "chars": 5, "text": "Nada.", "meta": {"translation_enabled": true, "translate_openai_ms": 2762}}
+{"ts": "2026-02-12 19:47:14.511", "stage": "display_update_input", "chars": 5, "text": "Nada.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:47:14.519", "stage": "display_chunk_enqueued", "chars": 5, "text": "Nada.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:47:14.732", "stage": "display_word_reveal_complete", "chars": 5, "text": "Nada."}
+{"ts": "2026-02-12 19:47:15.705", "stage": "stt_raw", "chars": 7, "text": "Nothing", "meta": {"engine": "openai", "stt_openai_ms": 863}}
+{"ts": "2026-02-12 19:47:15.711", "stage": "stt_sanitized", "chars": 7, "text": "Nothing", "meta": {"engine": "openai", "stt_openai_ms": 863}}
+{"ts": "2026-02-12 19:47:15.718", "stage": "stt_boundary_trim", "chars": 7, "text": "Nothing", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:47:16.055", "stage": "sentence_buffer_timeout_flush", "chars": 7, "text": "Nothing", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:47:16.063", "stage": "sentence_enqueued", "chars": 7, "text": "Nothing", "meta": {"queue_size": 1, "stt_openai_ms": 863}}
+{"ts": "2026-02-12 19:47:16.066", "stage": "translation_input", "chars": 7, "text": "Nothing", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 19:47:17.619", "stage": "translation_output", "chars": 4, "text": "Nada", "meta": {"translation_enabled": true, "translate_openai_ms": 1543}}
+{"ts": "2026-02-12 19:47:17.628", "stage": "display_update_input", "chars": 4, "text": "Nada", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:47:17.634", "stage": "display_chunk_enqueued", "chars": 4, "text": "Nada", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:47:17.824", "stage": "display_word_reveal_complete", "chars": 4, "text": "Nada"}
+{"ts": "2026-02-12 19:47:19.928", "stage": "stt_raw", "chars": 8, "text": "Nothing.", "meta": {"engine": "openai", "stt_openai_ms": 1765}}
+{"ts": "2026-02-12 19:47:19.935", "stage": "stt_sanitized", "chars": 8, "text": "Nothing.", "meta": {"engine": "openai", "stt_openai_ms": 1765}}
+{"ts": "2026-02-12 19:47:19.941", "stage": "stt_boundary_trim", "chars": 8, "text": "Nothing.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:47:20.275", "stage": "sentence_buffer_timeout_flush", "chars": 8, "text": "Nothing.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:47:20.283", "stage": "sentence_enqueued", "chars": 8, "text": "Nothing.", "meta": {"queue_size": 1, "stt_openai_ms": 1765}}
+{"ts": "2026-02-12 19:47:20.286", "stage": "translation_input", "chars": 8, "text": "Nothing.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 19:47:20.864", "stage": "translation_output", "chars": 5, "text": "Nada.", "meta": {"translation_enabled": true, "translate_openai_ms": 564}}
+{"ts": "2026-02-12 19:47:20.870", "stage": "display_update_input", "chars": 5, "text": "Nada.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:47:20.879", "stage": "display_chunk_enqueued", "chars": 5, "text": "Nada.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:47:21.061", "stage": "display_word_reveal_complete", "chars": 5, "text": "Nada."}
+{"ts": "2026-02-12 19:47:22.174", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 643}}
+{"ts": "2026-02-12 19:47:22.181", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 643}}
+{"ts": "2026-02-12 19:47:26.078", "stage": "stt_raw", "chars": 7, "text": "Nothing", "meta": {"engine": "openai", "stt_openai_ms": 626}}
+{"ts": "2026-02-12 19:47:26.084", "stage": "stt_sanitized", "chars": 7, "text": "Nothing", "meta": {"engine": "openai", "stt_openai_ms": 626}}
+{"ts": "2026-02-12 19:47:26.089", "stage": "stt_boundary_trim", "chars": 7, "text": "Nothing", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:47:26.416", "stage": "sentence_buffer_timeout_flush", "chars": 7, "text": "Nothing", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:47:26.422", "stage": "sentence_enqueued", "chars": 7, "text": "Nothing", "meta": {"queue_size": 1, "stt_openai_ms": 626}}
+{"ts": "2026-02-12 19:47:26.425", "stage": "translation_input", "chars": 7, "text": "Nothing", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 19:47:27.109", "stage": "translation_output", "chars": 4, "text": "Nada", "meta": {"translation_enabled": true, "translate_openai_ms": 672}}
+{"ts": "2026-02-12 19:47:27.116", "stage": "display_update_input", "chars": 4, "text": "Nada", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:47:27.123", "stage": "display_chunk_enqueued", "chars": 4, "text": "Nada", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:47:27.302", "stage": "display_word_reveal_complete", "chars": 4, "text": "Nada"}
+{"ts": "2026-02-12 19:47:29.137", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 545}}
+{"ts": "2026-02-12 19:47:29.147", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 545}}
+{"ts": "2026-02-12 19:47:31.444", "stage": "stt_raw", "chars": 7, "text": "Nothing", "meta": {"engine": "openai", "stt_openai_ms": 673}}
+{"ts": "2026-02-12 19:47:31.451", "stage": "stt_sanitized", "chars": 7, "text": "Nothing", "meta": {"engine": "openai", "stt_openai_ms": 673}}
+{"ts": "2026-02-12 19:47:31.457", "stage": "stt_boundary_trim", "chars": 7, "text": "Nothing", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:47:31.801", "stage": "sentence_buffer_timeout_flush", "chars": 7, "text": "Nothing", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:47:31.807", "stage": "sentence_enqueued", "chars": 7, "text": "Nothing", "meta": {"queue_size": 1, "stt_openai_ms": 673}}
+{"ts": "2026-02-12 19:47:31.810", "stage": "translation_input", "chars": 7, "text": "Nothing", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 19:47:33.430", "stage": "translation_output", "chars": 4, "text": "Nada", "meta": {"translation_enabled": true, "translate_openai_ms": 1608}}
+{"ts": "2026-02-12 19:47:33.437", "stage": "display_update_input", "chars": 4, "text": "Nada", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:47:33.445", "stage": "display_chunk_enqueued", "chars": 4, "text": "Nada", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:47:33.620", "stage": "display_word_reveal_complete", "chars": 4, "text": "Nada"}
+{"ts": "2026-02-12 19:47:35.668", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 647}}
+{"ts": "2026-02-12 19:47:35.675", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 647}}
+{"ts": "2026-02-12 19:47:41.784", "stage": "stt_raw", "chars": 7, "text": "Nothing", "meta": {"engine": "openai", "stt_openai_ms": 684}}
+{"ts": "2026-02-12 19:47:41.797", "stage": "stt_sanitized", "chars": 7, "text": "Nothing", "meta": {"engine": "openai", "stt_openai_ms": 684}}
+{"ts": "2026-02-12 19:47:41.802", "stage": "stt_boundary_trim", "chars": 7, "text": "Nothing", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:47:42.134", "stage": "sentence_buffer_timeout_flush", "chars": 7, "text": "Nothing", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:47:42.141", "stage": "sentence_enqueued", "chars": 7, "text": "Nothing", "meta": {"queue_size": 1, "stt_openai_ms": 684}}
+{"ts": "2026-02-12 19:47:42.621", "stage": "translation_input", "chars": 7, "text": "Nothing", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 19:47:43.958", "stage": "translation_output", "chars": 4, "text": "Nada", "meta": {"translation_enabled": true, "translate_openai_ms": 1328}}
+{"ts": "2026-02-12 19:47:43.965", "stage": "display_update_input", "chars": 4, "text": "Nada", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:47:43.971", "stage": "display_chunk_enqueued", "chars": 4, "text": "Nada", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:47:44.163", "stage": "display_word_reveal_complete", "chars": 4, "text": "Nada"}
+{"ts": "2026-02-12 19:47:45.471", "stage": "stt_raw", "chars": 7, "text": "Nothing", "meta": {"engine": "openai", "stt_openai_ms": 570}}
+{"ts": "2026-02-12 19:47:45.476", "stage": "stt_sanitized", "chars": 7, "text": "Nothing", "meta": {"engine": "openai", "stt_openai_ms": 570}}
+{"ts": "2026-02-12 19:47:45.482", "stage": "stt_boundary_trim", "chars": 7, "text": "Nothing", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:47:45.813", "stage": "sentence_buffer_timeout_flush", "chars": 7, "text": "Nothing", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:47:45.820", "stage": "sentence_enqueued", "chars": 7, "text": "Nothing", "meta": {"queue_size": 1, "stt_openai_ms": 570}}
+{"ts": "2026-02-12 19:47:45.823", "stage": "translation_input", "chars": 7, "text": "Nothing", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 19:47:46.308", "stage": "translation_output", "chars": 4, "text": "Nada", "meta": {"translation_enabled": true, "translate_openai_ms": 474}}
+{"ts": "2026-02-12 19:47:46.315", "stage": "display_update_input", "chars": 4, "text": "Nada", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:47:46.320", "stage": "display_chunk_enqueued", "chars": 4, "text": "Nada", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:47:46.512", "stage": "display_word_reveal_complete", "chars": 4, "text": "Nada"}
+{"ts": "2026-02-12 19:47:48.350", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 548}}
+{"ts": "2026-02-12 19:47:48.361", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 548}}
+{"ts": "2026-02-12 19:47:52.662", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 681}}
+{"ts": "2026-02-12 19:47:52.668", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 681}}
+{"ts": "2026-02-12 19:47:56.200", "stage": "stt_raw", "chars": 7, "text": "Nothing", "meta": {"engine": "openai", "stt_openai_ms": 638}}
+{"ts": "2026-02-12 19:47:56.208", "stage": "stt_sanitized", "chars": 7, "text": "Nothing", "meta": {"engine": "openai", "stt_openai_ms": 638}}
+{"ts": "2026-02-12 19:47:56.214", "stage": "stt_boundary_trim", "chars": 7, "text": "Nothing", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:47:56.542", "stage": "sentence_buffer_timeout_flush", "chars": 7, "text": "Nothing", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:47:56.549", "stage": "sentence_enqueued", "chars": 7, "text": "Nothing", "meta": {"queue_size": 1, "stt_openai_ms": 638}}
+{"ts": "2026-02-12 19:47:56.551", "stage": "translation_input", "chars": 7, "text": "Nothing", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 19:47:57.107", "stage": "translation_output", "chars": 4, "text": "Nada", "meta": {"translation_enabled": true, "translate_openai_ms": 543}}
+{"ts": "2026-02-12 19:47:57.115", "stage": "display_update_input", "chars": 4, "text": "Nada", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:47:57.121", "stage": "display_chunk_enqueued", "chars": 4, "text": "Nada", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:47:57.306", "stage": "display_word_reveal_complete", "chars": 4, "text": "Nada"}
+{"ts": "2026-02-12 19:48:08.459", "stage": "stt_raw", "chars": 7, "text": "I don't", "meta": {"engine": "openai", "stt_openai_ms": 827}}
+{"ts": "2026-02-12 19:48:08.466", "stage": "stt_sanitized", "chars": 7, "text": "I don't", "meta": {"engine": "openai", "stt_openai_ms": 827}}
+{"ts": "2026-02-12 19:48:08.471", "stage": "stt_boundary_trim", "chars": 7, "text": "I don't", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:48:08.804", "stage": "sentence_buffer_timeout_flush", "chars": 7, "text": "I don't", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:48:08.810", "stage": "sentence_enqueued", "chars": 7, "text": "I don't", "meta": {"queue_size": 1, "stt_openai_ms": 827}}
+{"ts": "2026-02-12 19:48:08.811", "stage": "translation_input", "chars": 7, "text": "I don't", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 19:48:09.778", "stage": "translation_output", "chars": 11, "text": "No lo hago.", "meta": {"translation_enabled": true, "translate_openai_ms": 954}}
+{"ts": "2026-02-12 19:48:09.787", "stage": "display_update_input", "chars": 11, "text": "No lo hago.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:48:09.795", "stage": "display_chunk_enqueued", "chars": 11, "text": "No lo hago.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:48:10.344", "stage": "display_word_reveal_complete", "chars": 11, "text": "No lo hago."}
+{"ts": "2026-02-12 19:48:14.719", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 868}}
+{"ts": "2026-02-12 19:48:14.727", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 868}}
+{"ts": "2026-02-12 19:48:16.480", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 719}}
+{"ts": "2026-02-12 19:48:16.486", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 719}}
+{"ts": "2026-02-12 19:48:26.551", "stage": "stt_raw", "chars": 7, "text": "Nothing", "meta": {"engine": "openai", "stt_openai_ms": 549}}
+{"ts": "2026-02-12 19:48:26.558", "stage": "stt_sanitized", "chars": 7, "text": "Nothing", "meta": {"engine": "openai", "stt_openai_ms": 549}}
+{"ts": "2026-02-12 19:48:26.564", "stage": "stt_boundary_trim", "chars": 7, "text": "Nothing", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:48:26.897", "stage": "sentence_buffer_timeout_flush", "chars": 7, "text": "Nothing", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:48:26.904", "stage": "sentence_enqueued", "chars": 7, "text": "Nothing", "meta": {"queue_size": 1, "stt_openai_ms": 549}}
+{"ts": "2026-02-12 19:48:26.906", "stage": "translation_input", "chars": 7, "text": "Nothing", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 19:48:27.775", "stage": "translation_output", "chars": 4, "text": "Nada", "meta": {"translation_enabled": true, "translate_openai_ms": 857}}
+{"ts": "2026-02-12 19:48:27.781", "stage": "display_update_input", "chars": 4, "text": "Nada", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:48:27.788", "stage": "display_chunk_enqueued", "chars": 4, "text": "Nada", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:48:27.970", "stage": "display_word_reveal_complete", "chars": 4, "text": "Nada"}
+{"ts": "2026-02-12 19:48:28.349", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 589}}
+{"ts": "2026-02-12 19:48:28.356", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 589}}
+{"ts": "2026-02-12 19:48:40.888", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 517}}
+{"ts": "2026-02-12 19:48:40.896", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 517}}
+{"ts": "2026-02-12 19:48:46.066", "stage": "stt_raw", "chars": 5, "text": "Um...", "meta": {"engine": "openai", "stt_openai_ms": 675}}
+{"ts": "2026-02-12 19:48:46.072", "stage": "stt_sanitized", "chars": 5, "text": "Um...", "meta": {"engine": "openai", "stt_openai_ms": 675}}
+{"ts": "2026-02-12 19:48:46.079", "stage": "stt_boundary_trim", "chars": 5, "text": "Um...", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:48:46.426", "stage": "sentence_buffer_timeout_flush", "chars": 5, "text": "Um...", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:48:46.433", "stage": "sentence_enqueued", "chars": 5, "text": "Um...", "meta": {"queue_size": 1, "stt_openai_ms": 675}}
+{"ts": "2026-02-12 19:48:46.435", "stage": "translation_input", "chars": 5, "text": "Um...", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 19:48:46.841", "stage": "translation_output", "chars": 5, "text": "Eh...", "meta": {"translation_enabled": true, "translate_openai_ms": 395}}
+{"ts": "2026-02-12 19:48:46.850", "stage": "display_update_input", "chars": 5, "text": "Eh...", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:48:46.855", "stage": "display_chunk_enqueued", "chars": 5, "text": "Eh...", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:48:47.042", "stage": "display_word_reveal_complete", "chars": 5, "text": "Eh..."}
+{"ts": "2026-02-12 19:48:56.159", "stage": "stt_raw", "chars": 7, "text": "Nothing", "meta": {"engine": "openai", "stt_openai_ms": 1208}}
+{"ts": "2026-02-12 19:48:56.165", "stage": "stt_sanitized", "chars": 7, "text": "Nothing", "meta": {"engine": "openai", "stt_openai_ms": 1208}}
+{"ts": "2026-02-12 19:48:56.173", "stage": "stt_boundary_trim", "chars": 7, "text": "Nothing", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:48:56.520", "stage": "sentence_buffer_timeout_flush", "chars": 7, "text": "Nothing", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:48:56.527", "stage": "sentence_enqueued", "chars": 7, "text": "Nothing", "meta": {"queue_size": 1, "stt_openai_ms": 1208}}
+{"ts": "2026-02-12 19:48:56.529", "stage": "translation_input", "chars": 7, "text": "Nothing", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 19:48:57.144", "stage": "translation_output", "chars": 4, "text": "Nada", "meta": {"translation_enabled": true, "translate_openai_ms": 605}}
+{"ts": "2026-02-12 19:48:57.151", "stage": "display_update_input", "chars": 4, "text": "Nada", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:48:57.157", "stage": "display_chunk_enqueued", "chars": 4, "text": "Nada", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:48:57.338", "stage": "display_word_reveal_complete", "chars": 4, "text": "Nada"}
+{"ts": "2026-02-12 19:48:58.538", "stage": "stt_raw", "chars": 8, "text": "Nothing.", "meta": {"engine": "openai", "stt_openai_ms": 746}}
+{"ts": "2026-02-12 19:48:58.546", "stage": "stt_sanitized", "chars": 8, "text": "Nothing.", "meta": {"engine": "openai", "stt_openai_ms": 746}}
+{"ts": "2026-02-12 19:48:58.554", "stage": "stt_boundary_trim", "chars": 8, "text": "Nothing.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:48:58.896", "stage": "sentence_buffer_timeout_flush", "chars": 8, "text": "Nothing.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:48:58.905", "stage": "sentence_enqueued", "chars": 8, "text": "Nothing.", "meta": {"queue_size": 1, "stt_openai_ms": 746}}
+{"ts": "2026-02-12 19:48:58.907", "stage": "translation_input", "chars": 8, "text": "Nothing.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 19:48:59.480", "stage": "translation_output", "chars": 5, "text": "Nada.", "meta": {"translation_enabled": true, "translate_openai_ms": 558}}
+{"ts": "2026-02-12 19:48:59.488", "stage": "display_update_input", "chars": 5, "text": "Nada.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:48:59.494", "stage": "display_chunk_enqueued", "chars": 5, "text": "Nada.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:48:59.689", "stage": "display_word_reveal_complete", "chars": 5, "text": "Nada."}
+{"ts": "2026-02-12 19:49:40.259", "stage": "stt_raw", "chars": 3, "text": "###", "meta": {"engine": "openai", "stt_openai_ms": 729}}
+{"ts": "2026-02-12 19:49:40.266", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 729}}
+{"ts": "2026-02-12 19:49:42.703", "stage": "stt_raw", "chars": 5, "text": "Hello", "meta": {"engine": "openai", "stt_openai_ms": 454}}
+{"ts": "2026-02-12 19:49:42.716", "stage": "stt_sanitized", "chars": 5, "text": "Hello", "meta": {"engine": "openai", "stt_openai_ms": 454}}
+{"ts": "2026-02-12 19:49:42.723", "stage": "stt_boundary_trim", "chars": 5, "text": "Hello", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:49:43.060", "stage": "sentence_buffer_timeout_flush", "chars": 5, "text": "Hello", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:49:43.067", "stage": "sentence_enqueued", "chars": 5, "text": "Hello", "meta": {"queue_size": 1, "stt_openai_ms": 454}}
+{"ts": "2026-02-12 19:49:43.070", "stage": "translation_input", "chars": 5, "text": "Hello", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 19:49:44.683", "stage": "translation_output", "chars": 4, "text": "Hola", "meta": {"translation_enabled": true, "translate_openai_ms": 1596}}
+{"ts": "2026-02-12 19:49:44.689", "stage": "display_update_input", "chars": 4, "text": "Hola", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:49:44.696", "stage": "display_chunk_enqueued", "chars": 4, "text": "Hola", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:49:44.881", "stage": "display_word_reveal_complete", "chars": 4, "text": "Hola"}
+{"ts": "2026-02-12 19:49:56.072", "stage": "stt_raw", "chars": 7, "text": "Nothing", "meta": {"engine": "openai", "stt_openai_ms": 1301}}
+{"ts": "2026-02-12 19:49:56.080", "stage": "stt_sanitized", "chars": 7, "text": "Nothing", "meta": {"engine": "openai", "stt_openai_ms": 1301}}
+{"ts": "2026-02-12 19:49:56.088", "stage": "stt_boundary_trim", "chars": 7, "text": "Nothing", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:49:56.420", "stage": "sentence_buffer_timeout_flush", "chars": 7, "text": "Nothing", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:49:56.428", "stage": "sentence_enqueued", "chars": 7, "text": "Nothing", "meta": {"queue_size": 1, "stt_openai_ms": 1301}}
+{"ts": "2026-02-12 19:49:56.431", "stage": "translation_input", "chars": 7, "text": "Nothing", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 19:49:57.210", "stage": "translation_output", "chars": 4, "text": "Nada", "meta": {"translation_enabled": true, "translate_openai_ms": 765}}
+{"ts": "2026-02-12 19:49:57.218", "stage": "display_update_input", "chars": 4, "text": "Nada", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:49:57.225", "stage": "display_chunk_enqueued", "chars": 4, "text": "Nada", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:49:57.412", "stage": "display_word_reveal_complete", "chars": 4, "text": "Nada"}
+{"ts": "2026-02-12 19:50:00.569", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 1338}}
+{"ts": "2026-02-12 19:50:00.579", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 1338}}
+{"ts": "2026-02-12 19:50:27.540", "stage": "stt_raw", "chars": 5, "text": "71942", "meta": {"engine": "openai", "stt_openai_ms": 1519}}
+{"ts": "2026-02-12 19:50:27.546", "stage": "stt_sanitized", "chars": 5, "text": "71942", "meta": {"engine": "openai", "stt_openai_ms": 1519}}
+{"ts": "2026-02-12 19:50:27.554", "stage": "stt_boundary_trim", "chars": 5, "text": "71942", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:50:27.887", "stage": "sentence_buffer_timeout_flush", "chars": 5, "text": "71942", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:50:27.894", "stage": "sentence_enqueued", "chars": 5, "text": "71942", "meta": {"queue_size": 1, "stt_openai_ms": 1519}}
+{"ts": "2026-02-12 19:50:27.897", "stage": "translation_input", "chars": 5, "text": "71942", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 19:50:28.519", "stage": "translation_output", "chars": 43, "text": "Setenta y un mil novecientos cuarenta y dos", "meta": {"translation_enabled": true, "translate_openai_ms": 609}}
+{"ts": "2026-02-12 19:50:28.526", "stage": "display_update_input", "chars": 43, "text": "Setenta y un mil novecientos cuarenta y dos", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:50:28.533", "stage": "display_chunk_enqueued", "chars": 28, "text": "Setenta y un mil novecientos", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:50:28.539", "stage": "display_chunk_enqueued", "chars": 14, "text": "cuarenta y dos", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-12 19:50:29.444", "stage": "display_word_reveal_complete", "chars": 28, "text": "Setenta y un mil novecientos"}
+{"ts": "2026-02-12 19:50:29.979", "stage": "display_word_reveal_complete", "chars": 14, "text": "cuarenta y dos"}
+{"ts": "2026-02-12 19:50:30.578", "stage": "stt_raw", "chars": 4, "text": "4861", "meta": {"engine": "openai", "stt_openai_ms": 1217}}
+{"ts": "2026-02-12 19:50:30.586", "stage": "stt_sanitized", "chars": 4, "text": "4861", "meta": {"engine": "openai", "stt_openai_ms": 1217}}
+{"ts": "2026-02-12 19:50:30.592", "stage": "stt_boundary_trim", "chars": 4, "text": "4861", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:50:30.930", "stage": "sentence_buffer_timeout_flush", "chars": 4, "text": "4861", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:50:30.937", "stage": "sentence_enqueued", "chars": 4, "text": "4861", "meta": {"queue_size": 1, "stt_openai_ms": 1217}}
+{"ts": "2026-02-12 19:50:30.940", "stage": "translation_input", "chars": 4, "text": "4861", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 19:50:31.516", "stage": "translation_output", "chars": 4, "text": "4861", "meta": {"translation_enabled": true, "translate_openai_ms": 564}}
+{"ts": "2026-02-12 19:50:31.523", "stage": "display_update_input", "chars": 4, "text": "4861", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:50:31.529", "stage": "display_chunk_enqueued", "chars": 4, "text": "4861", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:50:31.714", "stage": "display_word_reveal_complete", "chars": 4, "text": "4861"}
+{"ts": "2026-02-12 19:50:35.978", "stage": "stt_raw", "chars": 13, "text": "I don't know.", "meta": {"engine": "openai", "stt_openai_ms": 787}}
+{"ts": "2026-02-12 19:50:35.984", "stage": "stt_sanitized", "chars": 13, "text": "I don't know.", "meta": {"engine": "openai", "stt_openai_ms": 787}}
+{"ts": "2026-02-12 19:50:35.992", "stage": "stt_boundary_trim", "chars": 13, "text": "I don't know.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:50:36.328", "stage": "sentence_buffer_timeout_flush", "chars": 13, "text": "I don't know.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:50:36.335", "stage": "sentence_enqueued", "chars": 13, "text": "I don't know.", "meta": {"queue_size": 1, "stt_openai_ms": 787}}
+{"ts": "2026-02-12 19:50:36.339", "stage": "translation_input", "chars": 13, "text": "I don't know.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 19:50:37.185", "stage": "translation_output", "chars": 9, "text": "No lo sé.", "meta": {"translation_enabled": true, "translate_openai_ms": 836}}
+{"ts": "2026-02-12 19:50:37.192", "stage": "display_update_input", "chars": 9, "text": "No lo sé.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:50:37.199", "stage": "display_chunk_enqueued", "chars": 9, "text": "No lo sé.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:50:37.724", "stage": "display_word_reveal_complete", "chars": 9, "text": "No lo sé."}
+{"ts": "2026-02-12 19:50:38.028", "stage": "stt_raw", "chars": 7, "text": "I don't", "meta": {"engine": "openai", "stt_openai_ms": 418}}
+{"ts": "2026-02-12 19:50:38.036", "stage": "stt_sanitized", "chars": 7, "text": "I don't", "meta": {"engine": "openai", "stt_openai_ms": 418}}
+{"ts": "2026-02-12 19:50:38.043", "stage": "stt_boundary_trim", "chars": 7, "text": "I don't", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-12 19:50:38.375", "stage": "sentence_buffer_timeout_flush", "chars": 7, "text": "I don't", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-12 19:50:38.381", "stage": "sentence_enqueued", "chars": 7, "text": "I don't", "meta": {"queue_size": 1, "stt_openai_ms": 418}}
+{"ts": "2026-02-12 19:50:38.383", "stage": "translation_input", "chars": 7, "text": "I don't", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-12 19:50:38.936", "stage": "translation_output", "chars": 11, "text": "No lo hago.", "meta": {"translation_enabled": true, "translate_openai_ms": 540}}
+{"ts": "2026-02-12 19:50:38.943", "stage": "display_update_input", "chars": 11, "text": "No lo hago.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-12 19:50:38.951", "stage": "display_chunk_enqueued", "chars": 11, "text": "No lo hago.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-12 19:50:39.493", "stage": "display_word_reveal_complete", "chars": 11, "text": "No lo hago."}

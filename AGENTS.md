@@ -16,12 +16,12 @@ Python desktop app that captures live audio, transcribes speech, optionally tran
 3. Run: `python main.py`
 
 ## Speech Engines
-- `OpenAI (gpt-4o-mini-transcribe)` uses the OpenAI API and requires `openai_api_key`.
+- `OpenAI (gpt-4o-transcribe)` uses the OpenAI API and requires `openai_api_key`.
 - `Local (faster-whisper)` runs locally on GPU/CPU and downloads models as needed. No OpenAI calls for STT.
 
 ## Translation
 - Translation can be enabled/disabled in settings.
-- If enabled and an OpenAI key is present, OpenAI is used first with Google as fallback.
+- If enabled, translation uses OpenAI and requires an API key.
 
 ## Settings Persistence
 - Settings are stored in `settings.json` and written when Apply is clicked.

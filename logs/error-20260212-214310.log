@@ -1,0 +1,19 @@
+[2026-02-12 21:43:11.952] STATUS: Listening (Spanish)
+[2026-02-12 21:43:32.871] STATUS: No speech detected. Check mic level or device.
+[2026-02-12 21:45:28.873] STATUS: App closing requested
+
+--- Close Requested ---
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\main.py", line 5231, in <module>
+    self.text_canvas.itemconfigure(self.text_item, text=text, font=self.text_font)
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\main.py", line 378, in __init__
+  File "C:\Users\zachary.price\AppData\Local\Programs\Python\Python310\lib\tkinter\__init__.py", line 1458, in mainloop
+    self.tk.mainloop(n)
+  File "C:\Users\zachary.price\AppData\Local\Programs\Python\Python310\lib\tkinter\__init__.py", line 1921, in __call__
+    return self.func(*args)
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\main.py", line 464, in on_closing
+    f.write("\n--- Close Requested ---\n")
+[2026-02-12 21:45:28.881] STATUS: Process exiting
+
+--- Process Exit ---
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\main.py", line 527, in _log_process_exit
+    f.write("\n--- Process Exit ---\n")

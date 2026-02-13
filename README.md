@@ -22,7 +22,17 @@ A simple Python application for real-time speech-to-text translation, similar to
    ```
    pip install -r requirements.txt
    ```
-4. Run the app:
+4. Set your OpenAI key as an environment variable:
+   - PowerShell:
+     ```
+     $env:OPENAI_API_KEY="sk-..."
+     ```
+   - bash/zsh:
+     ```
+     export OPENAI_API_KEY="sk-..."
+     ```
+   - Optional local file (not committed): copy `.env.example` to `.env.local` and load it in your shell before running.
+5. Run the app:
    ```
    python main.py
    ```

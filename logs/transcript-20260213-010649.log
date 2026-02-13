@@ -1,0 +1,588 @@
+{"ts": "2026-02-13 01:07:16.689", "stage": "stt_raw", "chars": 47, "text": "protección es el Parque Nacional de Bieszczady.", "meta": {"engine": "openai", "stt_openai_ms": 793}}
+{"ts": "2026-02-13 01:07:16.692", "stage": "stt_sanitized", "chars": 47, "text": "protección es el Parque Nacional de Bieszczady.", "meta": {"engine": "openai", "stt_openai_ms": 793}}
+{"ts": "2026-02-13 01:07:16.693", "stage": "stt_boundary_trim", "chars": 47, "text": "protección es el Parque Nacional de Bieszczady.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-13 01:07:17.023", "stage": "sentence_buffer_timeout_flush", "chars": 47, "text": "protección es el Parque Nacional de Bieszczady.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-13 01:07:17.025", "stage": "sentence_enqueued", "chars": 47, "text": "protección es el Parque Nacional de Bieszczady.", "meta": {"queue_size": 1, "stt_openai_ms": 793, "translate_openai_ms": null}}
+{"ts": "2026-02-13 01:07:17.026", "stage": "translation_input", "chars": 47, "text": "protección es el Parque Nacional de Bieszczady.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 01:07:17.853", "stage": "translation_output", "chars": 43, "text": "protection is the Bieszczady National Park.", "meta": {"translation_enabled": true, "translate_openai_ms": 822}}
+{"ts": "2026-02-13 01:07:17.856", "stage": "display_update_input", "chars": 43, "text": "protection is the Bieszczady National Park.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 01:07:17.857", "stage": "display_chunk_enqueued", "chars": 28, "text": "protection is the Bieszczady", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 01:07:17.860", "stage": "display_chunk_enqueued", "chars": 14, "text": "National Park.", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 01:07:18.309", "stage": "display_word_reveal_complete", "chars": 28, "text": "protection is the Bieszczady"}
+{"ts": "2026-02-13 01:07:18.324", "stage": "stt_raw", "chars": 16, "text": "la parte polaca.", "meta": {"engine": "openai", "stt_openai_ms": 800}}
+{"ts": "2026-02-13 01:07:18.327", "stage": "stt_sanitized", "chars": 16, "text": "la parte polaca.", "meta": {"engine": "openai", "stt_openai_ms": 800}}
+{"ts": "2026-02-13 01:07:18.329", "stage": "stt_boundary_trim", "chars": 16, "text": "la parte polaca.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-13 01:07:18.527", "stage": "display_word_reveal_complete", "chars": 14, "text": "National Park."}
+{"ts": "2026-02-13 01:07:18.651", "stage": "sentence_buffer_timeout_defer", "chars": 16, "text": "la parte polaca.", "meta": {"wait_ms": 300, "age_ms": 320, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:07:18.761", "stage": "sentence_buffer_timeout_defer", "chars": 16, "text": "la parte polaca.", "meta": {"wait_ms": 300, "age_ms": 430, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:07:18.871", "stage": "sentence_buffer_timeout_defer", "chars": 16, "text": "la parte polaca.", "meta": {"wait_ms": 300, "age_ms": 540, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:07:18.979", "stage": "sentence_buffer_timeout_defer", "chars": 16, "text": "la parte polaca.", "meta": {"wait_ms": 300, "age_ms": 648, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:07:19.089", "stage": "sentence_buffer_timeout_defer", "chars": 16, "text": "la parte polaca.", "meta": {"wait_ms": 300, "age_ms": 758, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:07:19.198", "stage": "sentence_buffer_timeout_defer", "chars": 16, "text": "la parte polaca.", "meta": {"wait_ms": 300, "age_ms": 867, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:07:19.308", "stage": "sentence_buffer_timeout_defer", "chars": 16, "text": "la parte polaca.", "meta": {"wait_ms": 300, "age_ms": 977, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:07:19.417", "stage": "sentence_buffer_timeout_defer", "chars": 16, "text": "la parte polaca.", "meta": {"wait_ms": 300, "age_ms": 1086, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:07:19.525", "stage": "sentence_buffer_timeout_defer", "chars": 16, "text": "la parte polaca.", "meta": {"wait_ms": 300, "age_ms": 1194, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:07:19.634", "stage": "sentence_buffer_timeout_flush", "chars": 16, "text": "la parte polaca.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-13 01:07:19.637", "stage": "sentence_enqueued", "chars": 16, "text": "la parte polaca.", "meta": {"queue_size": 1, "stt_openai_ms": 800, "translate_openai_ms": null}}
+{"ts": "2026-02-13 01:07:19.638", "stage": "translation_input", "chars": 16, "text": "la parte polaca.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 01:07:20.192", "stage": "translation_output", "chars": 16, "text": "the Polish part.", "meta": {"translation_enabled": true, "translate_openai_ms": 551}}
+{"ts": "2026-02-13 01:07:20.196", "stage": "display_update_input", "chars": 16, "text": "the Polish part.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 01:07:20.198", "stage": "display_chunk_enqueued", "chars": 16, "text": "the Polish part.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-13 01:07:20.537", "stage": "display_word_reveal_complete", "chars": 16, "text": "the Polish part."}
+{"ts": "2026-02-13 01:07:23.154", "stage": "stt_raw", "chars": 57, "text": "Pero las zonas bajas aledañas al parque carecen de prote.", "meta": {"engine": "openai", "stt_openai_ms": 709}}
+{"ts": "2026-02-13 01:07:23.159", "stage": "stt_sanitized", "chars": 57, "text": "Pero las zonas bajas aledañas al parque carecen de prote.", "meta": {"engine": "openai", "stt_openai_ms": 709}}
+{"ts": "2026-02-13 01:07:23.162", "stage": "stt_boundary_trim", "chars": 57, "text": "Pero las zonas bajas aledañas al parque carecen de prote.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-13 01:07:23.492", "stage": "sentence_buffer_timeout_flush", "chars": 57, "text": "Pero las zonas bajas aledañas al parque carecen de prote.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-13 01:07:23.494", "stage": "sentence_enqueued", "chars": 57, "text": "Pero las zonas bajas aledañas al parque carecen de prote.", "meta": {"queue_size": 1, "stt_openai_ms": 709, "translate_openai_ms": null}}
+{"ts": "2026-02-13 01:07:23.497", "stage": "translation_input", "chars": 57, "text": "Pero las zonas bajas aledañas al parque carecen de prote.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 01:07:24.476", "stage": "translation_output", "chars": 61, "text": "But the low-lying areas adjacent to the park lack protection.", "meta": {"translation_enabled": true, "translate_openai_ms": 974}}
+{"ts": "2026-02-13 01:07:24.479", "stage": "display_update_input", "chars": 61, "text": "But the low-lying areas adjacent to the park lack protection.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 01:07:24.481", "stage": "display_chunk_enqueued", "chars": 23, "text": "But the low-lying areas", "meta": {"chunk_index": 0, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 01:07:24.483", "stage": "display_chunk_enqueued", "chars": 25, "text": "adjacent to the park lack", "meta": {"chunk_index": 1, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 01:07:24.486", "stage": "display_chunk_enqueued", "chars": 11, "text": "protection.", "meta": {"chunk_index": 2, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 01:07:24.937", "stage": "display_word_reveal_complete", "chars": 23, "text": "But the low-lying areas"}
+{"ts": "2026-02-13 01:07:25.543", "stage": "display_word_reveal_complete", "chars": 25, "text": "adjacent to the park lack"}
+{"ts": "2026-02-13 01:07:25.667", "stage": "display_word_reveal_complete", "chars": 11, "text": "protection."}
+{"ts": "2026-02-13 01:07:37.811", "stage": "stt_raw", "chars": 21, "text": "explotación forestal.", "meta": {"engine": "openai", "stt_openai_ms": 716}}
+{"ts": "2026-02-13 01:07:37.814", "stage": "stt_sanitized", "chars": 21, "text": "explotación forestal.", "meta": {"engine": "openai", "stt_openai_ms": 716}}
+{"ts": "2026-02-13 01:07:37.821", "stage": "stt_boundary_trim", "chars": 21, "text": "explotación forestal.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-13 01:07:38.157", "stage": "sentence_buffer_timeout_defer", "chars": 21, "text": "explotación forestal.", "meta": {"wait_ms": 300, "age_ms": 333, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:07:38.265", "stage": "sentence_buffer_timeout_defer", "chars": 21, "text": "explotación forestal.", "meta": {"wait_ms": 300, "age_ms": 442, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:07:38.373", "stage": "sentence_buffer_timeout_defer", "chars": 21, "text": "explotación forestal.", "meta": {"wait_ms": 300, "age_ms": 549, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:07:38.481", "stage": "sentence_buffer_timeout_defer", "chars": 21, "text": "explotación forestal.", "meta": {"wait_ms": 300, "age_ms": 657, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:07:38.590", "stage": "sentence_buffer_timeout_defer", "chars": 21, "text": "explotación forestal.", "meta": {"wait_ms": 300, "age_ms": 766, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:07:38.699", "stage": "sentence_buffer_timeout_defer", "chars": 21, "text": "explotación forestal.", "meta": {"wait_ms": 300, "age_ms": 875, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:07:38.808", "stage": "sentence_buffer_timeout_defer", "chars": 21, "text": "explotación forestal.", "meta": {"wait_ms": 300, "age_ms": 984, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:07:38.917", "stage": "sentence_buffer_timeout_defer", "chars": 21, "text": "explotación forestal.", "meta": {"wait_ms": 300, "age_ms": 1093, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:07:39.024", "stage": "sentence_buffer_timeout_flush", "chars": 21, "text": "explotación forestal.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-13 01:07:39.027", "stage": "sentence_enqueued", "chars": 21, "text": "explotación forestal.", "meta": {"queue_size": 1, "stt_openai_ms": 716, "translate_openai_ms": null}}
+{"ts": "2026-02-13 01:07:39.029", "stage": "translation_input", "chars": 21, "text": "explotación forestal.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 01:07:39.712", "stage": "translation_output", "chars": 22, "text": "Forestry exploitation.", "meta": {"translation_enabled": true, "translate_openai_ms": 676}}
+{"ts": "2026-02-13 01:07:39.715", "stage": "display_update_input", "chars": 22, "text": "Forestry exploitation.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 01:07:39.717", "stage": "display_chunk_enqueued", "chars": 22, "text": "Forestry exploitation.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-13 01:07:39.985", "stage": "display_word_reveal_complete", "chars": 22, "text": "Forestry exploitation."}
+{"ts": "2026-02-13 01:07:46.103", "stage": "stt_raw", "chars": 55, "text": "Solo queda un vestigio de aquellos bosques ancestrales.", "meta": {"engine": "openai", "stt_openai_ms": 717}}
+{"ts": "2026-02-13 01:07:46.106", "stage": "stt_sanitized", "chars": 55, "text": "Solo queda un vestigio de aquellos bosques ancestrales.", "meta": {"engine": "openai", "stt_openai_ms": 717}}
+{"ts": "2026-02-13 01:07:46.109", "stage": "stt_boundary_trim", "chars": 55, "text": "Solo queda un vestigio de aquellos bosques ancestrales.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-13 01:07:46.436", "stage": "sentence_buffer_timeout_flush", "chars": 55, "text": "Solo queda un vestigio de aquellos bosques ancestrales.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-13 01:07:46.439", "stage": "sentence_enqueued", "chars": 55, "text": "Solo queda un vestigio de aquellos bosques ancestrales.", "meta": {"queue_size": 1, "stt_openai_ms": 717, "translate_openai_ms": null}}
+{"ts": "2026-02-13 01:07:46.441", "stage": "translation_input", "chars": 55, "text": "Solo queda un vestigio de aquellos bosques ancestrales.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 01:07:47.703", "stage": "translation_output", "chars": 50, "text": "Only a vestige of those ancestral forests remains.", "meta": {"translation_enabled": true, "translate_openai_ms": 1256}}
+{"ts": "2026-02-13 01:07:47.706", "stage": "display_update_input", "chars": 50, "text": "Only a vestige of those ancestral forests remains.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 01:07:47.708", "stage": "display_chunk_enqueued", "chars": 23, "text": "Only a vestige of those", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 01:07:47.712", "stage": "display_chunk_enqueued", "chars": 26, "text": "ancestral forests remains.", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 01:07:48.207", "stage": "display_word_reveal_complete", "chars": 23, "text": "Only a vestige of those"}
+{"ts": "2026-02-13 01:07:48.532", "stage": "display_word_reveal_complete", "chars": 26, "text": "ancestral forests remains."}
+{"ts": "2026-02-13 01:07:49.173", "stage": "stt_raw", "chars": 43, "text": "Y es un roble muy viejo que hay en Ucrania.", "meta": {"engine": "openai", "stt_openai_ms": 1047}}
+{"ts": "2026-02-13 01:07:49.176", "stage": "stt_sanitized", "chars": 43, "text": "Y es un roble muy viejo que hay en Ucrania.", "meta": {"engine": "openai", "stt_openai_ms": 1047}}
+{"ts": "2026-02-13 01:07:49.178", "stage": "stt_boundary_trim", "chars": 43, "text": "Y es un roble muy viejo que hay en Ucrania.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-13 01:07:49.512", "stage": "sentence_buffer_timeout_flush", "chars": 43, "text": "Y es un roble muy viejo que hay en Ucrania.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-13 01:07:49.515", "stage": "sentence_enqueued", "chars": 43, "text": "Y es un roble muy viejo que hay en Ucrania.", "meta": {"queue_size": 1, "stt_openai_ms": 1047, "translate_openai_ms": null}}
+{"ts": "2026-02-13 01:07:49.521", "stage": "translation_input", "chars": 43, "text": "Y es un roble muy viejo que hay en Ucrania.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 01:07:50.204", "stage": "translation_output", "chars": 44, "text": "And it is a very old oak that is in Ukraine.", "meta": {"translation_enabled": true, "translate_openai_ms": 678}}
+{"ts": "2026-02-13 01:07:50.207", "stage": "display_update_input", "chars": 44, "text": "And it is a very old oak that is in Ukraine.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 01:07:50.210", "stage": "display_chunk_enqueued", "chars": 29, "text": "And it is a very old oak that", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 01:07:50.213", "stage": "display_chunk_enqueued", "chars": 14, "text": "is in Ukraine.", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 01:07:51.055", "stage": "display_word_reveal_complete", "chars": 29, "text": "And it is a very old oak that"}
+{"ts": "2026-02-13 01:07:51.397", "stage": "display_word_reveal_complete", "chars": 14, "text": "is in Ukraine."}
+{"ts": "2026-02-13 01:07:53.847", "stage": "stt_raw", "chars": 31, "text": "Tiene unos mil doscientos años.", "meta": {"engine": "openai", "stt_openai_ms": 1153}}
+{"ts": "2026-02-13 01:07:53.850", "stage": "stt_sanitized", "chars": 31, "text": "Tiene unos mil doscientos años.", "meta": {"engine": "openai", "stt_openai_ms": 1153}}
+{"ts": "2026-02-13 01:07:53.853", "stage": "stt_boundary_trim", "chars": 31, "text": "Tiene unos mil doscientos años.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-13 01:07:54.190", "stage": "sentence_buffer_timeout_defer", "chars": 31, "text": "Tiene unos mil doscientos años.", "meta": {"wait_ms": 300, "age_ms": 334, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:07:54.314", "stage": "sentence_buffer_timeout_defer", "chars": 31, "text": "Tiene unos mil doscientos años.", "meta": {"wait_ms": 300, "age_ms": 458, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:07:54.423", "stage": "sentence_buffer_timeout_defer", "chars": 31, "text": "Tiene unos mil doscientos años.", "meta": {"wait_ms": 300, "age_ms": 566, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:07:54.532", "stage": "sentence_buffer_timeout_defer", "chars": 31, "text": "Tiene unos mil doscientos años.", "meta": {"wait_ms": 300, "age_ms": 676, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:07:54.640", "stage": "sentence_buffer_timeout_defer", "chars": 31, "text": "Tiene unos mil doscientos años.", "meta": {"wait_ms": 300, "age_ms": 784, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:07:54.749", "stage": "sentence_buffer_timeout_defer", "chars": 31, "text": "Tiene unos mil doscientos años.", "meta": {"wait_ms": 300, "age_ms": 893, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:07:54.858", "stage": "sentence_buffer_timeout_defer", "chars": 31, "text": "Tiene unos mil doscientos años.", "meta": {"wait_ms": 300, "age_ms": 1001, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:07:54.966", "stage": "sentence_buffer_timeout_defer", "chars": 31, "text": "Tiene unos mil doscientos años.", "meta": {"wait_ms": 300, "age_ms": 1110, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:07:55.076", "stage": "sentence_buffer_timeout_flush", "chars": 31, "text": "Tiene unos mil doscientos años.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-13 01:07:55.079", "stage": "sentence_enqueued", "chars": 31, "text": "Tiene unos mil doscientos años.", "meta": {"queue_size": 1, "stt_openai_ms": 1153, "translate_openai_ms": null}}
+{"ts": "2026-02-13 01:07:55.081", "stage": "translation_input", "chars": 31, "text": "Tiene unos mil doscientos años.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 01:07:55.743", "stage": "translation_output", "chars": 37, "text": "It is about twelve hundred years old.", "meta": {"translation_enabled": true, "translate_openai_ms": 656}}
+{"ts": "2026-02-13 01:07:55.746", "stage": "display_update_input", "chars": 37, "text": "It is about twelve hundred years old.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 01:07:55.748", "stage": "display_chunk_enqueued", "chars": 26, "text": "It is about twelve hundred", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 01:07:55.751", "stage": "display_chunk_enqueued", "chars": 10, "text": "years old.", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 01:07:56.361", "stage": "display_word_reveal_complete", "chars": 26, "text": "It is about twelve hundred"}
+{"ts": "2026-02-13 01:07:56.611", "stage": "display_word_reveal_complete", "chars": 10, "text": "years old."}
+{"ts": "2026-02-13 01:08:03.010", "stage": "stt_raw", "chars": 39, "text": "sus majestuosas ramas en la antigüedad.", "meta": {"engine": "openai", "stt_openai_ms": 536}}
+{"ts": "2026-02-13 01:08:03.014", "stage": "stt_sanitized", "chars": 39, "text": "sus majestuosas ramas en la antigüedad.", "meta": {"engine": "openai", "stt_openai_ms": 536}}
+{"ts": "2026-02-13 01:08:03.018", "stage": "stt_boundary_trim", "chars": 39, "text": "sus majestuosas ramas en la antigüedad.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-13 01:08:03.352", "stage": "sentence_buffer_timeout_flush", "chars": 39, "text": "sus majestuosas ramas en la antigüedad.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-13 01:08:03.356", "stage": "sentence_enqueued", "chars": 39, "text": "sus majestuosas ramas en la antigüedad.", "meta": {"queue_size": 1, "stt_openai_ms": 536, "translate_openai_ms": null}}
+{"ts": "2026-02-13 01:08:03.357", "stage": "translation_input", "chars": 39, "text": "sus majestuosas ramas en la antigüedad.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 01:08:04.435", "stage": "translation_output", "chars": 37, "text": "their majestic branches in antiquity.", "meta": {"translation_enabled": true, "translate_openai_ms": 1073}}
+{"ts": "2026-02-13 01:08:04.439", "stage": "display_update_input", "chars": 37, "text": "their majestic branches in antiquity.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 01:08:04.442", "stage": "display_chunk_enqueued", "chars": 26, "text": "their majestic branches in", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 01:08:04.445", "stage": "display_chunk_enqueued", "chars": 10, "text": "antiquity.", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 01:08:04.946", "stage": "display_word_reveal_complete", "chars": 26, "text": "their majestic branches in"}
+{"ts": "2026-02-13 01:08:05.072", "stage": "display_word_reveal_complete", "chars": 10, "text": "antiquity."}
+{"ts": "2026-02-13 01:08:21.441", "stage": "stt_raw", "chars": 59, "text": "Esta es una de las regiones con mayor diversidad biológica.", "meta": {"engine": "openai", "stt_openai_ms": 555}}
+{"ts": "2026-02-13 01:08:21.444", "stage": "stt_sanitized", "chars": 59, "text": "Esta es una de las regiones con mayor diversidad biológica.", "meta": {"engine": "openai", "stt_openai_ms": 555}}
+{"ts": "2026-02-13 01:08:21.447", "stage": "stt_boundary_trim", "chars": 59, "text": "Esta es una de las regiones con mayor diversidad biológica.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-13 01:08:21.773", "stage": "sentence_buffer_timeout_flush", "chars": 59, "text": "Esta es una de las regiones con mayor diversidad biológica.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-13 01:08:21.776", "stage": "sentence_enqueued", "chars": 59, "text": "Esta es una de las regiones con mayor diversidad biológica.", "meta": {"queue_size": 1, "stt_openai_ms": 555, "translate_openai_ms": null}}
+{"ts": "2026-02-13 01:08:21.778", "stage": "translation_input", "chars": 59, "text": "Esta es una de las regiones con mayor diversidad biológica.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 01:08:22.521", "stage": "stt_raw", "chars": 10, "text": "de Europa.", "meta": {"engine": "openai", "stt_openai_ms": 446}}
+{"ts": "2026-02-13 01:08:22.524", "stage": "stt_sanitized", "chars": 10, "text": "de Europa.", "meta": {"engine": "openai", "stt_openai_ms": 446}}
+{"ts": "2026-02-13 01:08:22.527", "stage": "stt_boundary_trim", "chars": 10, "text": "de Europa.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-13 01:08:22.861", "stage": "sentence_buffer_timeout_defer", "chars": 10, "text": "de Europa.", "meta": {"wait_ms": 300, "age_ms": 330, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:08:22.971", "stage": "sentence_buffer_timeout_defer", "chars": 10, "text": "de Europa.", "meta": {"wait_ms": 300, "age_ms": 440, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:08:23.080", "stage": "sentence_buffer_timeout_defer", "chars": 10, "text": "de Europa.", "meta": {"wait_ms": 300, "age_ms": 549, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:08:23.104", "stage": "translation_output", "chars": 66, "text": "This is one of the regions with the greatest biological diversity.", "meta": {"translation_enabled": true, "translate_openai_ms": 1319}}
+{"ts": "2026-02-13 01:08:23.108", "stage": "display_update_input", "chars": 66, "text": "This is one of the regions with the greatest biological diversity.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 01:08:23.111", "stage": "display_chunk_enqueued", "chars": 26, "text": "This is one of the regions", "meta": {"chunk_index": 0, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 01:08:23.115", "stage": "display_chunk_enqueued", "chars": 28, "text": "with the greatest biological", "meta": {"chunk_index": 1, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 01:08:23.118", "stage": "display_chunk_enqueued", "chars": 10, "text": "diversity.", "meta": {"chunk_index": 2, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 01:08:23.188", "stage": "sentence_buffer_timeout_defer", "chars": 10, "text": "de Europa.", "meta": {"wait_ms": 300, "age_ms": 657, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:08:23.312", "stage": "sentence_buffer_timeout_defer", "chars": 10, "text": "de Europa.", "meta": {"wait_ms": 300, "age_ms": 781, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:08:23.420", "stage": "sentence_buffer_timeout_defer", "chars": 10, "text": "de Europa.", "meta": {"wait_ms": 300, "age_ms": 890, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:08:23.529", "stage": "sentence_buffer_timeout_defer", "chars": 10, "text": "de Europa.", "meta": {"wait_ms": 300, "age_ms": 999, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:08:23.638", "stage": "sentence_buffer_timeout_defer", "chars": 10, "text": "de Europa.", "meta": {"wait_ms": 300, "age_ms": 1107, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:08:23.746", "stage": "sentence_buffer_timeout_flush", "chars": 10, "text": "de Europa.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-13 01:08:23.751", "stage": "sentence_enqueued", "chars": 10, "text": "de Europa.", "meta": {"queue_size": 1, "stt_openai_ms": 446, "translate_openai_ms": null}}
+{"ts": "2026-02-13 01:08:23.771", "stage": "translation_input", "chars": 10, "text": "de Europa.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 01:08:23.853", "stage": "display_word_reveal_complete", "chars": 26, "text": "This is one of the regions"}
+{"ts": "2026-02-13 01:08:24.254", "stage": "translation_output", "chars": 12, "text": "from Europe.", "meta": {"translation_enabled": true, "translate_openai_ms": 477}}
+{"ts": "2026-02-13 01:08:24.257", "stage": "display_update_input", "chars": 12, "text": "from Europe.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 01:08:24.261", "stage": "display_chunk_enqueued", "chars": 12, "text": "from Europe.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-13 01:08:24.318", "stage": "display_word_reveal_complete", "chars": 28, "text": "with the greatest biological"}
+{"ts": "2026-02-13 01:08:24.442", "stage": "display_word_reveal_complete", "chars": 10, "text": "diversity."}
+{"ts": "2026-02-13 01:08:24.723", "stage": "display_word_reveal_complete", "chars": 12, "text": "from Europe."}
+{"ts": "2026-02-13 01:08:28.114", "stage": "stt_raw", "chars": 26, "text": "...de los Montes del Lobo.", "meta": {"engine": "openai", "stt_openai_ms": 729}}
+{"ts": "2026-02-13 01:08:28.119", "stage": "stt_sanitized", "chars": 26, "text": "...de los Montes del Lobo.", "meta": {"engine": "openai", "stt_openai_ms": 729}}
+{"ts": "2026-02-13 01:08:28.124", "stage": "stt_boundary_trim", "chars": 26, "text": "...de los Montes del Lobo.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-13 01:08:28.455", "stage": "sentence_buffer_timeout_defer", "chars": 26, "text": "...de los Montes del Lobo.", "meta": {"wait_ms": 300, "age_ms": 326, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:08:28.563", "stage": "sentence_buffer_timeout_defer", "chars": 26, "text": "...de los Montes del Lobo.", "meta": {"wait_ms": 300, "age_ms": 433, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:08:28.673", "stage": "sentence_buffer_timeout_defer", "chars": 26, "text": "...de los Montes del Lobo.", "meta": {"wait_ms": 300, "age_ms": 543, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:08:28.781", "stage": "sentence_buffer_timeout_defer", "chars": 26, "text": "...de los Montes del Lobo.", "meta": {"wait_ms": 300, "age_ms": 652, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:08:28.891", "stage": "sentence_buffer_timeout_defer", "chars": 26, "text": "...de los Montes del Lobo.", "meta": {"wait_ms": 300, "age_ms": 761, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:08:29.000", "stage": "sentence_buffer_timeout_defer", "chars": 26, "text": "...de los Montes del Lobo.", "meta": {"wait_ms": 300, "age_ms": 870, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:08:29.109", "stage": "sentence_buffer_timeout_defer", "chars": 26, "text": "...de los Montes del Lobo.", "meta": {"wait_ms": 300, "age_ms": 979, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:08:29.217", "stage": "sentence_buffer_timeout_defer", "chars": 26, "text": "...de los Montes del Lobo.", "meta": {"wait_ms": 300, "age_ms": 1087, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:08:29.326", "stage": "sentence_buffer_timeout_defer", "chars": 26, "text": "...de los Montes del Lobo.", "meta": {"wait_ms": 300, "age_ms": 1196, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:08:29.435", "stage": "sentence_buffer_timeout_flush", "chars": 26, "text": "...de los Montes del Lobo.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-13 01:08:29.438", "stage": "sentence_enqueued", "chars": 26, "text": "...de los Montes del Lobo.", "meta": {"queue_size": 1, "stt_openai_ms": 729, "translate_openai_ms": null}}
+{"ts": "2026-02-13 01:08:29.440", "stage": "translation_input", "chars": 26, "text": "...de los Montes del Lobo.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 01:08:30.233", "stage": "translation_output", "chars": 26, "text": "... of the Wolf Mountains.", "meta": {"translation_enabled": true, "translate_openai_ms": 786}}
+{"ts": "2026-02-13 01:08:30.237", "stage": "display_update_input", "chars": 26, "text": "... of the Wolf Mountains.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 01:08:30.241", "stage": "display_chunk_enqueued", "chars": 26, "text": "... of the Wolf Mountains.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-13 01:08:30.816", "stage": "display_word_reveal_complete", "chars": 26, "text": "... of the Wolf Mountains."}
+{"ts": "2026-02-13 01:08:32.362", "stage": "stt_raw", "chars": 35, "text": "Es la Reserva Natural de Sztuczica.", "meta": {"engine": "openai", "stt_openai_ms": 906}}
+{"ts": "2026-02-13 01:08:32.366", "stage": "stt_sanitized", "chars": 35, "text": "Es la Reserva Natural de Sztuczica.", "meta": {"engine": "openai", "stt_openai_ms": 906}}
+{"ts": "2026-02-13 01:08:32.368", "stage": "stt_boundary_trim", "chars": 35, "text": "Es la Reserva Natural de Sztuczica.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-13 01:08:32.698", "stage": "sentence_buffer_timeout_flush", "chars": 35, "text": "Es la Reserva Natural de Sztuczica.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-13 01:08:32.702", "stage": "sentence_enqueued", "chars": 35, "text": "Es la Reserva Natural de Sztuczica.", "meta": {"queue_size": 1, "stt_openai_ms": 906, "translate_openai_ms": null}}
+{"ts": "2026-02-13 01:08:32.704", "stage": "translation_input", "chars": 35, "text": "Es la Reserva Natural de Sztuczica.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 01:08:33.322", "stage": "translation_output", "chars": 35, "text": "It is the Sztuczica Nature Reserve.", "meta": {"translation_enabled": true, "translate_openai_ms": 611}}
+{"ts": "2026-02-13 01:08:33.325", "stage": "display_update_input", "chars": 35, "text": "It is the Sztuczica Nature Reserve.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 01:08:33.328", "stage": "display_chunk_enqueued", "chars": 26, "text": "It is the Sztuczica Nature", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 01:08:33.331", "stage": "display_chunk_enqueued", "chars": 8, "text": "Reserve.", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 01:08:33.925", "stage": "display_word_reveal_complete", "chars": 26, "text": "It is the Sztuczica Nature"}
+{"ts": "2026-02-13 01:08:34.050", "stage": "display_word_reveal_complete", "chars": 8, "text": "Reserve."}
+{"ts": "2026-02-13 01:08:40.357", "stage": "stt_raw", "chars": 41, "text": "Los árboles alcanzan 56 metros de altura.", "meta": {"engine": "openai", "stt_openai_ms": 1032}}
+{"ts": "2026-02-13 01:08:40.361", "stage": "stt_sanitized", "chars": 41, "text": "Los árboles alcanzan 56 metros de altura.", "meta": {"engine": "openai", "stt_openai_ms": 1032}}
+{"ts": "2026-02-13 01:08:40.364", "stage": "stt_boundary_trim", "chars": 41, "text": "Los árboles alcanzan 56 metros de altura.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-13 01:08:40.696", "stage": "sentence_buffer_timeout_flush", "chars": 41, "text": "Los árboles alcanzan 56 metros de altura.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-13 01:08:40.700", "stage": "sentence_enqueued", "chars": 41, "text": "Los árboles alcanzan 56 metros de altura.", "meta": {"queue_size": 1, "stt_openai_ms": 1032, "translate_openai_ms": null}}
+{"ts": "2026-02-13 01:08:40.702", "stage": "translation_input", "chars": 41, "text": "Los árboles alcanzan 56 metros de altura.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 01:08:41.505", "stage": "translation_output", "chars": 36, "text": "The trees reach 56 meters in height.", "meta": {"translation_enabled": true, "translate_openai_ms": 796}}
+{"ts": "2026-02-13 01:08:41.510", "stage": "display_update_input", "chars": 36, "text": "The trees reach 56 meters in height.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 01:08:41.513", "stage": "display_chunk_enqueued", "chars": 28, "text": "The trees reach 56 meters in", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 01:08:41.516", "stage": "display_chunk_enqueued", "chars": 7, "text": "height.", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 01:08:41.986", "stage": "stt_raw", "chars": 11, "text": "de espesor.", "meta": {"engine": "openai", "stt_openai_ms": 1171}}
+{"ts": "2026-02-13 01:08:41.989", "stage": "stt_sanitized", "chars": 11, "text": "de espesor.", "meta": {"engine": "openai", "stt_openai_ms": 1171}}
+{"ts": "2026-02-13 01:08:41.993", "stage": "stt_boundary_trim", "chars": 11, "text": "de espesor.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-13 01:08:42.262", "stage": "display_word_reveal_complete", "chars": 28, "text": "The trees reach 56 meters in"}
+{"ts": "2026-02-13 01:08:42.325", "stage": "sentence_buffer_timeout_defer", "chars": 11, "text": "de espesor.", "meta": {"wait_ms": 300, "age_ms": 327, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:08:42.387", "stage": "display_word_reveal_complete", "chars": 7, "text": "height."}
+{"ts": "2026-02-13 01:08:42.433", "stage": "sentence_buffer_timeout_defer", "chars": 11, "text": "de espesor.", "meta": {"wait_ms": 300, "age_ms": 435, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:08:42.541", "stage": "sentence_buffer_timeout_defer", "chars": 11, "text": "de espesor.", "meta": {"wait_ms": 300, "age_ms": 543, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:08:42.650", "stage": "sentence_buffer_timeout_defer", "chars": 11, "text": "de espesor.", "meta": {"wait_ms": 300, "age_ms": 652, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:08:42.758", "stage": "sentence_buffer_timeout_defer", "chars": 11, "text": "de espesor.", "meta": {"wait_ms": 300, "age_ms": 761, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:08:42.868", "stage": "sentence_buffer_timeout_defer", "chars": 11, "text": "de espesor.", "meta": {"wait_ms": 300, "age_ms": 870, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:08:42.977", "stage": "sentence_buffer_timeout_defer", "chars": 11, "text": "de espesor.", "meta": {"wait_ms": 300, "age_ms": 979, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:08:43.085", "stage": "sentence_buffer_timeout_defer", "chars": 11, "text": "de espesor.", "meta": {"wait_ms": 300, "age_ms": 1087, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:08:43.209", "stage": "sentence_buffer_timeout_flush", "chars": 11, "text": "de espesor.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-13 01:08:43.213", "stage": "sentence_enqueued", "chars": 11, "text": "de espesor.", "meta": {"queue_size": 1, "stt_openai_ms": 1171, "translate_openai_ms": null}}
+{"ts": "2026-02-13 01:08:43.216", "stage": "translation_input", "chars": 11, "text": "de espesor.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 01:08:43.885", "stage": "translation_output", "chars": 6, "text": "thick.", "meta": {"translation_enabled": true, "translate_openai_ms": 663}}
+{"ts": "2026-02-13 01:08:43.889", "stage": "display_update_input", "chars": 6, "text": "thick.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 01:08:43.893", "stage": "display_chunk_enqueued", "chars": 6, "text": "thick.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-13 01:08:44.018", "stage": "display_word_reveal_complete", "chars": 6, "text": "thick."}
+{"ts": "2026-02-13 01:08:46.405", "stage": "stt_raw", "chars": 52, "text": "Este ecosistema de bosque primitivo de abeto y haya,", "meta": {"engine": "openai", "stt_openai_ms": 689}}
+{"ts": "2026-02-13 01:08:46.409", "stage": "stt_sanitized", "chars": 52, "text": "Este ecosistema de bosque primitivo de abeto y haya,", "meta": {"engine": "openai", "stt_openai_ms": 689}}
+{"ts": "2026-02-13 01:08:46.413", "stage": "stt_boundary_trim", "chars": 52, "text": "Este ecosistema de bosque primitivo de abeto y haya,", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-13 01:08:46.750", "stage": "sentence_buffer_timeout_flush", "chars": 52, "text": "Este ecosistema de bosque primitivo de abeto y haya,", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-13 01:08:46.754", "stage": "sentence_enqueued", "chars": 52, "text": "Este ecosistema de bosque primitivo de abeto y haya,", "meta": {"queue_size": 1, "stt_openai_ms": 689, "translate_openai_ms": null}}
+{"ts": "2026-02-13 01:08:46.758", "stage": "translation_input", "chars": 52, "text": "Este ecosistema de bosque primitivo de abeto y haya,", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 01:08:48.056", "stage": "translation_output", "chars": 47, "text": "This ecosystem of ancient fir and beech forest,", "meta": {"translation_enabled": true, "translate_openai_ms": 1292}}
+{"ts": "2026-02-13 01:08:48.060", "stage": "display_update_input", "chars": 47, "text": "This ecosystem of ancient fir and beech forest,", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 01:08:48.065", "stage": "display_chunk_enqueued", "chars": 29, "text": "This ecosystem of ancient fir", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 01:08:48.068", "stage": "display_chunk_enqueued", "chars": 17, "text": "and beech forest,", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 01:08:48.696", "stage": "display_word_reveal_complete", "chars": 29, "text": "This ecosystem of ancient fir"}
+{"ts": "2026-02-13 01:08:49.068", "stage": "display_word_reveal_complete", "chars": 17, "text": "and beech forest,"}
+{"ts": "2026-02-13 01:09:03.186", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 970}}
+{"ts": "2026-02-13 01:09:03.196", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 970}}
+{"ts": "2026-02-13 01:09:07.351", "stage": "stt_raw", "chars": 38, "text": "Aquí viven decenas de aves diferentes.", "meta": {"engine": "openai", "stt_openai_ms": 555}}
+{"ts": "2026-02-13 01:09:07.356", "stage": "stt_sanitized", "chars": 38, "text": "Aquí viven decenas de aves diferentes.", "meta": {"engine": "openai", "stt_openai_ms": 555}}
+{"ts": "2026-02-13 01:09:07.360", "stage": "stt_boundary_trim", "chars": 38, "text": "Aquí viven decenas de aves diferentes.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-13 01:09:07.692", "stage": "sentence_buffer_timeout_flush", "chars": 38, "text": "Aquí viven decenas de aves diferentes.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-13 01:09:07.697", "stage": "sentence_enqueued", "chars": 38, "text": "Aquí viven decenas de aves diferentes.", "meta": {"queue_size": 1, "stt_openai_ms": 555, "translate_openai_ms": null}}
+{"ts": "2026-02-13 01:09:07.700", "stage": "translation_input", "chars": 38, "text": "Aquí viven decenas de aves diferentes.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 01:09:08.714", "stage": "translation_output", "chars": 36, "text": "Dozens of different birds live here.", "meta": {"translation_enabled": true, "translate_openai_ms": 1008}}
+{"ts": "2026-02-13 01:09:08.719", "stage": "display_update_input", "chars": 36, "text": "Dozens of different birds live here.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 01:09:08.722", "stage": "display_chunk_enqueued", "chars": 30, "text": "Dozens of different birds live", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 01:09:08.727", "stage": "display_chunk_enqueued", "chars": 5, "text": "here.", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 01:09:09.352", "stage": "display_word_reveal_complete", "chars": 30, "text": "Dozens of different birds live"}
+{"ts": "2026-02-13 01:09:09.477", "stage": "display_word_reveal_complete", "chars": 5, "text": "here."}
+{"ts": "2026-02-13 01:09:10.386", "stage": "stt_raw", "chars": 30, "text": "Hay hasta ocho clases de paja.", "meta": {"engine": "openai", "stt_openai_ms": 551}}
+{"ts": "2026-02-13 01:09:10.390", "stage": "stt_sanitized", "chars": 30, "text": "Hay hasta ocho clases de paja.", "meta": {"engine": "openai", "stt_openai_ms": 551}}
+{"ts": "2026-02-13 01:09:10.393", "stage": "stt_boundary_trim", "chars": 30, "text": "Hay hasta ocho clases de paja.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-13 01:09:10.719", "stage": "sentence_buffer_timeout_flush", "chars": 30, "text": "Hay hasta ocho clases de paja.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-13 01:09:10.723", "stage": "sentence_enqueued", "chars": 30, "text": "Hay hasta ocho clases de paja.", "meta": {"queue_size": 1, "stt_openai_ms": 551, "translate_openai_ms": null}}
+{"ts": "2026-02-13 01:09:10.724", "stage": "translation_input", "chars": 30, "text": "Hay hasta ocho clases de paja.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 01:09:11.444", "stage": "translation_output", "chars": 37, "text": "There are up to eight types of straw.", "meta": {"translation_enabled": true, "translate_openai_ms": 714}}
+{"ts": "2026-02-13 01:09:11.448", "stage": "display_update_input", "chars": 37, "text": "There are up to eight types of straw.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 01:09:11.451", "stage": "display_chunk_enqueued", "chars": 30, "text": "There are up to eight types of", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 01:09:11.455", "stage": "display_chunk_enqueued", "chars": 6, "text": "straw.", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 01:09:12.235", "stage": "display_word_reveal_complete", "chars": 30, "text": "There are up to eight types of"}
+{"ts": "2026-02-13 01:09:12.358", "stage": "display_word_reveal_complete", "chars": 6, "text": "straw."}
+{"ts": "2026-02-13 01:09:15.661", "stage": "stt_raw", "chars": 21, "text": "los bosques europeos.", "meta": {"engine": "openai", "stt_openai_ms": 716}}
+{"ts": "2026-02-13 01:09:15.666", "stage": "stt_sanitized", "chars": 21, "text": "los bosques europeos.", "meta": {"engine": "openai", "stt_openai_ms": 716}}
+{"ts": "2026-02-13 01:09:15.671", "stage": "stt_boundary_trim", "chars": 21, "text": "los bosques europeos.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-13 01:09:16.002", "stage": "sentence_buffer_timeout_defer", "chars": 21, "text": "los bosques europeos.", "meta": {"wait_ms": 300, "age_ms": 327, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:09:16.111", "stage": "sentence_buffer_timeout_defer", "chars": 21, "text": "los bosques europeos.", "meta": {"wait_ms": 300, "age_ms": 436, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:09:16.218", "stage": "sentence_buffer_timeout_defer", "chars": 21, "text": "los bosques europeos.", "meta": {"wait_ms": 300, "age_ms": 543, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:09:16.326", "stage": "sentence_buffer_timeout_defer", "chars": 21, "text": "los bosques europeos.", "meta": {"wait_ms": 300, "age_ms": 651, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:09:16.435", "stage": "sentence_buffer_timeout_defer", "chars": 21, "text": "los bosques europeos.", "meta": {"wait_ms": 300, "age_ms": 760, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:09:16.543", "stage": "sentence_buffer_timeout_defer", "chars": 21, "text": "los bosques europeos.", "meta": {"wait_ms": 300, "age_ms": 868, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:09:16.653", "stage": "sentence_buffer_timeout_defer", "chars": 21, "text": "los bosques europeos.", "meta": {"wait_ms": 300, "age_ms": 978, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:09:16.760", "stage": "sentence_buffer_timeout_defer", "chars": 21, "text": "los bosques europeos.", "meta": {"wait_ms": 300, "age_ms": 1085, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:09:16.869", "stage": "sentence_buffer_timeout_defer", "chars": 21, "text": "los bosques europeos.", "meta": {"wait_ms": 300, "age_ms": 1194, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:09:16.977", "stage": "sentence_buffer_timeout_flush", "chars": 21, "text": "los bosques europeos.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-13 01:09:16.980", "stage": "sentence_enqueued", "chars": 21, "text": "los bosques europeos.", "meta": {"queue_size": 1, "stt_openai_ms": 716, "translate_openai_ms": null}}
+{"ts": "2026-02-13 01:09:16.983", "stage": "translation_input", "chars": 21, "text": "los bosques europeos.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 01:09:17.739", "stage": "translation_output", "chars": 21, "text": "the European forests.", "meta": {"translation_enabled": true, "translate_openai_ms": 749}}
+{"ts": "2026-02-13 01:09:17.742", "stage": "display_update_input", "chars": 21, "text": "the European forests.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 01:09:17.746", "stage": "display_chunk_enqueued", "chars": 21, "text": "the European forests.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-13 01:09:18.094", "stage": "display_word_reveal_complete", "chars": 21, "text": "the European forests."}
+{"ts": "2026-02-13 01:09:29.736", "stage": "stt_raw", "chars": 3, "text": "###", "meta": {"engine": "openai", "stt_openai_ms": 601}}
+{"ts": "2026-02-13 01:09:29.744", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 601}}
+{"ts": "2026-02-13 01:09:38.955", "stage": "stt_raw", "chars": 55, "text": "Construye un nido bajo la corteza despegada de un haya.", "meta": {"engine": "openai", "stt_openai_ms": 740}}
+{"ts": "2026-02-13 01:09:38.963", "stage": "stt_sanitized", "chars": 55, "text": "Construye un nido bajo la corteza despegada de un haya.", "meta": {"engine": "openai", "stt_openai_ms": 740}}
+{"ts": "2026-02-13 01:09:38.971", "stage": "stt_boundary_trim", "chars": 55, "text": "Construye un nido bajo la corteza despegada de un haya.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-13 01:09:39.292", "stage": "sentence_buffer_timeout_flush", "chars": 55, "text": "Construye un nido bajo la corteza despegada de un haya.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-13 01:09:39.296", "stage": "sentence_enqueued", "chars": 55, "text": "Construye un nido bajo la corteza despegada de un haya.", "meta": {"queue_size": 1, "stt_openai_ms": 740, "translate_openai_ms": null}}
+{"ts": "2026-02-13 01:09:39.298", "stage": "translation_input", "chars": 55, "text": "Construye un nido bajo la corteza despegada de un haya.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 01:09:40.126", "stage": "translation_output", "chars": 53, "text": "Builds a nest under the peeling bark of a beech tree.", "meta": {"translation_enabled": true, "translate_openai_ms": 820}}
+{"ts": "2026-02-13 01:09:40.132", "stage": "display_update_input", "chars": 53, "text": "Builds a nest under the peeling bark of a beech tree.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 01:09:40.136", "stage": "display_chunk_enqueued", "chars": 23, "text": "Builds a nest under the", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 01:09:40.140", "stage": "display_chunk_enqueued", "chars": 29, "text": "peeling bark of a beech tree.", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 01:09:40.766", "stage": "display_word_reveal_complete", "chars": 23, "text": "Builds a nest under the"}
+{"ts": "2026-02-13 01:09:41.493", "stage": "display_word_reveal_complete", "chars": 29, "text": "peeling bark of a beech tree."}
+{"ts": "2026-02-13 01:09:43.043", "stage": "stt_raw", "chars": 2, "text": "No", "meta": {"engine": "openai", "stt_openai_ms": 697}}
+{"ts": "2026-02-13 01:09:43.047", "stage": "stt_sanitized", "chars": 2, "text": "No", "meta": {"engine": "openai", "stt_openai_ms": 697}}
+{"ts": "2026-02-13 01:09:43.051", "stage": "stt_boundary_trim", "chars": 2, "text": "No", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-13 01:09:43.386", "stage": "sentence_buffer_timeout_defer", "chars": 2, "text": "No", "meta": {"wait_ms": 300, "age_ms": 329, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:09:43.494", "stage": "sentence_buffer_timeout_defer", "chars": 2, "text": "No", "meta": {"wait_ms": 300, "age_ms": 438, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:09:43.603", "stage": "sentence_buffer_timeout_defer", "chars": 2, "text": "No", "meta": {"wait_ms": 300, "age_ms": 547, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:09:43.711", "stage": "sentence_buffer_timeout_defer", "chars": 2, "text": "No", "meta": {"wait_ms": 300, "age_ms": 655, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:09:43.820", "stage": "sentence_buffer_timeout_defer", "chars": 2, "text": "No", "meta": {"wait_ms": 300, "age_ms": 763, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:09:43.929", "stage": "sentence_buffer_timeout_defer", "chars": 2, "text": "No", "meta": {"wait_ms": 300, "age_ms": 872, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:09:44.052", "stage": "sentence_buffer_timeout_defer", "chars": 2, "text": "No", "meta": {"wait_ms": 300, "age_ms": 996, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:09:44.176", "stage": "sentence_buffer_timeout_defer", "chars": 2, "text": "No", "meta": {"wait_ms": 300, "age_ms": 1119, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:09:44.300", "stage": "sentence_buffer_timeout_flush", "chars": 2, "text": "No", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-13 01:09:44.304", "stage": "sentence_enqueued", "chars": 2, "text": "No", "meta": {"queue_size": 1, "stt_openai_ms": 697, "translate_openai_ms": null}}
+{"ts": "2026-02-13 01:09:44.306", "stage": "translation_input", "chars": 2, "text": "No", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 01:09:46.512", "stage": "translation_output", "chars": 2, "text": "No", "meta": {"translation_enabled": true, "translate_openai_ms": 2199}}
+{"ts": "2026-02-13 01:09:46.522", "stage": "display_update_input", "chars": 2, "text": "No", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 01:09:46.532", "stage": "display_chunk_enqueued", "chars": 2, "text": "No", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-13 01:09:46.683", "stage": "display_word_reveal_complete", "chars": 2, "text": "No"}
+{"ts": "2026-02-13 01:09:49.908", "stage": "stt_raw", "chars": 58, "text": "Es el lugar perfecto para ocultar una nidada de polluelos.", "meta": {"engine": "openai", "stt_openai_ms": 603}}
+{"ts": "2026-02-13 01:09:49.913", "stage": "stt_sanitized", "chars": 58, "text": "Es el lugar perfecto para ocultar una nidada de polluelos.", "meta": {"engine": "openai", "stt_openai_ms": 603}}
+{"ts": "2026-02-13 01:09:49.917", "stage": "stt_boundary_trim", "chars": 58, "text": "Es el lugar perfecto para ocultar una nidada de polluelos.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-13 01:09:50.248", "stage": "sentence_buffer_timeout_flush", "chars": 58, "text": "Es el lugar perfecto para ocultar una nidada de polluelos.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-13 01:09:50.252", "stage": "sentence_enqueued", "chars": 58, "text": "Es el lugar perfecto para ocultar una nidada de polluelos.", "meta": {"queue_size": 1, "stt_openai_ms": 603, "translate_openai_ms": null}}
+{"ts": "2026-02-13 01:09:50.255", "stage": "translation_input", "chars": 58, "text": "Es el lugar perfecto para ocultar una nidada de polluelos.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 01:09:51.239", "stage": "translation_output", "chars": 49, "text": "It's the perfect place to hide a brood of chicks.", "meta": {"translation_enabled": true, "translate_openai_ms": 973}}
+{"ts": "2026-02-13 01:09:51.244", "stage": "display_update_input", "chars": 49, "text": "It's the perfect place to hide a brood of chicks.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 01:09:51.248", "stage": "display_chunk_enqueued", "chars": 30, "text": "It's the perfect place to hide", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 01:09:51.251", "stage": "display_chunk_enqueued", "chars": 18, "text": "a brood of chicks.", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 01:09:51.969", "stage": "display_word_reveal_complete", "chars": 30, "text": "It's the perfect place to hide"}
+{"ts": "2026-02-13 01:09:52.449", "stage": "display_word_reveal_complete", "chars": 18, "text": "a brood of chicks."}
+{"ts": "2026-02-13 01:10:01.960", "stage": "stt_raw", "chars": 35, "text": "los carpinteros para hacer su nido.", "meta": {"engine": "openai", "stt_openai_ms": 625}}
+{"ts": "2026-02-13 01:10:01.964", "stage": "stt_sanitized", "chars": 35, "text": "los carpinteros para hacer su nido.", "meta": {"engine": "openai", "stt_openai_ms": 625}}
+{"ts": "2026-02-13 01:10:01.969", "stage": "stt_boundary_trim", "chars": 35, "text": "los carpinteros para hacer su nido.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-13 01:10:02.296", "stage": "sentence_buffer_timeout_flush", "chars": 35, "text": "los carpinteros para hacer su nido.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-13 01:10:02.301", "stage": "sentence_enqueued", "chars": 35, "text": "los carpinteros para hacer su nido.", "meta": {"queue_size": 1, "stt_openai_ms": 625, "translate_openai_ms": null}}
+{"ts": "2026-02-13 01:10:02.304", "stage": "translation_input", "chars": 35, "text": "los carpinteros para hacer su nido.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 01:10:03.218", "stage": "translation_output", "chars": 34, "text": "the carpenters to make their nest.", "meta": {"translation_enabled": true, "translate_openai_ms": 906}}
+{"ts": "2026-02-13 01:10:03.222", "stage": "display_update_input", "chars": 34, "text": "the carpenters to make their nest.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 01:10:03.227", "stage": "display_chunk_enqueued", "chars": 28, "text": "the carpenters to make their", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 01:10:03.231", "stage": "display_chunk_enqueued", "chars": 5, "text": "nest.", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 01:10:03.846", "stage": "display_word_reveal_complete", "chars": 28, "text": "the carpenters to make their"}
+{"ts": "2026-02-13 01:10:03.971", "stage": "display_word_reveal_complete", "chars": 5, "text": "nest."}
+{"ts": "2026-02-13 01:10:13.251", "stage": "stt_raw", "chars": 11, "text": "servidores.", "meta": {"engine": "openai", "stt_openai_ms": 656}}
+{"ts": "2026-02-13 01:10:13.256", "stage": "stt_sanitized", "chars": 11, "text": "servidores.", "meta": {"engine": "openai", "stt_openai_ms": 656}}
+{"ts": "2026-02-13 01:10:13.262", "stage": "stt_boundary_trim", "chars": 11, "text": "servidores.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-13 01:10:13.600", "stage": "sentence_buffer_timeout_defer", "chars": 11, "text": "servidores.", "meta": {"wait_ms": 300, "age_ms": 334, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:10:13.725", "stage": "sentence_buffer_timeout_defer", "chars": 11, "text": "servidores.", "meta": {"wait_ms": 300, "age_ms": 458, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:10:13.847", "stage": "sentence_buffer_timeout_defer", "chars": 11, "text": "servidores.", "meta": {"wait_ms": 300, "age_ms": 581, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:10:13.972", "stage": "sentence_buffer_timeout_defer", "chars": 11, "text": "servidores.", "meta": {"wait_ms": 300, "age_ms": 706, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:10:14.096", "stage": "sentence_buffer_timeout_defer", "chars": 11, "text": "servidores.", "meta": {"wait_ms": 300, "age_ms": 830, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:10:14.220", "stage": "sentence_buffer_timeout_defer", "chars": 11, "text": "servidores.", "meta": {"wait_ms": 300, "age_ms": 954, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:10:14.330", "stage": "sentence_buffer_timeout_defer", "chars": 11, "text": "servidores.", "meta": {"wait_ms": 300, "age_ms": 1063, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:10:14.439", "stage": "sentence_buffer_timeout_defer", "chars": 11, "text": "servidores.", "meta": {"wait_ms": 300, "age_ms": 1173, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:10:14.548", "stage": "sentence_buffer_timeout_flush", "chars": 11, "text": "servidores.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-13 01:10:14.551", "stage": "sentence_enqueued", "chars": 11, "text": "servidores.", "meta": {"queue_size": 1, "stt_openai_ms": 656, "translate_openai_ms": null}}
+{"ts": "2026-02-13 01:10:14.554", "stage": "translation_input", "chars": 11, "text": "servidores.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 01:10:15.440", "stage": "translation_output", "chars": 8, "text": "servers.", "meta": {"translation_enabled": true, "translate_openai_ms": 879}}
+{"ts": "2026-02-13 01:10:15.444", "stage": "display_update_input", "chars": 8, "text": "servers.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 01:10:15.447", "stage": "display_chunk_enqueued", "chars": 8, "text": "servers.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-13 01:10:15.574", "stage": "display_word_reveal_complete", "chars": 8, "text": "servers."}
+{"ts": "2026-02-13 01:10:22.872", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 447}}
+{"ts": "2026-02-13 01:10:22.876", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 447}}
+{"ts": "2026-02-13 01:10:34.442", "stage": "stt_raw", "chars": 43, "text": "raras especies de búhos, como el enigmático", "meta": {"engine": "openai", "stt_openai_ms": 668}}
+{"ts": "2026-02-13 01:10:34.446", "stage": "stt_sanitized", "chars": 43, "text": "raras especies de búhos, como el enigmático", "meta": {"engine": "openai", "stt_openai_ms": 668}}
+{"ts": "2026-02-13 01:10:34.450", "stage": "stt_boundary_trim", "chars": 43, "text": "raras especies de búhos, como el enigmático", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-13 01:10:34.781", "stage": "sentence_buffer_timeout_flush", "chars": 43, "text": "raras especies de búhos, como el enigmático", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-13 01:10:34.785", "stage": "sentence_enqueued", "chars": 43, "text": "raras especies de búhos, como el enigmático", "meta": {"queue_size": 1, "stt_openai_ms": 668, "translate_openai_ms": null}}
+{"ts": "2026-02-13 01:10:34.788", "stage": "translation_input", "chars": 43, "text": "raras especies de búhos, como el enigmático", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 01:10:35.550", "stage": "translation_output", "chars": 40, "text": "rare species of owls, like the enigmatic", "meta": {"translation_enabled": true, "translate_openai_ms": 755}}
+{"ts": "2026-02-13 01:10:35.554", "stage": "display_update_input", "chars": 40, "text": "rare species of owls, like the enigmatic", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 01:10:35.558", "stage": "display_chunk_enqueued", "chars": 30, "text": "rare species of owls, like the", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 01:10:35.562", "stage": "display_chunk_enqueued", "chars": 9, "text": "enigmatic", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 01:10:36.121", "stage": "stt_raw", "chars": 16, "text": "cravo ouralense.", "meta": {"engine": "openai", "stt_openai_ms": 606}}
+{"ts": "2026-02-13 01:10:36.125", "stage": "stt_sanitized", "chars": 16, "text": "cravo ouralense.", "meta": {"engine": "openai", "stt_openai_ms": 606}}
+{"ts": "2026-02-13 01:10:36.130", "stage": "stt_boundary_trim", "chars": 16, "text": "cravo ouralense.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-13 01:10:36.348", "stage": "display_word_reveal_complete", "chars": 30, "text": "rare species of owls, like the"}
+{"ts": "2026-02-13 01:10:36.473", "stage": "sentence_buffer_timeout_defer", "chars": 16, "text": "cravo ouralense.", "meta": {"wait_ms": 300, "age_ms": 339, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:10:36.473", "stage": "display_word_reveal_complete", "chars": 9, "text": "enigmatic"}
+{"ts": "2026-02-13 01:10:36.596", "stage": "sentence_buffer_timeout_defer", "chars": 16, "text": "cravo ouralense.", "meta": {"wait_ms": 300, "age_ms": 463, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:10:36.721", "stage": "sentence_buffer_timeout_defer", "chars": 16, "text": "cravo ouralense.", "meta": {"wait_ms": 300, "age_ms": 587, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:10:36.829", "stage": "sentence_buffer_timeout_defer", "chars": 16, "text": "cravo ouralense.", "meta": {"wait_ms": 300, "age_ms": 696, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:10:36.938", "stage": "sentence_buffer_timeout_defer", "chars": 16, "text": "cravo ouralense.", "meta": {"wait_ms": 300, "age_ms": 805, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:10:37.047", "stage": "sentence_buffer_timeout_defer", "chars": 16, "text": "cravo ouralense.", "meta": {"wait_ms": 300, "age_ms": 914, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:10:37.156", "stage": "sentence_buffer_timeout_defer", "chars": 16, "text": "cravo ouralense.", "meta": {"wait_ms": 300, "age_ms": 1022, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:10:37.263", "stage": "sentence_buffer_timeout_defer", "chars": 16, "text": "cravo ouralense.", "meta": {"wait_ms": 300, "age_ms": 1129, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:10:37.372", "stage": "sentence_buffer_timeout_flush", "chars": 16, "text": "cravo ouralense.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-13 01:10:37.375", "stage": "sentence_enqueued", "chars": 16, "text": "cravo ouralense.", "meta": {"queue_size": 1, "stt_openai_ms": 606, "translate_openai_ms": null}}
+{"ts": "2026-02-13 01:10:37.378", "stage": "translation_input", "chars": 16, "text": "cravo ouralense.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 01:10:39.021", "stage": "translation_output", "chars": 20, "text": "Ouralense carnation.", "meta": {"translation_enabled": true, "translate_openai_ms": 1636}}
+{"ts": "2026-02-13 01:10:39.025", "stage": "display_update_input", "chars": 20, "text": "Ouralense carnation.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 01:10:39.029", "stage": "display_chunk_enqueued", "chars": 20, "text": "Ouralense carnation.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-13 01:10:39.288", "stage": "display_word_reveal_complete", "chars": 20, "text": "Ouralense carnation."}
+{"ts": "2026-02-13 01:10:45.153", "stage": "stt_raw", "chars": 54, "text": "Pero el bosque es el hogar elegido por la población de", "meta": {"engine": "openai", "stt_openai_ms": 1419}}
+{"ts": "2026-02-13 01:10:45.158", "stage": "stt_sanitized", "chars": 54, "text": "Pero el bosque es el hogar elegido por la población de", "meta": {"engine": "openai", "stt_openai_ms": 1419}}
+{"ts": "2026-02-13 01:10:45.163", "stage": "stt_boundary_trim", "chars": 54, "text": "Pero el bosque es el hogar elegido por la población de", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-13 01:10:47.392", "stage": "stt_raw", "chars": 6, "text": "logós.", "meta": {"engine": "openai", "stt_openai_ms": 2224}}
+{"ts": "2026-02-13 01:10:47.396", "stage": "stt_sanitized", "chars": 6, "text": "logós.", "meta": {"engine": "openai", "stt_openai_ms": 2224}}
+{"ts": "2026-02-13 01:10:47.402", "stage": "stt_boundary_trim", "chars": 6, "text": "logós.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-13 01:10:47.738", "stage": "sentence_buffer_timeout_flush", "chars": 61, "text": "Pero el bosque es el hogar elegido por la población de logós.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-13 01:10:47.742", "stage": "sentence_enqueued", "chars": 61, "text": "Pero el bosque es el hogar elegido por la población de logós.", "meta": {"queue_size": 1, "stt_openai_ms": 2224, "translate_openai_ms": null}}
+{"ts": "2026-02-13 01:10:47.744", "stage": "translation_input", "chars": 61, "text": "Pero el bosque es el hogar elegido por la población de logós.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 01:10:48.752", "stage": "translation_output", "chars": 61, "text": "But the forest is the chosen home of the population of logós.", "meta": {"translation_enabled": true, "translate_openai_ms": 1000}}
+{"ts": "2026-02-13 01:10:48.756", "stage": "display_update_input", "chars": 61, "text": "But the forest is the chosen home of the population of logós.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 01:10:48.762", "stage": "display_chunk_enqueued", "chars": 28, "text": "But the forest is the chosen", "meta": {"chunk_index": 0, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 01:10:48.766", "stage": "display_chunk_enqueued", "chars": 25, "text": "home of the population of", "meta": {"chunk_index": 1, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 01:10:48.770", "stage": "display_chunk_enqueued", "chars": 6, "text": "logós.", "meta": {"chunk_index": 2, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 01:10:49.601", "stage": "display_word_reveal_complete", "chars": 28, "text": "But the forest is the chosen"}
+{"ts": "2026-02-13 01:10:50.271", "stage": "display_word_reveal_complete", "chars": 25, "text": "home of the population of"}
+{"ts": "2026-02-13 01:10:50.443", "stage": "display_word_reveal_complete", "chars": 6, "text": "logós."}
+{"ts": "2026-02-13 01:10:55.156", "stage": "stt_raw", "chars": 19, "text": "Suelen ser ciervos.", "meta": {"engine": "openai", "stt_openai_ms": 1080}}
+{"ts": "2026-02-13 01:10:55.161", "stage": "stt_sanitized", "chars": 19, "text": "Suelen ser ciervos.", "meta": {"engine": "openai", "stt_openai_ms": 1080}}
+{"ts": "2026-02-13 01:10:55.166", "stage": "stt_boundary_trim", "chars": 19, "text": "Suelen ser ciervos.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-13 01:10:55.500", "stage": "sentence_buffer_timeout_defer", "chars": 19, "text": "Suelen ser ciervos.", "meta": {"wait_ms": 300, "age_ms": 329, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:10:55.608", "stage": "sentence_buffer_timeout_defer", "chars": 19, "text": "Suelen ser ciervos.", "meta": {"wait_ms": 300, "age_ms": 437, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:10:55.717", "stage": "sentence_buffer_timeout_defer", "chars": 19, "text": "Suelen ser ciervos.", "meta": {"wait_ms": 300, "age_ms": 546, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:10:55.825", "stage": "sentence_buffer_timeout_defer", "chars": 19, "text": "Suelen ser ciervos.", "meta": {"wait_ms": 300, "age_ms": 654, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:10:55.935", "stage": "sentence_buffer_timeout_defer", "chars": 19, "text": "Suelen ser ciervos.", "meta": {"wait_ms": 300, "age_ms": 764, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:10:56.043", "stage": "sentence_buffer_timeout_defer", "chars": 19, "text": "Suelen ser ciervos.", "meta": {"wait_ms": 300, "age_ms": 872, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:10:56.151", "stage": "sentence_buffer_timeout_defer", "chars": 19, "text": "Suelen ser ciervos.", "meta": {"wait_ms": 300, "age_ms": 980, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:10:56.259", "stage": "sentence_buffer_timeout_defer", "chars": 19, "text": "Suelen ser ciervos.", "meta": {"wait_ms": 300, "age_ms": 1089, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:10:56.383", "stage": "sentence_buffer_timeout_flush", "chars": 19, "text": "Suelen ser ciervos.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-13 01:10:56.388", "stage": "sentence_enqueued", "chars": 19, "text": "Suelen ser ciervos.", "meta": {"queue_size": 1, "stt_openai_ms": 1080, "translate_openai_ms": null}}
+{"ts": "2026-02-13 01:10:56.390", "stage": "translation_input", "chars": 19, "text": "Suelen ser ciervos.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 01:10:57.043", "stage": "translation_output", "chars": 22, "text": "They are usually deer.", "meta": {"translation_enabled": true, "translate_openai_ms": 644}}
+{"ts": "2026-02-13 01:10:57.048", "stage": "display_update_input", "chars": 22, "text": "They are usually deer.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 01:10:57.054", "stage": "display_chunk_enqueued", "chars": 22, "text": "They are usually deer.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-13 01:10:57.688", "stage": "display_word_reveal_complete", "chars": 22, "text": "They are usually deer."}
+{"ts": "2026-02-13 01:11:12.263", "stage": "stt_raw", "chars": 28, "text": "búsqueda diaria de alimento.", "meta": {"engine": "openai", "stt_openai_ms": 476}}
+{"ts": "2026-02-13 01:11:12.268", "stage": "stt_sanitized", "chars": 28, "text": "búsqueda diaria de alimento.", "meta": {"engine": "openai", "stt_openai_ms": 476}}
+{"ts": "2026-02-13 01:11:12.273", "stage": "stt_boundary_trim", "chars": 28, "text": "búsqueda diaria de alimento.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-13 01:11:12.604", "stage": "sentence_buffer_timeout_defer", "chars": 28, "text": "búsqueda diaria de alimento.", "meta": {"wait_ms": 300, "age_ms": 326, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:11:12.712", "stage": "sentence_buffer_timeout_defer", "chars": 28, "text": "búsqueda diaria de alimento.", "meta": {"wait_ms": 300, "age_ms": 434, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:11:12.821", "stage": "sentence_buffer_timeout_defer", "chars": 28, "text": "búsqueda diaria de alimento.", "meta": {"wait_ms": 300, "age_ms": 543, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:11:12.930", "stage": "sentence_buffer_timeout_defer", "chars": 28, "text": "búsqueda diaria de alimento.", "meta": {"wait_ms": 300, "age_ms": 652, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:11:13.039", "stage": "sentence_buffer_timeout_defer", "chars": 28, "text": "búsqueda diaria de alimento.", "meta": {"wait_ms": 300, "age_ms": 761, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:11:13.149", "stage": "sentence_buffer_timeout_defer", "chars": 28, "text": "búsqueda diaria de alimento.", "meta": {"wait_ms": 300, "age_ms": 871, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:11:13.258", "stage": "sentence_buffer_timeout_defer", "chars": 28, "text": "búsqueda diaria de alimento.", "meta": {"wait_ms": 300, "age_ms": 980, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:11:13.367", "stage": "sentence_buffer_timeout_defer", "chars": 28, "text": "búsqueda diaria de alimento.", "meta": {"wait_ms": 300, "age_ms": 1089, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:11:13.475", "stage": "sentence_buffer_timeout_defer", "chars": 28, "text": "búsqueda diaria de alimento.", "meta": {"wait_ms": 300, "age_ms": 1197, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:11:13.599", "stage": "sentence_buffer_timeout_flush", "chars": 28, "text": "búsqueda diaria de alimento.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-13 01:11:13.604", "stage": "sentence_enqueued", "chars": 28, "text": "búsqueda diaria de alimento.", "meta": {"queue_size": 1, "stt_openai_ms": 476, "translate_openai_ms": null}}
+{"ts": "2026-02-13 01:11:13.607", "stage": "translation_input", "chars": 28, "text": "búsqueda diaria de alimento.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 01:11:14.229", "stage": "translation_output", "chars": 22, "text": "daily search for food.", "meta": {"translation_enabled": true, "translate_openai_ms": 614}}
+{"ts": "2026-02-13 01:11:14.234", "stage": "display_update_input", "chars": 22, "text": "daily search for food.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 01:11:14.240", "stage": "display_chunk_enqueued", "chars": 22, "text": "daily search for food.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-13 01:11:14.748", "stage": "display_word_reveal_complete", "chars": 22, "text": "daily search for food."}
+{"ts": "2026-02-13 01:11:15.058", "stage": "stt_raw", "chars": 3, "text": "###", "meta": {"engine": "openai", "stt_openai_ms": 461}}
+{"ts": "2026-02-13 01:11:15.063", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 461}}
+{"ts": "2026-02-13 01:11:24.049", "stage": "stt_raw", "chars": 3, "text": "###", "meta": {"engine": "openai", "stt_openai_ms": 494}}
+{"ts": "2026-02-13 01:11:24.056", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 494}}
+{"ts": "2026-02-13 01:11:27.505", "stage": "stt_raw", "chars": 12, "text": "No hay duda.", "meta": {"engine": "openai", "stt_openai_ms": 760}}
+{"ts": "2026-02-13 01:11:27.510", "stage": "stt_sanitized", "chars": 12, "text": "No hay duda.", "meta": {"engine": "openai", "stt_openai_ms": 760}}
+{"ts": "2026-02-13 01:11:27.513", "stage": "stt_boundary_trim", "chars": 12, "text": "No hay duda.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-13 01:11:27.848", "stage": "sentence_buffer_timeout_defer", "chars": 12, "text": "No hay duda.", "meta": {"wait_ms": 300, "age_ms": 330, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:11:27.974", "stage": "sentence_buffer_timeout_defer", "chars": 12, "text": "No hay duda.", "meta": {"wait_ms": 300, "age_ms": 455, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:11:28.098", "stage": "sentence_buffer_timeout_defer", "chars": 12, "text": "No hay duda.", "meta": {"wait_ms": 300, "age_ms": 579, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:11:28.223", "stage": "sentence_buffer_timeout_defer", "chars": 12, "text": "No hay duda.", "meta": {"wait_ms": 300, "age_ms": 704, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:11:28.347", "stage": "sentence_buffer_timeout_defer", "chars": 12, "text": "No hay duda.", "meta": {"wait_ms": 300, "age_ms": 829, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:11:28.470", "stage": "sentence_buffer_timeout_defer", "chars": 12, "text": "No hay duda.", "meta": {"wait_ms": 300, "age_ms": 951, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:11:28.579", "stage": "sentence_buffer_timeout_defer", "chars": 12, "text": "No hay duda.", "meta": {"wait_ms": 300, "age_ms": 1061, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:11:28.687", "stage": "sentence_buffer_timeout_defer", "chars": 12, "text": "No hay duda.", "meta": {"wait_ms": 300, "age_ms": 1168, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:11:28.796", "stage": "sentence_buffer_timeout_flush", "chars": 12, "text": "No hay duda.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-13 01:11:28.801", "stage": "sentence_enqueued", "chars": 12, "text": "No hay duda.", "meta": {"queue_size": 1, "stt_openai_ms": 760, "translate_openai_ms": null}}
+{"ts": "2026-02-13 01:11:28.803", "stage": "translation_input", "chars": 12, "text": "No hay duda.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 01:11:29.439", "stage": "translation_output", "chars": 18, "text": "There is no doubt.", "meta": {"translation_enabled": true, "translate_openai_ms": 626}}
+{"ts": "2026-02-13 01:11:29.444", "stage": "display_update_input", "chars": 18, "text": "There is no doubt.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 01:11:29.450", "stage": "display_chunk_enqueued", "chars": 18, "text": "There is no doubt.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-13 01:11:29.945", "stage": "display_word_reveal_complete", "chars": 18, "text": "There is no doubt."}
+{"ts": "2026-02-13 01:11:53.803", "stage": "stt_raw", "chars": 4, "text": "Mamá", "meta": {"engine": "openai", "stt_openai_ms": 659}}
+{"ts": "2026-02-13 01:11:53.808", "stage": "stt_sanitized", "chars": 4, "text": "Mamá", "meta": {"engine": "openai", "stt_openai_ms": 659}}
+{"ts": "2026-02-13 01:11:53.815", "stage": "stt_boundary_trim", "chars": 4, "text": "Mamá", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-13 01:11:54.160", "stage": "sentence_buffer_timeout_defer", "chars": 4, "text": "Mamá", "meta": {"wait_ms": 300, "age_ms": 340, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:11:54.283", "stage": "sentence_buffer_timeout_defer", "chars": 4, "text": "Mamá", "meta": {"wait_ms": 300, "age_ms": 463, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:11:54.408", "stage": "sentence_buffer_timeout_defer", "chars": 4, "text": "Mamá", "meta": {"wait_ms": 300, "age_ms": 588, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:11:54.531", "stage": "sentence_buffer_timeout_defer", "chars": 4, "text": "Mamá", "meta": {"wait_ms": 300, "age_ms": 711, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:11:54.639", "stage": "sentence_buffer_timeout_defer", "chars": 4, "text": "Mamá", "meta": {"wait_ms": 300, "age_ms": 819, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:11:54.749", "stage": "sentence_buffer_timeout_defer", "chars": 4, "text": "Mamá", "meta": {"wait_ms": 300, "age_ms": 929, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:11:54.856", "stage": "sentence_buffer_timeout_defer", "chars": 4, "text": "Mamá", "meta": {"wait_ms": 300, "age_ms": 1036, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:11:54.965", "stage": "sentence_buffer_timeout_defer", "chars": 4, "text": "Mamá", "meta": {"wait_ms": 300, "age_ms": 1145, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:11:55.073", "stage": "sentence_buffer_timeout_flush", "chars": 4, "text": "Mamá", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-13 01:11:55.078", "stage": "sentence_enqueued", "chars": 4, "text": "Mamá", "meta": {"queue_size": 1, "stt_openai_ms": 659, "translate_openai_ms": null}}
+{"ts": "2026-02-13 01:11:55.080", "stage": "translation_input", "chars": 4, "text": "Mamá", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 01:11:56.512", "stage": "translation_output", "chars": 3, "text": "Mom", "meta": {"translation_enabled": true, "translate_openai_ms": 1424}}
+{"ts": "2026-02-13 01:11:56.517", "stage": "display_update_input", "chars": 3, "text": "Mom", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 01:11:56.522", "stage": "display_chunk_enqueued", "chars": 3, "text": "Mom", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-13 01:11:56.704", "stage": "display_word_reveal_complete", "chars": 3, "text": "Mom"}
+{"ts": "2026-02-13 01:12:08.945", "stage": "stt_raw", "chars": 55, "text": "El invierno ha llegado con ganas a los montes del lobo.", "meta": {"engine": "openai", "stt_openai_ms": 830}}
+{"ts": "2026-02-13 01:12:08.950", "stage": "stt_sanitized", "chars": 55, "text": "El invierno ha llegado con ganas a los montes del lobo.", "meta": {"engine": "openai", "stt_openai_ms": 830}}
+{"ts": "2026-02-13 01:12:08.955", "stage": "stt_boundary_trim", "chars": 55, "text": "El invierno ha llegado con ganas a los montes del lobo.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-13 01:12:09.292", "stage": "sentence_buffer_timeout_flush", "chars": 55, "text": "El invierno ha llegado con ganas a los montes del lobo.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-13 01:12:09.297", "stage": "sentence_enqueued", "chars": 55, "text": "El invierno ha llegado con ganas a los montes del lobo.", "meta": {"queue_size": 1, "stt_openai_ms": 830, "translate_openai_ms": null}}
+{"ts": "2026-02-13 01:12:09.300", "stage": "translation_input", "chars": 55, "text": "El invierno ha llegado con ganas a los montes del lobo.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 01:12:10.397", "stage": "translation_output", "chars": 54, "text": "Winter has arrived with force in the wolf's mountains.", "meta": {"translation_enabled": true, "translate_openai_ms": 1087}}
+{"ts": "2026-02-13 01:12:10.401", "stage": "display_update_input", "chars": 54, "text": "Winter has arrived with force in the wolf's mountains.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 01:12:10.406", "stage": "display_chunk_enqueued", "chars": 29, "text": "Winter has arrived with force", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 01:12:10.410", "stage": "display_chunk_enqueued", "chars": 24, "text": "in the wolf's mountains.", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 01:12:11.074", "stage": "display_word_reveal_complete", "chars": 29, "text": "Winter has arrived with force"}
+{"ts": "2026-02-13 01:12:11.586", "stage": "display_word_reveal_complete", "chars": 24, "text": "in the wolf's mountains."}
+{"ts": "2026-02-13 01:12:13.188", "stage": "stt_raw", "chars": 54, "text": "Las condiciones son muy duras para todos los animales.", "meta": {"engine": "openai", "stt_openai_ms": 702}}
+{"ts": "2026-02-13 01:12:13.193", "stage": "stt_sanitized", "chars": 54, "text": "Las condiciones son muy duras para todos los animales.", "meta": {"engine": "openai", "stt_openai_ms": 702}}
+{"ts": "2026-02-13 01:12:13.198", "stage": "stt_boundary_trim", "chars": 54, "text": "Las condiciones son muy duras para todos los animales.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-13 01:12:13.531", "stage": "sentence_buffer_timeout_flush", "chars": 54, "text": "Las condiciones son muy duras para todos los animales.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-13 01:12:13.536", "stage": "sentence_enqueued", "chars": 54, "text": "Las condiciones son muy duras para todos los animales.", "meta": {"queue_size": 1, "stt_openai_ms": 702, "translate_openai_ms": null}}
+{"ts": "2026-02-13 01:12:13.539", "stage": "translation_input", "chars": 54, "text": "Las condiciones son muy duras para todos los animales.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 01:12:14.042", "stage": "translation_output", "chars": 50, "text": "The conditions are very harsh for all the animals.", "meta": {"translation_enabled": true, "translate_openai_ms": 494}}
+{"ts": "2026-02-13 01:12:14.047", "stage": "display_update_input", "chars": 50, "text": "The conditions are very harsh for all the animals.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 01:12:14.051", "stage": "display_chunk_enqueued", "chars": 29, "text": "The conditions are very harsh", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 01:12:14.056", "stage": "display_chunk_enqueued", "chars": 20, "text": "for all the animals.", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 01:12:14.680", "stage": "display_word_reveal_complete", "chars": 29, "text": "The conditions are very harsh"}
+{"ts": "2026-02-13 01:12:15.177", "stage": "display_word_reveal_complete", "chars": 20, "text": "for all the animals."}
+{"ts": "2026-02-13 01:12:17.113", "stage": "stt_raw", "chars": 3, "text": "###", "meta": {"engine": "openai", "stt_openai_ms": 680}}
+{"ts": "2026-02-13 01:12:17.119", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 680}}
+{"ts": "2026-02-13 01:12:21.830", "stage": "stt_raw", "chars": 12, "text": "No hay duda.", "meta": {"engine": "openai", "stt_openai_ms": 495}}
+{"ts": "2026-02-13 01:12:21.835", "stage": "stt_sanitized", "chars": 12, "text": "No hay duda.", "meta": {"engine": "openai", "stt_openai_ms": 495}}
+{"ts": "2026-02-13 01:12:21.840", "stage": "stt_boundary_trim", "chars": 12, "text": "No hay duda.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-13 01:12:22.179", "stage": "sentence_buffer_timeout_defer", "chars": 12, "text": "No hay duda.", "meta": {"wait_ms": 300, "age_ms": 333, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:12:22.302", "stage": "sentence_buffer_timeout_defer", "chars": 12, "text": "No hay duda.", "meta": {"wait_ms": 300, "age_ms": 457, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:12:22.426", "stage": "sentence_buffer_timeout_defer", "chars": 12, "text": "No hay duda.", "meta": {"wait_ms": 300, "age_ms": 580, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:12:22.549", "stage": "sentence_buffer_timeout_defer", "chars": 12, "text": "No hay duda.", "meta": {"wait_ms": 300, "age_ms": 704, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:12:22.674", "stage": "sentence_buffer_timeout_defer", "chars": 12, "text": "No hay duda.", "meta": {"wait_ms": 300, "age_ms": 829, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:12:22.799", "stage": "sentence_buffer_timeout_defer", "chars": 12, "text": "No hay duda.", "meta": {"wait_ms": 300, "age_ms": 953, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:12:22.908", "stage": "sentence_buffer_timeout_defer", "chars": 12, "text": "No hay duda.", "meta": {"wait_ms": 300, "age_ms": 1063, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:12:23.033", "stage": "sentence_buffer_timeout_defer", "chars": 12, "text": "No hay duda.", "meta": {"wait_ms": 300, "age_ms": 1187, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:12:23.142", "stage": "sentence_buffer_timeout_flush", "chars": 12, "text": "No hay duda.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-13 01:12:23.146", "stage": "sentence_enqueued", "chars": 12, "text": "No hay duda.", "meta": {"queue_size": 1, "stt_openai_ms": 495, "translate_openai_ms": null}}
+{"ts": "2026-02-13 01:12:23.148", "stage": "translation_input", "chars": 12, "text": "No hay duda.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 01:12:23.862", "stage": "translation_output", "chars": 18, "text": "There is no doubt.", "meta": {"translation_enabled": true, "translate_openai_ms": 707}}
+{"ts": "2026-02-13 01:12:23.868", "stage": "display_update_input", "chars": 18, "text": "There is no doubt.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 01:12:23.872", "stage": "display_chunk_enqueued", "chars": 18, "text": "There is no doubt.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-13 01:12:24.372", "stage": "display_word_reveal_complete", "chars": 18, "text": "There is no doubt."}
+{"ts": "2026-02-13 01:12:26.108", "stage": "stt_raw", "chars": 50, "text": "Los herbívoros, como el bisonte y el ciervo, deben", "meta": {"engine": "openai", "stt_openai_ms": 835}}
+{"ts": "2026-02-13 01:12:26.116", "stage": "stt_sanitized", "chars": 50, "text": "Los herbívoros, como el bisonte y el ciervo, deben", "meta": {"engine": "openai", "stt_openai_ms": 835}}
+{"ts": "2026-02-13 01:12:26.121", "stage": "stt_boundary_trim", "chars": 50, "text": "Los herbívoros, como el bisonte y el ciervo, deben", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-13 01:12:26.452", "stage": "sentence_buffer_timeout_flush", "chars": 50, "text": "Los herbívoros, como el bisonte y el ciervo, deben", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-13 01:12:26.457", "stage": "sentence_enqueued", "chars": 50, "text": "Los herbívoros, como el bisonte y el ciervo, deben", "meta": {"queue_size": 1, "stt_openai_ms": 835, "translate_openai_ms": null}}
+{"ts": "2026-02-13 01:12:26.459", "stage": "translation_input", "chars": 50, "text": "Los herbívoros, como el bisonte y el ciervo, deben", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 01:12:27.222", "stage": "translation_output", "chars": 45, "text": "Herbivores, like the bison and the deer, must", "meta": {"translation_enabled": true, "translate_openai_ms": 754}}
+{"ts": "2026-02-13 01:12:27.227", "stage": "display_update_input", "chars": 45, "text": "Herbivores, like the bison and the deer, must", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 01:12:27.231", "stage": "display_chunk_enqueued", "chars": 30, "text": "Herbivores, like the bison and", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 01:12:27.236", "stage": "display_chunk_enqueued", "chars": 14, "text": "the deer, must", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 01:12:27.884", "stage": "display_word_reveal_complete", "chars": 30, "text": "Herbivores, like the bison and"}
+{"ts": "2026-02-13 01:12:28.271", "stage": "display_word_reveal_complete", "chars": 14, "text": "the deer, must"}
+{"ts": "2026-02-13 01:12:30.568", "stage": "stt_raw", "chars": 25, "text": "difícil encontrar comida.", "meta": {"engine": "openai", "stt_openai_ms": 673}}
+{"ts": "2026-02-13 01:12:30.573", "stage": "stt_sanitized", "chars": 25, "text": "difícil encontrar comida.", "meta": {"engine": "openai", "stt_openai_ms": 673}}
+{"ts": "2026-02-13 01:12:30.578", "stage": "stt_boundary_trim", "chars": 25, "text": "difícil encontrar comida.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-13 01:12:30.914", "stage": "sentence_buffer_timeout_defer", "chars": 25, "text": "difícil encontrar comida.", "meta": {"wait_ms": 300, "age_ms": 330, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:12:31.022", "stage": "sentence_buffer_timeout_defer", "chars": 25, "text": "difícil encontrar comida.", "meta": {"wait_ms": 300, "age_ms": 439, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:12:31.146", "stage": "sentence_buffer_timeout_defer", "chars": 25, "text": "difícil encontrar comida.", "meta": {"wait_ms": 300, "age_ms": 563, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:12:31.271", "stage": "sentence_buffer_timeout_defer", "chars": 25, "text": "difícil encontrar comida.", "meta": {"wait_ms": 300, "age_ms": 688, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:12:31.396", "stage": "sentence_buffer_timeout_defer", "chars": 25, "text": "difícil encontrar comida.", "meta": {"wait_ms": 300, "age_ms": 813, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:12:31.520", "stage": "sentence_buffer_timeout_defer", "chars": 25, "text": "difícil encontrar comida.", "meta": {"wait_ms": 300, "age_ms": 937, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:12:31.645", "stage": "sentence_buffer_timeout_defer", "chars": 25, "text": "difícil encontrar comida.", "meta": {"wait_ms": 300, "age_ms": 1062, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:12:31.770", "stage": "sentence_buffer_timeout_defer", "chars": 25, "text": "difícil encontrar comida.", "meta": {"wait_ms": 300, "age_ms": 1187, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:12:31.892", "stage": "sentence_buffer_timeout_flush", "chars": 25, "text": "difícil encontrar comida.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-13 01:12:31.897", "stage": "sentence_enqueued", "chars": 25, "text": "difícil encontrar comida.", "meta": {"queue_size": 1, "stt_openai_ms": 673, "translate_openai_ms": null}}
+{"ts": "2026-02-13 01:12:31.899", "stage": "translation_input", "chars": 25, "text": "difícil encontrar comida.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 01:12:32.597", "stage": "translation_output", "chars": 23, "text": "difficult to find food.", "meta": {"translation_enabled": true, "translate_openai_ms": 687}}
+{"ts": "2026-02-13 01:12:32.602", "stage": "display_update_input", "chars": 23, "text": "difficult to find food.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 01:12:32.608", "stage": "display_chunk_enqueued", "chars": 23, "text": "difficult to find food.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-13 01:12:33.116", "stage": "display_word_reveal_complete", "chars": 23, "text": "difficult to find food."}
+{"ts": "2026-02-13 01:12:51.423", "stage": "stt_raw", "chars": 2, "text": "No", "meta": {"engine": "openai", "stt_openai_ms": 698}}
+{"ts": "2026-02-13 01:12:51.428", "stage": "stt_sanitized", "chars": 2, "text": "No", "meta": {"engine": "openai", "stt_openai_ms": 698}}
+{"ts": "2026-02-13 01:12:51.433", "stage": "stt_boundary_trim", "chars": 2, "text": "No", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-13 01:12:51.764", "stage": "sentence_buffer_timeout_defer", "chars": 2, "text": "No", "meta": {"wait_ms": 300, "age_ms": 325, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:12:51.873", "stage": "sentence_buffer_timeout_defer", "chars": 2, "text": "No", "meta": {"wait_ms": 300, "age_ms": 434, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:12:51.981", "stage": "sentence_buffer_timeout_defer", "chars": 2, "text": "No", "meta": {"wait_ms": 300, "age_ms": 542, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:12:52.090", "stage": "sentence_buffer_timeout_defer", "chars": 2, "text": "No", "meta": {"wait_ms": 300, "age_ms": 651, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:12:52.200", "stage": "sentence_buffer_timeout_defer", "chars": 2, "text": "No", "meta": {"wait_ms": 300, "age_ms": 760, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:12:52.309", "stage": "sentence_buffer_timeout_defer", "chars": 2, "text": "No", "meta": {"wait_ms": 300, "age_ms": 869, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:12:52.418", "stage": "sentence_buffer_timeout_defer", "chars": 2, "text": "No", "meta": {"wait_ms": 300, "age_ms": 979, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:12:52.527", "stage": "sentence_buffer_timeout_defer", "chars": 2, "text": "No", "meta": {"wait_ms": 300, "age_ms": 1087, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:12:52.637", "stage": "sentence_buffer_timeout_defer", "chars": 2, "text": "No", "meta": {"wait_ms": 300, "age_ms": 1198, "grace_ms": 900, "reason": "likely_fragment"}}
+{"ts": "2026-02-13 01:12:52.746", "stage": "sentence_buffer_timeout_flush", "chars": 2, "text": "No", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-13 01:12:52.750", "stage": "sentence_enqueued", "chars": 2, "text": "No", "meta": {"queue_size": 1, "stt_openai_ms": 698, "translate_openai_ms": null}}
+{"ts": "2026-02-13 01:12:52.752", "stage": "translation_input", "chars": 2, "text": "No", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 01:12:53.583", "stage": "translation_output", "chars": 2, "text": "No", "meta": {"translation_enabled": true, "translate_openai_ms": 822}}
+{"ts": "2026-02-13 01:12:53.589", "stage": "display_update_input", "chars": 2, "text": "No", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 01:12:53.594", "stage": "display_chunk_enqueued", "chars": 2, "text": "No", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-13 01:12:53.724", "stage": "display_word_reveal_complete", "chars": 2, "text": "No"}
+{"ts": "2026-02-13 01:12:58.874", "stage": "stt_raw", "chars": 44, "text": "De noche, las temperaturas pueden descender.", "meta": {"engine": "openai", "stt_openai_ms": 859}}
+{"ts": "2026-02-13 01:12:58.880", "stage": "stt_sanitized", "chars": 44, "text": "De noche, las temperaturas pueden descender.", "meta": {"engine": "openai", "stt_openai_ms": 859}}
+{"ts": "2026-02-13 01:12:58.885", "stage": "stt_boundary_trim", "chars": 44, "text": "De noche, las temperaturas pueden descender.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-13 01:12:59.212", "stage": "sentence_buffer_timeout_flush", "chars": 44, "text": "De noche, las temperaturas pueden descender.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-13 01:12:59.218", "stage": "sentence_enqueued", "chars": 44, "text": "De noche, las temperaturas pueden descender.", "meta": {"queue_size": 1, "stt_openai_ms": 859, "translate_openai_ms": null}}
+{"ts": "2026-02-13 01:12:59.220", "stage": "translation_input", "chars": 44, "text": "De noche, las temperaturas pueden descender.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 01:12:59.799", "stage": "translation_output", "chars": 32, "text": "At night, temperatures can drop.", "meta": {"translation_enabled": true, "translate_openai_ms": 565}}
+{"ts": "2026-02-13 01:12:59.805", "stage": "display_update_input", "chars": 32, "text": "At night, temperatures can drop.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 01:12:59.809", "stage": "display_chunk_enqueued", "chars": 26, "text": "At night, temperatures can", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 01:12:59.814", "stage": "display_chunk_enqueued", "chars": 5, "text": "drop.", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 01:13:00.336", "stage": "display_word_reveal_complete", "chars": 26, "text": "At night, temperatures can"}
+{"ts": "2026-02-13 01:13:00.459", "stage": "display_word_reveal_complete", "chars": 5, "text": "drop."}
+{"ts": "2026-02-13 01:13:00.949", "stage": "stt_raw", "chars": 34, "text": "hasta los veinte grados bajo cero.", "meta": {"engine": "openai", "stt_openai_ms": 564}}
+{"ts": "2026-02-13 01:13:00.954", "stage": "stt_sanitized", "chars": 34, "text": "hasta los veinte grados bajo cero.", "meta": {"engine": "openai", "stt_openai_ms": 564}}
+{"ts": "2026-02-13 01:13:00.958", "stage": "stt_boundary_trim", "chars": 34, "text": "hasta los veinte grados bajo cero.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-13 01:13:01.297", "stage": "sentence_buffer_timeout_flush", "chars": 34, "text": "hasta los veinte grados bajo cero.", "meta": {"wait_ms": 300}}
+{"ts": "2026-02-13 01:13:01.302", "stage": "sentence_enqueued", "chars": 34, "text": "hasta los veinte grados bajo cero.", "meta": {"queue_size": 1, "stt_openai_ms": 564, "translate_openai_ms": null}}
+{"ts": "2026-02-13 01:13:01.304", "stage": "translation_input", "chars": 34, "text": "hasta los veinte grados bajo cero.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 01:13:02.201", "stage": "translation_output", "chars": 32, "text": "up to twenty degrees below zero.", "meta": {"translation_enabled": true, "translate_openai_ms": 888}}
+{"ts": "2026-02-13 01:13:02.208", "stage": "display_update_input", "chars": 32, "text": "up to twenty degrees below zero.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 01:13:02.213", "stage": "display_chunk_enqueued", "chars": 26, "text": "up to twenty degrees below", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 01:13:02.218", "stage": "display_chunk_enqueued", "chars": 5, "text": "zero.", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 01:13:02.901", "stage": "display_word_reveal_complete", "chars": 26, "text": "up to twenty degrees below"}
+{"ts": "2026-02-13 01:13:03.057", "stage": "display_word_reveal_complete", "chars": 5, "text": "zero."}
+{"ts": "2026-02-13 01:13:05.556", "stage": "stt_raw", "chars": 3, "text": "###", "meta": {"engine": "openai", "stt_openai_ms": 661}}
+{"ts": "2026-02-13 01:13:05.561", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 661}}
