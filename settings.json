@@ -1,6 +1,10 @@
 {
   "openai_api_key": "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",
-  "speech_engine": "faster-whisper",
+  "openai_stt_model": "whisper-1",
+  "openai_translation_mode": "whisper",
+  "openai_translate_model": "gpt-4o",
+  "raw_whisper_debug_mode": true,
+  "speech_engine": "openai",
   "faster_whisper_model_name": "medium",
   "faster_whisper_compute_type": "float16",
   "faster_whisper_device": "cuda",
@@ -292,7 +296,7 @@
   "display_speed_factor": 1.0,
   "source_lang": "es",
   "target_lang": "en",
-  "translation_enabled": true,
+  "translation_enabled": false,
   "auto_switch_translation": false,
   "biblical_books": [
     "Genesis",
