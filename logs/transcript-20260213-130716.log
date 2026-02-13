@@ -964,3 +964,7 @@
 {"ts": "2026-02-13 13:18:11.784", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "faster-whisper", "stt_openai_ms": null}}
 {"ts": "2026-02-13 13:18:27.144", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "faster-whisper", "stt_openai_ms": null}}
 {"ts": "2026-02-13 13:18:27.153", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "faster-whisper", "stt_openai_ms": null}}
+{"ts": "2026-02-13 13:19:05.128", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "faster-whisper", "stt_openai_ms": null}}
+{"ts": "2026-02-13 13:19:05.137", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "faster-whisper", "stt_openai_ms": null}}
+{"ts": "2026-02-13 13:19:07.671", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "faster-whisper", "stt_openai_ms": null}}
+{"ts": "2026-02-13 13:19:07.680", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "faster-whisper", "stt_openai_ms": null}}
