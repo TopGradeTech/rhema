@@ -1,0 +1,260 @@
+{"ts": "2026-02-13 14:40:25.127", "stage": "stt_raw", "chars": 3, "text": "you", "meta": {"engine": "openai", "stt_openai_ms": 1669}}
+{"ts": "2026-02-13 14:40:25.131", "stage": "stt_debug_passthrough", "chars": 3, "text": "you", "meta": {"engine": "openai", "stt_openai_ms": 1669}}
+{"ts": "2026-02-13 14:40:25.137", "stage": "sentence_enqueued", "chars": 3, "text": "you", "meta": {"queue_size": 1, "pretranslated": true, "stt_openai_ms": 1669, "translate_openai_ms": null}}
+{"ts": "2026-02-13 14:40:25.140", "stage": "translation_input", "chars": 3, "text": "you", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 14:40:25.141", "stage": "translation_skipped_pretranslated", "chars": 3, "text": "you", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 14:40:25.142", "stage": "translation_output", "chars": 3, "text": "you", "meta": {"translation_enabled": true, "translate_openai_ms": 0}}
+{"ts": "2026-02-13 14:40:25.144", "stage": "display_update_input", "chars": 3, "text": "you", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 14:40:25.147", "stage": "display_chunk_enqueued", "chars": 3, "text": "you", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-13 14:40:25.280", "stage": "display_word_reveal_complete", "chars": 3, "text": "you"}
+{"ts": "2026-02-13 14:40:38.011", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 2182}}
+{"ts": "2026-02-13 14:40:38.013", "stage": "stt_debug_passthrough", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 2182}}
+{"ts": "2026-02-13 14:40:44.157", "stage": "stt_raw", "chars": 20, "text": "Más millonario de...", "meta": {"engine": "openai", "stt_openai_ms": 1008}}
+{"ts": "2026-02-13 14:40:44.164", "stage": "stt_debug_passthrough", "chars": 20, "text": "Más millonario de...", "meta": {"engine": "openai", "stt_openai_ms": 1008}}
+{"ts": "2026-02-13 14:40:44.166", "stage": "sentence_enqueued", "chars": 20, "text": "Más millonario de...", "meta": {"queue_size": 1, "pretranslated": true, "stt_openai_ms": 1008, "translate_openai_ms": null}}
+{"ts": "2026-02-13 14:40:44.167", "stage": "translation_input", "chars": 20, "text": "Más millonario de...", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 14:40:44.170", "stage": "translation_skipped_pretranslated", "chars": 20, "text": "Más millonario de...", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 14:40:44.171", "stage": "translation_output", "chars": 20, "text": "Más millonario de...", "meta": {"translation_enabled": true, "translate_openai_ms": 0}}
+{"ts": "2026-02-13 14:40:44.174", "stage": "display_update_input", "chars": 20, "text": "Más millonario de...", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 14:40:44.176", "stage": "display_chunk_enqueued", "chars": 20, "text": "Más millonario de...", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-13 14:40:44.561", "stage": "display_word_reveal_complete", "chars": 20, "text": "Más millonario de..."}
+{"ts": "2026-02-13 14:40:51.402", "stage": "stt_raw", "chars": 31, "text": "And one of them is a man who...", "meta": {"engine": "openai", "stt_openai_ms": 2053}}
+{"ts": "2026-02-13 14:40:51.410", "stage": "stt_debug_passthrough", "chars": 31, "text": "And one of them is a man who...", "meta": {"engine": "openai", "stt_openai_ms": 2053}}
+{"ts": "2026-02-13 14:40:51.412", "stage": "sentence_enqueued", "chars": 31, "text": "And one of them is a man who...", "meta": {"queue_size": 1, "pretranslated": true, "stt_openai_ms": 2053, "translate_openai_ms": null}}
+{"ts": "2026-02-13 14:40:51.414", "stage": "translation_input", "chars": 31, "text": "And one of them is a man who...", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 14:40:51.417", "stage": "translation_skipped_pretranslated", "chars": 31, "text": "And one of them is a man who...", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 14:40:51.419", "stage": "translation_output", "chars": 31, "text": "And one of them is a man who...", "meta": {"translation_enabled": true, "translate_openai_ms": 0}}
+{"ts": "2026-02-13 14:40:51.421", "stage": "display_update_input", "chars": 31, "text": "And one of them is a man who...", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 14:40:51.424", "stage": "display_chunk_enqueued", "chars": 24, "text": "And one of them is a man", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 14:40:51.426", "stage": "display_chunk_enqueued", "chars": 6, "text": "who...", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 14:40:52.302", "stage": "display_word_reveal_complete", "chars": 24, "text": "And one of them is a man"}
+{"ts": "2026-02-13 14:40:52.424", "stage": "display_word_reveal_complete", "chars": 6, "text": "who..."}
+{"ts": "2026-02-13 14:40:55.047", "stage": "stt_raw", "chars": 42, "text": "Salud con un automóvil que se llama Tesla.", "meta": {"engine": "openai", "stt_openai_ms": 1448}}
+{"ts": "2026-02-13 14:40:55.051", "stage": "stt_debug_passthrough", "chars": 42, "text": "Salud con un automóvil que se llama Tesla.", "meta": {"engine": "openai", "stt_openai_ms": 1448}}
+{"ts": "2026-02-13 14:40:55.054", "stage": "sentence_enqueued", "chars": 42, "text": "Salud con un automóvil que se llama Tesla.", "meta": {"queue_size": 1, "pretranslated": true, "stt_openai_ms": 1448, "translate_openai_ms": null}}
+{"ts": "2026-02-13 14:40:55.056", "stage": "translation_input", "chars": 42, "text": "Salud con un automóvil que se llama Tesla.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 14:40:55.058", "stage": "translation_skipped_pretranslated", "chars": 42, "text": "Salud con un automóvil que se llama Tesla.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 14:40:55.061", "stage": "translation_output", "chars": 42, "text": "Salud con un automóvil que se llama Tesla.", "meta": {"translation_enabled": true, "translate_openai_ms": 0}}
+{"ts": "2026-02-13 14:40:55.063", "stage": "display_update_input", "chars": 42, "text": "Salud con un automóvil que se llama Tesla.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 14:40:55.065", "stage": "display_chunk_enqueued", "chars": 29, "text": "Salud con un automóvil que se", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 14:40:55.067", "stage": "display_chunk_enqueued", "chars": 12, "text": "llama Tesla.", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 14:40:55.808", "stage": "display_word_reveal_complete", "chars": 29, "text": "Salud con un automóvil que se"}
+{"ts": "2026-02-13 14:40:56.059", "stage": "display_word_reveal_complete", "chars": 12, "text": "llama Tesla."}
+{"ts": "2026-02-13 14:40:57.650", "stage": "stt_raw", "chars": 23, "text": "Y el que ira a la luna,", "meta": {"engine": "openai", "stt_openai_ms": 1081}}
+{"ts": "2026-02-13 14:40:57.652", "stage": "stt_debug_passthrough", "chars": 23, "text": "Y el que ira a la luna,", "meta": {"engine": "openai", "stt_openai_ms": 1081}}
+{"ts": "2026-02-13 14:40:57.655", "stage": "sentence_enqueued", "chars": 23, "text": "Y el que ira a la luna,", "meta": {"queue_size": 1, "pretranslated": true, "stt_openai_ms": 1081, "translate_openai_ms": null}}
+{"ts": "2026-02-13 14:40:57.658", "stage": "translation_input", "chars": 23, "text": "Y el que ira a la luna,", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 14:40:57.659", "stage": "translation_skipped_pretranslated", "chars": 23, "text": "Y el que ira a la luna,", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 14:40:57.662", "stage": "translation_output", "chars": 23, "text": "Y el que ira a la luna,", "meta": {"translation_enabled": true, "translate_openai_ms": 0}}
+{"ts": "2026-02-13 14:40:57.665", "stage": "display_update_input", "chars": 23, "text": "Y el que ira a la luna,", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 14:40:57.667", "stage": "display_chunk_enqueued", "chars": 23, "text": "Y el que ira a la luna,", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-13 14:40:58.530", "stage": "display_word_reveal_complete", "chars": 23, "text": "Y el que ira a la luna,"}
+{"ts": "2026-02-13 14:41:01.052", "stage": "stt_raw", "chars": 30, "text": "Quiero ir al espacio, a Marte.", "meta": {"engine": "openai", "stt_openai_ms": 1563}}
+{"ts": "2026-02-13 14:41:01.055", "stage": "stt_debug_passthrough", "chars": 30, "text": "Quiero ir al espacio, a Marte.", "meta": {"engine": "openai", "stt_openai_ms": 1563}}
+{"ts": "2026-02-13 14:41:01.058", "stage": "sentence_enqueued", "chars": 30, "text": "Quiero ir al espacio, a Marte.", "meta": {"queue_size": 1, "pretranslated": true, "stt_openai_ms": 1563, "translate_openai_ms": null}}
+{"ts": "2026-02-13 14:41:01.060", "stage": "translation_input", "chars": 30, "text": "Quiero ir al espacio, a Marte.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 14:41:01.063", "stage": "translation_skipped_pretranslated", "chars": 30, "text": "Quiero ir al espacio, a Marte.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 14:41:01.065", "stage": "translation_output", "chars": 30, "text": "Quiero ir al espacio, a Marte.", "meta": {"translation_enabled": true, "translate_openai_ms": 0}}
+{"ts": "2026-02-13 14:41:01.068", "stage": "display_update_input", "chars": 30, "text": "Quiero ir al espacio, a Marte.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 14:41:01.070", "stage": "display_chunk_enqueued", "chars": 30, "text": "Quiero ir al espacio, a Marte.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-13 14:41:01.815", "stage": "display_word_reveal_complete", "chars": 30, "text": "Quiero ir al espacio, a Marte."}
+{"ts": "2026-02-13 14:41:02.954", "stage": "stt_raw", "chars": 67, "text": "I don't know if I'm going to be able to get to all of those places.", "meta": {"engine": "openai", "stt_openai_ms": 835}}
+{"ts": "2026-02-13 14:41:02.958", "stage": "stt_debug_passthrough", "chars": 67, "text": "I don't know if I'm going to be able to get to all of those places.", "meta": {"engine": "openai", "stt_openai_ms": 835}}
+{"ts": "2026-02-13 14:41:02.961", "stage": "sentence_enqueued", "chars": 67, "text": "I don't know if I'm going to be able to get to all of those places.", "meta": {"queue_size": 1, "pretranslated": true, "stt_openai_ms": 835, "translate_openai_ms": null}}
+{"ts": "2026-02-13 14:41:02.963", "stage": "translation_input", "chars": 67, "text": "I don't know if I'm going to be able to get to all of those places.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 14:41:02.965", "stage": "translation_skipped_pretranslated", "chars": 67, "text": "I don't know if I'm going to be able to get to all of those places.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 14:41:02.968", "stage": "translation_output", "chars": 67, "text": "I don't know if I'm going to be able to get to all of those places.", "meta": {"translation_enabled": true, "translate_openai_ms": 0}}
+{"ts": "2026-02-13 14:41:02.971", "stage": "display_update_input", "chars": 67, "text": "I don't know if I'm going to be able to get to all of those places.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 14:41:02.973", "stage": "display_chunk_enqueued", "chars": 28, "text": "I don't know if I'm going to", "meta": {"chunk_index": 0, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 14:41:02.975", "stage": "display_chunk_enqueued", "chars": 30, "text": "be able to get to all of those", "meta": {"chunk_index": 1, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 14:41:02.977", "stage": "display_chunk_enqueued", "chars": 7, "text": "places.", "meta": {"chunk_index": 2, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 14:41:03.856", "stage": "display_word_reveal_complete", "chars": 28, "text": "I don't know if I'm going to"}
+{"ts": "2026-02-13 14:41:04.856", "stage": "display_word_reveal_complete", "chars": 30, "text": "be able to get to all of those"}
+{"ts": "2026-02-13 14:41:04.980", "stage": "display_word_reveal_complete", "chars": 7, "text": "places."}
+{"ts": "2026-02-13 14:41:09.565", "stage": "stt_raw", "chars": 7, "text": "I can't", "meta": {"engine": "openai", "stt_openai_ms": 875}}
+{"ts": "2026-02-13 14:41:09.567", "stage": "stt_debug_passthrough", "chars": 7, "text": "I can't", "meta": {"engine": "openai", "stt_openai_ms": 875}}
+{"ts": "2026-02-13 14:41:09.569", "stage": "sentence_enqueued", "chars": 7, "text": "I can't", "meta": {"queue_size": 1, "pretranslated": true, "stt_openai_ms": 875, "translate_openai_ms": null}}
+{"ts": "2026-02-13 14:41:09.571", "stage": "translation_input", "chars": 7, "text": "I can't", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 14:41:09.576", "stage": "translation_skipped_pretranslated", "chars": 7, "text": "I can't", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 14:41:09.578", "stage": "translation_output", "chars": 7, "text": "I can't", "meta": {"translation_enabled": true, "translate_openai_ms": 0}}
+{"ts": "2026-02-13 14:41:09.581", "stage": "display_update_input", "chars": 7, "text": "I can't", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 14:41:09.583", "stage": "display_chunk_enqueued", "chars": 7, "text": "I can't", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-13 14:41:09.838", "stage": "display_word_reveal_complete", "chars": 7, "text": "I can't"}
+{"ts": "2026-02-13 14:41:15.366", "stage": "stt_raw", "chars": 32, "text": "La mente de ellos es el billete.", "meta": {"engine": "openai", "stt_openai_ms": 2616}}
+{"ts": "2026-02-13 14:41:15.369", "stage": "stt_debug_passthrough", "chars": 32, "text": "La mente de ellos es el billete.", "meta": {"engine": "openai", "stt_openai_ms": 2616}}
+{"ts": "2026-02-13 14:41:15.373", "stage": "sentence_enqueued", "chars": 32, "text": "La mente de ellos es el billete.", "meta": {"queue_size": 1, "pretranslated": true, "stt_openai_ms": 2616, "translate_openai_ms": null}}
+{"ts": "2026-02-13 14:41:15.375", "stage": "translation_input", "chars": 32, "text": "La mente de ellos es el billete.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 14:41:15.380", "stage": "translation_skipped_pretranslated", "chars": 32, "text": "La mente de ellos es el billete.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 14:41:15.383", "stage": "translation_output", "chars": 32, "text": "La mente de ellos es el billete.", "meta": {"translation_enabled": true, "translate_openai_ms": 0}}
+{"ts": "2026-02-13 14:41:15.387", "stage": "display_update_input", "chars": 32, "text": "La mente de ellos es el billete.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 14:41:15.388", "stage": "display_chunk_enqueued", "chars": 23, "text": "La mente de ellos es el", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 14:41:15.392", "stage": "display_chunk_enqueued", "chars": 8, "text": "billete.", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 14:41:15.942", "stage": "stt_raw", "chars": 8, "text": "the net.", "meta": {"engine": "openai", "stt_openai_ms": 563}}
+{"ts": "2026-02-13 14:41:15.944", "stage": "stt_debug_passthrough", "chars": 8, "text": "the net.", "meta": {"engine": "openai", "stt_openai_ms": 563}}
+{"ts": "2026-02-13 14:41:15.947", "stage": "sentence_enqueued", "chars": 8, "text": "the net.", "meta": {"queue_size": 1, "pretranslated": true, "stt_openai_ms": 563, "translate_openai_ms": null}}
+{"ts": "2026-02-13 14:41:15.950", "stage": "translation_input", "chars": 8, "text": "the net.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 14:41:15.953", "stage": "translation_skipped_pretranslated", "chars": 8, "text": "the net.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 14:41:15.956", "stage": "translation_output", "chars": 8, "text": "the net.", "meta": {"translation_enabled": true, "translate_openai_ms": 0}}
+{"ts": "2026-02-13 14:41:15.958", "stage": "display_update_input", "chars": 8, "text": "the net.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 14:41:15.962", "stage": "display_chunk_enqueued", "chars": 8, "text": "the net.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-13 14:41:16.155", "stage": "display_word_reveal_complete", "chars": 23, "text": "La mente de ellos es el"}
+{"ts": "2026-02-13 14:41:16.294", "stage": "display_word_reveal_complete", "chars": 8, "text": "billete."}
+{"ts": "2026-02-13 14:41:16.578", "stage": "display_word_reveal_complete", "chars": 8, "text": "the net."}
+{"ts": "2026-02-13 14:41:19.515", "stage": "stt_raw", "chars": 35, "text": "So the writing that we read here...", "meta": {"engine": "openai", "stt_openai_ms": 844}}
+{"ts": "2026-02-13 14:41:19.519", "stage": "stt_debug_passthrough", "chars": 35, "text": "So the writing that we read here...", "meta": {"engine": "openai", "stt_openai_ms": 844}}
+{"ts": "2026-02-13 14:41:19.521", "stage": "sentence_enqueued", "chars": 35, "text": "So the writing that we read here...", "meta": {"queue_size": 1, "pretranslated": true, "stt_openai_ms": 844, "translate_openai_ms": null}}
+{"ts": "2026-02-13 14:41:19.523", "stage": "translation_input", "chars": 35, "text": "So the writing that we read here...", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 14:41:19.527", "stage": "translation_skipped_pretranslated", "chars": 35, "text": "So the writing that we read here...", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 14:41:19.530", "stage": "translation_output", "chars": 35, "text": "So the writing that we read here...", "meta": {"translation_enabled": true, "translate_openai_ms": 0}}
+{"ts": "2026-02-13 14:41:19.533", "stage": "display_update_input", "chars": 35, "text": "So the writing that we read here...", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 14:41:19.536", "stage": "display_chunk_enqueued", "chars": 27, "text": "So the writing that we read", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 14:41:19.538", "stage": "display_chunk_enqueued", "chars": 7, "text": "here...", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 14:41:20.347", "stage": "display_word_reveal_complete", "chars": 27, "text": "So the writing that we read"}
+{"ts": "2026-02-13 14:41:20.481", "stage": "display_word_reveal_complete", "chars": 7, "text": "here..."}
+{"ts": "2026-02-13 14:41:22.670", "stage": "stt_raw", "chars": 30, "text": "¡Pero los que son de la carne!", "meta": {"engine": "openai", "stt_openai_ms": 889}}
+{"ts": "2026-02-13 14:41:22.674", "stage": "stt_debug_passthrough", "chars": 30, "text": "¡Pero los que son de la carne!", "meta": {"engine": "openai", "stt_openai_ms": 889}}
+{"ts": "2026-02-13 14:41:22.677", "stage": "sentence_enqueued", "chars": 30, "text": "¡Pero los que son de la carne!", "meta": {"queue_size": 1, "pretranslated": true, "stt_openai_ms": 889, "translate_openai_ms": null}}
+{"ts": "2026-02-13 14:41:22.680", "stage": "translation_input", "chars": 30, "text": "¡Pero los que son de la carne!", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 14:41:22.685", "stage": "translation_skipped_pretranslated", "chars": 30, "text": "¡Pero los que son de la carne!", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 14:41:22.688", "stage": "translation_output", "chars": 30, "text": "¡Pero los que son de la carne!", "meta": {"translation_enabled": true, "translate_openai_ms": 0}}
+{"ts": "2026-02-13 14:41:22.691", "stage": "display_update_input", "chars": 30, "text": "¡Pero los que son de la carne!", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 14:41:22.694", "stage": "display_chunk_enqueued", "chars": 30, "text": "¡Pero los que son de la carne!", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-13 14:41:23.646", "stage": "display_word_reveal_complete", "chars": 30, "text": "¡Pero los que son de la carne!"}
+{"ts": "2026-02-13 14:41:28.141", "stage": "stt_raw", "chars": 939, "text": "Piensan en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las", "meta": {"engine": "openai", "stt_openai_ms": 4058}}
+{"ts": "2026-02-13 14:41:28.143", "stage": "stt_debug_passthrough", "chars": 939, "text": "Piensan en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las", "meta": {"engine": "openai", "stt_openai_ms": 4058}}
+{"ts": "2026-02-13 14:41:28.146", "stage": "sentence_enqueued", "chars": 939, "text": "Piensan en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las", "meta": {"queue_size": 1, "pretranslated": true, "stt_openai_ms": 4058, "translate_openai_ms": null}}
+{"ts": "2026-02-13 14:41:28.149", "stage": "translation_input", "chars": 939, "text": "Piensan en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 14:41:28.153", "stage": "translation_skipped_pretranslated", "chars": 939, "text": "Piensan en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 14:41:28.156", "stage": "translation_output", "chars": 939, "text": "Piensan en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las", "meta": {"translation_enabled": true, "translate_openai_ms": 0}}
+{"ts": "2026-02-13 14:41:28.159", "stage": "display_update_input", "chars": 939, "text": "Piensan en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las cosas que no se pueden pensar en las", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 14:41:28.163", "stage": "display_chunk_enqueued", "chars": 30, "text": "Piensan en las cosas que no se", "meta": {"chunk_index": 0, "chunk_count": 32, "word_by_word": true}}
+{"ts": "2026-02-13 14:41:28.166", "stage": "display_chunk_enqueued", "chars": 30, "text": "pueden pensar en las cosas que", "meta": {"chunk_index": 1, "chunk_count": 32, "word_by_word": true}}
+{"ts": "2026-02-13 14:41:28.168", "stage": "display_chunk_enqueued", "chars": 26, "text": "no se pueden pensar en las", "meta": {"chunk_index": 2, "chunk_count": 32, "word_by_word": true}}
+{"ts": "2026-02-13 14:41:28.171", "stage": "display_chunk_enqueued", "chars": 29, "text": "cosas que no se pueden pensar", "meta": {"chunk_index": 3, "chunk_count": 32, "word_by_word": true}}
+{"ts": "2026-02-13 14:41:28.176", "stage": "display_chunk_enqueued", "chars": 29, "text": "en las cosas que no se pueden", "meta": {"chunk_index": 4, "chunk_count": 32, "word_by_word": true}}
+{"ts": "2026-02-13 14:41:28.178", "stage": "display_chunk_enqueued", "chars": 29, "text": "pensar en las cosas que no se", "meta": {"chunk_index": 5, "chunk_count": 32, "word_by_word": true}}
+{"ts": "2026-02-13 14:41:28.181", "stage": "display_chunk_enqueued", "chars": 30, "text": "pueden pensar en las cosas que", "meta": {"chunk_index": 6, "chunk_count": 32, "word_by_word": true}}
+{"ts": "2026-02-13 14:41:28.183", "stage": "display_chunk_enqueued", "chars": 26, "text": "no se pueden pensar en las", "meta": {"chunk_index": 7, "chunk_count": 32, "word_by_word": true}}
+{"ts": "2026-02-13 14:41:28.186", "stage": "display_chunk_enqueued", "chars": 29, "text": "cosas que no se pueden pensar", "meta": {"chunk_index": 8, "chunk_count": 32, "word_by_word": true}}
+{"ts": "2026-02-13 14:41:28.189", "stage": "display_chunk_enqueued", "chars": 29, "text": "en las cosas que no se pueden", "meta": {"chunk_index": 9, "chunk_count": 32, "word_by_word": true}}
+{"ts": "2026-02-13 14:41:28.193", "stage": "display_chunk_enqueued", "chars": 29, "text": "pensar en las cosas que no se", "meta": {"chunk_index": 10, "chunk_count": 32, "word_by_word": true}}
+{"ts": "2026-02-13 14:41:28.196", "stage": "display_chunk_enqueued", "chars": 30, "text": "pueden pensar en las cosas que", "meta": {"chunk_index": 11, "chunk_count": 32, "word_by_word": true}}
+{"ts": "2026-02-13 14:41:28.199", "stage": "display_chunk_enqueued", "chars": 26, "text": "no se pueden pensar en las", "meta": {"chunk_index": 12, "chunk_count": 32, "word_by_word": true}}
+{"ts": "2026-02-13 14:41:28.202", "stage": "display_chunk_enqueued", "chars": 29, "text": "cosas que no se pueden pensar", "meta": {"chunk_index": 13, "chunk_count": 32, "word_by_word": true}}
+{"ts": "2026-02-13 14:41:28.206", "stage": "display_chunk_enqueued", "chars": 29, "text": "en las cosas que no se pueden", "meta": {"chunk_index": 14, "chunk_count": 32, "word_by_word": true}}
+{"ts": "2026-02-13 14:41:28.209", "stage": "display_chunk_enqueued", "chars": 29, "text": "pensar en las cosas que no se", "meta": {"chunk_index": 15, "chunk_count": 32, "word_by_word": true}}
+{"ts": "2026-02-13 14:41:28.212", "stage": "display_chunk_enqueued", "chars": 30, "text": "pueden pensar en las cosas que", "meta": {"chunk_index": 16, "chunk_count": 32, "word_by_word": true}}
+{"ts": "2026-02-13 14:41:28.214", "stage": "display_chunk_enqueued", "chars": 26, "text": "no se pueden pensar en las", "meta": {"chunk_index": 17, "chunk_count": 32, "word_by_word": true}}
+{"ts": "2026-02-13 14:41:28.217", "stage": "display_chunk_enqueued", "chars": 29, "text": "cosas que no se pueden pensar", "meta": {"chunk_index": 18, "chunk_count": 32, "word_by_word": true}}
+{"ts": "2026-02-13 14:41:28.220", "stage": "display_chunk_enqueued", "chars": 29, "text": "en las cosas que no se pueden", "meta": {"chunk_index": 19, "chunk_count": 32, "word_by_word": true}}
+{"ts": "2026-02-13 14:41:28.223", "stage": "display_chunk_enqueued", "chars": 29, "text": "pensar en las cosas que no se", "meta": {"chunk_index": 20, "chunk_count": 32, "word_by_word": true}}
+{"ts": "2026-02-13 14:41:28.226", "stage": "display_chunk_enqueued", "chars": 30, "text": "pueden pensar en las cosas que", "meta": {"chunk_index": 21, "chunk_count": 32, "word_by_word": true}}
+{"ts": "2026-02-13 14:41:28.229", "stage": "display_chunk_enqueued", "chars": 26, "text": "no se pueden pensar en las", "meta": {"chunk_index": 22, "chunk_count": 32, "word_by_word": true}}
+{"ts": "2026-02-13 14:41:28.233", "stage": "display_chunk_enqueued", "chars": 29, "text": "cosas que no se pueden pensar", "meta": {"chunk_index": 23, "chunk_count": 32, "word_by_word": true}}
+{"ts": "2026-02-13 14:41:28.236", "stage": "display_chunk_enqueued", "chars": 29, "text": "en las cosas que no se pueden", "meta": {"chunk_index": 24, "chunk_count": 32, "word_by_word": true}}
+{"ts": "2026-02-13 14:41:28.239", "stage": "display_chunk_enqueued", "chars": 29, "text": "pensar en las cosas que no se", "meta": {"chunk_index": 25, "chunk_count": 32, "word_by_word": true}}
+{"ts": "2026-02-13 14:41:28.242", "stage": "display_chunk_enqueued", "chars": 30, "text": "pueden pensar en las cosas que", "meta": {"chunk_index": 26, "chunk_count": 32, "word_by_word": true}}
+{"ts": "2026-02-13 14:41:28.245", "stage": "display_chunk_enqueued", "chars": 26, "text": "no se pueden pensar en las", "meta": {"chunk_index": 27, "chunk_count": 32, "word_by_word": true}}
+{"ts": "2026-02-13 14:41:28.248", "stage": "display_chunk_enqueued", "chars": 29, "text": "cosas que no se pueden pensar", "meta": {"chunk_index": 28, "chunk_count": 32, "word_by_word": true}}
+{"ts": "2026-02-13 14:41:28.251", "stage": "display_chunk_enqueued", "chars": 29, "text": "en las cosas que no se pueden", "meta": {"chunk_index": 29, "chunk_count": 32, "word_by_word": true}}
+{"ts": "2026-02-13 14:41:28.254", "stage": "display_chunk_enqueued", "chars": 29, "text": "pensar en las cosas que no se", "meta": {"chunk_index": 30, "chunk_count": 32, "word_by_word": true}}
+{"ts": "2026-02-13 14:41:28.256", "stage": "display_chunk_enqueued", "chars": 20, "text": "pueden pensar en las", "meta": {"chunk_index": 31, "chunk_count": 32, "word_by_word": true}}
+{"ts": "2026-02-13 14:41:29.189", "stage": "display_word_reveal_complete", "chars": 30, "text": "Piensan en las cosas que no se"}
+{"ts": "2026-02-13 14:41:30.007", "stage": "display_word_reveal_complete", "chars": 30, "text": "pueden pensar en las cosas que"}
+{"ts": "2026-02-13 14:41:30.617", "stage": "stt_raw", "chars": 41, "text": "Cuando leí esa parte, pero los que son...", "meta": {"engine": "openai", "stt_openai_ms": 847}}
+{"ts": "2026-02-13 14:41:30.621", "stage": "stt_debug_passthrough", "chars": 41, "text": "Cuando leí esa parte, pero los que son...", "meta": {"engine": "openai", "stt_openai_ms": 847}}
+{"ts": "2026-02-13 14:41:30.623", "stage": "sentence_enqueued", "chars": 41, "text": "Cuando leí esa parte, pero los que son...", "meta": {"queue_size": 1, "pretranslated": true, "stt_openai_ms": 847, "translate_openai_ms": null}}
+{"ts": "2026-02-13 14:41:30.625", "stage": "translation_input", "chars": 41, "text": "Cuando leí esa parte, pero los que son...", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 14:41:30.630", "stage": "translation_skipped_pretranslated", "chars": 41, "text": "Cuando leí esa parte, pero los que son...", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 14:41:30.633", "stage": "translation_output", "chars": 41, "text": "Cuando leí esa parte, pero los que son...", "meta": {"translation_enabled": true, "translate_openai_ms": 0}}
+{"ts": "2026-02-13 14:41:30.636", "stage": "display_update_input", "chars": 41, "text": "Cuando leí esa parte, pero los que son...", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 14:41:30.641", "stage": "display_chunk_enqueued", "chars": 30, "text": "Cuando leí esa parte, pero los", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 14:41:30.645", "stage": "display_chunk_enqueued", "chars": 10, "text": "que son...", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 14:41:30.781", "stage": "display_word_reveal_complete", "chars": 26, "text": "no se pueden pensar en las"}
+{"ts": "2026-02-13 14:41:31.534", "stage": "display_word_reveal_complete", "chars": 29, "text": "cosas que no se pueden pensar"}
+{"ts": "2026-02-13 14:41:32.468", "stage": "display_word_reveal_complete", "chars": 29, "text": "en las cosas que no se pueden"}
+{"ts": "2026-02-13 14:41:33.074", "stage": "stt_raw", "chars": 16, "text": "Not necessarily.", "meta": {"engine": "openai", "stt_openai_ms": 583}}
+{"ts": "2026-02-13 14:41:33.078", "stage": "stt_debug_passthrough", "chars": 16, "text": "Not necessarily.", "meta": {"engine": "openai", "stt_openai_ms": 583}}
+{"ts": "2026-02-13 14:41:33.081", "stage": "sentence_enqueued", "chars": 16, "text": "Not necessarily.", "meta": {"queue_size": 1, "pretranslated": true, "stt_openai_ms": 583, "translate_openai_ms": null}}
+{"ts": "2026-02-13 14:41:33.083", "stage": "translation_input", "chars": 16, "text": "Not necessarily.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 14:41:33.086", "stage": "translation_skipped_pretranslated", "chars": 16, "text": "Not necessarily.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 14:41:33.089", "stage": "translation_output", "chars": 16, "text": "Not necessarily.", "meta": {"translation_enabled": true, "translate_openai_ms": 0}}
+{"ts": "2026-02-13 14:41:33.093", "stage": "display_update_input", "chars": 16, "text": "Not necessarily.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 14:41:33.096", "stage": "display_chunk_enqueued", "chars": 16, "text": "Not necessarily.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-13 14:41:33.371", "stage": "display_word_reveal_complete", "chars": 29, "text": "pensar en las cosas que no se"}
+{"ts": "2026-02-13 14:41:34.119", "stage": "display_word_reveal_complete", "chars": 30, "text": "pueden pensar en las cosas que"}
+{"ts": "2026-02-13 14:41:34.911", "stage": "display_word_reveal_complete", "chars": 26, "text": "no se pueden pensar en las"}
+{"ts": "2026-02-13 14:41:35.690", "stage": "display_word_reveal_complete", "chars": 29, "text": "cosas que no se pueden pensar"}
+{"ts": "2026-02-13 14:41:35.757", "stage": "stt_raw", "chars": 11, "text": "Christians?", "meta": {"engine": "openai", "stt_openai_ms": 647}}
+{"ts": "2026-02-13 14:41:35.762", "stage": "stt_debug_passthrough", "chars": 11, "text": "Christians?", "meta": {"engine": "openai", "stt_openai_ms": 647}}
+{"ts": "2026-02-13 14:41:35.766", "stage": "sentence_enqueued", "chars": 11, "text": "Christians?", "meta": {"queue_size": 1, "pretranslated": true, "stt_openai_ms": 647, "translate_openai_ms": null}}
+{"ts": "2026-02-13 14:41:35.768", "stage": "translation_input", "chars": 11, "text": "Christians?", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 14:41:35.773", "stage": "translation_skipped_pretranslated", "chars": 11, "text": "Christians?", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 14:41:35.779", "stage": "translation_output", "chars": 11, "text": "Christians?", "meta": {"translation_enabled": true, "translate_openai_ms": 0}}
+{"ts": "2026-02-13 14:41:35.783", "stage": "display_update_input", "chars": 11, "text": "Christians?", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 14:41:35.787", "stage": "display_chunk_enqueued", "chars": 11, "text": "Christians?", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-13 14:41:36.578", "stage": "display_word_reveal_complete", "chars": 29, "text": "en las cosas que no se pueden"}
+{"ts": "2026-02-13 14:41:37.468", "stage": "display_word_reveal_complete", "chars": 29, "text": "pensar en las cosas que no se"}
+{"ts": "2026-02-13 14:41:38.260", "stage": "display_word_reveal_complete", "chars": 30, "text": "pueden pensar en las cosas que"}
+{"ts": "2026-02-13 14:41:39.020", "stage": "display_word_reveal_complete", "chars": 26, "text": "no se pueden pensar en las"}
+{"ts": "2026-02-13 14:41:39.813", "stage": "display_word_reveal_complete", "chars": 29, "text": "cosas que no se pueden pensar"}
+{"ts": "2026-02-13 14:41:40.749", "stage": "display_word_reveal_complete", "chars": 29, "text": "en las cosas que no se pueden"}
+{"ts": "2026-02-13 14:41:41.508", "stage": "stt_raw", "chars": 24, "text": "But how can we say that?", "meta": {"engine": "openai", "stt_openai_ms": 1676}}
+{"ts": "2026-02-13 14:41:41.511", "stage": "stt_debug_passthrough", "chars": 24, "text": "But how can we say that?", "meta": {"engine": "openai", "stt_openai_ms": 1676}}
+{"ts": "2026-02-13 14:41:41.515", "stage": "sentence_enqueued", "chars": 24, "text": "But how can we say that?", "meta": {"queue_size": 1, "pretranslated": true, "stt_openai_ms": 1676, "translate_openai_ms": null}}
+{"ts": "2026-02-13 14:41:41.518", "stage": "translation_input", "chars": 24, "text": "But how can we say that?", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 14:41:41.524", "stage": "translation_skipped_pretranslated", "chars": 24, "text": "But how can we say that?", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 14:41:41.528", "stage": "translation_output", "chars": 24, "text": "But how can we say that?", "meta": {"translation_enabled": true, "translate_openai_ms": 0}}
+{"ts": "2026-02-13 14:41:41.615", "stage": "display_update_input", "chars": 24, "text": "But how can we say that?", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 14:41:41.618", "stage": "display_chunk_enqueued", "chars": 24, "text": "But how can we say that?", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-13 14:41:41.698", "stage": "display_word_reveal_complete", "chars": 29, "text": "pensar en las cosas que no se"}
+{"ts": "2026-02-13 14:41:42.546", "stage": "display_word_reveal_complete", "chars": 30, "text": "pueden pensar en las cosas que"}
+{"ts": "2026-02-13 14:41:43.411", "stage": "display_word_reveal_complete", "chars": 26, "text": "no se pueden pensar en las"}
+{"ts": "2026-02-13 14:41:44.046", "stage": "stt_raw", "chars": 16, "text": "¡Hay cristianos!", "meta": {"engine": "openai", "stt_openai_ms": 805}}
+{"ts": "2026-02-13 14:41:44.050", "stage": "stt_debug_passthrough", "chars": 16, "text": "¡Hay cristianos!", "meta": {"engine": "openai", "stt_openai_ms": 805}}
+{"ts": "2026-02-13 14:41:44.054", "stage": "sentence_enqueued", "chars": 16, "text": "¡Hay cristianos!", "meta": {"queue_size": 1, "pretranslated": true, "stt_openai_ms": 805, "translate_openai_ms": null}}
+{"ts": "2026-02-13 14:41:44.057", "stage": "translation_input", "chars": 16, "text": "¡Hay cristianos!", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 14:41:44.062", "stage": "translation_skipped_pretranslated", "chars": 16, "text": "¡Hay cristianos!", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 14:41:44.065", "stage": "translation_output", "chars": 16, "text": "¡Hay cristianos!", "meta": {"translation_enabled": true, "translate_openai_ms": 0}}
+{"ts": "2026-02-13 14:41:44.069", "stage": "display_update_input", "chars": 16, "text": "¡Hay cristianos!", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 14:41:44.072", "stage": "display_chunk_enqueued", "chars": 16, "text": "¡Hay cristianos!", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-13 14:41:44.326", "stage": "display_word_reveal_complete", "chars": 29, "text": "cosas que no se pueden pensar"}
+{"ts": "2026-02-13 14:41:45.201", "stage": "display_word_reveal_complete", "chars": 29, "text": "en las cosas que no se pueden"}
+{"ts": "2026-02-13 14:41:46.076", "stage": "display_word_reveal_complete", "chars": 29, "text": "pensar en las cosas que no se"}
+{"ts": "2026-02-13 14:41:46.841", "stage": "display_word_reveal_complete", "chars": 30, "text": "pueden pensar en las cosas que"}
+{"ts": "2026-02-13 14:41:47.618", "stage": "display_word_reveal_complete", "chars": 26, "text": "no se pueden pensar en las"}
+{"ts": "2026-02-13 14:41:48.094", "stage": "stt_raw", "chars": 43, "text": "que son cristianos, pero su mente es débil.", "meta": {"engine": "openai", "stt_openai_ms": 721}}
+{"ts": "2026-02-13 14:41:48.097", "stage": "stt_debug_passthrough", "chars": 43, "text": "que son cristianos, pero su mente es débil.", "meta": {"engine": "openai", "stt_openai_ms": 721}}
+{"ts": "2026-02-13 14:41:48.101", "stage": "sentence_enqueued", "chars": 43, "text": "que son cristianos, pero su mente es débil.", "meta": {"queue_size": 1, "pretranslated": true, "stt_openai_ms": 721, "translate_openai_ms": null}}
+{"ts": "2026-02-13 14:41:48.105", "stage": "translation_input", "chars": 43, "text": "que son cristianos, pero su mente es débil.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 14:41:48.110", "stage": "translation_skipped_pretranslated", "chars": 43, "text": "que son cristianos, pero su mente es débil.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 14:41:48.113", "stage": "translation_output", "chars": 43, "text": "que son cristianos, pero su mente es débil.", "meta": {"translation_enabled": true, "translate_openai_ms": 0}}
+{"ts": "2026-02-13 14:41:48.117", "stage": "display_update_input", "chars": 43, "text": "que son cristianos, pero su mente es débil.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 14:41:48.121", "stage": "display_chunk_enqueued", "chars": 27, "text": "que son cristianos, pero su", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 14:41:48.124", "stage": "display_chunk_enqueued", "chars": 15, "text": "mente es débil.", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 14:41:48.438", "stage": "display_word_reveal_complete", "chars": 29, "text": "cosas que no se pueden pensar"}
+{"ts": "2026-02-13 14:41:49.466", "stage": "display_word_reveal_complete", "chars": 29, "text": "en las cosas que no se pueden"}
+{"ts": "2026-02-13 14:41:50.462", "stage": "display_word_reveal_complete", "chars": 29, "text": "pensar en las cosas que no se"}
+{"ts": "2026-02-13 14:41:51.267", "stage": "display_word_reveal_complete", "chars": 30, "text": "pueden pensar en las cosas que"}
+{"ts": "2026-02-13 14:41:52.052", "stage": "display_word_reveal_complete", "chars": 26, "text": "no se pueden pensar en las"}
+{"ts": "2026-02-13 14:41:52.110", "stage": "stt_raw", "chars": 42, "text": "And when it comes to a Christian person...", "meta": {"engine": "openai", "stt_openai_ms": 527}}
+{"ts": "2026-02-13 14:41:52.113", "stage": "stt_debug_passthrough", "chars": 42, "text": "And when it comes to a Christian person...", "meta": {"engine": "openai", "stt_openai_ms": 527}}
+{"ts": "2026-02-13 14:41:52.117", "stage": "sentence_enqueued", "chars": 42, "text": "And when it comes to a Christian person...", "meta": {"queue_size": 1, "pretranslated": true, "stt_openai_ms": 527, "translate_openai_ms": null}}
+{"ts": "2026-02-13 14:41:52.119", "stage": "translation_input", "chars": 42, "text": "And when it comes to a Christian person...", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 14:41:52.124", "stage": "translation_skipped_pretranslated", "chars": 42, "text": "And when it comes to a Christian person...", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 14:41:52.127", "stage": "translation_output", "chars": 42, "text": "And when it comes to a Christian person...", "meta": {"translation_enabled": true, "translate_openai_ms": 0}}
+{"ts": "2026-02-13 14:41:52.132", "stage": "display_update_input", "chars": 42, "text": "And when it comes to a Christian person...", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 14:41:52.137", "stage": "display_chunk_enqueued", "chars": 22, "text": "And when it comes to a", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 14:41:52.141", "stage": "display_chunk_enqueued", "chars": 19, "text": "Christian person...", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 14:41:52.859", "stage": "display_word_reveal_complete", "chars": 29, "text": "cosas que no se pueden pensar"}
+{"ts": "2026-02-13 14:41:54.044", "stage": "display_word_reveal_complete", "chars": 29, "text": "en las cosas que no se pueden"}
+{"ts": "2026-02-13 14:41:54.175", "stage": "stt_raw", "chars": 24, "text": "to a spiritual weakness.", "meta": {"engine": "openai", "stt_openai_ms": 462}}
+{"ts": "2026-02-13 14:41:54.179", "stage": "stt_debug_passthrough", "chars": 24, "text": "to a spiritual weakness.", "meta": {"engine": "openai", "stt_openai_ms": 462}}
+{"ts": "2026-02-13 14:41:54.183", "stage": "sentence_enqueued", "chars": 24, "text": "to a spiritual weakness.", "meta": {"queue_size": 1, "pretranslated": true, "stt_openai_ms": 462, "translate_openai_ms": null}}
+{"ts": "2026-02-13 14:41:54.186", "stage": "translation_input", "chars": 24, "text": "to a spiritual weakness.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 14:41:54.192", "stage": "translation_skipped_pretranslated", "chars": 24, "text": "to a spiritual weakness.", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 14:41:54.197", "stage": "translation_output", "chars": 24, "text": "to a spiritual weakness.", "meta": {"translation_enabled": true, "translate_openai_ms": 0}}
+{"ts": "2026-02-13 14:41:54.202", "stage": "display_update_input", "chars": 24, "text": "to a spiritual weakness.", "meta": {"word_by_word": true}}
+{"ts": "2026-02-13 14:41:54.206", "stage": "display_chunk_enqueued", "chars": 24, "text": "to a spiritual weakness.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-13 14:41:55.307", "stage": "display_word_reveal_complete", "chars": 29, "text": "pensar en las cosas que no se"}
+{"ts": "2026-02-13 14:41:55.877", "stage": "display_word_reveal_complete", "chars": 20, "text": "pueden pensar en las"}
