@@ -1,0 +1,202 @@
+{"ts": "2026-02-13 17:21:27.776", "stage": "stt_raw", "chars": 24, "text": "Thank you for listening.", "meta": {"engine": "openai", "stt_openai_ms": 1261}}
+{"ts": "2026-02-13 17:21:27.779", "stage": "stt_sanitized", "chars": 24, "text": "Thank you for listening.", "meta": {"engine": "openai", "stt_openai_ms": 1261}}
+{"ts": "2026-02-13 17:21:27.788", "stage": "stt_boundary_trim_bypassed", "chars": 24, "text": "Thank you for listening.", "meta": {"loopback": false}}
+{"ts": "2026-02-13 17:21:27.792", "stage": "sentence_enqueued", "chars": 24, "text": "Thank you for listening.", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 1261, "translate_openai_ms": null}}
+{"ts": "2026-02-13 17:21:27.795", "stage": "translation_input", "chars": 24, "text": "Thank you for listening.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 17:21:27.800", "stage": "translation_cleanup_bypassed", "chars": 24, "text": "Thank you for listening.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 17:21:27.804", "stage": "translation_output", "chars": 24, "text": "Thank you for listening.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 17:21:27.808", "stage": "display_update_input", "chars": 24, "text": "Thank you for listening.", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 17:21:27.813", "stage": "display_chunk_enqueued", "chars": 24, "text": "Thank you for listening.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-13 17:21:28.317", "stage": "display_word_reveal_complete", "chars": 24, "text": "Thank you for listening."}
+{"ts": "2026-02-13 17:21:30.693", "stage": "stt_raw", "chars": 10, "text": "Thank you.", "meta": {"engine": "openai", "stt_openai_ms": 1509}}
+{"ts": "2026-02-13 17:21:30.704", "stage": "stt_sanitized", "chars": 10, "text": "Thank you.", "meta": {"engine": "openai", "stt_openai_ms": 1509}}
+{"ts": "2026-02-13 17:21:30.708", "stage": "stt_boundary_trim_bypassed", "chars": 10, "text": "Thank you.", "meta": {"loopback": false}}
+{"ts": "2026-02-13 17:21:30.712", "stage": "sentence_enqueued", "chars": 10, "text": "Thank you.", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 1509, "translate_openai_ms": null}}
+{"ts": "2026-02-13 17:21:30.714", "stage": "translation_input", "chars": 10, "text": "Thank you.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 17:21:30.721", "stage": "translation_cleanup_bypassed", "chars": 10, "text": "Thank you.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 17:21:30.725", "stage": "translation_output", "chars": 10, "text": "Thank you.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 17:21:30.730", "stage": "display_update_input", "chars": 10, "text": "Thank you.", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 17:21:30.734", "stage": "display_chunk_enqueued", "chars": 10, "text": "Thank you.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-13 17:21:31.013", "stage": "display_word_reveal_complete", "chars": 10, "text": "Thank you."}
+{"ts": "2026-02-13 17:21:35.234", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 1429}}
+{"ts": "2026-02-13 17:21:35.240", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 1429}}
+{"ts": "2026-02-13 17:21:43.731", "stage": "stt_raw", "chars": 24, "text": "The audio is in English.", "meta": {"engine": "openai", "stt_openai_ms": 1264}}
+{"ts": "2026-02-13 17:21:43.739", "stage": "stt_sanitized", "chars": 24, "text": "The audio is in English.", "meta": {"engine": "openai", "stt_openai_ms": 1264}}
+{"ts": "2026-02-13 17:21:43.744", "stage": "stt_boundary_trim_bypassed", "chars": 24, "text": "The audio is in English.", "meta": {"loopback": false}}
+{"ts": "2026-02-13 17:21:43.749", "stage": "sentence_enqueued", "chars": 24, "text": "The audio is in English.", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 1264, "translate_openai_ms": null}}
+{"ts": "2026-02-13 17:21:43.751", "stage": "translation_input", "chars": 24, "text": "The audio is in English.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 17:21:43.758", "stage": "translation_cleanup_bypassed", "chars": 24, "text": "The audio is in English.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 17:21:43.761", "stage": "translation_output", "chars": 24, "text": "The audio is in English.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 17:21:43.767", "stage": "display_update_input", "chars": 24, "text": "The audio is in English.", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 17:21:43.772", "stage": "display_chunk_enqueued", "chars": 24, "text": "The audio is in English.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-13 17:21:44.406", "stage": "display_word_reveal_complete", "chars": 24, "text": "The audio is in English."}
+{"ts": "2026-02-13 17:22:29.116", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 2139}}
+{"ts": "2026-02-13 17:22:29.121", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 2139}}
+{"ts": "2026-02-13 17:22:30.119", "stage": "stt_raw", "chars": 50, "text": "The audio is in English. The audio is in English. ", "meta": {"engine": "openai", "stt_openai_ms": 992}}
+{"ts": "2026-02-13 17:22:30.125", "stage": "stt_sanitized", "chars": 49, "text": "The audio is in English. The audio is in English.", "meta": {"engine": "openai", "stt_openai_ms": 992}}
+{"ts": "2026-02-13 17:22:30.131", "stage": "stt_boundary_trim_bypassed", "chars": 49, "text": "The audio is in English. The audio is in English.", "meta": {"loopback": false}}
+{"ts": "2026-02-13 17:22:30.135", "stage": "sentence_enqueued", "chars": 49, "text": "The audio is in English. The audio is in English.", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 992, "translate_openai_ms": null}}
+{"ts": "2026-02-13 17:22:30.137", "stage": "translation_input", "chars": 49, "text": "The audio is in English. The audio is in English.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 17:22:30.144", "stage": "translation_cleanup_bypassed", "chars": 49, "text": "The audio is in English. The audio is in English.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 17:22:30.149", "stage": "translation_output", "chars": 49, "text": "The audio is in English. The audio is in English.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 17:22:30.154", "stage": "display_update_input", "chars": 49, "text": "The audio is in English. The audio is in English.", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 17:22:30.159", "stage": "display_chunk_enqueued", "chars": 28, "text": "The audio is in English. The", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 17:22:30.164", "stage": "display_chunk_enqueued", "chars": 20, "text": "audio is in English.", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 17:22:30.965", "stage": "display_word_reveal_complete", "chars": 28, "text": "The audio is in English. The"}
+{"ts": "2026-02-13 17:22:31.479", "stage": "display_word_reveal_complete", "chars": 20, "text": "audio is in English."}
+{"ts": "2026-02-13 17:22:33.890", "stage": "stt_raw", "chars": 24, "text": "The audio is in English.", "meta": {"engine": "openai", "stt_openai_ms": 1264}}
+{"ts": "2026-02-13 17:22:33.897", "stage": "stt_sanitized", "chars": 24, "text": "The audio is in English.", "meta": {"engine": "openai", "stt_openai_ms": 1264}}
+{"ts": "2026-02-13 17:22:33.902", "stage": "stt_boundary_trim_bypassed", "chars": 24, "text": "The audio is in English.", "meta": {"loopback": false}}
+{"ts": "2026-02-13 17:22:33.907", "stage": "sentence_enqueued", "chars": 24, "text": "The audio is in English.", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 1264, "translate_openai_ms": null}}
+{"ts": "2026-02-13 17:22:33.909", "stage": "translation_input", "chars": 24, "text": "The audio is in English.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 17:22:33.916", "stage": "translation_cleanup_bypassed", "chars": 24, "text": "The audio is in English.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 17:22:33.920", "stage": "translation_output", "chars": 24, "text": "The audio is in English.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 17:22:33.926", "stage": "display_update_input", "chars": 24, "text": "The audio is in English.", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 17:22:33.931", "stage": "display_chunk_enqueued", "chars": 24, "text": "The audio is in English.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-13 17:22:34.558", "stage": "display_word_reveal_complete", "chars": 24, "text": "The audio is in English."}
+{"ts": "2026-02-13 17:23:17.496", "stage": "stt_raw", "chars": 45, "text": "No, it's not magic. You don't get to do this.", "meta": {"engine": "openai", "stt_openai_ms": 1848}}
+{"ts": "2026-02-13 17:23:17.508", "stage": "stt_sanitized", "chars": 45, "text": "No, it's not magic. You don't get to do this.", "meta": {"engine": "openai", "stt_openai_ms": 1848}}
+{"ts": "2026-02-13 17:23:17.513", "stage": "stt_boundary_trim_bypassed", "chars": 45, "text": "No, it's not magic. You don't get to do this.", "meta": {"loopback": false}}
+{"ts": "2026-02-13 17:23:17.519", "stage": "sentence_enqueued", "chars": 45, "text": "No, it's not magic. You don't get to do this.", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 1848, "translate_openai_ms": null}}
+{"ts": "2026-02-13 17:23:17.520", "stage": "translation_input", "chars": 45, "text": "No, it's not magic. You don't get to do this.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 17:23:17.527", "stage": "translation_cleanup_bypassed", "chars": 45, "text": "No, it's not magic. You don't get to do this.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 17:23:17.533", "stage": "translation_output", "chars": 45, "text": "No, it's not magic. You don't get to do this.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 17:23:17.539", "stage": "display_update_input", "chars": 45, "text": "No, it's not magic. You don't get to do this.", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 17:23:17.544", "stage": "display_chunk_enqueued", "chars": 29, "text": "No, it's not magic. You don't", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 17:23:17.549", "stage": "display_chunk_enqueued", "chars": 15, "text": "get to do this.", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 17:23:18.387", "stage": "display_word_reveal_complete", "chars": 29, "text": "No, it's not magic. You don't"}
+{"ts": "2026-02-13 17:23:18.885", "stage": "display_word_reveal_complete", "chars": 15, "text": "get to do this."}
+{"ts": "2026-02-13 17:24:04.291", "stage": "stt_raw", "chars": 28, "text": "We honor our black brethren.", "meta": {"engine": "openai", "stt_openai_ms": 1792}}
+{"ts": "2026-02-13 17:24:04.296", "stage": "stt_sanitized", "chars": 28, "text": "We honor our black brethren.", "meta": {"engine": "openai", "stt_openai_ms": 1792}}
+{"ts": "2026-02-13 17:24:04.303", "stage": "stt_boundary_trim", "chars": 28, "text": "We honor our black brethren.", "meta": {"loopback": false, "overlap_words": 0}}
+{"ts": "2026-02-13 17:24:04.307", "stage": "sentence_enqueued", "chars": 28, "text": "We honor our black brethren.", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 1792, "translate_openai_ms": null}}
+{"ts": "2026-02-13 17:24:04.309", "stage": "translation_input", "chars": 28, "text": "We honor our black brethren.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 17:24:04.319", "stage": "translation_cleanup_bypassed", "chars": 28, "text": "We honor our black brethren.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 17:24:04.324", "stage": "translation_output", "chars": 28, "text": "We honor our black brethren.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 17:24:04.329", "stage": "display_update_input", "chars": 28, "text": "We honor our black brethren.", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 17:24:04.335", "stage": "display_chunk_enqueued", "chars": 28, "text": "We honor our black brethren.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-13 17:24:05.054", "stage": "display_word_reveal_complete", "chars": 28, "text": "We honor our black brethren."}
+{"ts": "2026-02-13 17:24:54.866", "stage": "stt_raw", "chars": 10, "text": "Thank you.", "meta": {"engine": "openai", "stt_openai_ms": 2030}}
+{"ts": "2026-02-13 17:24:54.872", "stage": "stt_unsanitized_passthrough", "chars": 10, "text": "Thank you.", "meta": {"engine": "openai", "stt_openai_ms": 2030}}
+{"ts": "2026-02-13 17:24:54.878", "stage": "stt_boundary_trim_bypassed", "chars": 10, "text": "Thank you.", "meta": {"loopback": false}}
+{"ts": "2026-02-13 17:24:54.883", "stage": "sentence_enqueued", "chars": 10, "text": "Thank you.", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 2030, "translate_openai_ms": null}}
+{"ts": "2026-02-13 17:24:54.886", "stage": "translation_input", "chars": 10, "text": "Thank you.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 17:24:54.895", "stage": "translation_cleanup_bypassed", "chars": 10, "text": "Thank you.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 17:24:54.899", "stage": "translation_output", "chars": 10, "text": "Thank you.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 17:24:54.906", "stage": "display_update_input", "chars": 10, "text": "Thank you.", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 17:24:54.911", "stage": "display_chunk_enqueued", "chars": 10, "text": "Thank you.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-13 17:24:55.166", "stage": "display_word_reveal_complete", "chars": 10, "text": "Thank you."}
+{"ts": "2026-02-13 17:25:11.779", "stage": "stt_raw", "chars": 24, "text": "The audio is in English.", "meta": {"engine": "openai", "stt_openai_ms": 2789}}
+{"ts": "2026-02-13 17:25:11.786", "stage": "stt_unsanitized_passthrough", "chars": 24, "text": "The audio is in English.", "meta": {"engine": "openai", "stt_openai_ms": 2789}}
+{"ts": "2026-02-13 17:25:11.791", "stage": "stt_boundary_trim_bypassed", "chars": 24, "text": "The audio is in English.", "meta": {"loopback": false}}
+{"ts": "2026-02-13 17:25:11.797", "stage": "sentence_enqueued", "chars": 24, "text": "The audio is in English.", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 2789, "translate_openai_ms": null}}
+{"ts": "2026-02-13 17:25:11.799", "stage": "translation_input", "chars": 24, "text": "The audio is in English.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 17:25:11.809", "stage": "translation_cleanup_bypassed", "chars": 24, "text": "The audio is in English.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 17:25:11.813", "stage": "translation_output", "chars": 24, "text": "The audio is in English.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 17:25:11.821", "stage": "display_update_input", "chars": 24, "text": "The audio is in English.", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 17:25:11.827", "stage": "display_chunk_enqueued", "chars": 24, "text": "The audio is in English.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-13 17:25:12.516", "stage": "display_word_reveal_complete", "chars": 24, "text": "The audio is in English."}
+{"ts": "2026-02-13 17:25:33.890", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 890}}
+{"ts": "2026-02-13 17:25:33.898", "stage": "stt_unsanitized_passthrough", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 890}}
+{"ts": "2026-02-13 17:26:18.981", "stage": "stt_raw", "chars": 26, "text": "Not too much. How are you?", "meta": {"engine": "openai", "stt_openai_ms": 1421}}
+{"ts": "2026-02-13 17:26:18.988", "stage": "stt_unsanitized_passthrough", "chars": 26, "text": "Not too much. How are you?", "meta": {"engine": "openai", "stt_openai_ms": 1421}}
+{"ts": "2026-02-13 17:26:18.996", "stage": "stt_boundary_trim_bypassed", "chars": 26, "text": "Not too much. How are you?", "meta": {"loopback": false}}
+{"ts": "2026-02-13 17:26:19.001", "stage": "sentence_enqueued", "chars": 26, "text": "Not too much. How are you?", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 1421, "translate_openai_ms": null}}
+{"ts": "2026-02-13 17:26:19.003", "stage": "translation_input", "chars": 26, "text": "Not too much. How are you?", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 17:26:19.012", "stage": "translation_cleanup_bypassed", "chars": 26, "text": "Not too much. How are you?", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 17:26:19.017", "stage": "translation_output", "chars": 26, "text": "Not too much. How are you?", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 17:26:19.022", "stage": "display_update_input", "chars": 26, "text": "Not too much. How are you?", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 17:26:19.027", "stage": "display_chunk_enqueued", "chars": 26, "text": "Not too much. How are you?", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-13 17:26:19.802", "stage": "display_word_reveal_complete", "chars": 26, "text": "Not too much. How are you?"}
+{"ts": "2026-02-13 17:26:23.559", "stage": "stt_raw", "chars": 20, "text": "Good, that was work.", "meta": {"engine": "openai", "stt_openai_ms": 799}}
+{"ts": "2026-02-13 17:26:23.571", "stage": "stt_unsanitized_passthrough", "chars": 20, "text": "Good, that was work.", "meta": {"engine": "openai", "stt_openai_ms": 799}}
+{"ts": "2026-02-13 17:26:23.576", "stage": "stt_boundary_trim_bypassed", "chars": 20, "text": "Good, that was work.", "meta": {"loopback": false}}
+{"ts": "2026-02-13 17:26:23.581", "stage": "sentence_enqueued", "chars": 20, "text": "Good, that was work.", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 799, "translate_openai_ms": null}}
+{"ts": "2026-02-13 17:26:23.584", "stage": "translation_input", "chars": 20, "text": "Good, that was work.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 17:26:23.591", "stage": "translation_cleanup_bypassed", "chars": 20, "text": "Good, that was work.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 17:26:23.597", "stage": "translation_output", "chars": 20, "text": "Good, that was work.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 17:26:23.603", "stage": "display_update_input", "chars": 20, "text": "Good, that was work.", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 17:26:23.608", "stage": "display_chunk_enqueued", "chars": 20, "text": "Good, that was work.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-13 17:26:24.127", "stage": "display_word_reveal_complete", "chars": 20, "text": "Good, that was work."}
+{"ts": "2026-02-13 17:26:34.344", "stage": "stt_raw", "chars": 16, "text": "Um, I was gonna.", "meta": {"engine": "openai", "stt_openai_ms": 922}}
+{"ts": "2026-02-13 17:26:34.349", "stage": "stt_unsanitized_passthrough", "chars": 16, "text": "Um, I was gonna.", "meta": {"engine": "openai", "stt_openai_ms": 922}}
+{"ts": "2026-02-13 17:26:34.355", "stage": "stt_boundary_trim_bypassed", "chars": 16, "text": "Um, I was gonna.", "meta": {"loopback": false}}
+{"ts": "2026-02-13 17:26:34.360", "stage": "sentence_enqueued", "chars": 16, "text": "Um, I was gonna.", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 922, "translate_openai_ms": null}}
+{"ts": "2026-02-13 17:26:34.362", "stage": "translation_input", "chars": 16, "text": "Um, I was gonna.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 17:26:34.372", "stage": "translation_cleanup_bypassed", "chars": 16, "text": "Um, I was gonna.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 17:26:34.376", "stage": "translation_output", "chars": 16, "text": "Um, I was gonna.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 17:26:34.381", "stage": "display_update_input", "chars": 16, "text": "Um, I was gonna.", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 17:26:34.387", "stage": "display_chunk_enqueued", "chars": 16, "text": "Um, I was gonna.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-13 17:26:34.893", "stage": "display_word_reveal_complete", "chars": 16, "text": "Um, I was gonna."}
+{"ts": "2026-02-13 17:26:38.330", "stage": "stt_raw", "chars": 24, "text": "The audio is in English.", "meta": {"engine": "openai", "stt_openai_ms": 499}}
+{"ts": "2026-02-13 17:26:38.336", "stage": "stt_unsanitized_passthrough", "chars": 24, "text": "The audio is in English.", "meta": {"engine": "openai", "stt_openai_ms": 499}}
+{"ts": "2026-02-13 17:26:38.340", "stage": "stt_boundary_trim_bypassed", "chars": 24, "text": "The audio is in English.", "meta": {"loopback": false}}
+{"ts": "2026-02-13 17:26:38.347", "stage": "sentence_enqueued", "chars": 24, "text": "The audio is in English.", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 499, "translate_openai_ms": null}}
+{"ts": "2026-02-13 17:26:38.350", "stage": "translation_input", "chars": 24, "text": "The audio is in English.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 17:26:38.357", "stage": "translation_cleanup_bypassed", "chars": 24, "text": "The audio is in English.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 17:26:38.363", "stage": "translation_output", "chars": 24, "text": "The audio is in English.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 17:26:38.368", "stage": "display_update_input", "chars": 24, "text": "The audio is in English.", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 17:26:38.374", "stage": "display_chunk_enqueued", "chars": 24, "text": "The audio is in English.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-13 17:26:39.012", "stage": "display_word_reveal_complete", "chars": 24, "text": "The audio is in English."}
+{"ts": "2026-02-13 17:26:43.085", "stage": "stt_raw", "chars": 66, "text": "I'll probably just go in tomorrow. If you can't join, that's okay.", "meta": {"engine": "openai", "stt_openai_ms": 903}}
+{"ts": "2026-02-13 17:26:43.091", "stage": "stt_unsanitized_passthrough", "chars": 66, "text": "I'll probably just go in tomorrow. If you can't join, that's okay.", "meta": {"engine": "openai", "stt_openai_ms": 903}}
+{"ts": "2026-02-13 17:26:43.096", "stage": "stt_boundary_trim_bypassed", "chars": 66, "text": "I'll probably just go in tomorrow. If you can't join, that's okay.", "meta": {"loopback": false}}
+{"ts": "2026-02-13 17:26:43.101", "stage": "sentence_enqueued", "chars": 66, "text": "I'll probably just go in tomorrow. If you can't join, that's okay.", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 903, "translate_openai_ms": null}}
+{"ts": "2026-02-13 17:26:43.105", "stage": "translation_input", "chars": 66, "text": "I'll probably just go in tomorrow. If you can't join, that's okay.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 17:26:43.115", "stage": "translation_cleanup_bypassed", "chars": 66, "text": "I'll probably just go in tomorrow. If you can't join, that's okay.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 17:26:43.120", "stage": "translation_output", "chars": 66, "text": "I'll probably just go in tomorrow. If you can't join, that's okay.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 17:26:43.126", "stage": "display_update_input", "chars": 66, "text": "I'll probably just go in tomorrow. If you can't join, that's okay.", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 17:26:43.132", "stage": "display_chunk_enqueued", "chars": 24, "text": "I'll probably just go in", "meta": {"chunk_index": 0, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 17:26:43.137", "stage": "display_chunk_enqueued", "chars": 28, "text": "tomorrow. If you can't join,", "meta": {"chunk_index": 1, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 17:26:43.142", "stage": "display_chunk_enqueued", "chars": 12, "text": "that's okay.", "meta": {"chunk_index": 2, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 17:26:43.795", "stage": "display_word_reveal_complete", "chars": 24, "text": "I'll probably just go in"}
+{"ts": "2026-02-13 17:26:44.595", "stage": "display_word_reveal_complete", "chars": 28, "text": "tomorrow. If you can't join,"}
+{"ts": "2026-02-13 17:26:44.940", "stage": "display_word_reveal_complete", "chars": 12, "text": "that's okay."}
+{"ts": "2026-02-13 17:26:46.261", "stage": "stt_raw", "chars": 34, "text": "And I'll get that wire dropped in.", "meta": {"engine": "openai", "stt_openai_ms": 1109}}
+{"ts": "2026-02-13 17:26:46.268", "stage": "stt_unsanitized_passthrough", "chars": 34, "text": "And I'll get that wire dropped in.", "meta": {"engine": "openai", "stt_openai_ms": 1109}}
+{"ts": "2026-02-13 17:26:46.274", "stage": "stt_boundary_trim_bypassed", "chars": 34, "text": "And I'll get that wire dropped in.", "meta": {"loopback": false}}
+{"ts": "2026-02-13 17:26:46.280", "stage": "sentence_enqueued", "chars": 34, "text": "And I'll get that wire dropped in.", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 1109, "translate_openai_ms": null}}
+{"ts": "2026-02-13 17:26:46.283", "stage": "translation_input", "chars": 34, "text": "And I'll get that wire dropped in.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 17:26:46.292", "stage": "translation_cleanup_bypassed", "chars": 34, "text": "And I'll get that wire dropped in.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 17:26:46.297", "stage": "translation_output", "chars": 34, "text": "And I'll get that wire dropped in.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 17:26:46.302", "stage": "display_update_input", "chars": 34, "text": "And I'll get that wire dropped in.", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 17:26:46.308", "stage": "display_chunk_enqueued", "chars": 30, "text": "And I'll get that wire dropped", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 17:26:46.313", "stage": "display_chunk_enqueued", "chars": 3, "text": "in.", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 17:26:47.097", "stage": "display_word_reveal_complete", "chars": 30, "text": "And I'll get that wire dropped"}
+{"ts": "2026-02-13 17:26:47.238", "stage": "display_word_reveal_complete", "chars": 3, "text": "in."}
+{"ts": "2026-02-13 17:26:52.360", "stage": "stt_raw", "chars": 23, "text": "Thank you for watching.", "meta": {"engine": "openai", "stt_openai_ms": 689}}
+{"ts": "2026-02-13 17:26:52.365", "stage": "stt_unsanitized_passthrough", "chars": 23, "text": "Thank you for watching.", "meta": {"engine": "openai", "stt_openai_ms": 689}}
+{"ts": "2026-02-13 17:26:52.372", "stage": "stt_boundary_trim_bypassed", "chars": 23, "text": "Thank you for watching.", "meta": {"loopback": false}}
+{"ts": "2026-02-13 17:26:52.378", "stage": "sentence_enqueued", "chars": 23, "text": "Thank you for watching.", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 689, "translate_openai_ms": null}}
+{"ts": "2026-02-13 17:26:52.381", "stage": "translation_input", "chars": 23, "text": "Thank you for watching.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 17:26:52.393", "stage": "translation_cleanup_bypassed", "chars": 23, "text": "Thank you for watching.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 17:26:52.399", "stage": "translation_output", "chars": 23, "text": "Thank you for watching.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 17:26:52.405", "stage": "display_update_input", "chars": 23, "text": "Thank you for watching.", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 17:26:52.411", "stage": "display_chunk_enqueued", "chars": 23, "text": "Thank you for watching.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-13 17:26:52.933", "stage": "display_word_reveal_complete", "chars": 23, "text": "Thank you for watching."}
+{"ts": "2026-02-13 17:26:57.053", "stage": "stt_raw", "chars": 47, "text": "Whenever. I don't really have any time in mind.", "meta": {"engine": "openai", "stt_openai_ms": 1152}}
+{"ts": "2026-02-13 17:26:57.060", "stage": "stt_unsanitized_passthrough", "chars": 47, "text": "Whenever. I don't really have any time in mind.", "meta": {"engine": "openai", "stt_openai_ms": 1152}}
+{"ts": "2026-02-13 17:26:57.066", "stage": "stt_boundary_trim_bypassed", "chars": 47, "text": "Whenever. I don't really have any time in mind.", "meta": {"loopback": false}}
+{"ts": "2026-02-13 17:26:57.072", "stage": "sentence_enqueued", "chars": 47, "text": "Whenever. I don't really have any time in mind.", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 1152, "translate_openai_ms": null}}
+{"ts": "2026-02-13 17:26:57.074", "stage": "translation_input", "chars": 47, "text": "Whenever. I don't really have any time in mind.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 17:26:57.082", "stage": "translation_cleanup_bypassed", "chars": 47, "text": "Whenever. I don't really have any time in mind.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 17:26:57.088", "stage": "translation_output", "chars": 47, "text": "Whenever. I don't really have any time in mind.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 17:26:57.094", "stage": "display_update_input", "chars": 47, "text": "Whenever. I don't really have any time in mind.", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 17:26:57.099", "stage": "display_chunk_enqueued", "chars": 29, "text": "Whenever. I don't really have", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 17:26:57.105", "stage": "display_chunk_enqueued", "chars": 17, "text": "any time in mind.", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 17:26:57.759", "stage": "display_word_reveal_complete", "chars": 29, "text": "Whenever. I don't really have"}
+{"ts": "2026-02-13 17:26:58.334", "stage": "display_word_reveal_complete", "chars": 17, "text": "any time in mind."}
+{"ts": "2026-02-13 17:27:02.302", "stage": "stt_raw", "chars": 24, "text": "The audio is in English.", "meta": {"engine": "openai", "stt_openai_ms": 1181}}
+{"ts": "2026-02-13 17:27:02.310", "stage": "stt_unsanitized_passthrough", "chars": 24, "text": "The audio is in English.", "meta": {"engine": "openai", "stt_openai_ms": 1181}}
+{"ts": "2026-02-13 17:27:02.317", "stage": "stt_boundary_trim_bypassed", "chars": 24, "text": "The audio is in English.", "meta": {"loopback": false}}
+{"ts": "2026-02-13 17:27:02.323", "stage": "sentence_enqueued", "chars": 24, "text": "The audio is in English.", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 1181, "translate_openai_ms": null}}
+{"ts": "2026-02-13 17:27:02.327", "stage": "translation_input", "chars": 24, "text": "The audio is in English.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 17:27:02.339", "stage": "translation_cleanup_bypassed", "chars": 24, "text": "The audio is in English.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 17:27:02.347", "stage": "translation_output", "chars": 24, "text": "The audio is in English.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 17:27:02.355", "stage": "display_update_input", "chars": 24, "text": "The audio is in English.", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 17:27:02.362", "stage": "display_chunk_enqueued", "chars": 24, "text": "The audio is in English.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-13 17:27:03.141", "stage": "display_word_reveal_complete", "chars": 24, "text": "The audio is in English."}
+{"ts": "2026-02-13 17:27:04.988", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 617}}
+{"ts": "2026-02-13 17:27:04.999", "stage": "stt_unsanitized_passthrough", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 617}}
+{"ts": "2026-02-13 17:27:08.509", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 1699}}
+{"ts": "2026-02-13 17:27:08.515", "stage": "stt_unsanitized_passthrough", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 1699}}

@@ -1,0 +1,87 @@
+[2026-02-13 17:11:02.149] STATUS: Listening (Spanish)
+[2026-02-13 17:11:08.140] STATUS: No speech detected. Check mic level or device.
+[2026-02-13 17:11:12.203] STATUS: Apply clicked
+[2026-02-13 17:11:13.213] STATUS: Settings applied
+[2026-02-13 17:11:13.215] STATUS: Apply finished
+[2026-02-13 17:11:13.857] STATUS: Listening (Spanish)
+[2026-02-13 17:11:14.857] STATUS: No speech detected. Check mic level or device.
+[2026-02-13 17:11:15.220] STATUS: Listening (Spanish)
+[2026-02-13 17:11:20.848] STATUS: No speech detected. Check mic level or device.
+[2026-02-13 17:17:19.306] STATUS: Apply clicked
+[2026-02-13 17:17:20.424] STATUS: Settings applied
+[2026-02-13 17:17:20.427] STATUS: Apply finished
+[2026-02-13 17:17:21.069] STATUS: Listening (English)
+[2026-02-13 17:17:22.070] STATUS: No speech detected. Check mic level or device.
+[2026-02-13 17:17:22.426] STATUS: Listening (English)
+[2026-02-13 17:17:28.059] STATUS: No speech detected. Check mic level or device.
+[2026-02-13 17:21:27.793] STATUS: Transcribing...
+[2026-02-13 17:21:27.808] STATUS: Listening (English)
+[2026-02-13 17:21:30.712] STATUS: Transcribing...
+[2026-02-13 17:21:30.730] STATUS: Listening (English)
+[2026-02-13 17:21:43.749] STATUS: Transcribing...
+[2026-02-13 17:21:43.767] STATUS: Listening (English)
+[2026-02-13 17:21:51.964] STATUS: No speech detected. Check mic level or device.
+[2026-02-13 17:22:30.135] STATUS: Transcribing...
+[2026-02-13 17:22:30.154] STATUS: Listening (English)
+[2026-02-13 17:22:33.907] STATUS: Transcribing...
+[2026-02-13 17:22:33.926] STATUS: Listening (English)
+[2026-02-13 17:23:17.519] STATUS: Transcribing...
+[2026-02-13 17:23:17.539] STATUS: Listening (English)
+[2026-02-13 17:23:39.617] STATUS: Apply clicked
+[2026-02-13 17:23:40.484] STATUS: Settings applied
+[2026-02-13 17:23:40.485] STATUS: Apply finished
+[2026-02-13 17:23:40.948] STATUS: Listening (English)
+[2026-02-13 17:23:54.957] STATUS: Apply clicked
+[2026-02-13 17:23:56.077] STATUS: Settings applied
+[2026-02-13 17:23:56.079] STATUS: Apply finished
+[2026-02-13 17:23:56.736] STATUS: Listening (English)
+[2026-02-13 17:24:04.307] STATUS: Transcribing...
+[2026-02-13 17:24:04.329] STATUS: Listening (English)
+[2026-02-13 17:24:20.712] STATUS: Apply clicked
+[2026-02-13 17:24:22.631] STATUS: Settings applied
+[2026-02-13 17:24:22.634] STATUS: Apply finished
+[2026-02-13 17:24:23.272] STATUS: Listening (English)
+[2026-02-13 17:24:50.701] STATUS: Apply clicked
+[2026-02-13 17:24:52.949] STATUS: Settings applied
+[2026-02-13 17:24:52.951] STATUS: Apply finished
+[2026-02-13 17:24:53.407] STATUS: Listening (English)
+[2026-02-13 17:24:54.883] STATUS: Transcribing...
+[2026-02-13 17:24:54.906] STATUS: Listening (English)
+[2026-02-13 17:25:11.797] STATUS: Transcribing...
+[2026-02-13 17:25:11.821] STATUS: Listening (English)
+[2026-02-13 17:26:19.001] STATUS: Transcribing...
+[2026-02-13 17:26:19.022] STATUS: Listening (English)
+[2026-02-13 17:26:23.581] STATUS: Transcribing...
+[2026-02-13 17:26:23.603] STATUS: Listening (English)
+[2026-02-13 17:26:34.360] STATUS: Transcribing...
+[2026-02-13 17:26:34.381] STATUS: Listening (English)
+[2026-02-13 17:26:38.347] STATUS: Transcribing...
+[2026-02-13 17:26:38.368] STATUS: Listening (English)
+[2026-02-13 17:26:43.102] STATUS: Transcribing...
+[2026-02-13 17:26:43.126] STATUS: Listening (English)
+[2026-02-13 17:26:46.280] STATUS: Transcribing...
+[2026-02-13 17:26:46.302] STATUS: Listening (English)
+[2026-02-13 17:26:52.378] STATUS: Transcribing...
+[2026-02-13 17:26:52.405] STATUS: Listening (English)
+[2026-02-13 17:26:57.072] STATUS: Transcribing...
+[2026-02-13 17:26:57.094] STATUS: Listening (English)
+[2026-02-13 17:27:02.324] STATUS: Transcribing...
+[2026-02-13 17:27:02.355] STATUS: Listening (English)
+[2026-02-13 17:27:11.600] STATUS: App closing requested
+
+--- Close Requested ---
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\main.py", line 5779, in <module>
+    line_height = self.text_font.metrics("linespace") or 1
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\main.py", line 444, in __init__
+    self.root.mainloop()
+  File "C:\Users\zachary.price\AppData\Local\Programs\Python\Python310\lib\tkinter\__init__.py", line 1458, in mainloop
+    self.tk.mainloop(n)
+  File "C:\Users\zachary.price\AppData\Local\Programs\Python\Python310\lib\tkinter\__init__.py", line 1921, in __call__
+    return self.func(*args)
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\main.py", line 524, in on_closing
+    f.write("".join(traceback.format_stack(limit=10)))
+[2026-02-13 17:27:11.610] STATUS: Process exiting
+
+--- Process Exit ---
+  File "E:\OneDrive - zachthetech.com\Documents\GitHub\python-translation\main.py", line 587, in _log_process_exit
+    f.write("".join(traceback.format_stack(limit=10)))

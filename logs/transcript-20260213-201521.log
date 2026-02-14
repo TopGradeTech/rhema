@@ -1,0 +1,641 @@
+{"ts": "2026-02-13 20:15:32.420", "stage": "stt_raw", "chars": 80, "text": "y no hay nadie de nosotros que esté siendo el presidente del DOJ. Es tu trabajo.", "meta": {"engine": "faster-whisper", "stt_openai_ms": 4091}}
+{"ts": "2026-02-13 20:15:32.426", "stage": "stt_sanitized", "chars": 80, "text": "y no hay nadie de nosotros que esté siendo el presidente del DOJ. Es tu trabajo.", "meta": {"engine": "faster-whisper", "stt_openai_ms": 4091}}
+{"ts": "2026-02-13 20:15:32.430", "stage": "stt_boundary_trim_bypassed", "chars": 80, "text": "y no hay nadie de nosotros que esté siendo el presidente del DOJ. Es tu trabajo.", "meta": {"loopback": false}}
+{"ts": "2026-02-13 20:15:32.435", "stage": "sentence_enqueued", "chars": 80, "text": "y no hay nadie de nosotros que esté siendo el presidente del DOJ. Es tu trabajo.", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 4091, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:15:32.440", "stage": "translation_input", "chars": 80, "text": "y no hay nadie de nosotros que esté siendo el presidente del DOJ. Es tu trabajo.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:15:32.443", "stage": "translation_cleanup_bypassed", "chars": 80, "text": "y no hay nadie de nosotros que esté siendo el presidente del DOJ. Es tu trabajo.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:15:32.447", "stage": "translation_output", "chars": 80, "text": "y no hay nadie de nosotros que esté siendo el presidente del DOJ. Es tu trabajo.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:15:32.452", "stage": "display_update_input", "chars": 80, "text": "y no hay nadie de nosotros que esté siendo el presidente del DOJ. Es tu trabajo.", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 20:15:32.456", "stage": "display_fast_mode_on", "chars": 0, "text": "", "meta": {"sentence_fill_ratio": 0.0, "reveal_queue": 0, "text_queue": 0, "stt_openai_ms": 4091, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:15:32.494", "stage": "display_fast_path_render", "chars": 80, "text": "y no hay nadie de nosotros que esté siendo el presidente del DOJ. Es tu trabajo."}
+{"ts": "2026-02-13 20:15:33.521", "stage": "stt_raw", "chars": 89, "text": "y tú puedes ganar el Super Bowl, entonces tú vienes al B-Corte. Bueno, eso no es mi cosa.", "meta": {"engine": "faster-whisper", "stt_openai_ms": 393}}
+{"ts": "2026-02-13 20:15:33.525", "stage": "stt_sanitized", "chars": 89, "text": "y tú puedes ganar el Super Bowl, entonces tú vienes al B-Corte. Bueno, eso no es mi cosa.", "meta": {"engine": "faster-whisper", "stt_openai_ms": 393}}
+{"ts": "2026-02-13 20:15:33.530", "stage": "stt_boundary_trim_bypassed", "chars": 89, "text": "y tú puedes ganar el Super Bowl, entonces tú vienes al B-Corte. Bueno, eso no es mi cosa.", "meta": {"loopback": false}}
+{"ts": "2026-02-13 20:15:33.534", "stage": "sentence_enqueued", "chars": 89, "text": "y tú puedes ganar el Super Bowl, entonces tú vienes al B-Corte. Bueno, eso no es mi cosa.", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 393, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:15:33.539", "stage": "translation_input", "chars": 89, "text": "y tú puedes ganar el Super Bowl, entonces tú vienes al B-Corte. Bueno, eso no es mi cosa.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:15:33.542", "stage": "translation_cleanup_bypassed", "chars": 89, "text": "y tú puedes ganar el Super Bowl, entonces tú vienes al B-Corte. Bueno, eso no es mi cosa.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:15:33.546", "stage": "translation_output", "chars": 89, "text": "y tú puedes ganar el Super Bowl, entonces tú vienes al B-Corte. Bueno, eso no es mi cosa.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:15:33.551", "stage": "display_update_input", "chars": 89, "text": "y tú puedes ganar el Super Bowl, entonces tú vienes al B-Corte. Bueno, eso no es mi cosa.", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 20:15:33.597", "stage": "display_fast_path_render", "chars": 89, "text": "y tú puedes ganar el Super Bowl, entonces tú vienes al B-Corte. Bueno, eso no es mi cosa."}
+{"ts": "2026-02-13 20:15:34.724", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "faster-whisper", "stt_openai_ms": 35}}
+{"ts": "2026-02-13 20:15:34.729", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "faster-whisper", "stt_openai_ms": 35}}
+{"ts": "2026-02-13 20:15:40.372", "stage": "stt_raw", "chars": 133, "text": "Mi cosa está aquí, por cierto, 11 de la mañana cada día. Si estás viendo el video, 11 de la mañana, puedes entrar cada día en Rumble.", "meta": {"engine": "faster-whisper", "stt_openai_ms": 553}}
+{"ts": "2026-02-13 20:15:40.375", "stage": "stt_sanitized", "chars": 133, "text": "Mi cosa está aquí, por cierto, 11 de la mañana cada día. Si estás viendo el video, 11 de la mañana, puedes entrar cada día en Rumble.", "meta": {"engine": "faster-whisper", "stt_openai_ms": 553}}
+{"ts": "2026-02-13 20:15:40.379", "stage": "stt_boundary_trim_bypassed", "chars": 133, "text": "Mi cosa está aquí, por cierto, 11 de la mañana cada día. Si estás viendo el video, 11 de la mañana, puedes entrar cada día en Rumble.", "meta": {"loopback": false}}
+{"ts": "2026-02-13 20:15:40.384", "stage": "sentence_enqueued", "chars": 133, "text": "Mi cosa está aquí, por cierto, 11 de la mañana cada día. Si estás viendo el video, 11 de la mañana, puedes entrar cada día en Rumble.", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 553, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:15:40.388", "stage": "translation_input", "chars": 133, "text": "Mi cosa está aquí, por cierto, 11 de la mañana cada día. Si estás viendo el video, 11 de la mañana, puedes entrar cada día en Rumble.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:15:40.393", "stage": "translation_cleanup_bypassed", "chars": 133, "text": "Mi cosa está aquí, por cierto, 11 de la mañana cada día. Si estás viendo el video, 11 de la mañana, puedes entrar cada día en Rumble.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:15:40.398", "stage": "translation_output", "chars": 133, "text": "Mi cosa está aquí, por cierto, 11 de la mañana cada día. Si estás viendo el video, 11 de la mañana, puedes entrar cada día en Rumble.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:15:40.403", "stage": "display_update_input", "chars": 133, "text": "Mi cosa está aquí, por cierto, 11 de la mañana cada día. Si estás viendo el video, 11 de la mañana, puedes entrar cada día en Rumble.", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 20:15:40.408", "stage": "display_chunk_enqueued", "chars": 30, "text": "Mi cosa está aquí, por cierto,", "meta": {"chunk_index": 0, "chunk_count": 5, "word_by_word": true}}
+{"ts": "2026-02-13 20:15:40.411", "stage": "display_chunk_enqueued", "chars": 28, "text": "11 de la mañana cada día. Si", "meta": {"chunk_index": 1, "chunk_count": 5, "word_by_word": true}}
+{"ts": "2026-02-13 20:15:40.415", "stage": "display_chunk_enqueued", "chars": 28, "text": "estás viendo el video, 11 de", "meta": {"chunk_index": 2, "chunk_count": 5, "word_by_word": true}}
+{"ts": "2026-02-13 20:15:40.420", "stage": "display_chunk_enqueued", "chars": 29, "text": "la mañana, puedes entrar cada", "meta": {"chunk_index": 3, "chunk_count": 5, "word_by_word": true}}
+{"ts": "2026-02-13 20:15:40.425", "stage": "display_chunk_enqueued", "chars": 14, "text": "día en Rumble.", "meta": {"chunk_index": 4, "chunk_count": 5, "word_by_word": true}}
+{"ts": "2026-02-13 20:15:41.320", "stage": "display_word_reveal_complete", "chars": 30, "text": "Mi cosa está aquí, por cierto,"}
+{"ts": "2026-02-13 20:15:42.239", "stage": "display_word_reveal_complete", "chars": 28, "text": "11 de la mañana cada día. Si"}
+{"ts": "2026-02-13 20:15:43.248", "stage": "display_word_reveal_complete", "chars": 28, "text": "estás viendo el video, 11 de"}
+{"ts": "2026-02-13 20:15:44.108", "stage": "display_word_reveal_complete", "chars": 29, "text": "la mañana, puedes entrar cada"}
+{"ts": "2026-02-13 20:15:44.605", "stage": "display_word_reveal_complete", "chars": 14, "text": "día en Rumble."}
+{"ts": "2026-02-13 20:15:45.459", "stage": "stt_raw", "chars": 65, "text": "11 de la tarde, no perdemos un día. Inconsistencia aquí número 3.", "meta": {"engine": "faster-whisper", "stt_openai_ms": 490}}
+{"ts": "2026-02-13 20:15:45.464", "stage": "stt_sanitized", "chars": 65, "text": "11 de la tarde, no perdemos un día. Inconsistencia aquí número 3.", "meta": {"engine": "faster-whisper", "stt_openai_ms": 490}}
+{"ts": "2026-02-13 20:15:45.469", "stage": "stt_boundary_trim_bypassed", "chars": 65, "text": "11 de la tarde, no perdemos un día. Inconsistencia aquí número 3.", "meta": {"loopback": false}}
+{"ts": "2026-02-13 20:15:45.474", "stage": "sentence_enqueued", "chars": 65, "text": "11 de la tarde, no perdemos un día. Inconsistencia aquí número 3.", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 490, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:15:45.480", "stage": "translation_input", "chars": 65, "text": "11 de la tarde, no perdemos un día. Inconsistencia aquí número 3.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:15:45.484", "stage": "translation_cleanup_bypassed", "chars": 65, "text": "11 de la tarde, no perdemos un día. Inconsistencia aquí número 3.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:15:45.489", "stage": "translation_output", "chars": 65, "text": "11 de la tarde, no perdemos un día. Inconsistencia aquí número 3.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:15:45.495", "stage": "display_update_input", "chars": 65, "text": "11 de la tarde, no perdemos un día. Inconsistencia aquí número 3.", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 20:15:45.501", "stage": "display_chunk_enqueued", "chars": 30, "text": "11 de la tarde, no perdemos un", "meta": {"chunk_index": 0, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 20:15:45.506", "stage": "display_chunk_enqueued", "chars": 24, "text": "día. Inconsistencia aquí", "meta": {"chunk_index": 1, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 20:15:45.511", "stage": "display_chunk_enqueued", "chars": 9, "text": "número 3.", "meta": {"chunk_index": 2, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 20:15:46.541", "stage": "display_word_reveal_complete", "chars": 30, "text": "11 de la tarde, no perdemos un"}
+{"ts": "2026-02-13 20:15:46.995", "stage": "display_word_reveal_complete", "chars": 24, "text": "día. Inconsistencia aquí"}
+{"ts": "2026-02-13 20:15:47.253", "stage": "display_word_reveal_complete", "chars": 9, "text": "número 3."}
+{"ts": "2026-02-13 20:15:49.330", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "faster-whisper", "stt_openai_ms": 431}}
+{"ts": "2026-02-13 20:15:49.334", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "faster-whisper", "stt_openai_ms": 431}}
+{"ts": "2026-02-13 20:15:55.175", "stage": "stt_raw", "chars": 120, "text": "y esto se ve muy mal cuando tienes a los conservadores fortes flip-flopping para que esto se viva y en el sentido de que", "meta": {"engine": "faster-whisper", "stt_openai_ms": 706}}
+{"ts": "2026-02-13 20:15:55.180", "stage": "stt_sanitized", "chars": 120, "text": "y esto se ve muy mal cuando tienes a los conservadores fortes flip-flopping para que esto se viva y en el sentido de que", "meta": {"engine": "faster-whisper", "stt_openai_ms": 706}}
+{"ts": "2026-02-13 20:15:55.185", "stage": "stt_boundary_trim_bypassed", "chars": 120, "text": "y esto se ve muy mal cuando tienes a los conservadores fortes flip-flopping para que esto se viva y en el sentido de que", "meta": {"loopback": false}}
+{"ts": "2026-02-13 20:15:55.190", "stage": "sentence_enqueued", "chars": 120, "text": "y esto se ve muy mal cuando tienes a los conservadores fortes flip-flopping para que esto se viva y en el sentido de que", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 706, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:15:55.195", "stage": "translation_input", "chars": 120, "text": "y esto se ve muy mal cuando tienes a los conservadores fortes flip-flopping para que esto se viva y en el sentido de que", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:15:55.200", "stage": "translation_cleanup_bypassed", "chars": 120, "text": "y esto se ve muy mal cuando tienes a los conservadores fortes flip-flopping para que esto se viva y en el sentido de que", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:15:55.205", "stage": "translation_output", "chars": 120, "text": "y esto se ve muy mal cuando tienes a los conservadores fortes flip-flopping para que esto se viva y en el sentido de que", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:15:55.210", "stage": "display_update_input", "chars": 120, "text": "y esto se ve muy mal cuando tienes a los conservadores fortes flip-flopping para que esto se viva y en el sentido de que", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 20:15:55.214", "stage": "display_chunk_enqueued", "chars": 27, "text": "y esto se ve muy mal cuando", "meta": {"chunk_index": 0, "chunk_count": 5, "word_by_word": true}}
+{"ts": "2026-02-13 20:15:55.219", "stage": "display_chunk_enqueued", "chars": 26, "text": "tienes a los conservadores", "meta": {"chunk_index": 1, "chunk_count": 5, "word_by_word": true}}
+{"ts": "2026-02-13 20:15:55.224", "stage": "display_chunk_enqueued", "chars": 29, "text": "fortes flip-flopping para que", "meta": {"chunk_index": 2, "chunk_count": 5, "word_by_word": true}}
+{"ts": "2026-02-13 20:15:55.228", "stage": "display_chunk_enqueued", "chars": 28, "text": "esto se viva y en el sentido", "meta": {"chunk_index": 3, "chunk_count": 5, "word_by_word": true}}
+{"ts": "2026-02-13 20:15:55.233", "stage": "display_chunk_enqueued", "chars": 6, "text": "de que", "meta": {"chunk_index": 4, "chunk_count": 5, "word_by_word": true}}
+{"ts": "2026-02-13 20:15:56.125", "stage": "display_word_reveal_complete", "chars": 27, "text": "y esto se ve muy mal cuando"}
+{"ts": "2026-02-13 20:15:56.627", "stage": "display_word_reveal_complete", "chars": 26, "text": "tienes a los conservadores"}
+{"ts": "2026-02-13 20:15:57.122", "stage": "display_word_reveal_complete", "chars": 29, "text": "fortes flip-flopping para que"}
+{"ts": "2026-02-13 20:15:57.999", "stage": "display_word_reveal_complete", "chars": 28, "text": "esto se viva y en el sentido"}
+{"ts": "2026-02-13 20:15:58.248", "stage": "display_word_reveal_complete", "chars": 6, "text": "de que"}
+{"ts": "2026-02-13 20:16:00.205", "stage": "stt_raw", "chars": 104, "text": "y los demócratas que realmente no quieren hablar de ello ahora dicen ¡Uhhh! ¡Sentimos un poco de sangre!", "meta": {"engine": "faster-whisper", "stt_openai_ms": 716}}
+{"ts": "2026-02-13 20:16:00.210", "stage": "stt_sanitized", "chars": 104, "text": "y los demócratas que realmente no quieren hablar de ello ahora dicen ¡Uhhh! ¡Sentimos un poco de sangre!", "meta": {"engine": "faster-whisper", "stt_openai_ms": 716}}
+{"ts": "2026-02-13 20:16:00.215", "stage": "stt_boundary_trim_bypassed", "chars": 104, "text": "y los demócratas que realmente no quieren hablar de ello ahora dicen ¡Uhhh! ¡Sentimos un poco de sangre!", "meta": {"loopback": false}}
+{"ts": "2026-02-13 20:16:00.221", "stage": "sentence_enqueued", "chars": 104, "text": "y los demócratas que realmente no quieren hablar de ello ahora dicen ¡Uhhh! ¡Sentimos un poco de sangre!", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 716, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:16:00.225", "stage": "translation_input", "chars": 104, "text": "y los demócratas que realmente no quieren hablar de ello ahora dicen ¡Uhhh! ¡Sentimos un poco de sangre!", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:16:00.232", "stage": "translation_cleanup_bypassed", "chars": 104, "text": "y los demócratas que realmente no quieren hablar de ello ahora dicen ¡Uhhh! ¡Sentimos un poco de sangre!", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:16:00.237", "stage": "translation_output", "chars": 104, "text": "y los demócratas que realmente no quieren hablar de ello ahora dicen ¡Uhhh! ¡Sentimos un poco de sangre!", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:16:00.242", "stage": "display_update_input", "chars": 104, "text": "y los demócratas que realmente no quieren hablar de ello ahora dicen ¡Uhhh! ¡Sentimos un poco de sangre!", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 20:16:00.248", "stage": "display_chunk_enqueued", "chars": 30, "text": "y los demócratas que realmente", "meta": {"chunk_index": 0, "chunk_count": 4, "word_by_word": true}}
+{"ts": "2026-02-13 20:16:00.256", "stage": "display_chunk_enqueued", "chars": 25, "text": "no quieren hablar de ello", "meta": {"chunk_index": 1, "chunk_count": 4, "word_by_word": true}}
+{"ts": "2026-02-13 20:16:00.261", "stage": "display_chunk_enqueued", "chars": 28, "text": "ahora dicen ¡Uhhh! ¡Sentimos", "meta": {"chunk_index": 2, "chunk_count": 4, "word_by_word": true}}
+{"ts": "2026-02-13 20:16:00.267", "stage": "display_chunk_enqueued", "chars": 18, "text": "un poco de sangre!", "meta": {"chunk_index": 3, "chunk_count": 4, "word_by_word": true}}
+{"ts": "2026-02-13 20:16:00.888", "stage": "display_word_reveal_complete", "chars": 30, "text": "y los demócratas que realmente"}
+{"ts": "2026-02-13 20:16:01.564", "stage": "display_word_reveal_complete", "chars": 25, "text": "no quieren hablar de ello"}
+{"ts": "2026-02-13 20:16:02.064", "stage": "display_word_reveal_complete", "chars": 28, "text": "ahora dicen ¡Uhhh! ¡Sentimos"}
+{"ts": "2026-02-13 20:16:02.573", "stage": "display_word_reveal_complete", "chars": 18, "text": "un poco de sangre!"}
+{"ts": "2026-02-13 20:16:07.211", "stage": "stt_raw", "chars": 723, "text": "¡Vamos a ser un perro con un perro con un perro con un perro con un perro con un perro con un perro con un perro con un perro con un perro con un perro con un perro con un perro con un perro con un perro con un perro con un perro con un perro con un perro con un perro con un perro con un perro con un perro con un perro con un perro con un perro con un perro con un perro con un perro con un perro con un perro con un perro con un perro con un perro con un perro con un perro con un perro con un perro con un perro con un perro con un perro con un perro con un perro con un perro con un perro con un perro con un perro con un perro con un perro con un perro con un perro con un perro con un perro con un perro con un perro", "meta": {"engine": "faster-whisper", "stt_openai_ms": 2683}}
+{"ts": "2026-02-13 20:16:07.218", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "faster-whisper", "stt_openai_ms": 2683}}
+{"ts": "2026-02-13 20:16:10.469", "stage": "stt_raw", "chars": 118, "text": "No hubo billos, no hubo subvenciones, no hubo escuchos durante 4 años de la pandemia. ¿Es relacionado con la epidemia?", "meta": {"engine": "faster-whisper", "stt_openai_ms": 836}}
+{"ts": "2026-02-13 20:16:10.475", "stage": "stt_sanitized", "chars": 118, "text": "No hubo billos, no hubo subvenciones, no hubo escuchos durante 4 años de la pandemia. ¿Es relacionado con la epidemia?", "meta": {"engine": "faster-whisper", "stt_openai_ms": 836}}
+{"ts": "2026-02-13 20:16:10.480", "stage": "stt_boundary_trim_bypassed", "chars": 118, "text": "No hubo billos, no hubo subvenciones, no hubo escuchos durante 4 años de la pandemia. ¿Es relacionado con la epidemia?", "meta": {"loopback": false}}
+{"ts": "2026-02-13 20:16:10.486", "stage": "sentence_enqueued", "chars": 118, "text": "No hubo billos, no hubo subvenciones, no hubo escuchos durante 4 años de la pandemia. ¿Es relacionado con la epidemia?", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 836, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:16:10.492", "stage": "translation_input", "chars": 118, "text": "No hubo billos, no hubo subvenciones, no hubo escuchos durante 4 años de la pandemia. ¿Es relacionado con la epidemia?", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:16:10.499", "stage": "translation_cleanup_bypassed", "chars": 118, "text": "No hubo billos, no hubo subvenciones, no hubo escuchos durante 4 años de la pandemia. ¿Es relacionado con la epidemia?", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:16:10.507", "stage": "translation_output", "chars": 118, "text": "No hubo billos, no hubo subvenciones, no hubo escuchos durante 4 años de la pandemia. ¿Es relacionado con la epidemia?", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:16:10.514", "stage": "display_update_input", "chars": 118, "text": "No hubo billos, no hubo subvenciones, no hubo escuchos durante 4 años de la pandemia. ¿Es relacionado con la epidemia?", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 20:16:10.523", "stage": "display_chunk_enqueued", "chars": 23, "text": "No hubo billos, no hubo", "meta": {"chunk_index": 0, "chunk_count": 5, "word_by_word": true}}
+{"ts": "2026-02-13 20:16:10.530", "stage": "display_chunk_enqueued", "chars": 30, "text": "subvenciones, no hubo escuchos", "meta": {"chunk_index": 1, "chunk_count": 5, "word_by_word": true}}
+{"ts": "2026-02-13 20:16:10.537", "stage": "display_chunk_enqueued", "chars": 30, "text": "durante 4 años de la pandemia.", "meta": {"chunk_index": 2, "chunk_count": 5, "word_by_word": true}}
+{"ts": "2026-02-13 20:16:10.544", "stage": "display_chunk_enqueued", "chars": 22, "text": "¿Es relacionado con la", "meta": {"chunk_index": 3, "chunk_count": 5, "word_by_word": true}}
+{"ts": "2026-02-13 20:16:10.551", "stage": "display_chunk_enqueued", "chars": 9, "text": "epidemia?", "meta": {"chunk_index": 4, "chunk_count": 5, "word_by_word": true}}
+{"ts": "2026-02-13 20:16:11.341", "stage": "display_word_reveal_complete", "chars": 23, "text": "No hubo billos, no hubo"}
+{"ts": "2026-02-13 20:16:11.884", "stage": "display_word_reveal_complete", "chars": 30, "text": "subvenciones, no hubo escuchos"}
+{"ts": "2026-02-13 20:16:12.644", "stage": "display_word_reveal_complete", "chars": 30, "text": "durante 4 años de la pandemia."}
+{"ts": "2026-02-13 20:16:13.157", "stage": "display_word_reveal_complete", "chars": 22, "text": "¿Es relacionado con la"}
+{"ts": "2026-02-13 20:16:13.282", "stage": "display_word_reveal_complete", "chars": 9, "text": "epidemia?"}
+{"ts": "2026-02-13 20:16:15.440", "stage": "stt_raw", "chars": 91, "text": "No hay un llamado a nadie en la parte democrática de Nota para hacer nada con respecto a...", "meta": {"engine": "faster-whisper", "stt_openai_ms": 541}}
+{"ts": "2026-02-13 20:16:15.446", "stage": "stt_sanitized", "chars": 91, "text": "No hay un llamado a nadie en la parte democrática de Nota para hacer nada con respecto a...", "meta": {"engine": "faster-whisper", "stt_openai_ms": 541}}
+{"ts": "2026-02-13 20:16:15.452", "stage": "stt_boundary_trim_bypassed", "chars": 91, "text": "No hay un llamado a nadie en la parte democrática de Nota para hacer nada con respecto a...", "meta": {"loopback": false}}
+{"ts": "2026-02-13 20:16:15.457", "stage": "sentence_enqueued", "chars": 91, "text": "No hay un llamado a nadie en la parte democrática de Nota para hacer nada con respecto a...", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 541, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:16:15.461", "stage": "translation_input", "chars": 91, "text": "No hay un llamado a nadie en la parte democrática de Nota para hacer nada con respecto a...", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:16:15.468", "stage": "translation_cleanup_bypassed", "chars": 91, "text": "No hay un llamado a nadie en la parte democrática de Nota para hacer nada con respecto a...", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:16:15.474", "stage": "translation_output", "chars": 91, "text": "No hay un llamado a nadie en la parte democrática de Nota para hacer nada con respecto a...", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:16:15.479", "stage": "display_update_input", "chars": 91, "text": "No hay un llamado a nadie en la parte democrática de Nota para hacer nada con respecto a...", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 20:16:15.483", "stage": "display_chunk_enqueued", "chars": 28, "text": "No hay un llamado a nadie en", "meta": {"chunk_index": 0, "chunk_count": 4, "word_by_word": true}}
+{"ts": "2026-02-13 20:16:15.489", "stage": "display_chunk_enqueued", "chars": 28, "text": "la parte democrática de Nota", "meta": {"chunk_index": 1, "chunk_count": 4, "word_by_word": true}}
+{"ts": "2026-02-13 20:16:15.493", "stage": "display_chunk_enqueued", "chars": 28, "text": "para hacer nada con respecto", "meta": {"chunk_index": 2, "chunk_count": 4, "word_by_word": true}}
+{"ts": "2026-02-13 20:16:15.499", "stage": "display_chunk_enqueued", "chars": 4, "text": "a...", "meta": {"chunk_index": 3, "chunk_count": 4, "word_by_word": true}}
+{"ts": "2026-02-13 20:16:16.567", "stage": "display_word_reveal_complete", "chars": 28, "text": "No hay un llamado a nadie en"}
+{"ts": "2026-02-13 20:16:17.217", "stage": "display_word_reveal_complete", "chars": 28, "text": "la parte democrática de Nota"}
+{"ts": "2026-02-13 20:16:17.869", "stage": "display_word_reveal_complete", "chars": 28, "text": "para hacer nada con respecto"}
+{"ts": "2026-02-13 20:16:17.998", "stage": "display_word_reveal_complete", "chars": 4, "text": "a..."}
+{"ts": "2026-02-13 20:16:20.868", "stage": "stt_raw", "chars": 93, "text": "Jeffrey Epstein. Pelosi, junto con su portfuebre de compra, refiere a responder una pregunta.", "meta": {"engine": "faster-whisper", "stt_openai_ms": 509}}
+{"ts": "2026-02-13 20:16:20.876", "stage": "stt_sanitized", "chars": 93, "text": "Jeffrey Epstein. Pelosi, junto con su portfuebre de compra, refiere a responder una pregunta.", "meta": {"engine": "faster-whisper", "stt_openai_ms": 509}}
+{"ts": "2026-02-13 20:16:20.882", "stage": "stt_boundary_trim_bypassed", "chars": 93, "text": "Jeffrey Epstein. Pelosi, junto con su portfuebre de compra, refiere a responder una pregunta.", "meta": {"loopback": false}}
+{"ts": "2026-02-13 20:16:20.887", "stage": "sentence_enqueued", "chars": 93, "text": "Jeffrey Epstein. Pelosi, junto con su portfuebre de compra, refiere a responder una pregunta.", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 509, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:16:20.892", "stage": "translation_input", "chars": 93, "text": "Jeffrey Epstein. Pelosi, junto con su portfuebre de compra, refiere a responder una pregunta.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:16:20.898", "stage": "translation_cleanup_bypassed", "chars": 93, "text": "Jeffrey Epstein. Pelosi, junto con su portfuebre de compra, refiere a responder una pregunta.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:16:20.903", "stage": "translation_output", "chars": 93, "text": "Jeffrey Epstein. Pelosi, junto con su portfuebre de compra, refiere a responder una pregunta.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:16:20.909", "stage": "display_update_input", "chars": 93, "text": "Jeffrey Epstein. Pelosi, junto con su portfuebre de compra, refiere a responder una pregunta.", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 20:16:20.915", "stage": "display_chunk_enqueued", "chars": 30, "text": "Jeffrey Epstein. Pelosi, junto", "meta": {"chunk_index": 0, "chunk_count": 4, "word_by_word": true}}
+{"ts": "2026-02-13 20:16:20.920", "stage": "display_chunk_enqueued", "chars": 28, "text": "con su portfuebre de compra,", "meta": {"chunk_index": 1, "chunk_count": 4, "word_by_word": true}}
+{"ts": "2026-02-13 20:16:20.927", "stage": "display_chunk_enqueued", "chars": 23, "text": "refiere a responder una", "meta": {"chunk_index": 2, "chunk_count": 4, "word_by_word": true}}
+{"ts": "2026-02-13 20:16:20.932", "stage": "display_chunk_enqueued", "chars": 9, "text": "pregunta.", "meta": {"chunk_index": 3, "chunk_count": 4, "word_by_word": true}}
+{"ts": "2026-02-13 20:16:21.450", "stage": "display_word_reveal_complete", "chars": 30, "text": "Jeffrey Epstein. Pelosi, junto"}
+{"ts": "2026-02-13 20:16:22.165", "stage": "display_word_reveal_complete", "chars": 28, "text": "con su portfuebre de compra,"}
+{"ts": "2026-02-13 20:16:22.470", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "faster-whisper", "stt_openai_ms": 39}}
+{"ts": "2026-02-13 20:16:22.475", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "faster-whisper", "stt_openai_ms": 39}}
+{"ts": "2026-02-13 20:16:22.689", "stage": "display_word_reveal_complete", "chars": 23, "text": "refiere a responder una"}
+{"ts": "2026-02-13 20:16:22.838", "stage": "display_word_reveal_complete", "chars": 9, "text": "pregunta."}
+{"ts": "2026-02-13 20:16:27.928", "stage": "stt_raw", "chars": 27, "text": "Gracias, señora presidenta.", "meta": {"engine": "faster-whisper", "stt_openai_ms": 489}}
+{"ts": "2026-02-13 20:16:27.936", "stage": "stt_sanitized", "chars": 27, "text": "Gracias, señora presidenta.", "meta": {"engine": "faster-whisper", "stt_openai_ms": 489}}
+{"ts": "2026-02-13 20:16:27.943", "stage": "stt_boundary_trim_bypassed", "chars": 27, "text": "Gracias, señora presidenta.", "meta": {"loopback": false}}
+{"ts": "2026-02-13 20:16:27.949", "stage": "sentence_enqueued", "chars": 27, "text": "Gracias, señora presidenta.", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 489, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:16:27.953", "stage": "translation_input", "chars": 27, "text": "Gracias, señora presidenta.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:16:27.960", "stage": "translation_cleanup_bypassed", "chars": 27, "text": "Gracias, señora presidenta.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:16:27.966", "stage": "translation_output", "chars": 27, "text": "Gracias, señora presidenta.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:16:27.971", "stage": "display_update_input", "chars": 27, "text": "Gracias, señora presidenta.", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 20:16:27.977", "stage": "display_chunk_enqueued", "chars": 27, "text": "Gracias, señora presidenta.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-13 20:16:28.410", "stage": "display_word_reveal_complete", "chars": 27, "text": "Gracias, señora presidenta."}
+{"ts": "2026-02-13 20:16:32.491", "stage": "stt_raw", "chars": 52, "text": "¿Por qué crees que Biden no lo hizo por cuatro años?", "meta": {"engine": "faster-whisper", "stt_openai_ms": 452}}
+{"ts": "2026-02-13 20:16:32.496", "stage": "stt_sanitized", "chars": 52, "text": "¿Por qué crees que Biden no lo hizo por cuatro años?", "meta": {"engine": "faster-whisper", "stt_openai_ms": 452}}
+{"ts": "2026-02-13 20:16:32.503", "stage": "stt_boundary_trim_bypassed", "chars": 52, "text": "¿Por qué crees que Biden no lo hizo por cuatro años?", "meta": {"loopback": false}}
+{"ts": "2026-02-13 20:16:32.508", "stage": "sentence_enqueued", "chars": 52, "text": "¿Por qué crees que Biden no lo hizo por cuatro años?", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 452, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:16:32.512", "stage": "translation_input", "chars": 52, "text": "¿Por qué crees que Biden no lo hizo por cuatro años?", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:16:32.519", "stage": "translation_cleanup_bypassed", "chars": 52, "text": "¿Por qué crees que Biden no lo hizo por cuatro años?", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:16:32.525", "stage": "translation_output", "chars": 52, "text": "¿Por qué crees que Biden no lo hizo por cuatro años?", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:16:32.531", "stage": "display_update_input", "chars": 52, "text": "¿Por qué crees que Biden no lo hizo por cuatro años?", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 20:16:32.537", "stage": "display_chunk_enqueued", "chars": 30, "text": "¿Por qué crees que Biden no lo", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 20:16:32.542", "stage": "display_chunk_enqueued", "chars": 21, "text": "hizo por cuatro años?", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 20:16:33.438", "stage": "display_word_reveal_complete", "chars": 30, "text": "¿Por qué crees que Biden no lo"}
+{"ts": "2026-02-13 20:16:33.982", "stage": "display_word_reveal_complete", "chars": 21, "text": "hizo por cuatro años?"}
+{"ts": "2026-02-13 20:16:39.265", "stage": "stt_raw", "chars": 51, "text": "¿Sabes por qué no lo hicieron? ¿Crees que deberían?", "meta": {"engine": "faster-whisper", "stt_openai_ms": 586}}
+{"ts": "2026-02-13 20:16:39.272", "stage": "stt_sanitized", "chars": 51, "text": "¿Sabes por qué no lo hicieron? ¿Crees que deberían?", "meta": {"engine": "faster-whisper", "stt_openai_ms": 586}}
+{"ts": "2026-02-13 20:16:39.277", "stage": "stt_boundary_trim_bypassed", "chars": 51, "text": "¿Sabes por qué no lo hicieron? ¿Crees que deberían?", "meta": {"loopback": false}}
+{"ts": "2026-02-13 20:16:39.283", "stage": "sentence_enqueued", "chars": 51, "text": "¿Sabes por qué no lo hicieron? ¿Crees que deberían?", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 586, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:16:39.288", "stage": "translation_input", "chars": 51, "text": "¿Sabes por qué no lo hicieron? ¿Crees que deberían?", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:16:39.295", "stage": "translation_cleanup_bypassed", "chars": 51, "text": "¿Sabes por qué no lo hicieron? ¿Crees que deberían?", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:16:39.302", "stage": "translation_output", "chars": 51, "text": "¿Sabes por qué no lo hicieron? ¿Crees que deberían?", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:16:39.307", "stage": "display_update_input", "chars": 51, "text": "¿Sabes por qué no lo hicieron? ¿Crees que deberían?", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 20:16:39.314", "stage": "display_chunk_enqueued", "chars": 30, "text": "¿Sabes por qué no lo hicieron?", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 20:16:39.319", "stage": "display_chunk_enqueued", "chars": 20, "text": "¿Crees que deberían?", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 20:16:40.219", "stage": "display_word_reveal_complete", "chars": 30, "text": "¿Sabes por qué no lo hicieron?"}
+{"ts": "2026-02-13 20:16:40.543", "stage": "stt_raw", "chars": 25, "text": "lo que sabemos más tarde.", "meta": {"engine": "faster-whisper", "stt_openai_ms": 213}}
+{"ts": "2026-02-13 20:16:40.551", "stage": "stt_sanitized", "chars": 25, "text": "lo que sabemos más tarde.", "meta": {"engine": "faster-whisper", "stt_openai_ms": 213}}
+{"ts": "2026-02-13 20:16:40.558", "stage": "stt_boundary_trim_bypassed", "chars": 25, "text": "lo que sabemos más tarde.", "meta": {"loopback": false}}
+{"ts": "2026-02-13 20:16:40.566", "stage": "sentence_enqueued", "chars": 25, "text": "lo que sabemos más tarde.", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 213, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:16:40.571", "stage": "translation_input", "chars": 25, "text": "lo que sabemos más tarde.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:16:40.579", "stage": "translation_cleanup_bypassed", "chars": 25, "text": "lo que sabemos más tarde.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:16:40.586", "stage": "translation_output", "chars": 25, "text": "lo que sabemos más tarde.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:16:40.592", "stage": "display_update_input", "chars": 25, "text": "lo que sabemos más tarde.", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 20:16:40.600", "stage": "display_chunk_enqueued", "chars": 25, "text": "lo que sabemos más tarde.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-13 20:16:40.654", "stage": "display_word_reveal_complete", "chars": 20, "text": "¿Crees que deberían?"}
+{"ts": "2026-02-13 20:16:41.368", "stage": "display_word_reveal_complete", "chars": 25, "text": "lo que sabemos más tarde."}
+{"ts": "2026-02-13 20:16:46.180", "stage": "stt_raw", "chars": 120, "text": "y algunas conexiones bastante fuertes con la gente en el intercírculo de Joe Biden, quien podría haber querido proteger.", "meta": {"engine": "faster-whisper", "stt_openai_ms": 760}}
+{"ts": "2026-02-13 20:16:46.190", "stage": "stt_sanitized", "chars": 120, "text": "y algunas conexiones bastante fuertes con la gente en el intercírculo de Joe Biden, quien podría haber querido proteger.", "meta": {"engine": "faster-whisper", "stt_openai_ms": 760}}
+{"ts": "2026-02-13 20:16:46.197", "stage": "stt_boundary_trim_bypassed", "chars": 120, "text": "y algunas conexiones bastante fuertes con la gente en el intercírculo de Joe Biden, quien podría haber querido proteger.", "meta": {"loopback": false}}
+{"ts": "2026-02-13 20:16:46.202", "stage": "sentence_enqueued", "chars": 120, "text": "y algunas conexiones bastante fuertes con la gente en el intercírculo de Joe Biden, quien podría haber querido proteger.", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 760, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:16:46.209", "stage": "translation_input", "chars": 120, "text": "y algunas conexiones bastante fuertes con la gente en el intercírculo de Joe Biden, quien podría haber querido proteger.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:16:46.218", "stage": "translation_cleanup_bypassed", "chars": 120, "text": "y algunas conexiones bastante fuertes con la gente en el intercírculo de Joe Biden, quien podría haber querido proteger.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:16:46.224", "stage": "translation_output", "chars": 120, "text": "y algunas conexiones bastante fuertes con la gente en el intercírculo de Joe Biden, quien podría haber querido proteger.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:16:46.233", "stage": "display_update_input", "chars": 120, "text": "y algunas conexiones bastante fuertes con la gente en el intercírculo de Joe Biden, quien podría haber querido proteger.", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 20:16:46.239", "stage": "display_chunk_enqueued", "chars": 29, "text": "y algunas conexiones bastante", "meta": {"chunk_index": 0, "chunk_count": 5, "word_by_word": true}}
+{"ts": "2026-02-13 20:16:46.245", "stage": "display_chunk_enqueued", "chars": 26, "text": "fuertes con la gente en el", "meta": {"chunk_index": 1, "chunk_count": 5, "word_by_word": true}}
+{"ts": "2026-02-13 20:16:46.253", "stage": "display_chunk_enqueued", "chars": 26, "text": "intercírculo de Joe Biden,", "meta": {"chunk_index": 2, "chunk_count": 5, "word_by_word": true}}
+{"ts": "2026-02-13 20:16:46.259", "stage": "display_chunk_enqueued", "chars": 26, "text": "quien podría haber querido", "meta": {"chunk_index": 3, "chunk_count": 5, "word_by_word": true}}
+{"ts": "2026-02-13 20:16:46.267", "stage": "display_chunk_enqueued", "chars": 9, "text": "proteger.", "meta": {"chunk_index": 4, "chunk_count": 5, "word_by_word": true}}
+{"ts": "2026-02-13 20:16:46.873", "stage": "display_word_reveal_complete", "chars": 29, "text": "y algunas conexiones bastante"}
+{"ts": "2026-02-13 20:16:47.677", "stage": "display_word_reveal_complete", "chars": 26, "text": "fuertes con la gente en el"}
+{"ts": "2026-02-13 20:16:48.277", "stage": "display_word_reveal_complete", "chars": 26, "text": "intercírculo de Joe Biden,"}
+{"ts": "2026-02-13 20:16:48.842", "stage": "display_word_reveal_complete", "chars": 26, "text": "quien podría haber querido"}
+{"ts": "2026-02-13 20:16:48.982", "stage": "display_word_reveal_complete", "chars": 9, "text": "proteger."}
+{"ts": "2026-02-13 20:16:50.943", "stage": "stt_raw", "chars": 85, "text": "Just asking questions, big guy. All he had to say, they're weaponizing it against me.", "meta": {"engine": "faster-whisper", "stt_openai_ms": 513}}
+{"ts": "2026-02-13 20:16:50.948", "stage": "stt_sanitized", "chars": 85, "text": "Just asking questions, big guy. All he had to say, they're weaponizing it against me.", "meta": {"engine": "faster-whisper", "stt_openai_ms": 513}}
+{"ts": "2026-02-13 20:16:50.955", "stage": "stt_source_lang_filtered", "chars": 85, "text": "Just asking questions, big guy. All he had to say, they're weaponizing it against me.", "meta": {"source_lang": "es"}}
+{"ts": "2026-02-13 20:16:56.181", "stage": "stt_raw", "chars": 91, "text": "Ellos tenían 4 años para lanzarlo, no lo hicieron. Me pregunto por qué. En vez de... Jodas.", "meta": {"engine": "faster-whisper", "stt_openai_ms": 661}}
+{"ts": "2026-02-13 20:16:56.187", "stage": "stt_sanitized", "chars": 91, "text": "Ellos tenían 4 años para lanzarlo, no lo hicieron. Me pregunto por qué. En vez de... Jodas.", "meta": {"engine": "faster-whisper", "stt_openai_ms": 661}}
+{"ts": "2026-02-13 20:16:56.193", "stage": "stt_boundary_trim_bypassed", "chars": 91, "text": "Ellos tenían 4 años para lanzarlo, no lo hicieron. Me pregunto por qué. En vez de... Jodas.", "meta": {"loopback": false}}
+{"ts": "2026-02-13 20:16:56.200", "stage": "sentence_enqueued", "chars": 91, "text": "Ellos tenían 4 años para lanzarlo, no lo hicieron. Me pregunto por qué. En vez de... Jodas.", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 661, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:16:56.205", "stage": "translation_input", "chars": 91, "text": "Ellos tenían 4 años para lanzarlo, no lo hicieron. Me pregunto por qué. En vez de... Jodas.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:16:56.213", "stage": "translation_cleanup_bypassed", "chars": 91, "text": "Ellos tenían 4 años para lanzarlo, no lo hicieron. Me pregunto por qué. En vez de... Jodas.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:16:56.219", "stage": "translation_output", "chars": 91, "text": "Ellos tenían 4 años para lanzarlo, no lo hicieron. Me pregunto por qué. En vez de... Jodas.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:16:56.226", "stage": "display_update_input", "chars": 91, "text": "Ellos tenían 4 años para lanzarlo, no lo hicieron. Me pregunto por qué. En vez de... Jodas.", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 20:16:56.233", "stage": "display_chunk_enqueued", "chars": 24, "text": "Ellos tenían 4 años para", "meta": {"chunk_index": 0, "chunk_count": 4, "word_by_word": true}}
+{"ts": "2026-02-13 20:16:56.240", "stage": "display_chunk_enqueued", "chars": 28, "text": "lanzarlo, no lo hicieron. Me", "meta": {"chunk_index": 1, "chunk_count": 4, "word_by_word": true}}
+{"ts": "2026-02-13 20:16:56.246", "stage": "display_chunk_enqueued", "chars": 30, "text": "pregunto por qué. En vez de...", "meta": {"chunk_index": 2, "chunk_count": 4, "word_by_word": true}}
+{"ts": "2026-02-13 20:16:56.252", "stage": "display_chunk_enqueued", "chars": 6, "text": "Jodas.", "meta": {"chunk_index": 3, "chunk_count": 4, "word_by_word": true}}
+{"ts": "2026-02-13 20:16:56.933", "stage": "display_word_reveal_complete", "chars": 24, "text": "Ellos tenían 4 años para"}
+{"ts": "2026-02-13 20:16:57.584", "stage": "display_word_reveal_complete", "chars": 28, "text": "lanzarlo, no lo hicieron. Me"}
+{"ts": "2026-02-13 20:16:58.465", "stage": "display_word_reveal_complete", "chars": 30, "text": "pregunto por qué. En vez de..."}
+{"ts": "2026-02-13 20:16:58.653", "stage": "display_word_reveal_complete", "chars": 6, "text": "Jodas."}
+{"ts": "2026-02-13 20:17:01.062", "stage": "stt_raw", "chars": 76, "text": "y ahora tienes gente en esta administración que se ha flipado de otra manera", "meta": {"engine": "faster-whisper", "stt_openai_ms": 442}}
+{"ts": "2026-02-13 20:17:01.069", "stage": "stt_sanitized", "chars": 76, "text": "y ahora tienes gente en esta administración que se ha flipado de otra manera", "meta": {"engine": "faster-whisper", "stt_openai_ms": 442}}
+{"ts": "2026-02-13 20:17:01.075", "stage": "stt_boundary_trim_bypassed", "chars": 76, "text": "y ahora tienes gente en esta administración que se ha flipado de otra manera", "meta": {"loopback": false}}
+{"ts": "2026-02-13 20:17:01.080", "stage": "sentence_enqueued", "chars": 76, "text": "y ahora tienes gente en esta administración que se ha flipado de otra manera", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 442, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:17:01.085", "stage": "translation_input", "chars": 76, "text": "y ahora tienes gente en esta administración que se ha flipado de otra manera", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:17:01.092", "stage": "translation_cleanup_bypassed", "chars": 76, "text": "y ahora tienes gente en esta administración que se ha flipado de otra manera", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:17:01.099", "stage": "translation_output", "chars": 76, "text": "y ahora tienes gente en esta administración que se ha flipado de otra manera", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:17:01.106", "stage": "display_update_input", "chars": 76, "text": "y ahora tienes gente en esta administración que se ha flipado de otra manera", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 20:17:01.115", "stage": "display_chunk_enqueued", "chars": 28, "text": "y ahora tienes gente en esta", "meta": {"chunk_index": 0, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 20:17:01.124", "stage": "display_chunk_enqueued", "chars": 24, "text": "administración que se ha", "meta": {"chunk_index": 1, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 20:17:01.134", "stage": "display_chunk_enqueued", "chars": 22, "text": "flipado de otra manera", "meta": {"chunk_index": 2, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 20:17:02.001", "stage": "display_word_reveal_complete", "chars": 28, "text": "y ahora tienes gente en esta"}
+{"ts": "2026-02-13 20:17:02.495", "stage": "display_word_reveal_complete", "chars": 24, "text": "administración que se ha"}
+{"ts": "2026-02-13 20:17:02.953", "stage": "display_word_reveal_complete", "chars": 22, "text": "flipado de otra manera"}
+{"ts": "2026-02-13 20:17:06.587", "stage": "stt_raw", "chars": 64, "text": "y no hay ningún de ellos que parezca bien y te preguntas, hey...", "meta": {"engine": "faster-whisper", "stt_openai_ms": 596}}
+{"ts": "2026-02-13 20:17:06.594", "stage": "stt_sanitized", "chars": 64, "text": "y no hay ningún de ellos que parezca bien y te preguntas, hey...", "meta": {"engine": "faster-whisper", "stt_openai_ms": 596}}
+{"ts": "2026-02-13 20:17:06.602", "stage": "stt_boundary_trim_bypassed", "chars": 64, "text": "y no hay ningún de ellos que parezca bien y te preguntas, hey...", "meta": {"loopback": false}}
+{"ts": "2026-02-13 20:17:06.608", "stage": "sentence_enqueued", "chars": 64, "text": "y no hay ningún de ellos que parezca bien y te preguntas, hey...", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 596, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:17:06.612", "stage": "translation_input", "chars": 64, "text": "y no hay ningún de ellos que parezca bien y te preguntas, hey...", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:17:06.619", "stage": "translation_cleanup_bypassed", "chars": 64, "text": "y no hay ningún de ellos que parezca bien y te preguntas, hey...", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:17:06.626", "stage": "translation_output", "chars": 64, "text": "y no hay ningún de ellos que parezca bien y te preguntas, hey...", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:17:06.634", "stage": "display_update_input", "chars": 64, "text": "y no hay ningún de ellos que parezca bien y te preguntas, hey...", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 20:17:06.640", "stage": "display_chunk_enqueued", "chars": 28, "text": "y no hay ningún de ellos que", "meta": {"chunk_index": 0, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 20:17:06.646", "stage": "display_chunk_enqueued", "chars": 28, "text": "parezca bien y te preguntas,", "meta": {"chunk_index": 1, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 20:17:06.652", "stage": "display_chunk_enqueued", "chars": 6, "text": "hey...", "meta": {"chunk_index": 2, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 20:17:07.407", "stage": "display_word_reveal_complete", "chars": 28, "text": "y no hay ningún de ellos que"}
+{"ts": "2026-02-13 20:17:07.965", "stage": "display_word_reveal_complete", "chars": 28, "text": "parezca bien y te preguntas,"}
+{"ts": "2026-02-13 20:17:08.089", "stage": "display_word_reveal_complete", "chars": 6, "text": "hey..."}
+{"ts": "2026-02-13 20:17:11.664", "stage": "stt_raw", "chars": 87, "text": "¿Cuál es la verdad? Y lo entiendo, es muy difícil determinar eso, porque ahora mismo...", "meta": {"engine": "faster-whisper", "stt_openai_ms": 665}}
+{"ts": "2026-02-13 20:17:11.670", "stage": "stt_sanitized", "chars": 87, "text": "¿Cuál es la verdad? Y lo entiendo, es muy difícil determinar eso, porque ahora mismo...", "meta": {"engine": "faster-whisper", "stt_openai_ms": 665}}
+{"ts": "2026-02-13 20:17:11.677", "stage": "stt_boundary_trim_bypassed", "chars": 87, "text": "¿Cuál es la verdad? Y lo entiendo, es muy difícil determinar eso, porque ahora mismo...", "meta": {"loopback": false}}
+{"ts": "2026-02-13 20:17:11.684", "stage": "sentence_enqueued", "chars": 87, "text": "¿Cuál es la verdad? Y lo entiendo, es muy difícil determinar eso, porque ahora mismo...", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 665, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:17:11.688", "stage": "translation_input", "chars": 87, "text": "¿Cuál es la verdad? Y lo entiendo, es muy difícil determinar eso, porque ahora mismo...", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:17:11.698", "stage": "translation_cleanup_bypassed", "chars": 87, "text": "¿Cuál es la verdad? Y lo entiendo, es muy difícil determinar eso, porque ahora mismo...", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:17:11.704", "stage": "translation_output", "chars": 87, "text": "¿Cuál es la verdad? Y lo entiendo, es muy difícil determinar eso, porque ahora mismo...", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:17:11.711", "stage": "display_update_input", "chars": 87, "text": "¿Cuál es la verdad? Y lo entiendo, es muy difícil determinar eso, porque ahora mismo...", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 20:17:11.717", "stage": "display_chunk_enqueued", "chars": 24, "text": "¿Cuál es la verdad? Y lo", "meta": {"chunk_index": 0, "chunk_count": 4, "word_by_word": true}}
+{"ts": "2026-02-13 20:17:11.724", "stage": "display_chunk_enqueued", "chars": 24, "text": "entiendo, es muy difícil", "meta": {"chunk_index": 1, "chunk_count": 4, "word_by_word": true}}
+{"ts": "2026-02-13 20:17:11.732", "stage": "display_chunk_enqueued", "chars": 28, "text": "determinar eso, porque ahora", "meta": {"chunk_index": 2, "chunk_count": 4, "word_by_word": true}}
+{"ts": "2026-02-13 20:17:11.740", "stage": "display_chunk_enqueued", "chars": 8, "text": "mismo...", "meta": {"chunk_index": 3, "chunk_count": 4, "word_by_word": true}}
+{"ts": "2026-02-13 20:17:12.497", "stage": "display_word_reveal_complete", "chars": 24, "text": "¿Cuál es la verdad? Y lo"}
+{"ts": "2026-02-13 20:17:13.010", "stage": "display_word_reveal_complete", "chars": 24, "text": "entiendo, es muy difícil"}
+{"ts": "2026-02-13 20:17:13.514", "stage": "display_word_reveal_complete", "chars": 28, "text": "determinar eso, porque ahora"}
+{"ts": "2026-02-13 20:17:13.645", "stage": "display_word_reveal_complete", "chars": 8, "text": "mismo..."}
+{"ts": "2026-02-13 20:17:14.698", "stage": "stt_raw", "chars": 45, "text": "que de repente los demócratas quieren hablar.", "meta": {"engine": "faster-whisper", "stt_openai_ms": 348}}
+{"ts": "2026-02-13 20:17:14.705", "stage": "stt_sanitized", "chars": 45, "text": "que de repente los demócratas quieren hablar.", "meta": {"engine": "faster-whisper", "stt_openai_ms": 348}}
+{"ts": "2026-02-13 20:17:14.710", "stage": "stt_boundary_trim_bypassed", "chars": 45, "text": "que de repente los demócratas quieren hablar.", "meta": {"loopback": false}}
+{"ts": "2026-02-13 20:17:14.715", "stage": "sentence_enqueued", "chars": 45, "text": "que de repente los demócratas quieren hablar.", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 348, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:17:14.720", "stage": "translation_input", "chars": 45, "text": "que de repente los demócratas quieren hablar.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:17:14.729", "stage": "translation_cleanup_bypassed", "chars": 45, "text": "que de repente los demócratas quieren hablar.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:17:14.736", "stage": "translation_output", "chars": 45, "text": "que de repente los demócratas quieren hablar.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:17:14.743", "stage": "display_update_input", "chars": 45, "text": "que de repente los demócratas quieren hablar.", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 20:17:14.749", "stage": "display_chunk_enqueued", "chars": 29, "text": "que de repente los demócratas", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 20:17:14.756", "stage": "display_chunk_enqueued", "chars": 15, "text": "quieren hablar.", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 20:17:15.377", "stage": "display_word_reveal_complete", "chars": 29, "text": "que de repente los demócratas"}
+{"ts": "2026-02-13 20:17:15.631", "stage": "display_word_reveal_complete", "chars": 15, "text": "quieren hablar."}
+{"ts": "2026-02-13 20:17:20.326", "stage": "stt_raw", "chars": 134, "text": "...que es la pregunta que todos los americanos están preguntando, no todos los americanos, pero muchos americanos están preguntando...", "meta": {"engine": "faster-whisper", "stt_openai_ms": 685}}
+{"ts": "2026-02-13 20:17:20.332", "stage": "stt_sanitized", "chars": 134, "text": "...que es la pregunta que todos los americanos están preguntando, no todos los americanos, pero muchos americanos están preguntando...", "meta": {"engine": "faster-whisper", "stt_openai_ms": 685}}
+{"ts": "2026-02-13 20:17:20.338", "stage": "stt_boundary_trim_bypassed", "chars": 134, "text": "...que es la pregunta que todos los americanos están preguntando, no todos los americanos, pero muchos americanos están preguntando...", "meta": {"loopback": false}}
+{"ts": "2026-02-13 20:17:20.342", "stage": "sentence_enqueued", "chars": 134, "text": "...que es la pregunta que todos los americanos están preguntando, no todos los americanos, pero muchos americanos están preguntando...", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 685, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:17:20.347", "stage": "translation_input", "chars": 134, "text": "...que es la pregunta que todos los americanos están preguntando, no todos los americanos, pero muchos americanos están preguntando...", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:17:20.354", "stage": "translation_cleanup_bypassed", "chars": 134, "text": "...que es la pregunta que todos los americanos están preguntando, no todos los americanos, pero muchos americanos están preguntando...", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:17:20.361", "stage": "translation_output", "chars": 134, "text": "...que es la pregunta que todos los americanos están preguntando, no todos los americanos, pero muchos americanos están preguntando...", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:17:20.368", "stage": "display_update_input", "chars": 134, "text": "...que es la pregunta que todos los americanos están preguntando, no todos los americanos, pero muchos americanos están preguntando...", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 20:17:20.375", "stage": "display_chunk_enqueued", "chars": 25, "text": "...que es la pregunta que", "meta": {"chunk_index": 0, "chunk_count": 6, "word_by_word": true}}
+{"ts": "2026-02-13 20:17:20.380", "stage": "display_chunk_enqueued", "chars": 26, "text": "todos los americanos están", "meta": {"chunk_index": 1, "chunk_count": 6, "word_by_word": true}}
+{"ts": "2026-02-13 20:17:20.386", "stage": "display_chunk_enqueued", "chars": 25, "text": "preguntando, no todos los", "meta": {"chunk_index": 2, "chunk_count": 6, "word_by_word": true}}
+{"ts": "2026-02-13 20:17:20.391", "stage": "display_chunk_enqueued", "chars": 23, "text": "americanos, pero muchos", "meta": {"chunk_index": 3, "chunk_count": 6, "word_by_word": true}}
+{"ts": "2026-02-13 20:17:20.398", "stage": "display_chunk_enqueued", "chars": 16, "text": "americanos están", "meta": {"chunk_index": 4, "chunk_count": 6, "word_by_word": true}}
+{"ts": "2026-02-13 20:17:20.404", "stage": "display_chunk_enqueued", "chars": 14, "text": "preguntando...", "meta": {"chunk_index": 5, "chunk_count": 6, "word_by_word": true}}
+{"ts": "2026-02-13 20:17:21.044", "stage": "display_word_reveal_complete", "chars": 25, "text": "...que es la pregunta que"}
+{"ts": "2026-02-13 20:17:21.561", "stage": "display_word_reveal_complete", "chars": 26, "text": "todos los americanos están"}
+{"ts": "2026-02-13 20:17:22.075", "stage": "display_word_reveal_complete", "chars": 25, "text": "preguntando, no todos los"}
+{"ts": "2026-02-13 20:17:22.448", "stage": "display_word_reveal_complete", "chars": 23, "text": "americanos, pero muchos"}
+{"ts": "2026-02-13 20:17:22.696", "stage": "display_word_reveal_complete", "chars": 16, "text": "americanos están"}
+{"ts": "2026-02-13 20:17:22.820", "stage": "display_word_reveal_complete", "chars": 14, "text": "preguntando..."}
+{"ts": "2026-02-13 20:17:25.523", "stage": "stt_raw", "chars": 108, "text": "¿Qué diablos está escondiendo? Los americanos merecen saber la verdad, la verdad total y nada más la verdad.", "meta": {"engine": "faster-whisper", "stt_openai_ms": 632}}
+{"ts": "2026-02-13 20:17:25.528", "stage": "stt_sanitized", "chars": 108, "text": "¿Qué diablos está escondiendo? Los americanos merecen saber la verdad, la verdad total y nada más la verdad.", "meta": {"engine": "faster-whisper", "stt_openai_ms": 632}}
+{"ts": "2026-02-13 20:17:25.536", "stage": "stt_boundary_trim_bypassed", "chars": 108, "text": "¿Qué diablos está escondiendo? Los americanos merecen saber la verdad, la verdad total y nada más la verdad.", "meta": {"loopback": false}}
+{"ts": "2026-02-13 20:17:25.542", "stage": "sentence_enqueued", "chars": 108, "text": "¿Qué diablos está escondiendo? Los americanos merecen saber la verdad, la verdad total y nada más la verdad.", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 632, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:17:25.547", "stage": "translation_input", "chars": 108, "text": "¿Qué diablos está escondiendo? Los americanos merecen saber la verdad, la verdad total y nada más la verdad.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:17:25.555", "stage": "translation_cleanup_bypassed", "chars": 108, "text": "¿Qué diablos está escondiendo? Los americanos merecen saber la verdad, la verdad total y nada más la verdad.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:17:25.562", "stage": "translation_output", "chars": 108, "text": "¿Qué diablos está escondiendo? Los americanos merecen saber la verdad, la verdad total y nada más la verdad.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:17:25.568", "stage": "display_update_input", "chars": 108, "text": "¿Qué diablos está escondiendo? Los americanos merecen saber la verdad, la verdad total y nada más la verdad.", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 20:17:25.574", "stage": "display_chunk_enqueued", "chars": 30, "text": "¿Qué diablos está escondiendo?", "meta": {"chunk_index": 0, "chunk_count": 4, "word_by_word": true}}
+{"ts": "2026-02-13 20:17:25.580", "stage": "display_chunk_enqueued", "chars": 28, "text": "Los americanos merecen saber", "meta": {"chunk_index": 1, "chunk_count": 4, "word_by_word": true}}
+{"ts": "2026-02-13 20:17:25.588", "stage": "display_chunk_enqueued", "chars": 28, "text": "la verdad, la verdad total y", "meta": {"chunk_index": 2, "chunk_count": 4, "word_by_word": true}}
+{"ts": "2026-02-13 20:17:25.596", "stage": "display_chunk_enqueued", "chars": 19, "text": "nada más la verdad.", "meta": {"chunk_index": 3, "chunk_count": 4, "word_by_word": true}}
+{"ts": "2026-02-13 20:17:26.107", "stage": "display_word_reveal_complete", "chars": 30, "text": "¿Qué diablos está escondiendo?"}
+{"ts": "2026-02-13 20:17:26.636", "stage": "display_word_reveal_complete", "chars": 28, "text": "Los americanos merecen saber"}
+{"ts": "2026-02-13 20:17:27.418", "stage": "display_word_reveal_complete", "chars": 28, "text": "la verdad, la verdad total y"}
+{"ts": "2026-02-13 20:17:27.921", "stage": "display_word_reveal_complete", "chars": 19, "text": "nada más la verdad."}
+{"ts": "2026-02-13 20:17:30.568", "stage": "stt_raw", "chars": 56, "text": "como se relaciona con todo este tema de Jeffrey Epstein.", "meta": {"engine": "faster-whisper", "stt_openai_ms": 428}}
+{"ts": "2026-02-13 20:17:30.575", "stage": "stt_sanitized", "chars": 56, "text": "como se relaciona con todo este tema de Jeffrey Epstein.", "meta": {"engine": "faster-whisper", "stt_openai_ms": 428}}
+{"ts": "2026-02-13 20:17:30.581", "stage": "stt_boundary_trim_bypassed", "chars": 56, "text": "como se relaciona con todo este tema de Jeffrey Epstein.", "meta": {"loopback": false}}
+{"ts": "2026-02-13 20:17:30.588", "stage": "sentence_enqueued", "chars": 56, "text": "como se relaciona con todo este tema de Jeffrey Epstein.", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 428, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:17:30.592", "stage": "translation_input", "chars": 56, "text": "como se relaciona con todo este tema de Jeffrey Epstein.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:17:30.601", "stage": "translation_cleanup_bypassed", "chars": 56, "text": "como se relaciona con todo este tema de Jeffrey Epstein.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:17:30.607", "stage": "translation_output", "chars": 56, "text": "como se relaciona con todo este tema de Jeffrey Epstein.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:17:30.614", "stage": "display_update_input", "chars": 56, "text": "como se relaciona con todo este tema de Jeffrey Epstein.", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 20:17:30.621", "stage": "display_chunk_enqueued", "chars": 26, "text": "como se relaciona con todo", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 20:17:30.627", "stage": "display_chunk_enqueued", "chars": 29, "text": "este tema de Jeffrey Epstein.", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 20:17:31.362", "stage": "display_word_reveal_complete", "chars": 26, "text": "como se relaciona con todo"}
+{"ts": "2026-02-13 20:17:32.062", "stage": "display_word_reveal_complete", "chars": 29, "text": "este tema de Jeffrey Epstein."}
+{"ts": "2026-02-13 20:17:35.776", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "faster-whisper", "stt_openai_ms": 575}}
+{"ts": "2026-02-13 20:17:35.785", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "faster-whisper", "stt_openai_ms": 575}}
+{"ts": "2026-02-13 20:17:40.980", "stage": "stt_raw", "chars": 79, "text": "documentos o se encerra de los documentos o se encerra en la redacción excesiva", "meta": {"engine": "faster-whisper", "stt_openai_ms": 770}}
+{"ts": "2026-02-13 20:17:40.991", "stage": "stt_sanitized", "chars": 79, "text": "documentos o se encerra de los documentos o se encerra en la redacción excesiva", "meta": {"engine": "faster-whisper", "stt_openai_ms": 770}}
+{"ts": "2026-02-13 20:17:41.001", "stage": "stt_boundary_trim_bypassed", "chars": 79, "text": "documentos o se encerra de los documentos o se encerra en la redacción excesiva", "meta": {"loopback": false}}
+{"ts": "2026-02-13 20:17:41.013", "stage": "sentence_enqueued", "chars": 79, "text": "documentos o se encerra de los documentos o se encerra en la redacción excesiva", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 770, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:17:41.020", "stage": "translation_input", "chars": 79, "text": "documentos o se encerra de los documentos o se encerra en la redacción excesiva", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:17:41.035", "stage": "translation_cleanup_bypassed", "chars": 79, "text": "documentos o se encerra de los documentos o se encerra en la redacción excesiva", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:17:41.045", "stage": "translation_output", "chars": 79, "text": "documentos o se encerra de los documentos o se encerra en la redacción excesiva", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:17:41.058", "stage": "display_update_input", "chars": 79, "text": "documentos o se encerra de los documentos o se encerra en la redacción excesiva", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 20:17:41.067", "stage": "display_chunk_enqueued", "chars": 30, "text": "documentos o se encerra de los", "meta": {"chunk_index": 0, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 20:17:41.078", "stage": "display_chunk_enqueued", "chars": 29, "text": "documentos o se encerra en la", "meta": {"chunk_index": 1, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 20:17:41.085", "stage": "display_chunk_enqueued", "chars": 18, "text": "redacción excesiva", "meta": {"chunk_index": 2, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 20:17:42.004", "stage": "display_word_reveal_complete", "chars": 30, "text": "documentos o se encerra de los"}
+{"ts": "2026-02-13 20:17:42.875", "stage": "display_word_reveal_complete", "chars": 29, "text": "documentos o se encerra en la"}
+{"ts": "2026-02-13 20:17:42.981", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "faster-whisper", "stt_openai_ms": 260}}
+{"ts": "2026-02-13 20:17:42.987", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "faster-whisper", "stt_openai_ms": 260}}
+{"ts": "2026-02-13 20:17:43.152", "stage": "display_word_reveal_complete", "chars": 18, "text": "redacción excesiva"}
+{"ts": "2026-02-13 20:17:48.186", "stage": "stt_raw", "chars": 49, "text": "Transparencia y Justicia para los sobrevivientes.", "meta": {"engine": "faster-whisper", "stt_openai_ms": 424}}
+{"ts": "2026-02-13 20:17:48.194", "stage": "stt_sanitized", "chars": 49, "text": "Transparencia y Justicia para los sobrevivientes.", "meta": {"engine": "faster-whisper", "stt_openai_ms": 424}}
+{"ts": "2026-02-13 20:17:48.201", "stage": "stt_boundary_trim_bypassed", "chars": 49, "text": "Transparencia y Justicia para los sobrevivientes.", "meta": {"loopback": false}}
+{"ts": "2026-02-13 20:17:48.207", "stage": "sentence_enqueued", "chars": 49, "text": "Transparencia y Justicia para los sobrevivientes.", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 424, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:17:48.212", "stage": "translation_input", "chars": 49, "text": "Transparencia y Justicia para los sobrevivientes.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:17:48.221", "stage": "translation_cleanup_bypassed", "chars": 49, "text": "Transparencia y Justicia para los sobrevivientes.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:17:48.227", "stage": "translation_output", "chars": 49, "text": "Transparencia y Justicia para los sobrevivientes.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:17:48.234", "stage": "display_update_input", "chars": 49, "text": "Transparencia y Justicia para los sobrevivientes.", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 20:17:48.239", "stage": "display_chunk_enqueued", "chars": 29, "text": "Transparencia y Justicia para", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 20:17:48.245", "stage": "display_chunk_enqueued", "chars": 19, "text": "los sobrevivientes.", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 20:17:48.745", "stage": "display_word_reveal_complete", "chars": 29, "text": "Transparencia y Justicia para"}
+{"ts": "2026-02-13 20:17:49.015", "stage": "display_word_reveal_complete", "chars": 19, "text": "los sobrevivientes."}
+{"ts": "2026-02-13 20:17:53.806", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "faster-whisper", "stt_openai_ms": 655}}
+{"ts": "2026-02-13 20:17:53.813", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "faster-whisper", "stt_openai_ms": 655}}
+{"ts": "2026-02-13 20:17:55.554", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "faster-whisper", "stt_openai_ms": 41}}
+{"ts": "2026-02-13 20:17:55.561", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "faster-whisper", "stt_openai_ms": 41}}
+{"ts": "2026-02-13 20:18:01.260", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "faster-whisper", "stt_openai_ms": 547}}
+{"ts": "2026-02-13 20:18:01.267", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "faster-whisper", "stt_openai_ms": 547}}
+{"ts": "2026-02-13 20:18:06.476", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "faster-whisper", "stt_openai_ms": 531}}
+{"ts": "2026-02-13 20:18:06.482", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "faster-whisper", "stt_openai_ms": 531}}
+{"ts": "2026-02-13 20:18:11.254", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "faster-whisper", "stt_openai_ms": 301}}
+{"ts": "2026-02-13 20:18:11.261", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "faster-whisper", "stt_openai_ms": 301}}
+{"ts": "2026-02-13 20:18:17.145", "stage": "stt_raw", "chars": 84, "text": "Ok, pero ustedes lo pararon por 4 años. Esto nos lleva a la incontestancia número...", "meta": {"engine": "faster-whisper", "stt_openai_ms": 682}}
+{"ts": "2026-02-13 20:18:17.152", "stage": "stt_sanitized", "chars": 84, "text": "Ok, pero ustedes lo pararon por 4 años. Esto nos lleva a la incontestancia número...", "meta": {"engine": "faster-whisper", "stt_openai_ms": 682}}
+{"ts": "2026-02-13 20:18:17.161", "stage": "stt_boundary_trim_bypassed", "chars": 84, "text": "Ok, pero ustedes lo pararon por 4 años. Esto nos lleva a la incontestancia número...", "meta": {"loopback": false}}
+{"ts": "2026-02-13 20:18:17.168", "stage": "sentence_enqueued", "chars": 84, "text": "Ok, pero ustedes lo pararon por 4 años. Esto nos lleva a la incontestancia número...", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 682, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:18:17.172", "stage": "translation_input", "chars": 84, "text": "Ok, pero ustedes lo pararon por 4 años. Esto nos lleva a la incontestancia número...", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:18:17.182", "stage": "translation_cleanup_bypassed", "chars": 84, "text": "Ok, pero ustedes lo pararon por 4 años. Esto nos lleva a la incontestancia número...", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:18:17.190", "stage": "translation_output", "chars": 84, "text": "Ok, pero ustedes lo pararon por 4 años. Esto nos lleva a la incontestancia número...", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:18:17.198", "stage": "display_update_input", "chars": 84, "text": "Ok, pero ustedes lo pararon por 4 años. Esto nos lleva a la incontestancia número...", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 20:18:17.206", "stage": "display_chunk_enqueued", "chars": 27, "text": "Ok, pero ustedes lo pararon", "meta": {"chunk_index": 0, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 20:18:17.214", "stage": "display_chunk_enqueued", "chars": 28, "text": "por 4 años. Esto nos lleva a", "meta": {"chunk_index": 1, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 20:18:17.224", "stage": "display_chunk_enqueued", "chars": 27, "text": "la incontestancia número...", "meta": {"chunk_index": 2, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 20:18:18.011", "stage": "display_word_reveal_complete", "chars": 27, "text": "Ok, pero ustedes lo pararon"}
+{"ts": "2026-02-13 20:18:18.973", "stage": "display_word_reveal_complete", "chars": 28, "text": "por 4 años. Esto nos lleva a"}
+{"ts": "2026-02-13 20:18:19.360", "stage": "display_word_reveal_complete", "chars": 27, "text": "la incontestancia número..."}
+{"ts": "2026-02-13 20:18:22.153", "stage": "stt_raw", "chars": 53, "text": "por los víctimas no sólo fueron silenciados por Biden", "meta": {"engine": "faster-whisper", "stt_openai_ms": 559}}
+{"ts": "2026-02-13 20:18:22.160", "stage": "stt_sanitized", "chars": 53, "text": "por los víctimas no sólo fueron silenciados por Biden", "meta": {"engine": "faster-whisper", "stt_openai_ms": 559}}
+{"ts": "2026-02-13 20:18:22.169", "stage": "stt_boundary_trim_bypassed", "chars": 53, "text": "por los víctimas no sólo fueron silenciados por Biden", "meta": {"loopback": false}}
+{"ts": "2026-02-13 20:18:22.177", "stage": "sentence_enqueued", "chars": 53, "text": "por los víctimas no sólo fueron silenciados por Biden", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 559, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:18:22.183", "stage": "translation_input", "chars": 53, "text": "por los víctimas no sólo fueron silenciados por Biden", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:18:22.193", "stage": "translation_cleanup_bypassed", "chars": 53, "text": "por los víctimas no sólo fueron silenciados por Biden", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:18:22.203", "stage": "translation_output", "chars": 53, "text": "por los víctimas no sólo fueron silenciados por Biden", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:18:22.213", "stage": "display_update_input", "chars": 53, "text": "por los víctimas no sólo fueron silenciados por Biden", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 20:18:22.222", "stage": "display_chunk_enqueued", "chars": 24, "text": "por los víctimas no sólo", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 20:18:22.229", "stage": "display_chunk_enqueued", "chars": 28, "text": "fueron silenciados por Biden", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 20:18:22.910", "stage": "display_word_reveal_complete", "chars": 24, "text": "por los víctimas no sólo"}
+{"ts": "2026-02-13 20:18:23.439", "stage": "display_word_reveal_complete", "chars": 28, "text": "fueron silenciados por Biden"}
+{"ts": "2026-02-13 20:18:27.438", "stage": "stt_raw", "chars": 79, "text": "pero no fueron dices por el amplificado que han dado ahora. Y más importante...", "meta": {"engine": "faster-whisper", "stt_openai_ms": 505}}
+{"ts": "2026-02-13 20:18:27.446", "stage": "stt_sanitized", "chars": 79, "text": "pero no fueron dices por el amplificado que han dado ahora. Y más importante...", "meta": {"engine": "faster-whisper", "stt_openai_ms": 505}}
+{"ts": "2026-02-13 20:18:27.453", "stage": "stt_boundary_trim_bypassed", "chars": 79, "text": "pero no fueron dices por el amplificado que han dado ahora. Y más importante...", "meta": {"loopback": false}}
+{"ts": "2026-02-13 20:18:27.459", "stage": "sentence_enqueued", "chars": 79, "text": "pero no fueron dices por el amplificado que han dado ahora. Y más importante...", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 505, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:18:27.465", "stage": "translation_input", "chars": 79, "text": "pero no fueron dices por el amplificado que han dado ahora. Y más importante...", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:18:27.474", "stage": "translation_cleanup_bypassed", "chars": 79, "text": "pero no fueron dices por el amplificado que han dado ahora. Y más importante...", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:18:27.481", "stage": "translation_output", "chars": 79, "text": "pero no fueron dices por el amplificado que han dado ahora. Y más importante...", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:18:27.489", "stage": "display_update_input", "chars": 79, "text": "pero no fueron dices por el amplificado que han dado ahora. Y más importante...", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 20:18:27.496", "stage": "display_chunk_enqueued", "chars": 27, "text": "pero no fueron dices por el", "meta": {"chunk_index": 0, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 20:18:27.503", "stage": "display_chunk_enqueued", "chars": 24, "text": "amplificado que han dado", "meta": {"chunk_index": 1, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 20:18:27.510", "stage": "display_chunk_enqueued", "chars": 26, "text": "ahora. Y más importante...", "meta": {"chunk_index": 2, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 20:18:28.286", "stage": "display_word_reveal_complete", "chars": 27, "text": "pero no fueron dices por el"}
+{"ts": "2026-02-13 20:18:28.800", "stage": "display_word_reveal_complete", "chars": 24, "text": "amplificado que han dado"}
+{"ts": "2026-02-13 20:18:29.310", "stage": "display_word_reveal_complete", "chars": 26, "text": "ahora. Y más importante..."}
+{"ts": "2026-02-13 20:18:32.381", "stage": "stt_raw", "chars": 81, "text": "no se ha dado a las financias financieras y a la plataforma media para ser tan...", "meta": {"engine": "faster-whisper", "stt_openai_ms": 437}}
+{"ts": "2026-02-13 20:18:32.388", "stage": "stt_sanitized", "chars": 81, "text": "no se ha dado a las financias financieras y a la plataforma media para ser tan...", "meta": {"engine": "faster-whisper", "stt_openai_ms": 437}}
+{"ts": "2026-02-13 20:18:32.394", "stage": "stt_boundary_trim_bypassed", "chars": 81, "text": "no se ha dado a las financias financieras y a la plataforma media para ser tan...", "meta": {"loopback": false}}
+{"ts": "2026-02-13 20:18:32.401", "stage": "sentence_enqueued", "chars": 81, "text": "no se ha dado a las financias financieras y a la plataforma media para ser tan...", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 437, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:18:32.407", "stage": "translation_input", "chars": 81, "text": "no se ha dado a las financias financieras y a la plataforma media para ser tan...", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:18:32.415", "stage": "translation_cleanup_bypassed", "chars": 81, "text": "no se ha dado a las financias financieras y a la plataforma media para ser tan...", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:18:32.422", "stage": "translation_output", "chars": 81, "text": "no se ha dado a las financias financieras y a la plataforma media para ser tan...", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:18:32.427", "stage": "display_update_input", "chars": 81, "text": "no se ha dado a las financias financieras y a la plataforma media para ser tan...", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 20:18:32.436", "stage": "display_chunk_enqueued", "chars": 29, "text": "no se ha dado a las financias", "meta": {"chunk_index": 0, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 20:18:32.441", "stage": "display_chunk_enqueued", "chars": 29, "text": "financieras y a la plataforma", "meta": {"chunk_index": 1, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 20:18:32.448", "stage": "display_chunk_enqueued", "chars": 21, "text": "media para ser tan...", "meta": {"chunk_index": 2, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 20:18:33.335", "stage": "display_word_reveal_complete", "chars": 29, "text": "no se ha dado a las financias"}
+{"ts": "2026-02-13 20:18:33.989", "stage": "display_word_reveal_complete", "chars": 29, "text": "financieras y a la plataforma"}
+{"ts": "2026-02-13 20:18:34.501", "stage": "display_word_reveal_complete", "chars": 21, "text": "media para ser tan..."}
+{"ts": "2026-02-13 20:18:35.456", "stage": "stt_raw", "chars": 29, "text": "vocal as they are now as seen", "meta": {"engine": "faster-whisper", "stt_openai_ms": 331}}
+{"ts": "2026-02-13 20:18:35.463", "stage": "stt_sanitized", "chars": 29, "text": "vocal as they are now as seen", "meta": {"engine": "faster-whisper", "stt_openai_ms": 331}}
+{"ts": "2026-02-13 20:18:35.469", "stage": "stt_source_lang_filtered", "chars": 29, "text": "vocal as they are now as seen", "meta": {"source_lang": "es"}}
+{"ts": "2026-02-13 20:18:38.281", "stage": "stt_raw", "chars": 40, "text": "que se había publicado en la Super Bowl.", "meta": {"engine": "faster-whisper", "stt_openai_ms": 348}}
+{"ts": "2026-02-13 20:18:38.289", "stage": "stt_sanitized", "chars": 40, "text": "que se había publicado en la Super Bowl.", "meta": {"engine": "faster-whisper", "stt_openai_ms": 348}}
+{"ts": "2026-02-13 20:18:38.296", "stage": "stt_boundary_trim_bypassed", "chars": 40, "text": "que se había publicado en la Super Bowl.", "meta": {"loopback": false}}
+{"ts": "2026-02-13 20:18:38.302", "stage": "sentence_enqueued", "chars": 40, "text": "que se había publicado en la Super Bowl.", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 348, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:18:38.308", "stage": "translation_input", "chars": 40, "text": "que se había publicado en la Super Bowl.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:18:38.316", "stage": "translation_cleanup_bypassed", "chars": 40, "text": "que se había publicado en la Super Bowl.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:18:38.323", "stage": "translation_output", "chars": 40, "text": "que se había publicado en la Super Bowl.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:18:38.331", "stage": "display_update_input", "chars": 40, "text": "que se había publicado en la Super Bowl.", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 20:18:38.338", "stage": "display_chunk_enqueued", "chars": 28, "text": "que se había publicado en la", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 20:18:38.344", "stage": "display_chunk_enqueued", "chars": 11, "text": "Super Bowl.", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 20:18:39.178", "stage": "display_word_reveal_complete", "chars": 28, "text": "que se había publicado en la"}
+{"ts": "2026-02-13 20:18:39.452", "stage": "display_word_reveal_complete", "chars": 11, "text": "Super Bowl."}
+{"ts": "2026-02-13 20:18:44.562", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "faster-whisper", "stt_openai_ms": 58}}
+{"ts": "2026-02-13 20:18:44.570", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "faster-whisper", "stt_openai_ms": 58}}
+{"ts": "2026-02-13 20:18:49.442", "stage": "stt_raw", "chars": 6, "text": "jajaja", "meta": {"engine": "faster-whisper", "stt_openai_ms": 449}}
+{"ts": "2026-02-13 20:18:49.450", "stage": "stt_sanitized", "chars": 6, "text": "jajaja", "meta": {"engine": "faster-whisper", "stt_openai_ms": 449}}
+{"ts": "2026-02-13 20:18:49.457", "stage": "stt_boundary_trim_bypassed", "chars": 6, "text": "jajaja", "meta": {"loopback": false}}
+{"ts": "2026-02-13 20:18:49.466", "stage": "sentence_enqueued", "chars": 6, "text": "jajaja", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 449, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:18:49.470", "stage": "translation_input", "chars": 6, "text": "jajaja", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:18:49.481", "stage": "translation_cleanup_bypassed", "chars": 6, "text": "jajaja", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:18:49.490", "stage": "translation_output", "chars": 6, "text": "jajaja", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:18:49.498", "stage": "display_update_input", "chars": 6, "text": "jajaja", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 20:18:49.505", "stage": "display_chunk_enqueued", "chars": 6, "text": "jajaja", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-13 20:18:49.634", "stage": "display_word_reveal_complete", "chars": 6, "text": "jajaja"}
+{"ts": "2026-02-13 20:18:51.434", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "faster-whisper", "stt_openai_ms": 51}}
+{"ts": "2026-02-13 20:18:51.444", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "faster-whisper", "stt_openai_ms": 51}}
+{"ts": "2026-02-13 20:18:56.804", "stage": "stt_raw", "chars": 41, "text": "Esta ad se ha publicado en la Super Bowl.", "meta": {"engine": "faster-whisper", "stt_openai_ms": 689}}
+{"ts": "2026-02-13 20:18:56.817", "stage": "stt_sanitized", "chars": 41, "text": "Esta ad se ha publicado en la Super Bowl.", "meta": {"engine": "faster-whisper", "stt_openai_ms": 689}}
+{"ts": "2026-02-13 20:18:56.829", "stage": "stt_boundary_trim_bypassed", "chars": 41, "text": "Esta ad se ha publicado en la Super Bowl.", "meta": {"loopback": false}}
+{"ts": "2026-02-13 20:18:56.840", "stage": "sentence_enqueued", "chars": 41, "text": "Esta ad se ha publicado en la Super Bowl.", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 689, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:18:56.845", "stage": "translation_input", "chars": 41, "text": "Esta ad se ha publicado en la Super Bowl.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:18:56.858", "stage": "translation_cleanup_bypassed", "chars": 41, "text": "Esta ad se ha publicado en la Super Bowl.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:18:56.867", "stage": "translation_output", "chars": 41, "text": "Esta ad se ha publicado en la Super Bowl.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:18:56.876", "stage": "display_update_input", "chars": 41, "text": "Esta ad se ha publicado en la Super Bowl.", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 20:18:56.886", "stage": "display_chunk_enqueued", "chars": 29, "text": "Esta ad se ha publicado en la", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 20:18:56.895", "stage": "display_chunk_enqueued", "chars": 11, "text": "Super Bowl.", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 20:18:57.956", "stage": "display_word_reveal_complete", "chars": 29, "text": "Esta ad se ha publicado en la"}
+{"ts": "2026-02-13 20:18:58.295", "stage": "display_word_reveal_complete", "chars": 11, "text": "Super Bowl."}
+{"ts": "2026-02-13 20:19:02.750", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "faster-whisper", "stt_openai_ms": 55}}
+{"ts": "2026-02-13 20:19:02.757", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "faster-whisper", "stt_openai_ms": 55}}
+{"ts": "2026-02-13 20:19:07.665", "stage": "stt_raw", "chars": 6, "text": "jajaja", "meta": {"engine": "faster-whisper", "stt_openai_ms": 488}}
+{"ts": "2026-02-13 20:19:07.673", "stage": "stt_sanitized", "chars": 6, "text": "jajaja", "meta": {"engine": "faster-whisper", "stt_openai_ms": 488}}
+{"ts": "2026-02-13 20:19:07.683", "stage": "stt_boundary_trim_bypassed", "chars": 6, "text": "jajaja", "meta": {"loopback": false}}
+{"ts": "2026-02-13 20:19:07.692", "stage": "sentence_enqueued", "chars": 6, "text": "jajaja", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 488, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:19:07.698", "stage": "translation_input", "chars": 6, "text": "jajaja", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:19:07.710", "stage": "translation_cleanup_bypassed", "chars": 6, "text": "jajaja", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:19:07.719", "stage": "translation_output", "chars": 6, "text": "jajaja", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:19:07.728", "stage": "display_update_input", "chars": 6, "text": "jajaja", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 20:19:07.738", "stage": "display_chunk_enqueued", "chars": 6, "text": "jajaja", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-13 20:19:07.898", "stage": "display_word_reveal_complete", "chars": 6, "text": "jajaja"}
+{"ts": "2026-02-13 20:19:09.585", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "faster-whisper", "stt_openai_ms": 41}}
+{"ts": "2026-02-13 20:19:09.593", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "faster-whisper", "stt_openai_ms": 41}}
+{"ts": "2026-02-13 20:19:15.456", "stage": "stt_raw", "chars": 33, "text": "después de años de ser detenidos.", "meta": {"engine": "faster-whisper", "stt_openai_ms": 501}}
+{"ts": "2026-02-13 20:19:15.466", "stage": "stt_sanitized", "chars": 33, "text": "después de años de ser detenidos.", "meta": {"engine": "faster-whisper", "stt_openai_ms": 501}}
+{"ts": "2026-02-13 20:19:15.477", "stage": "stt_boundary_trim_bypassed", "chars": 33, "text": "después de años de ser detenidos.", "meta": {"loopback": false}}
+{"ts": "2026-02-13 20:19:15.486", "stage": "sentence_enqueued", "chars": 33, "text": "después de años de ser detenidos.", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 501, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:19:15.493", "stage": "translation_input", "chars": 33, "text": "después de años de ser detenidos.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:19:15.505", "stage": "translation_cleanup_bypassed", "chars": 33, "text": "después de años de ser detenidos.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:19:15.512", "stage": "translation_output", "chars": 33, "text": "después de años de ser detenidos.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:19:15.520", "stage": "display_update_input", "chars": 33, "text": "después de años de ser detenidos.", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 20:19:15.530", "stage": "display_chunk_enqueued", "chars": 22, "text": "después de años de ser", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 20:19:15.541", "stage": "display_chunk_enqueued", "chars": 10, "text": "detenidos.", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 20:19:16.231", "stage": "display_word_reveal_complete", "chars": 22, "text": "después de años de ser"}
+{"ts": "2026-02-13 20:19:16.381", "stage": "display_word_reveal_complete", "chars": 10, "text": "detenidos."}
+{"ts": "2026-02-13 20:19:19.538", "stage": "stt_raw", "chars": 23, "text": "Estamos estando juntos.", "meta": {"engine": "faster-whisper", "stt_openai_ms": 504}}
+{"ts": "2026-02-13 20:19:19.550", "stage": "stt_sanitized", "chars": 23, "text": "Estamos estando juntos.", "meta": {"engine": "faster-whisper", "stt_openai_ms": 504}}
+{"ts": "2026-02-13 20:19:19.561", "stage": "stt_boundary_trim_bypassed", "chars": 23, "text": "Estamos estando juntos.", "meta": {"loopback": false}}
+{"ts": "2026-02-13 20:19:19.574", "stage": "sentence_enqueued", "chars": 23, "text": "Estamos estando juntos.", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 504, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:19:19.581", "stage": "translation_input", "chars": 23, "text": "Estamos estando juntos.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:19:19.597", "stage": "translation_cleanup_bypassed", "chars": 23, "text": "Estamos estando juntos.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:19:19.607", "stage": "translation_output", "chars": 23, "text": "Estamos estando juntos.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:19:19.617", "stage": "display_update_input", "chars": 23, "text": "Estamos estando juntos.", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 20:19:19.627", "stage": "display_chunk_enqueued", "chars": 23, "text": "Estamos estando juntos.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-13 20:19:20.078", "stage": "display_word_reveal_complete", "chars": 23, "text": "Estamos estando juntos."}
+{"ts": "2026-02-13 20:19:24.641", "stage": "stt_raw", "chars": 89, "text": "porque esta chica merece la verdad porque ella merece la verdad porque todos merecemos la", "meta": {"engine": "faster-whisper", "stt_openai_ms": 535}}
+{"ts": "2026-02-13 20:19:24.650", "stage": "stt_sanitized", "chars": 89, "text": "porque esta chica merece la verdad porque ella merece la verdad porque todos merecemos la", "meta": {"engine": "faster-whisper", "stt_openai_ms": 535}}
+{"ts": "2026-02-13 20:19:24.661", "stage": "stt_boundary_trim_bypassed", "chars": 89, "text": "porque esta chica merece la verdad porque ella merece la verdad porque todos merecemos la", "meta": {"loopback": false}}
+{"ts": "2026-02-13 20:19:24.670", "stage": "sentence_enqueued", "chars": 89, "text": "porque esta chica merece la verdad porque ella merece la verdad porque todos merecemos la", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 535, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:19:24.678", "stage": "translation_input", "chars": 89, "text": "porque esta chica merece la verdad porque ella merece la verdad porque todos merecemos la", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:19:24.693", "stage": "translation_cleanup_bypassed", "chars": 89, "text": "porque esta chica merece la verdad porque ella merece la verdad porque todos merecemos la", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:19:24.702", "stage": "translation_output", "chars": 89, "text": "porque esta chica merece la verdad porque ella merece la verdad porque todos merecemos la", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:19:24.710", "stage": "display_update_input", "chars": 89, "text": "porque esta chica merece la verdad porque ella merece la verdad porque todos merecemos la", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 20:19:24.719", "stage": "display_chunk_enqueued", "chars": 27, "text": "porque esta chica merece la", "meta": {"chunk_index": 0, "chunk_count": 4, "word_by_word": true}}
+{"ts": "2026-02-13 20:19:24.730", "stage": "display_chunk_enqueued", "chars": 28, "text": "verdad porque ella merece la", "meta": {"chunk_index": 1, "chunk_count": 4, "word_by_word": true}}
+{"ts": "2026-02-13 20:19:24.738", "stage": "display_chunk_enqueued", "chars": 29, "text": "verdad porque todos merecemos", "meta": {"chunk_index": 2, "chunk_count": 4, "word_by_word": true}}
+{"ts": "2026-02-13 20:19:24.750", "stage": "display_chunk_enqueued", "chars": 2, "text": "la", "meta": {"chunk_index": 3, "chunk_count": 4, "word_by_word": true}}
+{"ts": "2026-02-13 20:19:25.619", "stage": "stt_raw", "chars": 9, "text": "la verdad", "meta": {"engine": "faster-whisper", "stt_openai_ms": 168}}
+{"ts": "2026-02-13 20:19:25.622", "stage": "display_word_reveal_complete", "chars": 27, "text": "porque esta chica merece la"}
+{"ts": "2026-02-13 20:19:25.628", "stage": "stt_sanitized", "chars": 9, "text": "la verdad", "meta": {"engine": "faster-whisper", "stt_openai_ms": 168}}
+{"ts": "2026-02-13 20:19:25.646", "stage": "stt_boundary_trim_bypassed", "chars": 9, "text": "la verdad", "meta": {"loopback": false}}
+{"ts": "2026-02-13 20:19:25.655", "stage": "sentence_enqueued", "chars": 9, "text": "la verdad", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 168, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:19:25.726", "stage": "translation_input", "chars": 9, "text": "la verdad", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:19:25.737", "stage": "translation_cleanup_bypassed", "chars": 9, "text": "la verdad", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:19:25.745", "stage": "translation_output", "chars": 9, "text": "la verdad", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:19:25.754", "stage": "display_update_input", "chars": 9, "text": "la verdad", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 20:19:25.762", "stage": "display_fast_mode_on", "chars": 0, "text": "", "meta": {"sentence_fill_ratio": 0.0, "reveal_queue": 2, "text_queue": 0, "stt_openai_ms": 168, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:19:25.821", "stage": "display_fast_mode_drain", "chars": 0, "text": "", "meta": {"drained_count": 3, "appended_count": 3}}
+{"ts": "2026-02-13 20:19:25.879", "stage": "display_fast_path_render", "chars": 9, "text": "la verdad"}
+{"ts": "2026-02-13 20:19:27.461", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "faster-whisper", "stt_openai_ms": 37}}
+{"ts": "2026-02-13 20:19:27.468", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "faster-whisper", "stt_openai_ms": 37}}
+{"ts": "2026-02-13 20:19:29.606", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "faster-whisper", "stt_openai_ms": 52}}
+{"ts": "2026-02-13 20:19:29.616", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "faster-whisper", "stt_openai_ms": 52}}
+{"ts": "2026-02-13 20:19:33.039", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "faster-whisper", "stt_openai_ms": 44}}
+{"ts": "2026-02-13 20:19:33.047", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "faster-whisper", "stt_openai_ms": 44}}
+{"ts": "2026-02-13 20:19:39.031", "stage": "stt_raw", "chars": 72, "text": "Y yo diré, no me gusta la politización de esto más que tú si la gente...", "meta": {"engine": "faster-whisper", "stt_openai_ms": 646}}
+{"ts": "2026-02-13 20:19:39.039", "stage": "stt_sanitized", "chars": 72, "text": "Y yo diré, no me gusta la politización de esto más que tú si la gente...", "meta": {"engine": "faster-whisper", "stt_openai_ms": 646}}
+{"ts": "2026-02-13 20:19:39.047", "stage": "stt_boundary_trim_bypassed", "chars": 72, "text": "Y yo diré, no me gusta la politización de esto más que tú si la gente...", "meta": {"loopback": false}}
+{"ts": "2026-02-13 20:19:39.056", "stage": "sentence_enqueued", "chars": 72, "text": "Y yo diré, no me gusta la politización de esto más que tú si la gente...", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 646, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:19:39.060", "stage": "translation_input", "chars": 72, "text": "Y yo diré, no me gusta la politización de esto más que tú si la gente...", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:19:39.074", "stage": "translation_cleanup_bypassed", "chars": 72, "text": "Y yo diré, no me gusta la politización de esto más que tú si la gente...", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:19:39.082", "stage": "translation_output", "chars": 72, "text": "Y yo diré, no me gusta la politización de esto más que tú si la gente...", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:19:39.093", "stage": "display_update_input", "chars": 72, "text": "Y yo diré, no me gusta la politización de esto más que tú si la gente...", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 20:19:39.101", "stage": "display_chunk_enqueued", "chars": 25, "text": "Y yo diré, no me gusta la", "meta": {"chunk_index": 0, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 20:19:39.108", "stage": "display_chunk_enqueued", "chars": 28, "text": "politización de esto más que", "meta": {"chunk_index": 1, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 20:19:39.115", "stage": "display_chunk_enqueued", "chars": 17, "text": "tú si la gente...", "meta": {"chunk_index": 2, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 20:19:40.157", "stage": "display_word_reveal_complete", "chars": 25, "text": "Y yo diré, no me gusta la"}
+{"ts": "2026-02-13 20:19:40.852", "stage": "display_word_reveal_complete", "chars": 28, "text": "politización de esto más que"}
+{"ts": "2026-02-13 20:19:41.399", "stage": "display_word_reveal_complete", "chars": 17, "text": "tú si la gente..."}
+{"ts": "2026-02-13 20:19:44.070", "stage": "stt_raw", "chars": 88, "text": "que la gente era traficante de sexo. Mira, Donald Trump es el presidente que hizo más...", "meta": {"engine": "faster-whisper", "stt_openai_ms": 675}}
+{"ts": "2026-02-13 20:19:44.081", "stage": "stt_sanitized", "chars": 88, "text": "que la gente era traficante de sexo. Mira, Donald Trump es el presidente que hizo más...", "meta": {"engine": "faster-whisper", "stt_openai_ms": 675}}
+{"ts": "2026-02-13 20:19:44.090", "stage": "stt_boundary_trim_bypassed", "chars": 88, "text": "que la gente era traficante de sexo. Mira, Donald Trump es el presidente que hizo más...", "meta": {"loopback": false}}
+{"ts": "2026-02-13 20:19:44.098", "stage": "sentence_enqueued", "chars": 88, "text": "que la gente era traficante de sexo. Mira, Donald Trump es el presidente que hizo más...", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 675, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:19:44.104", "stage": "translation_input", "chars": 88, "text": "que la gente era traficante de sexo. Mira, Donald Trump es el presidente que hizo más...", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:19:44.117", "stage": "translation_cleanup_bypassed", "chars": 88, "text": "que la gente era traficante de sexo. Mira, Donald Trump es el presidente que hizo más...", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:19:44.127", "stage": "translation_output", "chars": 88, "text": "que la gente era traficante de sexo. Mira, Donald Trump es el presidente que hizo más...", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:19:44.136", "stage": "display_update_input", "chars": 88, "text": "que la gente era traficante de sexo. Mira, Donald Trump es el presidente que hizo más...", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 20:19:44.145", "stage": "display_chunk_enqueued", "chars": 30, "text": "que la gente era traficante de", "meta": {"chunk_index": 0, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 20:19:44.154", "stage": "display_chunk_enqueued", "chars": 30, "text": "sexo. Mira, Donald Trump es el", "meta": {"chunk_index": 1, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 20:19:44.161", "stage": "display_chunk_enqueued", "chars": 26, "text": "presidente que hizo más...", "meta": {"chunk_index": 2, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 20:19:45.006", "stage": "display_word_reveal_complete", "chars": 30, "text": "que la gente era traficante de"}
+{"ts": "2026-02-13 20:19:45.847", "stage": "display_word_reveal_complete", "chars": 30, "text": "sexo. Mira, Donald Trump es el"}
+{"ts": "2026-02-13 20:19:46.403", "stage": "display_word_reveal_complete", "chars": 26, "text": "presidente que hizo más..."}
+{"ts": "2026-02-13 20:19:48.991", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "faster-whisper", "stt_openai_ms": 467}}
+{"ts": "2026-02-13 20:19:49.001", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "faster-whisper", "stt_openai_ms": 467}}
+{"ts": "2026-02-13 20:19:54.200", "stage": "stt_raw", "chars": 81, "text": "El mensaje es malo. Y también hablamos de que Elon Musk ha sido muy transparente.", "meta": {"engine": "faster-whisper", "stt_openai_ms": 546}}
+{"ts": "2026-02-13 20:19:54.210", "stage": "stt_sanitized", "chars": 81, "text": "El mensaje es malo. Y también hablamos de que Elon Musk ha sido muy transparente.", "meta": {"engine": "faster-whisper", "stt_openai_ms": 546}}
+{"ts": "2026-02-13 20:19:54.219", "stage": "stt_boundary_trim_bypassed", "chars": 81, "text": "El mensaje es malo. Y también hablamos de que Elon Musk ha sido muy transparente.", "meta": {"loopback": false}}
+{"ts": "2026-02-13 20:19:54.226", "stage": "sentence_enqueued", "chars": 81, "text": "El mensaje es malo. Y también hablamos de que Elon Musk ha sido muy transparente.", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 546, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:19:54.230", "stage": "translation_input", "chars": 81, "text": "El mensaje es malo. Y también hablamos de que Elon Musk ha sido muy transparente.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:19:54.241", "stage": "translation_cleanup_bypassed", "chars": 81, "text": "El mensaje es malo. Y también hablamos de que Elon Musk ha sido muy transparente.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:19:54.249", "stage": "translation_output", "chars": 81, "text": "El mensaje es malo. Y también hablamos de que Elon Musk ha sido muy transparente.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:19:54.257", "stage": "display_update_input", "chars": 81, "text": "El mensaje es malo. Y también hablamos de que Elon Musk ha sido muy transparente.", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 20:19:54.264", "stage": "display_chunk_enqueued", "chars": 29, "text": "El mensaje es malo. Y también", "meta": {"chunk_index": 0, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 20:19:54.273", "stage": "display_chunk_enqueued", "chars": 28, "text": "hablamos de que Elon Musk ha", "meta": {"chunk_index": 1, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 20:19:54.280", "stage": "display_chunk_enqueued", "chars": 22, "text": "sido muy transparente.", "meta": {"chunk_index": 2, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 20:19:55.141", "stage": "display_word_reveal_complete", "chars": 29, "text": "El mensaje es malo. Y también"}
+{"ts": "2026-02-13 20:19:55.920", "stage": "display_word_reveal_complete", "chars": 28, "text": "hablamos de que Elon Musk ha"}
+{"ts": "2026-02-13 20:19:56.308", "stage": "display_word_reveal_complete", "chars": 22, "text": "sido muy transparente."}
+{"ts": "2026-02-13 20:19:59.458", "stage": "stt_raw", "chars": 86, "text": "Obviamente fue nado en estos filos, lo hicimos. Le respondió, ha sido muy consistente.", "meta": {"engine": "faster-whisper", "stt_openai_ms": 553}}
+{"ts": "2026-02-13 20:19:59.467", "stage": "stt_sanitized", "chars": 86, "text": "Obviamente fue nado en estos filos, lo hicimos. Le respondió, ha sido muy consistente.", "meta": {"engine": "faster-whisper", "stt_openai_ms": 553}}
+{"ts": "2026-02-13 20:19:59.477", "stage": "stt_boundary_trim_bypassed", "chars": 86, "text": "Obviamente fue nado en estos filos, lo hicimos. Le respondió, ha sido muy consistente.", "meta": {"loopback": false}}
+{"ts": "2026-02-13 20:19:59.485", "stage": "sentence_enqueued", "chars": 86, "text": "Obviamente fue nado en estos filos, lo hicimos. Le respondió, ha sido muy consistente.", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 553, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:19:59.490", "stage": "translation_input", "chars": 86, "text": "Obviamente fue nado en estos filos, lo hicimos. Le respondió, ha sido muy consistente.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:19:59.502", "stage": "translation_cleanup_bypassed", "chars": 86, "text": "Obviamente fue nado en estos filos, lo hicimos. Le respondió, ha sido muy consistente.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:19:59.510", "stage": "translation_output", "chars": 86, "text": "Obviamente fue nado en estos filos, lo hicimos. Le respondió, ha sido muy consistente.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:19:59.517", "stage": "display_update_input", "chars": 86, "text": "Obviamente fue nado en estos filos, lo hicimos. Le respondió, ha sido muy consistente.", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 20:19:59.525", "stage": "display_chunk_enqueued", "chars": 28, "text": "Obviamente fue nado en estos", "meta": {"chunk_index": 0, "chunk_count": 4, "word_by_word": true}}
+{"ts": "2026-02-13 20:19:59.532", "stage": "display_chunk_enqueued", "chars": 21, "text": "filos, lo hicimos. Le", "meta": {"chunk_index": 1, "chunk_count": 4, "word_by_word": true}}
+{"ts": "2026-02-13 20:19:59.540", "stage": "display_chunk_enqueued", "chars": 22, "text": "respondió, ha sido muy", "meta": {"chunk_index": 2, "chunk_count": 4, "word_by_word": true}}
+{"ts": "2026-02-13 20:19:59.547", "stage": "display_chunk_enqueued", "chars": 12, "text": "consistente.", "meta": {"chunk_index": 3, "chunk_count": 4, "word_by_word": true}}
+{"ts": "2026-02-13 20:20:00.266", "stage": "display_word_reveal_complete", "chars": 28, "text": "Obviamente fue nado en estos"}
+{"ts": "2026-02-13 20:20:00.920", "stage": "display_word_reveal_complete", "chars": 21, "text": "filos, lo hicimos. Le"}
+{"ts": "2026-02-13 20:20:01.519", "stage": "display_word_reveal_complete", "chars": 22, "text": "respondió, ha sido muy"}
+{"ts": "2026-02-13 20:20:01.663", "stage": "display_word_reveal_complete", "chars": 12, "text": "consistente."}
+{"ts": "2026-02-13 20:20:04.563", "stage": "stt_raw", "chars": 81, "text": "si se vieron a él escribió que pagaría por la defensa de cualquier persona que...", "meta": {"engine": "faster-whisper", "stt_openai_ms": 637}}
+{"ts": "2026-02-13 20:20:04.573", "stage": "stt_sanitized", "chars": 81, "text": "si se vieron a él escribió que pagaría por la defensa de cualquier persona que...", "meta": {"engine": "faster-whisper", "stt_openai_ms": 637}}
+{"ts": "2026-02-13 20:20:04.580", "stage": "stt_boundary_trim_bypassed", "chars": 81, "text": "si se vieron a él escribió que pagaría por la defensa de cualquier persona que...", "meta": {"loopback": false}}
+{"ts": "2026-02-13 20:20:04.588", "stage": "sentence_enqueued", "chars": 81, "text": "si se vieron a él escribió que pagaría por la defensa de cualquier persona que...", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 637, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:20:04.594", "stage": "translation_input", "chars": 81, "text": "si se vieron a él escribió que pagaría por la defensa de cualquier persona que...", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:20:04.605", "stage": "translation_cleanup_bypassed", "chars": 81, "text": "si se vieron a él escribió que pagaría por la defensa de cualquier persona que...", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:20:04.612", "stage": "translation_output", "chars": 81, "text": "si se vieron a él escribió que pagaría por la defensa de cualquier persona que...", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:20:04.621", "stage": "display_update_input", "chars": 81, "text": "si se vieron a él escribió que pagaría por la defensa de cualquier persona que...", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 20:20:04.629", "stage": "display_chunk_enqueued", "chars": 30, "text": "si se vieron a él escribió que", "meta": {"chunk_index": 0, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 20:20:04.636", "stage": "display_chunk_enqueued", "chars": 25, "text": "pagaría por la defensa de", "meta": {"chunk_index": 1, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 20:20:04.643", "stage": "display_chunk_enqueued", "chars": 24, "text": "cualquier persona que...", "meta": {"chunk_index": 2, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 20:20:05.548", "stage": "display_word_reveal_complete", "chars": 30, "text": "si se vieron a él escribió que"}
+{"ts": "2026-02-13 20:20:06.219", "stage": "display_word_reveal_complete", "chars": 25, "text": "pagaría por la defensa de"}
+{"ts": "2026-02-13 20:20:06.638", "stage": "display_word_reveal_complete", "chars": 24, "text": "cualquier persona que..."}
+{"ts": "2026-02-13 20:20:09.727", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "faster-whisper", "stt_openai_ms": 531}}
+{"ts": "2026-02-13 20:20:09.734", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "faster-whisper", "stt_openai_ms": 531}}
+{"ts": "2026-02-13 20:20:14.851", "stage": "stt_raw", "chars": 63, "text": "y por defensa, he de notar que él significó su nuevo prototipo.", "meta": {"engine": "faster-whisper", "stt_openai_ms": 616}}
+{"ts": "2026-02-13 20:20:14.860", "stage": "stt_sanitized", "chars": 63, "text": "y por defensa, he de notar que él significó su nuevo prototipo.", "meta": {"engine": "faster-whisper", "stt_openai_ms": 616}}
+{"ts": "2026-02-13 20:20:14.867", "stage": "stt_boundary_trim_bypassed", "chars": 63, "text": "y por defensa, he de notar que él significó su nuevo prototipo.", "meta": {"loopback": false}}
+{"ts": "2026-02-13 20:20:14.875", "stage": "sentence_enqueued", "chars": 63, "text": "y por defensa, he de notar que él significó su nuevo prototipo.", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 616, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:20:14.880", "stage": "translation_input", "chars": 63, "text": "y por defensa, he de notar que él significó su nuevo prototipo.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:20:14.889", "stage": "translation_cleanup_bypassed", "chars": 63, "text": "y por defensa, he de notar que él significó su nuevo prototipo.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:20:14.896", "stage": "translation_output", "chars": 63, "text": "y por defensa, he de notar que él significó su nuevo prototipo.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:20:14.905", "stage": "display_update_input", "chars": 63, "text": "y por defensa, he de notar que él significó su nuevo prototipo.", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 20:20:14.911", "stage": "display_chunk_enqueued", "chars": 30, "text": "y por defensa, he de notar que", "meta": {"chunk_index": 0, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 20:20:14.919", "stage": "display_chunk_enqueued", "chars": 21, "text": "él significó su nuevo", "meta": {"chunk_index": 1, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 20:20:14.929", "stage": "display_chunk_enqueued", "chars": 10, "text": "prototipo.", "meta": {"chunk_index": 2, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 20:20:15.931", "stage": "display_word_reveal_complete", "chars": 30, "text": "y por defensa, he de notar que"}
+{"ts": "2026-02-13 20:20:16.531", "stage": "display_word_reveal_complete", "chars": 21, "text": "él significó su nuevo"}
+{"ts": "2026-02-13 20:20:16.680", "stage": "display_word_reveal_complete", "chars": 10, "text": "prototipo."}
+{"ts": "2026-02-13 20:20:20.261", "stage": "stt_raw", "chars": 19, "text": "optimist terminator", "meta": {"engine": "faster-whisper", "stt_openai_ms": 437}}
+{"ts": "2026-02-13 20:20:20.274", "stage": "stt_sanitized", "chars": 19, "text": "optimist terminator", "meta": {"engine": "faster-whisper", "stt_openai_ms": 437}}
+{"ts": "2026-02-13 20:20:20.284", "stage": "stt_boundary_trim_bypassed", "chars": 19, "text": "optimist terminator", "meta": {"loopback": false}}
+{"ts": "2026-02-13 20:20:20.295", "stage": "sentence_enqueued", "chars": 19, "text": "optimist terminator", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 437, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:20:20.301", "stage": "translation_input", "chars": 19, "text": "optimist terminator", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:20:20.312", "stage": "translation_cleanup_bypassed", "chars": 19, "text": "optimist terminator", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:20:20.323", "stage": "translation_output", "chars": 19, "text": "optimist terminator", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:20:20.332", "stage": "display_update_input", "chars": 19, "text": "optimist terminator", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 20:20:20.341", "stage": "display_chunk_enqueued", "chars": 19, "text": "optimist terminator", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-13 20:20:20.632", "stage": "display_word_reveal_complete", "chars": 19, "text": "optimist terminator"}
+{"ts": "2026-02-13 20:20:26.312", "stage": "stt_raw", "chars": 53, "text": "es lo que pasa cuando tienes una tecnología autística", "meta": {"engine": "faster-whisper", "stt_openai_ms": 536}}
+{"ts": "2026-02-13 20:20:26.319", "stage": "stt_sanitized", "chars": 53, "text": "es lo que pasa cuando tienes una tecnología autística", "meta": {"engine": "faster-whisper", "stt_openai_ms": 536}}
+{"ts": "2026-02-13 20:20:26.328", "stage": "stt_boundary_trim_bypassed", "chars": 53, "text": "es lo que pasa cuando tienes una tecnología autística", "meta": {"loopback": false}}
+{"ts": "2026-02-13 20:20:26.336", "stage": "sentence_enqueued", "chars": 53, "text": "es lo que pasa cuando tienes una tecnología autística", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 536, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:20:26.342", "stage": "translation_input", "chars": 53, "text": "es lo que pasa cuando tienes una tecnología autística", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:20:26.356", "stage": "translation_cleanup_bypassed", "chars": 53, "text": "es lo que pasa cuando tienes una tecnología autística", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:20:26.364", "stage": "translation_output", "chars": 53, "text": "es lo que pasa cuando tienes una tecnología autística", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:20:26.373", "stage": "display_update_input", "chars": 53, "text": "es lo que pasa cuando tienes una tecnología autística", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 20:20:26.381", "stage": "display_chunk_enqueued", "chars": 28, "text": "es lo que pasa cuando tienes", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 20:20:26.389", "stage": "display_chunk_enqueued", "chars": 24, "text": "una tecnología autística", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 20:20:27.238", "stage": "display_word_reveal_complete", "chars": 28, "text": "es lo que pasa cuando tienes"}
+{"ts": "2026-02-13 20:20:27.780", "stage": "display_word_reveal_complete", "chars": 24, "text": "una tecnología autística"}
