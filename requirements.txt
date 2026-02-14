@@ -3,3 +3,4 @@ pyaudio
 requests
 ttkbootstrap
 faster-whisper
+pydub
