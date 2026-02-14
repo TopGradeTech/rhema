@@ -13,6 +13,7 @@ logs/
 # Environment files
 .env
 .env.local
+settings.json
 
 # Editor / OS files
 .vscode/
