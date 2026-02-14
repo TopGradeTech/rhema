@@ -1,0 +1,174 @@
+{"ts": "2026-02-13 20:09:51.200", "stage": "stt_raw", "chars": 55, "text": "¿Has dicho que tuve los fiches de Epstein en tu cuenta?", "meta": {"engine": "faster-whisper", "stt_openai_ms": 4257}}
+{"ts": "2026-02-13 20:09:51.202", "stage": "stt_sanitized", "chars": 55, "text": "¿Has dicho que tuve los fiches de Epstein en tu cuenta?", "meta": {"engine": "faster-whisper", "stt_openai_ms": 4257}}
+{"ts": "2026-02-13 20:09:51.209", "stage": "stt_boundary_trim_bypassed", "chars": 55, "text": "¿Has dicho que tuve los fiches de Epstein en tu cuenta?", "meta": {"loopback": false}}
+{"ts": "2026-02-13 20:09:51.211", "stage": "sentence_enqueued", "chars": 55, "text": "¿Has dicho que tuve los fiches de Epstein en tu cuenta?", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 4257, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:09:51.215", "stage": "translation_input", "chars": 55, "text": "¿Has dicho que tuve los fiches de Epstein en tu cuenta?", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:09:51.216", "stage": "translation_cleanup_bypassed", "chars": 55, "text": "¿Has dicho que tuve los fiches de Epstein en tu cuenta?", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:09:51.218", "stage": "translation_output", "chars": 55, "text": "¿Has dicho que tuve los fiches de Epstein en tu cuenta?", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:09:51.221", "stage": "display_update_input", "chars": 55, "text": "¿Has dicho que tuve los fiches de Epstein en tu cuenta?", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 20:09:51.222", "stage": "display_fast_mode_on", "chars": 0, "text": "", "meta": {"sentence_fill_ratio": 0.0, "reveal_queue": 0, "text_queue": 0, "stt_openai_ms": 4257, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:09:51.257", "stage": "display_fast_path_render", "chars": 55, "text": "¿Has dicho que tuve los fiches de Epstein en tu cuenta?"}
+{"ts": "2026-02-13 20:09:52.251", "stage": "stt_raw", "chars": 64, "text": "¿Cuándo podemos verlos y qué hace tanto tiempo para los liberar?", "meta": {"engine": "faster-whisper", "stt_openai_ms": 288}}
+{"ts": "2026-02-13 20:09:52.253", "stage": "stt_sanitized", "chars": 64, "text": "¿Cuándo podemos verlos y qué hace tanto tiempo para los liberar?", "meta": {"engine": "faster-whisper", "stt_openai_ms": 288}}
+{"ts": "2026-02-13 20:09:52.255", "stage": "stt_boundary_trim_bypassed", "chars": 64, "text": "¿Cuándo podemos verlos y qué hace tanto tiempo para los liberar?", "meta": {"loopback": false}}
+{"ts": "2026-02-13 20:09:52.256", "stage": "sentence_enqueued", "chars": 64, "text": "¿Cuándo podemos verlos y qué hace tanto tiempo para los liberar?", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 288, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:09:52.261", "stage": "translation_input", "chars": 64, "text": "¿Cuándo podemos verlos y qué hace tanto tiempo para los liberar?", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:09:52.263", "stage": "translation_cleanup_bypassed", "chars": 64, "text": "¿Cuándo podemos verlos y qué hace tanto tiempo para los liberar?", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:09:52.265", "stage": "translation_output", "chars": 64, "text": "¿Cuándo podemos verlos y qué hace tanto tiempo para los liberar?", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:09:52.266", "stage": "display_update_input", "chars": 64, "text": "¿Cuándo podemos verlos y qué hace tanto tiempo para los liberar?", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 20:09:52.303", "stage": "display_fast_path_render", "chars": 64, "text": "¿Cuándo podemos verlos y qué hace tanto tiempo para los liberar?"}
+{"ts": "2026-02-13 20:09:57.528", "stage": "stt_raw", "chars": 42, "text": "Jesse, hay... ¡Muy bien! Esto te hará mal.", "meta": {"engine": "faster-whisper", "stt_openai_ms": 524}}
+{"ts": "2026-02-13 20:09:57.530", "stage": "stt_sanitized", "chars": 42, "text": "Jesse, hay... ¡Muy bien! Esto te hará mal.", "meta": {"engine": "faster-whisper", "stt_openai_ms": 524}}
+{"ts": "2026-02-13 20:09:57.532", "stage": "stt_boundary_trim_bypassed", "chars": 42, "text": "Jesse, hay... ¡Muy bien! Esto te hará mal.", "meta": {"loopback": false}}
+{"ts": "2026-02-13 20:09:57.535", "stage": "sentence_enqueued", "chars": 42, "text": "Jesse, hay... ¡Muy bien! Esto te hará mal.", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 524, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:09:57.541", "stage": "translation_input", "chars": 42, "text": "Jesse, hay... ¡Muy bien! Esto te hará mal.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:09:57.543", "stage": "translation_cleanup_bypassed", "chars": 42, "text": "Jesse, hay... ¡Muy bien! Esto te hará mal.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:09:57.545", "stage": "translation_output", "chars": 42, "text": "Jesse, hay... ¡Muy bien! Esto te hará mal.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:09:57.547", "stage": "display_update_input", "chars": 42, "text": "Jesse, hay... ¡Muy bien! Esto te hará mal.", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 20:09:57.549", "stage": "display_chunk_enqueued", "chars": 29, "text": "Jesse, hay... ¡Muy bien! Esto", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 20:09:57.551", "stage": "display_chunk_enqueued", "chars": 12, "text": "te hará mal.", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 20:10:02.442", "stage": "display_word_reveal_complete", "chars": 29, "text": "Jesse, hay... ¡Muy bien! Esto"}
+{"ts": "2026-02-13 20:10:02.815", "stage": "display_word_reveal_complete", "chars": 12, "text": "te hará mal."}
+{"ts": "2026-02-13 20:10:02.876", "stage": "stt_raw", "chars": 52, "text": "200 víctimas 200 lo que vas a ver, espero que mañana", "meta": {"engine": "faster-whisper", "stt_openai_ms": 513}}
+{"ts": "2026-02-13 20:10:02.878", "stage": "stt_sanitized", "chars": 52, "text": "200 víctimas 200 lo que vas a ver, espero que mañana", "meta": {"engine": "faster-whisper", "stt_openai_ms": 513}}
+{"ts": "2026-02-13 20:10:02.881", "stage": "stt_boundary_trim_bypassed", "chars": 52, "text": "200 víctimas 200 lo que vas a ver, espero que mañana", "meta": {"loopback": false}}
+{"ts": "2026-02-13 20:10:02.882", "stage": "sentence_enqueued", "chars": 52, "text": "200 víctimas 200 lo que vas a ver, espero que mañana", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 513, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:10:02.886", "stage": "translation_input", "chars": 52, "text": "200 víctimas 200 lo que vas a ver, espero que mañana", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 20:10:03.844", "stage": "translation_cleanup_bypassed", "chars": 58, "text": "200 victims 200 what you are going to see, I hope tomorrow", "meta": {"translation_enabled": true}}
+{"ts": "2026-02-13 20:10:03.846", "stage": "translation_output", "chars": 58, "text": "200 victims 200 what you are going to see, I hope tomorrow", "meta": {"translation_enabled": true, "translate_openai_ms": 955}}
+{"ts": "2026-02-13 20:10:03.849", "stage": "display_update_input", "chars": 58, "text": "200 victims 200 what you are going to see, I hope tomorrow", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 20:10:03.851", "stage": "display_fast_mode_on", "chars": 0, "text": "", "meta": {"sentence_fill_ratio": 0.0, "reveal_queue": 0, "text_queue": 0, "stt_openai_ms": 513, "translate_openai_ms": 955}}
+{"ts": "2026-02-13 20:10:03.891", "stage": "display_fast_path_render", "chars": 58, "text": "200 victims 200 what you are going to see, I hope tomorrow"}
+{"ts": "2026-02-13 20:10:06.467", "stage": "translation_disabled_backlog_cleared", "chars": 0, "text": "", "meta": {"dropped_sentences": 0, "dropped_display": 0}}
+{"ts": "2026-02-13 20:10:08.556", "stage": "stt_raw", "chars": 74, "text": "...es un montón de flotos, un montón de nombres, un montón de información.", "meta": {"engine": "faster-whisper", "stt_openai_ms": 452}}
+{"ts": "2026-02-13 20:10:08.558", "stage": "stt_sanitized", "chars": 74, "text": "...es un montón de flotos, un montón de nombres, un montón de información.", "meta": {"engine": "faster-whisper", "stt_openai_ms": 452}}
+{"ts": "2026-02-13 20:10:08.561", "stage": "stt_boundary_trim_bypassed", "chars": 74, "text": "...es un montón de flotos, un montón de nombres, un montón de información.", "meta": {"loopback": false}}
+{"ts": "2026-02-13 20:10:08.563", "stage": "sentence_enqueued", "chars": 74, "text": "...es un montón de flotos, un montón de nombres, un montón de información.", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 452, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:10:08.568", "stage": "translation_input", "chars": 74, "text": "...es un montón de flotos, un montón de nombres, un montón de información.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:10:08.569", "stage": "translation_cleanup_bypassed", "chars": 74, "text": "...es un montón de flotos, un montón de nombres, un montón de información.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:10:08.572", "stage": "translation_output", "chars": 74, "text": "...es un montón de flotos, un montón de nombres, un montón de información.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:10:08.574", "stage": "display_update_input", "chars": 74, "text": "...es un montón de flotos, un montón de nombres, un montón de información.", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 20:10:08.576", "stage": "display_chunk_enqueued", "chars": 29, "text": "...es un montón de flotos, un", "meta": {"chunk_index": 0, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 20:10:08.578", "stage": "display_chunk_enqueued", "chars": 28, "text": "montón de nombres, un montón", "meta": {"chunk_index": 1, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 20:10:08.581", "stage": "display_chunk_enqueued", "chars": 15, "text": "de información.", "meta": {"chunk_index": 2, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 20:10:09.324", "stage": "display_word_reveal_complete", "chars": 29, "text": "...es un montón de flotos, un"}
+{"ts": "2026-02-13 20:10:09.933", "stage": "display_word_reveal_complete", "chars": 28, "text": "montón de nombres, un montón"}
+{"ts": "2026-02-13 20:10:10.176", "stage": "display_word_reveal_complete", "chars": 15, "text": "de información."}
+{"ts": "2026-02-13 20:10:12.640", "stage": "stt_raw", "chars": 38, "text": "es bastante malo lo que hizo esa mujer", "meta": {"engine": "faster-whisper", "stt_openai_ms": 449}}
+{"ts": "2026-02-13 20:10:12.645", "stage": "stt_sanitized", "chars": 38, "text": "es bastante malo lo que hizo esa mujer", "meta": {"engine": "faster-whisper", "stt_openai_ms": 449}}
+{"ts": "2026-02-13 20:10:12.648", "stage": "stt_boundary_trim_bypassed", "chars": 38, "text": "es bastante malo lo que hizo esa mujer", "meta": {"loopback": false}}
+{"ts": "2026-02-13 20:10:12.651", "stage": "sentence_enqueued", "chars": 38, "text": "es bastante malo lo que hizo esa mujer", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 449, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:10:12.655", "stage": "translation_input", "chars": 38, "text": "es bastante malo lo que hizo esa mujer", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:10:12.657", "stage": "translation_cleanup_bypassed", "chars": 38, "text": "es bastante malo lo que hizo esa mujer", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:10:12.659", "stage": "translation_output", "chars": 38, "text": "es bastante malo lo que hizo esa mujer", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:10:12.663", "stage": "display_update_input", "chars": 38, "text": "es bastante malo lo que hizo esa mujer", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 20:10:12.665", "stage": "display_chunk_enqueued", "chars": 28, "text": "es bastante malo lo que hizo", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 20:10:12.668", "stage": "display_chunk_enqueued", "chars": 9, "text": "esa mujer", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 20:10:13.313", "stage": "display_word_reveal_complete", "chars": 28, "text": "es bastante malo lo que hizo"}
+{"ts": "2026-02-13 20:10:13.530", "stage": "display_word_reveal_complete", "chars": 9, "text": "esa mujer"}
+{"ts": "2026-02-13 20:10:17.693", "stage": "stt_raw", "chars": 25, "text": "Ok, bueno, vamos con eso.", "meta": {"engine": "faster-whisper", "stt_openai_ms": 493}}
+{"ts": "2026-02-13 20:10:17.696", "stage": "stt_sanitized", "chars": 25, "text": "Ok, bueno, vamos con eso.", "meta": {"engine": "faster-whisper", "stt_openai_ms": 493}}
+{"ts": "2026-02-13 20:10:17.700", "stage": "stt_boundary_trim_bypassed", "chars": 25, "text": "Ok, bueno, vamos con eso.", "meta": {"loopback": false}}
+{"ts": "2026-02-13 20:10:17.702", "stage": "sentence_enqueued", "chars": 25, "text": "Ok, bueno, vamos con eso.", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 493, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:10:17.707", "stage": "translation_input", "chars": 25, "text": "Ok, bueno, vamos con eso.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:10:17.709", "stage": "translation_cleanup_bypassed", "chars": 25, "text": "Ok, bueno, vamos con eso.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:10:17.712", "stage": "translation_output", "chars": 25, "text": "Ok, bueno, vamos con eso.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:10:17.715", "stage": "display_update_input", "chars": 25, "text": "Ok, bueno, vamos con eso.", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 20:10:17.718", "stage": "display_chunk_enqueued", "chars": 25, "text": "Ok, bueno, vamos con eso.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-13 20:10:18.304", "stage": "display_word_reveal_complete", "chars": 25, "text": "Ok, bueno, vamos con eso."}
+{"ts": "2026-02-13 20:10:22.669", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "faster-whisper", "stt_openai_ms": 429}}
+{"ts": "2026-02-13 20:10:22.678", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "faster-whisper", "stt_openai_ms": 429}}
+{"ts": "2026-02-13 20:10:27.678", "stage": "stt_raw", "chars": 41, "text": "y mi respuesta fue que está sentado en...", "meta": {"engine": "faster-whisper", "stt_openai_ms": 396}}
+{"ts": "2026-02-13 20:10:27.681", "stage": "stt_sanitized", "chars": 41, "text": "y mi respuesta fue que está sentado en...", "meta": {"engine": "faster-whisper", "stt_openai_ms": 396}}
+{"ts": "2026-02-13 20:10:27.683", "stage": "stt_boundary_trim_bypassed", "chars": 41, "text": "y mi respuesta fue que está sentado en...", "meta": {"loopback": false}}
+{"ts": "2026-02-13 20:10:27.686", "stage": "sentence_enqueued", "chars": 41, "text": "y mi respuesta fue que está sentado en...", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 396, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:10:27.691", "stage": "translation_input", "chars": 41, "text": "y mi respuesta fue que está sentado en...", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:10:27.693", "stage": "translation_cleanup_bypassed", "chars": 41, "text": "y mi respuesta fue que está sentado en...", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:10:27.696", "stage": "translation_output", "chars": 41, "text": "y mi respuesta fue que está sentado en...", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:10:27.699", "stage": "display_update_input", "chars": 41, "text": "y mi respuesta fue que está sentado en...", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 20:10:27.702", "stage": "display_chunk_enqueued", "chars": 27, "text": "y mi respuesta fue que está", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 20:10:27.705", "stage": "display_chunk_enqueued", "chars": 13, "text": "sentado en...", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 20:10:28.445", "stage": "display_word_reveal_complete", "chars": 27, "text": "y mi respuesta fue que está"}
+{"ts": "2026-02-13 20:10:28.694", "stage": "display_word_reveal_complete", "chars": 13, "text": "sentado en..."}
+{"ts": "2026-02-13 20:10:32.973", "stage": "stt_raw", "chars": 69, "text": "...en mi mesa para ser revisada, significa el documento, junto con...", "meta": {"engine": "faster-whisper", "stt_openai_ms": 493}}
+{"ts": "2026-02-13 20:10:32.977", "stage": "stt_sanitized", "chars": 69, "text": "...en mi mesa para ser revisada, significa el documento, junto con...", "meta": {"engine": "faster-whisper", "stt_openai_ms": 493}}
+{"ts": "2026-02-13 20:10:32.979", "stage": "stt_boundary_trim_bypassed", "chars": 69, "text": "...en mi mesa para ser revisada, significa el documento, junto con...", "meta": {"loopback": false}}
+{"ts": "2026-02-13 20:10:32.982", "stage": "sentence_enqueued", "chars": 69, "text": "...en mi mesa para ser revisada, significa el documento, junto con...", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 493, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:10:32.987", "stage": "translation_input", "chars": 69, "text": "...en mi mesa para ser revisada, significa el documento, junto con...", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:10:32.990", "stage": "translation_cleanup_bypassed", "chars": 69, "text": "...en mi mesa para ser revisada, significa el documento, junto con...", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:10:32.992", "stage": "translation_output", "chars": 69, "text": "...en mi mesa para ser revisada, significa el documento, junto con...", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:10:32.995", "stage": "display_update_input", "chars": 69, "text": "...en mi mesa para ser revisada, significa el documento, junto con...", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 20:10:32.999", "stage": "display_chunk_enqueued", "chars": 22, "text": "...en mi mesa para ser", "meta": {"chunk_index": 0, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 20:10:33.002", "stage": "display_chunk_enqueued", "chars": 22, "text": "revisada, significa el", "meta": {"chunk_index": 1, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 20:10:33.006", "stage": "display_chunk_enqueued", "chars": 23, "text": "documento, junto con...", "meta": {"chunk_index": 2, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 20:10:33.622", "stage": "display_word_reveal_complete", "chars": 22, "text": "...en mi mesa para ser"}
+{"ts": "2026-02-13 20:10:33.995", "stage": "display_word_reveal_complete", "chars": 22, "text": "revisada, significa el"}
+{"ts": "2026-02-13 20:10:34.366", "stage": "display_word_reveal_complete", "chars": 23, "text": "documento, junto con..."}
+{"ts": "2026-02-13 20:10:37.912", "stage": "stt_raw", "chars": 38, "text": "VJFK, MLK, files as well. 200 victims.", "meta": {"engine": "faster-whisper", "stt_openai_ms": 583}}
+{"ts": "2026-02-13 20:10:37.915", "stage": "stt_sanitized", "chars": 38, "text": "VJFK, MLK, files as well. 200 victims.", "meta": {"engine": "faster-whisper", "stt_openai_ms": 583}}
+{"ts": "2026-02-13 20:10:37.920", "stage": "stt_boundary_trim_bypassed", "chars": 38, "text": "VJFK, MLK, files as well. 200 victims.", "meta": {"loopback": false}}
+{"ts": "2026-02-13 20:10:37.923", "stage": "sentence_enqueued", "chars": 38, "text": "VJFK, MLK, files as well. 200 victims.", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 583, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:10:37.929", "stage": "translation_input", "chars": 38, "text": "VJFK, MLK, files as well. 200 victims.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:10:37.932", "stage": "translation_cleanup_bypassed", "chars": 38, "text": "VJFK, MLK, files as well. 200 victims.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:10:37.935", "stage": "translation_output", "chars": 38, "text": "VJFK, MLK, files as well. 200 victims.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:10:37.938", "stage": "display_update_input", "chars": 38, "text": "VJFK, MLK, files as well. 200 victims.", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 20:10:37.941", "stage": "display_chunk_enqueued", "chars": 29, "text": "VJFK, MLK, files as well. 200", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 20:10:37.944", "stage": "display_chunk_enqueued", "chars": 8, "text": "victims.", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 20:10:38.687", "stage": "display_word_reveal_complete", "chars": 29, "text": "VJFK, MLK, files as well. 200"}
+{"ts": "2026-02-13 20:10:38.811", "stage": "display_word_reveal_complete", "chars": 8, "text": "victims."}
+{"ts": "2026-02-13 20:10:42.752", "stage": "stt_raw", "chars": 58, "text": "y también a los 10 mil videos, se turnaron a ser chocados.", "meta": {"engine": "faster-whisper", "stt_openai_ms": 632}}
+{"ts": "2026-02-13 20:10:42.755", "stage": "stt_sanitized", "chars": 58, "text": "y también a los 10 mil videos, se turnaron a ser chocados.", "meta": {"engine": "faster-whisper", "stt_openai_ms": 632}}
+{"ts": "2026-02-13 20:10:42.760", "stage": "stt_boundary_trim_bypassed", "chars": 58, "text": "y también a los 10 mil videos, se turnaron a ser chocados.", "meta": {"loopback": false}}
+{"ts": "2026-02-13 20:10:42.764", "stage": "sentence_enqueued", "chars": 58, "text": "y también a los 10 mil videos, se turnaron a ser chocados.", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 632, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:10:42.767", "stage": "translation_input", "chars": 58, "text": "y también a los 10 mil videos, se turnaron a ser chocados.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:10:42.770", "stage": "translation_cleanup_bypassed", "chars": 58, "text": "y también a los 10 mil videos, se turnaron a ser chocados.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:10:42.773", "stage": "translation_output", "chars": 58, "text": "y también a los 10 mil videos, se turnaron a ser chocados.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:10:42.777", "stage": "display_update_input", "chars": 58, "text": "y también a los 10 mil videos, se turnaron a ser chocados.", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 20:10:42.779", "stage": "display_chunk_enqueued", "chars": 30, "text": "y también a los 10 mil videos,", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 20:10:42.782", "stage": "display_chunk_enqueued", "chars": 27, "text": "se turnaron a ser chocados.", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 20:10:43.675", "stage": "display_word_reveal_complete", "chars": 30, "text": "y también a los 10 mil videos,"}
+{"ts": "2026-02-13 20:10:44.280", "stage": "display_word_reveal_complete", "chars": 27, "text": "se turnaron a ser chocados."}
+{"ts": "2026-02-13 20:10:47.629", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "faster-whisper", "stt_openai_ms": 358}}
+{"ts": "2026-02-13 20:10:47.632", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "faster-whisper", "stt_openai_ms": 358}}
+{"ts": "2026-02-13 20:10:52.695", "stage": "stt_raw", "chars": 34, "text": "y nunca se va a ver la luz al día.", "meta": {"engine": "faster-whisper", "stt_openai_ms": 405}}
+{"ts": "2026-02-13 20:10:52.698", "stage": "stt_sanitized", "chars": 34, "text": "y nunca se va a ver la luz al día.", "meta": {"engine": "faster-whisper", "stt_openai_ms": 405}}
+{"ts": "2026-02-13 20:10:52.701", "stage": "stt_boundary_trim_bypassed", "chars": 34, "text": "y nunca se va a ver la luz al día.", "meta": {"loopback": false}}
+{"ts": "2026-02-13 20:10:52.705", "stage": "sentence_enqueued", "chars": 34, "text": "y nunca se va a ver la luz al día.", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 405, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:10:52.708", "stage": "translation_input", "chars": 34, "text": "y nunca se va a ver la luz al día.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:10:52.712", "stage": "translation_cleanup_bypassed", "chars": 34, "text": "y nunca se va a ver la luz al día.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:10:52.714", "stage": "translation_output", "chars": 34, "text": "y nunca se va a ver la luz al día.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:10:52.717", "stage": "display_update_input", "chars": 34, "text": "y nunca se va a ver la luz al día.", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 20:10:52.725", "stage": "display_chunk_enqueued", "chars": 29, "text": "y nunca se va a ver la luz al", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 20:10:52.728", "stage": "display_chunk_enqueued", "chars": 4, "text": "día.", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 20:10:53.848", "stage": "display_word_reveal_complete", "chars": 29, "text": "y nunca se va a ver la luz al"}
+{"ts": "2026-02-13 20:10:53.972", "stage": "display_word_reveal_complete", "chars": 4, "text": "día."}
+{"ts": "2026-02-13 20:10:57.804", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "faster-whisper", "stt_openai_ms": 503}}
+{"ts": "2026-02-13 20:10:57.808", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "faster-whisper", "stt_openai_ms": 503}}
+{"ts": "2026-02-13 20:11:03.156", "stage": "stt_raw", "chars": 81, "text": "y respondió en la lista de clientes. Al mejor, si estamos siendo muy graciosos...", "meta": {"engine": "faster-whisper", "stt_openai_ms": 627}}
+{"ts": "2026-02-13 20:11:03.160", "stage": "stt_sanitized", "chars": 81, "text": "y respondió en la lista de clientes. Al mejor, si estamos siendo muy graciosos...", "meta": {"engine": "faster-whisper", "stt_openai_ms": 627}}
+{"ts": "2026-02-13 20:11:03.163", "stage": "stt_boundary_trim_bypassed", "chars": 81, "text": "y respondió en la lista de clientes. Al mejor, si estamos siendo muy graciosos...", "meta": {"loopback": false}}
+{"ts": "2026-02-13 20:11:03.167", "stage": "sentence_enqueued", "chars": 81, "text": "y respondió en la lista de clientes. Al mejor, si estamos siendo muy graciosos...", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 627, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:11:03.171", "stage": "translation_input", "chars": 81, "text": "y respondió en la lista de clientes. Al mejor, si estamos siendo muy graciosos...", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:11:03.174", "stage": "translation_cleanup_bypassed", "chars": 81, "text": "y respondió en la lista de clientes. Al mejor, si estamos siendo muy graciosos...", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:11:03.176", "stage": "translation_output", "chars": 81, "text": "y respondió en la lista de clientes. Al mejor, si estamos siendo muy graciosos...", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:11:03.180", "stage": "display_update_input", "chars": 81, "text": "y respondió en la lista de clientes. Al mejor, si estamos siendo muy graciosos...", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 20:11:03.183", "stage": "display_chunk_enqueued", "chars": 26, "text": "y respondió en la lista de", "meta": {"chunk_index": 0, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 20:11:03.187", "stage": "display_chunk_enqueued", "chars": 30, "text": "clientes. Al mejor, si estamos", "meta": {"chunk_index": 1, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 20:11:03.190", "stage": "display_chunk_enqueued", "chars": 23, "text": "siendo muy graciosos...", "meta": {"chunk_index": 2, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 20:11:03.943", "stage": "display_word_reveal_complete", "chars": 26, "text": "y respondió en la lista de"}
+{"ts": "2026-02-13 20:11:04.578", "stage": "display_word_reveal_complete", "chars": 30, "text": "clientes. Al mejor, si estamos"}
+{"ts": "2026-02-13 20:11:04.966", "stage": "display_word_reveal_complete", "chars": 23, "text": "siendo muy graciosos..."}
+{"ts": "2026-02-13 20:11:08.330", "stage": "stt_raw", "chars": 94, "text": "Eres un comunicador horrible y no deberías hacer este trabajo y no deberías gastar la mayoría.", "meta": {"engine": "faster-whisper", "stt_openai_ms": 669}}
+{"ts": "2026-02-13 20:11:08.335", "stage": "stt_sanitized", "chars": 94, "text": "Eres un comunicador horrible y no deberías hacer este trabajo y no deberías gastar la mayoría.", "meta": {"engine": "faster-whisper", "stt_openai_ms": 669}}
+{"ts": "2026-02-13 20:11:08.339", "stage": "stt_boundary_trim_bypassed", "chars": 94, "text": "Eres un comunicador horrible y no deberías hacer este trabajo y no deberías gastar la mayoría.", "meta": {"loopback": false}}
+{"ts": "2026-02-13 20:11:08.344", "stage": "sentence_enqueued", "chars": 94, "text": "Eres un comunicador horrible y no deberías hacer este trabajo y no deberías gastar la mayoría.", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 669, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:11:08.349", "stage": "translation_input", "chars": 94, "text": "Eres un comunicador horrible y no deberías hacer este trabajo y no deberías gastar la mayoría.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:11:08.355", "stage": "translation_cleanup_bypassed", "chars": 94, "text": "Eres un comunicador horrible y no deberías hacer este trabajo y no deberías gastar la mayoría.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 20:11:08.359", "stage": "translation_output", "chars": 94, "text": "Eres un comunicador horrible y no deberías hacer este trabajo y no deberías gastar la mayoría.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 20:11:08.365", "stage": "display_update_input", "chars": 94, "text": "Eres un comunicador horrible y no deberías hacer este trabajo y no deberías gastar la mayoría.", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 20:11:08.371", "stage": "display_chunk_enqueued", "chars": 30, "text": "Eres un comunicador horrible y", "meta": {"chunk_index": 0, "chunk_count": 4, "word_by_word": true}}
+{"ts": "2026-02-13 20:11:08.375", "stage": "display_chunk_enqueued", "chars": 30, "text": "no deberías hacer este trabajo", "meta": {"chunk_index": 1, "chunk_count": 4, "word_by_word": true}}
+{"ts": "2026-02-13 20:11:08.379", "stage": "display_chunk_enqueued", "chars": 23, "text": "y no deberías gastar la", "meta": {"chunk_index": 2, "chunk_count": 4, "word_by_word": true}}
+{"ts": "2026-02-13 20:11:08.384", "stage": "display_chunk_enqueued", "chars": 8, "text": "mayoría.", "meta": {"chunk_index": 3, "chunk_count": 4, "word_by_word": true}}
+{"ts": "2026-02-13 20:11:09.036", "stage": "display_word_reveal_complete", "chars": 30, "text": "Eres un comunicador horrible y"}
+{"ts": "2026-02-13 20:11:09.669", "stage": "display_word_reveal_complete", "chars": 30, "text": "no deberías hacer este trabajo"}

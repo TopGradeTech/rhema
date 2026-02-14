@@ -83,6 +83,7 @@ class TranslationApp:
     SCROLL_EVENTS = ("<MouseWheel>", "<Button-4>", "<Button-5>")
     CONFIGURE_EVENT = "<Configure>"
     STATUS_LISTENING = "Listening..."
+    OPENAI_AUDIO_MAX_BYTES = 24 * 1024 * 1024
     TRANSLATION_NOISE_MARKERS = (
         "please provide",
         "provide the text",
@@ -140,6 +141,17 @@ class TranslationApp:
             "cannot help with that",
             "i can t assist with that",
             "i cannot assist with that",
+            "subtitulos realizados por la comunidad de amara org",
+            "subtítulos realizados por la comunidad de amara org",
+            "please see the complete disclaimer",
+            "thank you for watching",
+            "thanks for watching",
+            "thank you for listening",
+            "thanks for listening",
+            "this video is for educational purposes only",
+            "the audio is in english",
+            "the audio is in spanish",
+            "the audio is in english or spanish",
         }
     )
 
@@ -155,7 +167,6 @@ class TranslationApp:
         self.recognition_lock = Lock()
         self.portaudio_admin_lock = Lock()
         self.last_status_message = None
-        self.last_status_log_time = 0.0
         self.latency_samples = deque(maxlen=20)
         self.chunk_latency_label = None
         self.audio_level_label = None
@@ -174,17 +185,15 @@ class TranslationApp:
         self.audio_level_thread = None
         self.audio_level_restart_requested = False
         self._audio_level_last_error_log = 0.0
-        self.audio_queue = queue.Queue(maxsize=120)
-        self.audio_queue_high_water_ratio = 0.75
-        self.audio_queue_relief_ratio = 0.55
+        self.audio_queue = queue.Queue(maxsize=180)
+        self.audio_queue_high_water_ratio = 0.8
+        self.audio_queue_relief_ratio = 0.65
         self.capture_thread = None
         self.capture_restart_requested = False
         self.capture_suspend_event = Event()
         self.capture_suspended_event = Event()
-        self.active_device_index = None
         self.listener_restart_min_interval = 2.0
         self.listener_restart_time = 0.0
-        self.last_audio_time = 0.0
         self.no_speech_timeout_count = 0
         self.last_no_speech_notice = 0.0
         self.unknown_speech_count = 0
@@ -233,6 +242,11 @@ class TranslationApp:
         self.recognizer.phrase_threshold = 0.2
         self.allow_loopback = False
         self.loopback_chunk_seconds = 1.0
+        self.dynamic_loopback_chunking = True
+        self.loopback_chunk_seconds_min = 0.65
+        self.loopback_chunk_seconds_max = 1.85
+        self._last_effective_loopback_chunk_seconds = None
+        self._last_chunk_tuning_notice = 0.0
         self.loopback_overlap_seconds = 0.35
         self.loopback_tail_raw = b""
         self.phrase_time_limit = 5.0
@@ -243,17 +257,23 @@ class TranslationApp:
         self.openai_translation_mode = "whisper"
         self.openai_translate_model = "gpt-4o"
         self.raw_whisper_debug_mode = False
+        self.whisper_manipulation_level = 6
         self.speech_engine = "openai"
         self.faster_whisper_model_name = "medium"
         self.faster_whisper_compute_type = "float16"
         self.faster_whisper_device = "cuda"
+        self.faster_whisper_cpu_threads = max(1, (os.cpu_count() or 4) - 1)
+        self.faster_whisper_beam_size = 1
+        self.faster_whisper_best_of = 1
+        self.faster_whisper_temperature = 0.0
+        self.faster_whisper_without_timestamps = True
+        self.faster_whisper_no_speech_threshold = 0.7
         self.faster_whisper_model = None
         self.faster_whisper_model_config = None
         self.device_menu = None
         self.device_sample_rates_by_index = {}
         self.preferred_device_label = ""
         self.device_refresh_in_progress = False
-        self._scaled_font_size = None
         self.last_display_line_count = 0
         self.rms_gate_enabled = False
         self.rms_gate_factor = 1.0
@@ -263,7 +283,7 @@ class TranslationApp:
         self.sentence_flush_ms = 100
         self.sentence_last_update = 0.0
         self.sentence_max_chars = 200
-        self.sentence_fragment_grace_ms = 450
+        self.sentence_fragment_grace_ms = 250
         self.sentence_timeout_min_words = 3
         self.sentence_queue = queue.Queue(maxsize=120)
         self.sentence_queue_high_water_ratio = 0.75
@@ -373,9 +393,16 @@ class TranslationApp:
         self.current_reveal_text = ""
         self.current_reveal_latency_meta = None
         self.chunk_size = 120
-        self.chunk_delay_ms = 120
+        self.chunk_delay_ms = 90
         self.flush_timeout_ms = 2000
         self.display_speed_factor = 1.0
+        self.dynamic_fast_display_enabled = True
+        self.fast_display_hold_sec = 2.0
+        self.fast_display_until = 0.0
+        self.fast_display_sentence_queue_ratio = 0.25
+        self.fast_display_reveal_queue_items = 2
+        self.fast_display_translate_ms = 1200
+        self.fast_display_stt_ms = 1500
         self.pending_text = ""
         self.pending_latency_meta = None
         self.last_openai_stt_ms = None
@@ -479,12 +506,6 @@ class TranslationApp:
 
     def toggle_fullscreen_event(self, event):
         self.toggle_fullscreen()
-
-    def exit_fullscreen_event(self, event):
-        if self.is_fullscreen:
-            self.is_fullscreen = False
-            self.exit_fullscreen()
-        return "break"
 
     def open_settings_event(self, event):
         self.show_status_temporarily()
@@ -626,7 +647,6 @@ class TranslationApp:
         if msg == self.last_status_message:
             return
         self.last_status_message = msg
-        self.last_status_log_time = now
         try:
             timestamp = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(now))
             ms = int((now - int(now)) * 1000)
@@ -680,9 +700,17 @@ class TranslationApp:
         self.openai_translate_model = str(
             data.get("openai_translate_model", self.openai_translate_model)
         ).strip() or "gpt-4o"
-        self.raw_whisper_debug_mode = bool(
-            data.get("raw_whisper_debug_mode", self.raw_whisper_debug_mode)
+        self.raw_whisper_debug_mode = self._coerce_bool(
+            data.get("raw_whisper_debug_mode", self.raw_whisper_debug_mode),
+            default=self.raw_whisper_debug_mode,
         )
+        try:
+            self.whisper_manipulation_level = int(
+                data.get("whisper_manipulation_level", self.whisper_manipulation_level)
+            )
+        except Exception:
+            self.whisper_manipulation_level = 6
+        self.whisper_manipulation_level = max(0, min(6, self.whisper_manipulation_level))
         self.speech_engine = data.get("speech_engine", self.speech_engine)
         self.faster_whisper_model_name = data.get(
             "faster_whisper_model_name", self.faster_whisper_model_name
@@ -771,13 +799,11 @@ class TranslationApp:
         except Exception:
             pass
         self.display_speed_factor = max(0.5, min(self.display_speed_factor, 2.5))
-        self.source_lang = data.get("source_lang", self.source_lang)
-        self.target_lang = "en"
-        self.translation_enabled = bool(data.get("translation_enabled", self.translation_enabled))
-        # Keep output language fixed to English.
-        self.auto_switch_translation = False
-        if not self.auto_switch_translation and (self.source_lang or "").strip().lower() == "auto":
-            self.source_lang = "en"
+        self.translation_enabled = self._coerce_bool(
+            data.get("translation_enabled", self.translation_enabled),
+            default=self.translation_enabled,
+        )
+        self._apply_translation_mode_defaults()
         self.biblical_books = data.get("biblical_books", self.biblical_books)
         self.preferred_device_label = data.get(
             "preferred_device_label", self.preferred_device_label
@@ -809,6 +835,27 @@ class TranslationApp:
                 self.settings_monitor_origin,
             )
 
+    def _coerce_bool(self, value, default=False):
+        if isinstance(value, bool):
+            return value
+        if isinstance(value, (int, float)):
+            return value != 0
+        if isinstance(value, str):
+            normalized = value.strip().lower()
+            if normalized in ("1", "true", "yes", "on", "enabled"):
+                return True
+            if normalized in ("0", "false", "no", "off", "disabled", ""):
+                return False
+        return bool(default)
+
+    def _apply_translation_mode_defaults(self):
+        # Requested behavior:
+        # - Translation OFF => English output
+        # - Translation ON  => Spanish output
+        self.source_lang = "en"
+        self.target_lang = "es" if self.translation_enabled else "en"
+        self.auto_switch_translation = False
+
     def save_settings(self):
         if self.settings_window is not None and self.settings_window.winfo_exists():
             try:
@@ -831,6 +878,7 @@ class TranslationApp:
             "openai_translation_mode": self.openai_translation_mode,
             "openai_translate_model": self.openai_translate_model,
             "raw_whisper_debug_mode": self.raw_whisper_debug_mode,
+            "whisper_manipulation_level": self.whisper_manipulation_level,
             "speech_engine": self.speech_engine,
             "faster_whisper_model_name": self.faster_whisper_model_name,
             "faster_whisper_compute_type": self.faster_whisper_compute_type,
@@ -876,25 +924,6 @@ class TranslationApp:
                 json.dump(data, f, indent=2)
         except Exception:
             pass
-
-    def close_settings_window(self):
-        if self.settings_window is None:
-            return
-        if not self.settings_window.winfo_exists():
-            self.settings_window = None
-            return
-        try:
-            self.settings_geometry = self.settings_window.geometry()
-        except Exception:
-            pass
-        try:
-            for event_name in self.SCROLL_EVENTS:
-                self.settings_window.unbind_all(event_name)
-        except Exception:
-            pass
-        self.settings_window.destroy()
-        self.settings_window = None
-        self.preview_widget = None
 
     def get_monitors(self):
         if os.name == "nt":
@@ -1095,19 +1124,6 @@ class TranslationApp:
             self.monitor_id_windows = []
 
         self.root.after(duration_ms, close_overlays)
-
-    def apply_monitor_geometry(self):
-        self.monitors = self.get_monitors()
-        if not self.monitors:
-            return
-        self.monitor_index = max(0, min(self.monitor_index, len(self.monitors) - 1))
-        idx = max(0, min(self.monitor_index, len(self.monitors) - 1))
-        monitor = self.monitors[idx]
-        width = monitor["right"] - monitor["left"]
-        height = monitor["bottom"] - monitor["top"]
-        x = monitor["left"]
-        y = monitor["top"]
-        self.root.geometry(f"{width}x{height}+{x}+{y}")
 
     def move_window_to_monitor(self, window, monitor_index, keep_size=True):
         self.monitors = self.get_monitors()
@@ -1357,16 +1373,6 @@ class TranslationApp:
 
     def _normalize_host_api(self, name):
         return (name or "").strip().lower()
-
-    def _filter_entries_by_host_api(self, entries, preferred_api):
-        preferred = self._normalize_host_api(preferred_api)
-        if not preferred:
-            return entries
-        return [
-            entry
-            for entry in entries
-            if self._normalize_host_api(entry.get("host_api")) == preferred
-        ]
 
     def _is_loopback_name(self, name):
         lowered = name.lower()
@@ -1859,6 +1865,14 @@ class TranslationApp:
                 )
             if "raw_whisper_debug_var" in api_vars:
                 self.raw_whisper_debug_mode = bool(api_vars["raw_whisper_debug_var"].get())
+            if (
+                "whisper_manipulation_level_var" in api_vars
+                and "whisper_manipulation_level_map" in api_vars
+            ):
+                selected_level = api_vars["whisper_manipulation_level_var"].get()
+                self.whisper_manipulation_level = api_vars[
+                    "whisper_manipulation_level_map"
+                ].get(selected_level, 6)
             if "openai_api_key_var" in api_vars:
                 self.openai_api_key = api_vars["openai_api_key_var"].get().strip()
             if "faster_whisper_model_var" in api_vars:
@@ -1887,14 +1901,22 @@ class TranslationApp:
             gc.collect()
 
     def _apply_translation_vars(self, translation_vars):
-        self.source_lang = translation_vars["lang_map"].get(
-            translation_vars["source_lang_var"].get(),
-            "auto",
-        )
-        self.target_lang = "en"
+        was_translation_enabled = bool(self.translation_enabled)
         if "enable_translation_var" in translation_vars:
-            self.translation_enabled = bool(translation_vars["enable_translation_var"].get())
-        self.auto_switch_translation = False
+            self.translation_enabled = self._coerce_bool(
+                translation_vars["enable_translation_var"].get(),
+                default=False,
+            )
+        self._apply_translation_mode_defaults()
+        self._trace_pipeline(
+            "translation_toggle_applied",
+            "",
+            translation_enabled=self.translation_enabled,
+            source_lang=self.source_lang,
+            target_lang=self.target_lang,
+        )
+        if was_translation_enabled and not self.translation_enabled:
+            self._clear_translation_backlog_after_disable()
 
     def _apply_audio_vars(self, audio_vars):
         pass
@@ -2054,9 +2076,6 @@ class TranslationApp:
         except Exception:
             pass
     
-    def _validate_int_entry(self, proposed):
-        return proposed == "" or proposed.isdigit()
-
     def _compute_scaled_font_size(self):
         base_size = max(12, int(self.font_size))
         lines = max(1, int(self.max_lines))
@@ -2148,7 +2167,6 @@ class TranslationApp:
         if target_size:
             best = min(best, target_size)
 
-        self._scaled_font_size = best
         self.text_font.configure(size=best)
         if self.preview_font is not None:
             preview_size = max(12, int(best * 0.5))
@@ -2231,21 +2249,6 @@ class TranslationApp:
                 font=self.text_font,
                 state="normal",
             )
-
-    def _coerce_int_var(self, var, default, min_val=None, max_val=None):
-        try:
-            value = int(var.get())
-        except Exception:
-            value = default
-        if min_val is not None:
-            value = max(min_val, value)
-        if max_val is not None:
-            value = min(max_val, value)
-        try:
-            var.set(value)
-        except Exception:
-            pass
-        return value
 
     def _add_setting_label(self, parent, text, help_text, label_opts, pady=(0, 4)):
         row = tk.Frame(parent, bg=label_opts["bg"])
@@ -3131,6 +3134,41 @@ class TranslationApp:
             label_opts["bg"],
             label_opts["fg"],
         )
+        self._add_setting_label(
+            openai_key_container,
+            "Whisper Processing Level:",
+            "Controls non-debug Whisper manipulations. Start low and increase one level at a time.",
+            label_opts,
+            pady=(10, 4),
+        )
+        whisper_manipulation_options = [
+            ("0 - Raw passthrough", 0),
+            ("1 - + STT sanitize", 1),
+            ("2 - + Source language filter", 2),
+            ("3 - + Boundary de-dup trim", 3),
+            ("4 - + Sentence buffering", 4),
+            ("5 - + Translation cleanup", 5),
+            ("6 - + Output cleanup (full)", 6),
+        ]
+        whisper_manipulation_display = [
+            name for name, _ in whisper_manipulation_options
+        ]
+        whisper_manipulation_level_map = dict(whisper_manipulation_options)
+        rev_whisper_manipulation_level_map = {
+            level: name for name, level in whisper_manipulation_options
+        }
+        whisper_manipulation_level_var = tk.StringVar(
+            value=rev_whisper_manipulation_level_map.get(
+                int(self.whisper_manipulation_level), whisper_manipulation_display[-1]
+            )
+        )
+        whisper_manipulation_level_menu = tk.OptionMenu(
+            openai_key_container,
+            whisper_manipulation_level_var,
+            *whisper_manipulation_display,
+        )
+        self._apply_option_menu_style(whisper_manipulation_level_menu)
+        whisper_manipulation_level_menu.pack(anchor="w")
 
         faster_whisper_container = tk.Frame(api_section, bg=label_opts["bg"])
         faster_whisper_container.pack(fill=tk.X, pady=(10, 0))
@@ -3203,6 +3241,8 @@ class TranslationApp:
             "openai_translation_mode_map": openai_translation_mode_map,
             "openai_translate_model_var": openai_translate_model_var,
             "raw_whisper_debug_var": raw_whisper_debug_var,
+            "whisper_manipulation_level_var": whisper_manipulation_level_var,
+            "whisper_manipulation_level_map": whisper_manipulation_level_map,
             "openai_key_container": openai_key_container,
             "faster_whisper_model_var": faster_whisper_model_var,
             "faster_whisper_compute_var": faster_whisper_compute_var,
@@ -3215,7 +3255,7 @@ class TranslationApp:
         translate_row.pack(anchor="w", pady=(0, 8), fill=tk.X)
         translate_check = tk.Checkbutton(
             translate_row,
-            text="Enable translation",
+            text="Enable English -> Spanish translation",
             variable=enable_translation_var,
             bg=label_opts["bg"],
             fg=label_opts["fg"],
@@ -3225,58 +3265,70 @@ class TranslationApp:
         translate_check.pack(side=tk.LEFT)
         self._create_help_icon(
             translate_row,
-            "Translate recognized speech to the target language.",
+            "Unchecked: output English. Checked: output Spanish.",
             label_opts["bg"],
             label_opts["fg"],
         )
-
-        self._add_setting_label(
+        toggle_state_label = tk.Label(
             translation_section,
-            "Translate from:",
-            "Source language for the speech text.",
-            label_opts,
-            pady=(0, 4),
-        )
-        lang_options = [
-            ("English", "en"),
-            ("Spanish", "es"),
-            ("French", "fr"),
-            ("German", "de"),
-            ("Italian", "it"),
-            ("Portuguese", "pt"),
-            ("Dutch", "nl"),
-            ("Russian", "ru"),
-            ("Japanese", "ja"),
-            ("Korean", "ko"),
-            ("Chinese (Simplified)", "zh-cn"),
-        ]
-        lang_display = [name for name, _ in lang_options]
-        lang_map = dict(lang_options)
-        rev_lang_map = {code: name for name, code in lang_options}
-
-        source_lang_var = tk.StringVar(value=rev_lang_map.get(self.source_lang, "English"))
-        source_menu = tk.OptionMenu(translation_section, source_lang_var, *lang_display)
-        self._apply_option_menu_style(source_menu)
-        source_menu.pack(anchor="w")
-
-        self._add_setting_label(
-            translation_section,
-            "Translate to:",
-            "Target language is fixed to English for a single clear output.",
-            label_opts,
-            pady=(10, 4),
-        )
-        fixed_target_label = tk.Label(
-            translation_section,
-            text="English",
+            text="Current mode: Translation OFF (English output)",
             bg=label_opts["bg"],
             fg=label_opts["fg"],
+            font=(self.ui_font_family, 9),
         )
-        fixed_target_label.pack(anchor="w")
+        toggle_state_label.pack(anchor="w", pady=(0, 8))
+        output_lang_label = tk.Label(
+            translation_section,
+            text="Output language: English",
+            bg=label_opts["bg"],
+            fg=label_opts["fg"],
+            font=(self.ui_font_family, 9),
+        )
+        output_lang_label.pack(anchor="w", pady=(0, 8))
+
+        def _refresh_translation_toggle_label(*_args):
+            enabled = self._coerce_bool(enable_translation_var.get(), default=False)
+            if enabled:
+                toggle_state_label.config(
+                    text="Current mode: Translation ON (Spanish output)"
+                )
+                output_lang_label.config(text="Output language: Spanish")
+            else:
+                toggle_state_label.config(
+                    text="Current mode: Translation OFF (English output)"
+                )
+                output_lang_label.config(text="Output language: English")
+
+        def _sync_translation_toggle_runtime(*_args):
+            enabled = self._coerce_bool(enable_translation_var.get(), default=False)
+            previous = bool(self.translation_enabled)
+            if enabled == previous:
+                return
+            self.translation_enabled = enabled
+            self._apply_translation_mode_defaults()
+            if previous and not enabled:
+                self._clear_translation_backlog_after_disable()
+            self._trace_pipeline(
+                "translation_toggle_runtime",
+                "",
+                translation_enabled=self.translation_enabled,
+                source_lang=self.source_lang,
+                target_lang=self.target_lang,
+            )
+
+        enable_translation_var.trace_add("write", _refresh_translation_toggle_label)
+        enable_translation_var.trace_add("write", _sync_translation_toggle_runtime)
+        _refresh_translation_toggle_label()
+        fixed_input_label = tk.Label(
+            translation_section,
+            text="Input language: English",
+            bg=label_opts["bg"],
+            fg=label_opts["fg"],
+            font=(self.ui_font_family, 9),
+        )
+        fixed_input_label.pack(anchor="w")
 
         return {
-            "source_lang_var": source_lang_var,
-            "lang_map": lang_map,
             "enable_translation_var": enable_translation_var,
         }
         
@@ -3413,6 +3465,47 @@ class TranslationApp:
             action=action,
         )
 
+    def _effective_loopback_chunk_seconds(self):
+        try:
+            base_seconds = max(0.35, float(self.loopback_chunk_seconds))
+        except Exception:
+            base_seconds = 1.0
+        if not bool(getattr(self, "dynamic_loopback_chunking", True)):
+            return base_seconds
+        _size, _maxsize, fill_ratio = self._queue_fill_ratio(self.audio_queue)
+        tuned_seconds = base_seconds
+        if fill_ratio >= 0.9:
+            tuned_seconds = base_seconds * 1.55
+        elif fill_ratio >= self.audio_queue_high_water_ratio:
+            tuned_seconds = base_seconds * 1.3
+        elif fill_ratio <= 0.15:
+            tuned_seconds = base_seconds * 0.9
+        try:
+            min_seconds = max(0.35, float(self.loopback_chunk_seconds_min))
+        except Exception:
+            min_seconds = 0.65
+        try:
+            max_seconds = max(min_seconds, float(self.loopback_chunk_seconds_max))
+        except Exception:
+            max_seconds = 1.85
+        tuned_seconds = max(min_seconds, min(max_seconds, tuned_seconds))
+        last_seconds = self._last_effective_loopback_chunk_seconds
+        self._last_effective_loopback_chunk_seconds = tuned_seconds
+        if (
+            last_seconds is not None
+            and abs(tuned_seconds - last_seconds) >= 0.15
+            and time.time() - self._last_chunk_tuning_notice >= 3.0
+        ):
+            self._last_chunk_tuning_notice = time.time()
+            self._trace_pipeline(
+                "loopback_chunk_tuned",
+                "",
+                queue_fill_ratio=round(fill_ratio, 3),
+                chunk_seconds=round(tuned_seconds, 3),
+                chunk_base_seconds=round(base_seconds, 3),
+            )
+        return tuned_seconds
+
     def _pause_if_needed(self):
         if not self.is_paused:
             return False
@@ -3462,29 +3555,18 @@ class TranslationApp:
         self.update_status("Loopback capture (output)")
         return loopback_index
 
-    def _capture_and_process(self, device_index):
-        # Use microphone input
-        sample_rate = self.device_sample_rates_by_index.get(device_index, 16000)
-        mic = None
-        source = None
-        try:
-            mic, source = self._open_microphone_source(device_index, sample_rate)
-            self.recognizer.adjust_for_ambient_noise(source, duration=0.5)
-            self.update_status(self.STATUS_LISTENING)
-            audio = self.recognizer.listen(
-                source, timeout=1, phrase_time_limit=self.phrase_time_limit
-            )
-            self.process_audio(audio)
-        finally:
-            self._close_microphone_source(mic)
-
-    def _audio_callback(self, _recognizer, audio, use_loopback=False):
+    def _audio_callback(self, _recognizer, audio, use_loopback=False, chunk_seconds=None):
         if not self.listening or self.is_paused:
             return
         self._capture_audio_level(audio)
-        self.last_audio_time = time.time()
         self.no_speech_timeout_count = 0
-        payload = (audio, {"loopback": bool(use_loopback)})
+        payload_meta = {"loopback": bool(use_loopback)}
+        if chunk_seconds is not None:
+            try:
+                payload_meta["chunk_seconds"] = round(float(chunk_seconds), 3)
+            except Exception:
+                pass
+        payload = (audio, payload_meta)
         if self._queue_is_hot(self.audio_queue, self.audio_queue_high_water_ratio):
             dropped = self._trim_queue_to_fill_ratio(
                 self.audio_queue, self.audio_queue_relief_ratio
@@ -3566,7 +3648,6 @@ class TranslationApp:
                 self.device_types.get(device_label) != "input"
                 or self._is_loopback_label(device_label)
             )
-            self.active_device_index = device_index
             try:
                 mic = None
                 source = None
@@ -3591,8 +3672,9 @@ class TranslationApp:
                             break
                         try:
                             if use_loopback:
+                                loopback_duration = self._effective_loopback_chunk_seconds()
                                 audio = self.recognizer.record(
-                                    source, duration=self.loopback_chunk_seconds
+                                    source, duration=loopback_duration
                                 )
                             else:
                                 audio = self.recognizer.listen(
@@ -3607,7 +3689,12 @@ class TranslationApp:
                         except Exception as exc:
                             self.update_status(f"Audio error: {exc}")
                             break
-                        self._audio_callback(self.recognizer, audio, use_loopback=use_loopback)
+                        self._audio_callback(
+                            self.recognizer,
+                            audio,
+                            use_loopback=use_loopback,
+                            chunk_seconds=loopback_duration if use_loopback else None,
+                        )
                 finally:
                     self._close_microphone_source(mic)
             except Exception as exc:
@@ -3646,11 +3733,13 @@ class TranslationApp:
             try:
                 engine = (self.speech_engine or "openai").lower()
                 raw_debug_active = self._raw_whisper_debug_active()
+                stt_sanitize_enabled = self._whisper_step_enabled(1)
                 self.last_openai_translate_ms = None
                 self.last_stt_pretranslated = False
                 if engine == "faster-whisper":
+                    stt_started = time.time()
                     raw_text = self.recognize_faster_whisper(audio)
-                    stt_ms = None
+                    stt_ms = int((time.time() - stt_started) * 1000)
                 else:
                     if not self.openai_api_key:
                         raise ValueError(
@@ -3681,13 +3770,42 @@ class TranslationApp:
                             stt_openai_ms=stt_ms,
                         )
                     else:
-                        text = self._sanitize_model_text(raw_text)
-                        self._trace_pipeline(
-                            "stt_sanitized",
-                            text,
-                            engine=engine,
-                            stt_openai_ms=stt_ms,
-                        )
+                        if stt_sanitize_enabled:
+                            text = self._sanitize_model_text(raw_text)
+                            self._trace_pipeline(
+                                "stt_sanitized",
+                                text,
+                                engine=engine,
+                                stt_openai_ms=stt_ms,
+                            )
+                        else:
+                            if isinstance(raw_text, str):
+                                text = raw_text
+                            elif raw_text is None:
+                                text = ""
+                            else:
+                                text = str(raw_text)
+                            normalized = re.sub(
+                                r"[^\w]+", " ", text.lower(), flags=re.UNICODE
+                            ).strip()
+                            if (
+                                self._contains_url_like_text(text)
+                                or normalized in self.STT_STRICT_NOISE_MARKERS_NORMALIZED
+                                or self._looks_like_known_stt_hallucination(text, normalized)
+                            ):
+                                self._trace_pipeline(
+                                    "stt_noise_suppressed_passthrough",
+                                    text,
+                                    engine=engine,
+                                    stt_openai_ms=stt_ms,
+                                )
+                                text = ""
+                            self._trace_pipeline(
+                                "stt_unsanitized_passthrough",
+                                text,
+                                engine=engine,
+                                stt_openai_ms=stt_ms,
+                            )
                 if engine == "faster-whisper":
                     self.last_openai_stt_ms = stt_ms
                     self._trace_pipeline("stt_raw", raw_text, engine=engine, stt_openai_ms=stt_ms)
@@ -3705,18 +3823,52 @@ class TranslationApp:
                             stt_openai_ms=stt_ms,
                         )
                     else:
-                        text = self._sanitize_model_text(raw_text)
-                        self._trace_pipeline(
-                            "stt_sanitized",
-                            text,
-                            engine=engine,
-                            stt_openai_ms=stt_ms,
-                        )
+                        if stt_sanitize_enabled:
+                            text = self._sanitize_model_text(raw_text)
+                            self._trace_pipeline(
+                                "stt_sanitized",
+                                text,
+                                engine=engine,
+                                stt_openai_ms=stt_ms,
+                            )
+                        else:
+                            if isinstance(raw_text, str):
+                                text = raw_text
+                            elif raw_text is None:
+                                text = ""
+                            else:
+                                text = str(raw_text)
+                            normalized = re.sub(
+                                r"[^\w]+", " ", text.lower(), flags=re.UNICODE
+                            ).strip()
+                            if (
+                                self._contains_url_like_text(text)
+                                or normalized in self.STT_STRICT_NOISE_MARKERS_NORMALIZED
+                                or self._looks_like_known_stt_hallucination(text, normalized)
+                            ):
+                                self._trace_pipeline(
+                                    "stt_noise_suppressed_passthrough",
+                                    text,
+                                    engine=engine,
+                                    stt_openai_ms=stt_ms,
+                                )
+                                text = ""
+                            self._trace_pipeline(
+                                "stt_unsanitized_passthrough",
+                                text,
+                                engine=engine,
+                                stt_openai_ms=stt_ms,
+                            )
                 if not text:
                     if engine == "faster-whisper":
                         self._note_unknown_speech()
                     return ""
-                if not self.last_stt_pretranslated and not raw_debug_active:
+                source_filter_enabled = self._whisper_step_enabled(2)
+                if (
+                    not self.last_stt_pretranslated
+                    and not raw_debug_active
+                    and source_filter_enabled
+                ):
                     self._update_auto_detect_language(text)
                     if not self._passes_source_language_filter(text):
                         self._trace_pipeline(
@@ -3741,50 +3893,15 @@ class TranslationApp:
                 )
                 return ""
 
-    def run_mic_test(self):
-        Thread(target=self._run_mic_test_worker, daemon=True).start()
-
-    def _run_mic_test_worker(self):
-        if self.is_paused:
-            self.update_status("Mic test unavailable while paused")
-            return
-        self.update_status("Mic test: say something...")
-        suspended = self._suspend_capture_for_device_scan()
-        try:
-            device_index = self._resolve_capture_device()
-            if device_index is None:
-                return
-            sample_rate = self.device_sample_rates_by_index.get(device_index, 16000)
-            mic = None
-            source = None
-            try:
-                mic, source = self._open_microphone_source(device_index, sample_rate)
-                try:
-                    self.recognizer.adjust_for_ambient_noise(source, duration=0.3)
-                except Exception:
-                    pass
-                audio = self.recognizer.listen(source, timeout=3, phrase_time_limit=4)
-            finally:
-                self._close_microphone_source(mic)
-            text = self._recognize_audio(audio)
-            if text:
-                self.update_status(f"Mic test heard: {text}")
-            else:
-                self.update_status("Mic test: no speech detected")
-        except sr.WaitTimeoutError:
-            self.update_status("Mic test timed out (no speech)")
-        except Exception as exc:
-            self.update_status(f"Mic test failed: {exc}")
-        finally:
-            if suspended:
-                self._resume_capture_after_device_scan()
-    
     def process_audio(self, audio, capture_meta=None):
         capture_meta = capture_meta or {}
         is_loopback = bool(capture_meta.get("loopback"))
         raw_debug_active = self._raw_whisper_debug_active()
+        boundary_trim_enabled = self._whisper_step_enabled(3)
+        sentence_buffer_enabled = self._whisper_step_enabled(4)
+        whisper_gate_enabled = self._whisper_step_enabled(1)
         audio_for_stt = self._prepare_audio_for_stt(audio, is_loopback=is_loopback)
-        if self.rms_gate_enabled and not raw_debug_active:
+        if self.rms_gate_enabled and not raw_debug_active and whisper_gate_enabled:
             try:
                 raw = audio.get_raw_data()
                 if not raw:
@@ -3801,14 +3918,20 @@ class TranslationApp:
         if raw_debug_active:
             self._enqueue_sentence(text, pretranslated=bool(self.last_stt_pretranslated))
             return
-        text, overlap_words = self._trim_repeated_boundary_words(text)
-        self._trace_pipeline(
-            "stt_boundary_trim",
-            text,
-            loopback=is_loopback,
-            overlap_words=overlap_words,
-        )
+        if boundary_trim_enabled:
+            text, overlap_words = self._trim_repeated_boundary_words(text)
+            self._trace_pipeline(
+                "stt_boundary_trim",
+                text,
+                loopback=is_loopback,
+                overlap_words=overlap_words,
+            )
+        else:
+            self._trace_pipeline("stt_boundary_trim_bypassed", text, loopback=is_loopback)
         if not text:
+            return
+        if not sentence_buffer_enabled:
+            self._enqueue_sentence(text, pretranslated=bool(self.last_stt_pretranslated))
             return
         flushed = self._append_sentence_buffer(text)
         if flushed:
@@ -3956,6 +4079,10 @@ class TranslationApp:
         if self._raw_whisper_debug_active():
             # True raw mode: let the model auto-detect language.
             return ""
+        # During staged Whisper rollout, do not force a source language
+        # until level 2 (source-language filter stage) is enabled.
+        if self._whisper_stt_active() and not self._whisper_step_enabled(2):
+            return ""
         lang = self._normalized_source_lang_code()
         if self._auto_detect_enabled():
             auto_lang = (self.auto_detect_lang or "").strip().lower()
@@ -3997,49 +4124,122 @@ class TranslationApp:
         if self.auto_detect_streak_count >= 2 and detected != self.auto_detect_lang:
             self.auto_detect_lang = detected
 
+    def _split_wav_under_limit(self, audio_bytes, max_bytes=None):
+        max_bytes = int(max_bytes or self.OPENAI_AUDIO_MAX_BYTES)
+        if len(audio_bytes) <= max_bytes:
+            return [audio_bytes]
+        try:
+            from pydub import AudioSegment
+            from pydub.silence import detect_silence
+        except Exception as exc:
+            raise ValueError(
+                "Audio exceeds OpenAI size limit and pydub is required for safe splitting. "
+                "Install with: pip install pydub"
+            ) from exc
+        segment = AudioSegment.from_file(io.BytesIO(audio_bytes), format="wav")
+        total_ms = int(len(segment) or 0)
+        if total_ms <= 0:
+            return [audio_bytes]
+        bytes_per_ms = max(1.0, float(len(audio_bytes)) / float(total_ms))
+        max_ms = max(1000, int((max_bytes - 4096) / bytes_per_ms))
+        silence_thresh = (segment.dBFS - 16.0) if segment.dBFS != float("-inf") else -40.0
+        silence_ranges = detect_silence(
+            segment,
+            min_silence_len=220,
+            silence_thresh=silence_thresh,
+            seek_step=10,
+        )
+        split_points = sorted(
+            {
+                int((start + end) / 2)
+                for start, end in silence_ranges
+                if end > start
+            }
+        )
+        chunks = []
+        cursor = 0
+        while cursor < total_ms:
+            target = min(total_ms, cursor + max_ms)
+            end = target
+            if target < total_ms:
+                candidates = [p for p in split_points if (cursor + 250) <= p <= target]
+                if candidates:
+                    end = candidates[-1]
+            if end <= cursor:
+                end = min(total_ms, cursor + max_ms)
+            chunk_seg = segment[cursor:end]
+            buf = io.BytesIO()
+            chunk_seg.export(buf, format="wav")
+            chunk_bytes = buf.getvalue()
+            shrink_guard = 0
+            while len(chunk_bytes) > max_bytes and (end - cursor) > 500 and shrink_guard < 24:
+                shrink_guard += 1
+                end = cursor + max(400, int((end - cursor) * 0.92))
+                chunk_seg = segment[cursor:end]
+                buf = io.BytesIO()
+                chunk_seg.export(buf, format="wav")
+                chunk_bytes = buf.getvalue()
+            if len(chunk_bytes) > max_bytes:
+                raise ValueError("Unable to split audio under OpenAI size limit")
+            chunks.append(chunk_bytes)
+            cursor = end
+        return chunks
+
+    def _post_openai_audio_chunks(self, url, api_key, audio_bytes, data, timeout=20):
+        headers = {"Authorization": f"Bearer {api_key}"}
+        chunks = self._split_wav_under_limit(audio_bytes, self.OPENAI_AUDIO_MAX_BYTES)
+        collected_text = []
+        total_request_ms = 0
+        for idx, chunk_bytes in enumerate(chunks):
+            files = {
+                "file": (
+                    f"audio-part-{idx + 1}.wav",
+                    io.BytesIO(chunk_bytes),
+                    "audio/wav",
+                )
+            }
+            request_started = time.time()
+            response = requests.post(
+                url, headers=headers, files=files, data=data, timeout=timeout
+            )
+            total_request_ms += int((time.time() - request_started) * 1000)
+            if response.status_code != 200:
+                raise sr.RequestError(
+                    f"OpenAI API error {response.status_code}: {response.text}"
+                )
+            payload = response.json()
+            text = (payload.get("text", "") or "").strip()
+            if text:
+                collected_text.append(text)
+        return " ".join(collected_text).strip(), total_request_ms
+
     def recognize_openai_whisper(self, audio, api_key):
         url = "https://api.openai.com/v1/audio/transcriptions"
         audio_bytes = audio.get_wav_data()
-        file_obj = io.BytesIO(audio_bytes)
-        files = {"file": ("audio.wav", file_obj, "audio/wav")}
         raw_debug_active = self._raw_whisper_debug_active()
+        prompt_enabled = self._whisper_step_enabled(1)
         data = {
             "model": self.openai_stt_model or "whisper-1",
             "response_format": "json",
             "temperature": 0,
         }
         if not raw_debug_active:
-            data["prompt"] = self._build_openai_transcription_prompt()
+            if prompt_enabled:
+                data["prompt"] = self._build_openai_transcription_prompt()
             lang = self._maybe_openai_language()
             if lang:
                 data["language"] = lang
-        headers = {"Authorization": f"Bearer {api_key}"}
-        request_started = time.time()
-        response = requests.post(url, headers=headers, files=files, data=data, timeout=20)
-        request_ms = int((time.time() - request_started) * 1000)
-        if response.status_code == 200:
-            payload = response.json()
-            return payload.get("text", ""), request_ms
-        raise sr.RequestError(f"OpenAI API error {response.status_code}: {response.text}")
+        return self._post_openai_audio_chunks(url, api_key, audio_bytes, data, timeout=20)
 
     def recognize_openai_whisper_translation(self, audio, api_key):
         url = "https://api.openai.com/v1/audio/translations"
         audio_bytes = audio.get_wav_data()
-        file_obj = io.BytesIO(audio_bytes)
-        files = {"file": ("audio.wav", file_obj, "audio/wav")}
         data = {
             "model": "whisper-1",
             "response_format": "json",
             "temperature": 0,
         }
-        headers = {"Authorization": f"Bearer {api_key}"}
-        request_started = time.time()
-        response = requests.post(url, headers=headers, files=files, data=data, timeout=20)
-        request_ms = int((time.time() - request_started) * 1000)
-        if response.status_code == 200:
-            payload = response.json()
-            return payload.get("text", ""), request_ms
-        raise sr.RequestError(f"OpenAI API error {response.status_code}: {response.text}")
+        return self._post_openai_audio_chunks(url, api_key, audio_bytes, data, timeout=20)
 
     def _get_faster_whisper_model(self):
         try:
@@ -4058,11 +4258,28 @@ class TranslationApp:
                 "Loading faster-whisper model (first run can take a few minutes)..."
             )
             try:
-                self.faster_whisper_model = WhisperModel(
-                    self.faster_whisper_model_name,
-                    device=self.faster_whisper_device,
-                    compute_type=self.faster_whisper_compute_type,
-                )
+                model_kwargs = {
+                    "device": self.faster_whisper_device,
+                    "compute_type": self.faster_whisper_compute_type,
+                }
+                if str(self.faster_whisper_device).lower() == "cpu":
+                    try:
+                        cpu_threads = int(self.faster_whisper_cpu_threads)
+                    except Exception:
+                        cpu_threads = 0
+                    if cpu_threads > 0:
+                        model_kwargs["cpu_threads"] = cpu_threads
+                try:
+                    self.faster_whisper_model = WhisperModel(
+                        self.faster_whisper_model_name,
+                        **model_kwargs,
+                    )
+                except TypeError:
+                    model_kwargs.pop("cpu_threads", None)
+                    self.faster_whisper_model = WhisperModel(
+                        self.faster_whisper_model_name,
+                        **model_kwargs,
+                    )
             except Exception as exc:
                 hint = ""
                 if str(self.faster_whisper_device).lower() == "cuda":
@@ -4090,11 +4307,39 @@ class TranslationApp:
             lang = self._maybe_openai_language()
             kwargs = {}
             if not raw_debug_active:
+                try:
+                    beam_size = max(1, int(getattr(self, "faster_whisper_beam_size", 1)))
+                except Exception:
+                    beam_size = 1
+                try:
+                    best_of = max(1, int(getattr(self, "faster_whisper_best_of", 1)))
+                except Exception:
+                    best_of = 1
+                try:
+                    decode_temperature = max(
+                        0.0, float(getattr(self, "faster_whisper_temperature", 0.0))
+                    )
+                except Exception:
+                    decode_temperature = 0.0
+                try:
+                    no_speech_threshold = float(
+                        getattr(self, "faster_whisper_no_speech_threshold", 0.7)
+                    )
+                except Exception:
+                    no_speech_threshold = 0.7
                 kwargs = {
                     # Improve robustness on noise/silence and avoid context carry-over
                     # that can produce repeated hallucinated phrases.
                     "vad_filter": True,
                     "condition_on_previous_text": False,
+                    # Favor low-latency, deterministic decoding for live captioning.
+                    "beam_size": beam_size,
+                    "best_of": best_of,
+                    "temperature": decode_temperature,
+                    "without_timestamps": bool(
+                        getattr(self, "faster_whisper_without_timestamps", True)
+                    ),
+                    "no_speech_threshold": max(0.0, min(1.0, no_speech_threshold)),
                 }
             if lang:
                 kwargs["language"] = lang
@@ -4104,6 +4349,11 @@ class TranslationApp:
                 # Backward compatibility for older faster-whisper versions.
                 kwargs.pop("vad_filter", None)
                 kwargs.pop("condition_on_previous_text", None)
+                kwargs.pop("beam_size", None)
+                kwargs.pop("best_of", None)
+                kwargs.pop("temperature", None)
+                kwargs.pop("without_timestamps", None)
+                kwargs.pop("no_speech_threshold", None)
                 segments, _info = model.transcribe(tmp_path, **kwargs)
             if raw_debug_active:
                 text = " ".join(
@@ -4141,28 +4391,26 @@ class TranslationApp:
         return " ".join(kept).strip()
 
     def _build_openai_transcription_prompt(self):
-        prompt = (
+        return (
             "Transcribe the audio verbatim. Do not add commentary or instructions. "
-            "If no speech is present, return nothing and do not output quotes."
+            "If no speech is present, return nothing and do not output quotes. "
+            "The sentence may be cut off, do not make up words to fill in the rest of the sentence. "
+            "Omit common bad words."
         )
-        if self._auto_detect_enabled() and self.auto_detect_langs:
-            lang_labels = []
-            for code in self.auto_detect_langs:
-                if code == "en":
-                    lang_labels.append("English")
-                elif code == "es":
-                    lang_labels.append("Spanish")
-                else:
-                    lang_labels.append(code)
-            if lang_labels:
-                prompt += " The audio is in " + " or ".join(lang_labels) + "."
-        else:
-            fixed_lang = self._maybe_openai_language()
-            if fixed_lang == "en":
-                prompt += " The audio is in English."
-            elif fixed_lang == "es":
-                prompt += " The audio is in Spanish."
-        return prompt
+
+    def _contains_url_like_text(self, text):
+        sample = (text or "").strip().lower()
+        if not sample:
+            return False
+        if re.search(r"(https?://|www\.)", sample):
+            return True
+        # Bare domains (e.g., example.com) without scheme.
+        if re.search(
+            r"\b(?:[a-z0-9-]+\.)+(?:com|org|net|io|co|edu|gov|info|biz|app|dev|ai|us|uk|ca|de|fr|es|mx|tv|me)\b",
+            sample,
+        ):
+            return True
+        return False
 
     def _append_sentence_buffer(self, text):
         text = text.strip()
@@ -4236,6 +4484,12 @@ class TranslationApp:
             return
         fragment_grace_ms = max(0, int(self.sentence_fragment_grace_ms))
         min_timeout_words = max(1, int(self.sentence_timeout_min_words))
+        if self._queue_is_hot(self.audio_queue, 0.35) or self._queue_is_hot(
+            self.sentence_queue, 0.35
+        ):
+            # Under capture/translation pressure, flush partials sooner to reduce visible lag.
+            fragment_grace_ms = min(fragment_grace_ms, 120)
+            min_timeout_words = min(min_timeout_words, 2)
         with self.sentence_lock:
             if not self.sentence_buffer:
                 return
@@ -4284,6 +4538,13 @@ class TranslationApp:
 
     def _enqueue_sentence(self, text, pretranslated=False):
         if not text:
+            return
+        if not self.translation_enabled and bool(pretranslated):
+            self._trace_pipeline(
+                "translation_disabled_drop_pretranslated_enqueued",
+                text,
+                translation_enabled=self.translation_enabled,
+            )
             return
         queued_at = time.time()
         payload = {
@@ -4345,6 +4606,10 @@ class TranslationApp:
         sentence = (sentence or "").strip()
         if not sentence:
             return "", started_at, latency_meta
+        if not self.translation_enabled:
+            # Keep disabled mode strictly one-in/one-out so no mixed-state batch
+            # can leak translated payloads around toggle transitions.
+            return sentence, started_at, latency_meta
         merged_items = [(sentence, started_at, dict(latency_meta or {}))]
         if not self._queue_is_hot(self.sentence_queue, self.sentence_queue_high_water_ratio):
             return sentence, started_at, latency_meta
@@ -4396,6 +4661,40 @@ class TranslationApp:
         )
         return merged_text, merged_started_at, merged_meta
 
+    def _clear_translation_backlog_after_disable(self):
+        dropped_sentences = 0
+        with self.sentence_lock:
+            self.sentence_buffer = ""
+            self.sentence_buffer_pretranslated = False
+            self.sentence_last_update = 0.0
+        while True:
+            try:
+                self.sentence_queue.get_nowait()
+                dropped_sentences += 1
+            except queue.Empty:
+                break
+            except Exception:
+                break
+        dropped_display = len(self.word_reveal_queue) + len(self.text_queue)
+        self.word_reveal_queue.clear()
+        self.text_queue.clear()
+        self.pending_text = ""
+        self.pending_latency_meta = None
+        self.is_flushing_queue = False
+        self.is_revealing_words = False
+        self.current_reveal_words = []
+        self.current_reveal_text = ""
+        self.current_reveal_latency_meta = None
+        self.live_line = ""
+        self.last_stt_pretranslated = False
+        self.last_openai_translate_ms = None
+        self._trace_pipeline(
+            "translation_disabled_backlog_cleared",
+            "",
+            dropped_sentences=dropped_sentences,
+            dropped_display=dropped_display,
+        )
+
     def _translation_worker(self):
         while self.listening:
             try:
@@ -4410,15 +4709,6 @@ class TranslationApp:
             )
             if not sentence:
                 continue
-            self._translate_and_display(sentence, started_at, latency_meta)
-
-    def _drain_sentence_queue(self):
-        while True:
-            try:
-                payload = self.sentence_queue.get_nowait()
-            except queue.Empty:
-                return
-            sentence, started_at, latency_meta = self._unpack_sentence_payload(payload)
             self._translate_and_display(sentence, started_at, latency_meta)
 
     def _build_openai_translation_prompt(self, text):
@@ -4577,6 +4867,29 @@ class TranslationApp:
             return (self.openai_stt_model or "").strip().lower() == "whisper-1"
         return False
 
+    def _whisper_stt_active(self):
+        engine = (self.speech_engine or "").strip().lower()
+        if engine == "faster-whisper":
+            return True
+        if engine == "openai":
+            return (self.openai_stt_model or "").strip().lower() == "whisper-1"
+        return False
+
+    def _effective_whisper_manipulation_level(self):
+        try:
+            level = int(self.whisper_manipulation_level)
+        except Exception:
+            level = 6
+        return max(0, min(6, level))
+
+    def _whisper_step_enabled(self, step):
+        # Scope this staged rollout only to Whisper pipelines outside debug mode.
+        if not self._whisper_stt_active():
+            return True
+        if self._raw_whisper_debug_active():
+            return False
+        return self._effective_whisper_manipulation_level() >= int(step)
+
     def _translate_with_openai(self, text):
         if not self.openai_api_key:
             raise ValueError(
@@ -4613,6 +4926,7 @@ class TranslationApp:
 
     def _translate_and_display(self, text, started_at=None, latency_meta=None):
         raw_debug_active = self._raw_whisper_debug_active()
+        translation_cleanup_enabled = self._whisper_step_enabled(5)
         if raw_debug_active or not self.translation_enabled:
             self.update_status("Transcribing...")
         else:
@@ -4627,6 +4941,17 @@ class TranslationApp:
         display_meta.setdefault("stt_openai_ms", None)
         display_meta.setdefault("translate_openai_ms", None)
         pretranslated = bool(display_meta.get("pretranslated"))
+        if not raw_debug_active and not self.translation_enabled and pretranslated:
+            # This payload came from Whisper direct-translation before the toggle changed.
+            # Drop it to enforce "translation off" strictly.
+            self._trace_pipeline(
+                "translation_disabled_drop_pretranslated",
+                text,
+                translation_enabled=self.translation_enabled,
+            )
+            self._record_chunk_latency(started_at, latency_meta=display_meta, rendered_at=time.time())
+            self.update_status(self.STATUS_LISTENING)
+            return
         try:
             if raw_debug_active:
                 if isinstance(text, str):
@@ -4647,26 +4972,45 @@ class TranslationApp:
                             translation_enabled=self.translation_enabled,
                         )
                     else:
-                        translated, translate_ms = self._translate_text(text)
-                        display_meta["translate_openai_ms"] = translate_ms
+                        translated_candidate, translate_ms = self._translate_text(text)
+                        if not self.translation_enabled:
+                            # Toggle changed while request was in-flight.
+                            self._trace_pipeline(
+                                "translation_result_discarded_toggle_off",
+                                translated_candidate,
+                            )
+                            translated = text
+                            display_meta["translate_openai_ms"] = 0
+                        else:
+                            translated = translated_candidate
+                            display_meta["translate_openai_ms"] = translate_ms
                 else:
                     translated = text
-                translated = self._strip_translation_wrappers(translated)
-                if self._looks_like_nontranslation_response(text, translated):
-                    self._trace_pipeline(
-                        "translation_guard_fallback",
-                        translated,
-                        reason="non_translation_response",
+                if translation_cleanup_enabled:
+                    translated = self._strip_translation_wrappers(translated)
+                    if self._looks_like_nontranslation_response(text, translated):
+                        self._trace_pipeline(
+                            "translation_guard_fallback",
+                            translated,
+                            reason="non_translation_response",
+                        )
+                        translated = text
+                    translated = self.apply_custom_vocabulary(translated)
+                    if self.translation_enabled and self._effective_target_lang().startswith("en"):
+                        translated = self.apply_spanish_bible_name_map(translated)
+                    translated = self.format_scripture_refs(translated)
+                    if self._is_spanish_output_mode():
+                        translated = self._normalize_spanish_text(translated)
+                    translated = self.clean_text_spacing(translated)
+                    translated = self._sanitize_model_text(
+                        translated, suppress_repeated_noise=False
                     )
-                    translated = text
-                translated = self.apply_custom_vocabulary(translated)
-                if self.translation_enabled and self._effective_target_lang().startswith("en"):
-                    translated = self.apply_spanish_bible_name_map(translated)
-                translated = self.format_scripture_refs(translated)
-                if self._is_spanish_output_mode():
-                    translated = self._normalize_spanish_text(translated)
-                translated = self.clean_text_spacing(translated)
-                translated = self._sanitize_model_text(translated, suppress_repeated_noise=False)
+                else:
+                    self._trace_pipeline(
+                        "translation_cleanup_bypassed",
+                        translated,
+                        translation_enabled=self.translation_enabled,
+                    )
         except Exception as e:
             self.update_status(f"Translation error: {e}")
             self._trace_pipeline("translation_error", text, error=str(e))
@@ -4788,6 +5132,124 @@ class TranslationApp:
             self.chunk_latency_label.config(text=label_text)
 
         self.root.after(0, update)
+
+    def _display_should_fast_path(self, text, latency_meta=None):
+        if self._raw_whisper_debug_active():
+            return False
+        if not self.word_by_word:
+            return False
+        if not bool(getattr(self, "dynamic_fast_display_enabled", True)):
+            return False
+        now = time.time()
+        if now < float(getattr(self, "fast_display_until", 0.0)):
+            return True
+        pressure = False
+        _size, _maxsize, sentence_fill = self._queue_fill_ratio(self.sentence_queue)
+        if sentence_fill >= float(getattr(self, "fast_display_sentence_queue_ratio", 0.25)):
+            pressure = True
+        if len(self.word_reveal_queue) >= int(getattr(self, "fast_display_reveal_queue_items", 2)):
+            pressure = True
+        if self.is_revealing_words and len(self.word_reveal_queue) >= 1:
+            pressure = True
+        if len(self.text_queue) >= 2:
+            pressure = True
+        if self.translation_enabled:
+            word_count = len(re.findall(r"\S+", text or ""))
+            if word_count >= 9:
+                pressure = True
+        meta = latency_meta or {}
+        stt_ms = meta.get("stt_openai_ms")
+        if isinstance(stt_ms, (int, float)) and stt_ms >= int(
+            getattr(self, "fast_display_stt_ms", 1500)
+        ):
+            pressure = True
+        translate_ms = meta.get("translate_openai_ms")
+        if isinstance(translate_ms, (int, float)) and translate_ms >= int(
+            getattr(self, "fast_display_translate_ms", 1200)
+        ):
+            pressure = True
+        if pressure:
+            hold_sec = max(0.2, float(getattr(self, "fast_display_hold_sec", 2.0)))
+            self.fast_display_until = now + hold_sec
+            self._trace_pipeline(
+                "display_fast_mode_on",
+                "",
+                sentence_fill_ratio=round(sentence_fill, 3),
+                reveal_queue=len(self.word_reveal_queue),
+                text_queue=len(self.text_queue),
+                stt_openai_ms=stt_ms,
+                translate_openai_ms=translate_ms,
+            )
+            return True
+        return False
+
+    def _drain_display_queues_immediately(self):
+        drained = 0
+        drained_items = []
+        if self.current_reveal_text:
+            drained_items.append(
+                (
+                    self.current_reveal_text,
+                    dict(self.current_reveal_latency_meta or {}),
+                )
+            )
+            drained += 1
+        self.current_reveal_words = []
+        self.current_reveal_text = ""
+        self.current_reveal_latency_meta = None
+        self.is_revealing_words = False
+        self.live_line = ""
+        while self.word_reveal_queue:
+            sentence, chunk_meta = self._unpack_display_payload(self.word_reveal_queue.popleft())
+            if sentence:
+                drained_items.append((sentence, dict(chunk_meta or {})))
+                drained += 1
+        while self.text_queue:
+            sentence, chunk_meta = self._unpack_display_payload(self.text_queue.popleft())
+            if sentence:
+                drained_items.append((sentence, dict(chunk_meta or {})))
+                drained += 1
+        self.is_flushing_queue = False
+        appended = 0
+        for sentence, meta in drained_items:
+            filtered = self.filter_bad_words(sentence)
+            if not filtered:
+                continue
+            self.translations.append(filtered)
+            appended += 1
+            if meta and not meta.get("display_reported"):
+                meta["display_reported"] = True
+                self._record_chunk_latency(
+                    meta.get("queued_at"),
+                    latency_meta=meta,
+                    rendered_at=time.time(),
+                )
+        if appended > 0:
+            self._trim_translation_history()
+            self.render_text()
+        if drained > 0:
+            self._trace_pipeline(
+                "display_fast_mode_drain",
+                "",
+                drained_count=drained,
+                appended_count=appended,
+            )
+
+    def _append_display_text_immediate(self, text, latency_meta=None, stage="display_fast_path"):
+        filtered_text = self.filter_bad_words(text)
+        if not filtered_text:
+            return
+        self.translations.append(filtered_text)
+        self._trim_translation_history()
+        self.render_text()
+        self._trace_pipeline(stage, filtered_text)
+        if latency_meta and not latency_meta.get("display_reported"):
+            latency_meta["display_reported"] = True
+            self._record_chunk_latency(
+                latency_meta.get("queued_at"),
+                latency_meta=latency_meta,
+                rendered_at=time.time(),
+            )
     
     def update_text(self, text, latency_meta=None):
         def update():
@@ -4823,6 +5285,15 @@ class TranslationApp:
                         latency_meta=latency_meta,
                         rendered_at=time.time(),
                     )
+                return
+
+            if self._display_should_fast_path(incoming, latency_meta):
+                self._drain_display_queues_immediately()
+                self._append_display_text_immediate(
+                    incoming,
+                    latency_meta=latency_meta,
+                    stage="display_fast_path_render",
+                )
                 return
 
             if self.word_by_word:
@@ -4910,6 +5381,8 @@ class TranslationApp:
         self.reveal_next_word()
 
     def reveal_next_word(self):
+        if not self.is_revealing_words:
+            return
         if not self.current_reveal_words:
             if self.current_reveal_text:
                 self.translations.append(self.current_reveal_text)
@@ -5046,7 +5519,11 @@ class TranslationApp:
         filtered = re.sub(r"\s+([,.;:!?])", r"\1", filtered)
         filtered = re.sub(r"\(\s+", "(", filtered)
         filtered = re.sub(r"\s+\)", ")", filtered)
-        return self.clean_text_spacing(filtered)
+        filtered = self.clean_text_spacing(filtered)
+        # If bad-word removal leaves only punctuation/symbols, omit it entirely.
+        if not re.search(r"[^\W_]", filtered, flags=re.UNICODE):
+            return ""
+        return filtered
 
     def apply_custom_vocabulary(self, text):
         vocabulary = self._get_custom_vocabulary_for_output()
@@ -5109,6 +5586,8 @@ class TranslationApp:
         # Ignore symbol-only outputs so noise does not render as visible text.
         if not re.search(r"[^\W_]", text, flags=re.UNICODE):
             return ""
+        if suppress_repeated_noise and self._contains_url_like_text(text):
+            return ""
         if suppress_repeated_noise:
             # OpenAI occasionally returns these exact non-speech placeholders.
             if re.fullmatch(r"(?i)no[.!?]+", text):
@@ -5117,9 +5596,34 @@ class TranslationApp:
             # Keep STT filtering strict to avoid dropping legitimate user speech.
             if normalized in self.STT_STRICT_NOISE_MARKERS_NORMALIZED:
                 return ""
+            if self._looks_like_known_stt_hallucination(text, normalized):
+                return ""
             if self._looks_like_repeated_noise(normalized):
                 return ""
         return text
+
+    def _looks_like_known_stt_hallucination(self, text, normalized_text):
+        raw = (text or "").strip().lower()
+        norm = (normalized_text or "").strip().lower()
+        if not raw:
+            return False
+        if "amara.org" in raw and ("subtit" in norm or "comunidad" in norm):
+            return True
+        has_link = bool(re.search(r"(https?://|www\.)", raw))
+        has_domain = bool(re.search(r"\b[\w.-]+\.(com|org|net|io|co)\b", raw))
+        if not (has_link or has_domain):
+            return False
+        if "please see review no" in norm:
+            return True
+        if "please see the complete disclaimer" in norm:
+            return True
+        if "for more information" in norm and has_link:
+            return True
+        if raw.count("https://") + raw.count("http://") >= 2 and (
+            "please see" in norm or "disclaimer" in norm
+        ):
+            return True
+        return False
 
     def _looks_like_repeated_noise(self, normalized_text):
         tokens = re.findall(r"[^\W_]+", normalized_text, flags=re.UNICODE)
@@ -5140,20 +5644,6 @@ class TranslationApp:
             if unit * (len(tokens) // unit_len) == tokens:
                 return True
         return False
-
-    def _apply_basic_punctuation(self, text):
-        text = (text or "").strip()
-        if not text:
-            return text
-        if text[0].islower():
-            text = text[0].upper() + text[1:]
-        if re.search(r"[.!?][\"')\]]*$", text):
-            return text
-        if re.search(r"[\"')\]]$", text):
-            return re.sub(r"([\"')\]]$)", r".\g<1>", text)
-        if re.search(r"[,:;]$", text):
-            return re.sub(r"[,:;]$", ".", text)
-        return f"{text}."
 
     def format_scripture_refs(self, text):
         if not self.biblical_books:
@@ -5192,6 +5682,7 @@ class TranslationApp:
             "cunt",
             "damn",
             "dick",
+            "faggot",
             "fuck",
             "piss",
             "pussy",
@@ -5715,6 +6206,7 @@ class TranslationApp:
     def render_text(self):
         self._fit_font_to_lines()
         raw_debug_active = self._raw_whisper_debug_active()
+        output_cleanup_enabled = self._whisper_step_enabled(6)
         base_parts = []
         for segment in self.translations:
             if raw_debug_active:
@@ -5739,7 +6231,10 @@ class TranslationApp:
             if raw_debug_active:
                 merged_text = "\n".join(base_parts)
             else:
-                merged_text = self.clean_text_spacing(" ".join(base_parts))
+                if output_cleanup_enabled:
+                    merged_text = self.clean_text_spacing(" ".join(base_parts))
+                else:
+                    merged_text = " ".join(base_parts)
         else:
             merged_text = ""
         width = max(10, self.text_canvas.winfo_width() - (self.text_padding * 2))
@@ -5774,24 +6269,6 @@ class TranslationApp:
     def update_text_metrics(self):
         line_height = self.text_font.metrics("linespace") or 1
         self.text_bbox_height = line_height * max(1, self.last_display_line_count)
-
-    def clamp_text_to_fit(self):
-        height = max(1, self.text_canvas.winfo_height())
-        available = max(1, height - (self.text_padding * 2))
-        if self.text_bbox_height > available:
-            self.truncate_text_to_fit(available)
-
-    def truncate_text_to_fit(self, available_height):
-        if not self.translations:
-            return
-        text = '\n'.join(self.filter_bad_words(t) for t in self.translations[-self.max_lines:])
-        while len(text) > 10:
-            text = text[: max(10, int(len(text) * 0.85))].rstrip() + "..."
-            self.text_canvas.itemconfigure(self.text_item, text=text, font=self.text_font)
-            self.text_canvas.update_idletasks()
-            self.update_text_metrics()
-            if self.text_bbox_height <= available_height:
-                return
 
 
 if __name__ == "__main__":

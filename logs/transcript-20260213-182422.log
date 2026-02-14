@@ -1,0 +1,278 @@
+{"ts": "2026-02-13 18:24:32.361", "stage": "stt_raw", "chars": 114, "text": "...highlighting a logical inconsistency. It's the only way he can do it, because they wouldn't allow him to speak.", "meta": {"engine": "openai", "stt_openai_ms": 2424}}
+{"ts": "2026-02-13 18:24:32.366", "stage": "stt_sanitized", "chars": 114, "text": "...highlighting a logical inconsistency. It's the only way he can do it, because they wouldn't allow him to speak.", "meta": {"engine": "openai", "stt_openai_ms": 2424}}
+{"ts": "2026-02-13 18:24:32.369", "stage": "stt_boundary_trim_bypassed", "chars": 114, "text": "...highlighting a logical inconsistency. It's the only way he can do it, because they wouldn't allow him to speak.", "meta": {"loopback": false}}
+{"ts": "2026-02-13 18:24:32.374", "stage": "sentence_enqueued", "chars": 114, "text": "...highlighting a logical inconsistency. It's the only way he can do it, because they wouldn't allow him to speak.", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 2424, "translate_openai_ms": null}}
+{"ts": "2026-02-13 18:24:32.377", "stage": "translation_input", "chars": 114, "text": "...highlighting a logical inconsistency. It's the only way he can do it, because they wouldn't allow him to speak.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 18:24:32.380", "stage": "translation_cleanup_bypassed", "chars": 114, "text": "...highlighting a logical inconsistency. It's the only way he can do it, because they wouldn't allow him to speak.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 18:24:32.384", "stage": "translation_output", "chars": 114, "text": "...highlighting a logical inconsistency. It's the only way he can do it, because they wouldn't allow him to speak.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 18:24:32.387", "stage": "display_update_input", "chars": 114, "text": "...highlighting a logical inconsistency. It's the only way he can do it, because they wouldn't allow him to speak.", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 18:24:32.390", "stage": "display_chunk_enqueued", "chars": 25, "text": "...highlighting a logical", "meta": {"chunk_index": 0, "chunk_count": 4, "word_by_word": true}}
+{"ts": "2026-02-13 18:24:32.394", "stage": "display_chunk_enqueued", "chars": 28, "text": "inconsistency. It's the only", "meta": {"chunk_index": 1, "chunk_count": 4, "word_by_word": true}}
+{"ts": "2026-02-13 18:24:32.397", "stage": "display_chunk_enqueued", "chars": 30, "text": "way he can do it, because they", "meta": {"chunk_index": 2, "chunk_count": 4, "word_by_word": true}}
+{"ts": "2026-02-13 18:24:32.400", "stage": "display_chunk_enqueued", "chars": 28, "text": "wouldn't allow him to speak.", "meta": {"chunk_index": 3, "chunk_count": 4, "word_by_word": true}}
+{"ts": "2026-02-13 18:24:32.813", "stage": "display_word_reveal_complete", "chars": 25, "text": "...highlighting a logical"}
+{"ts": "2026-02-13 18:24:33.387", "stage": "display_word_reveal_complete", "chars": 28, "text": "inconsistency. It's the only"}
+{"ts": "2026-02-13 18:24:34.317", "stage": "display_word_reveal_complete", "chars": 30, "text": "way he can do it, because they"}
+{"ts": "2026-02-13 18:24:34.999", "stage": "display_word_reveal_complete", "chars": 28, "text": "wouldn't allow him to speak."}
+{"ts": "2026-02-13 18:24:36.956", "stage": "stt_raw", "chars": 86, "text": "The sentence may be cut off, do not make up words to fill in the rest of the sentence.", "meta": {"engine": "openai", "stt_openai_ms": 1962}}
+{"ts": "2026-02-13 18:24:36.959", "stage": "stt_sanitized", "chars": 86, "text": "The sentence may be cut off, do not make up words to fill in the rest of the sentence.", "meta": {"engine": "openai", "stt_openai_ms": 1962}}
+{"ts": "2026-02-13 18:24:36.961", "stage": "stt_boundary_trim_bypassed", "chars": 86, "text": "The sentence may be cut off, do not make up words to fill in the rest of the sentence.", "meta": {"loopback": false}}
+{"ts": "2026-02-13 18:24:36.963", "stage": "sentence_enqueued", "chars": 86, "text": "The sentence may be cut off, do not make up words to fill in the rest of the sentence.", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 1962, "translate_openai_ms": null}}
+{"ts": "2026-02-13 18:24:36.965", "stage": "translation_input", "chars": 86, "text": "The sentence may be cut off, do not make up words to fill in the rest of the sentence.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 18:24:36.967", "stage": "translation_cleanup_bypassed", "chars": 86, "text": "The sentence may be cut off, do not make up words to fill in the rest of the sentence.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 18:24:36.969", "stage": "translation_output", "chars": 86, "text": "The sentence may be cut off, do not make up words to fill in the rest of the sentence.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 18:24:36.973", "stage": "display_update_input", "chars": 86, "text": "The sentence may be cut off, do not make up words to fill in the rest of the sentence.", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 18:24:36.975", "stage": "display_chunk_enqueued", "chars": 28, "text": "The sentence may be cut off,", "meta": {"chunk_index": 0, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 18:24:36.977", "stage": "display_chunk_enqueued", "chars": 28, "text": "do not make up words to fill", "meta": {"chunk_index": 1, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 18:24:36.979", "stage": "display_chunk_enqueued", "chars": 28, "text": "in the rest of the sentence.", "meta": {"chunk_index": 2, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 18:24:37.727", "stage": "display_word_reveal_complete", "chars": 28, "text": "The sentence may be cut off,"}
+{"ts": "2026-02-13 18:24:38.675", "stage": "display_word_reveal_complete", "chars": 28, "text": "do not make up words to fill"}
+{"ts": "2026-02-13 18:24:39.529", "stage": "display_word_reveal_complete", "chars": 28, "text": "in the rest of the sentence."}
+{"ts": "2026-02-13 18:24:41.269", "stage": "stt_raw", "chars": 89, "text": "There's also no way he started at this, he didn't start at 10, he for sure was respecting", "meta": {"engine": "openai", "stt_openai_ms": 1252}}
+{"ts": "2026-02-13 18:24:41.272", "stage": "stt_sanitized", "chars": 89, "text": "There's also no way he started at this, he didn't start at 10, he for sure was respecting", "meta": {"engine": "openai", "stt_openai_ms": 1252}}
+{"ts": "2026-02-13 18:24:41.275", "stage": "stt_boundary_trim_bypassed", "chars": 89, "text": "There's also no way he started at this, he didn't start at 10, he for sure was respecting", "meta": {"loopback": false}}
+{"ts": "2026-02-13 18:24:41.279", "stage": "sentence_enqueued", "chars": 89, "text": "There's also no way he started at this, he didn't start at 10, he for sure was respecting", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 1252, "translate_openai_ms": null}}
+{"ts": "2026-02-13 18:24:41.282", "stage": "translation_input", "chars": 89, "text": "There's also no way he started at this, he didn't start at 10, he for sure was respecting", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 18:24:41.285", "stage": "translation_cleanup_bypassed", "chars": 89, "text": "There's also no way he started at this, he didn't start at 10, he for sure was respecting", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 18:24:41.287", "stage": "translation_output", "chars": 89, "text": "There's also no way he started at this, he didn't start at 10, he for sure was respecting", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 18:24:41.291", "stage": "display_update_input", "chars": 89, "text": "There's also no way he started at this, he didn't start at 10, he for sure was respecting", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 18:24:41.294", "stage": "display_chunk_enqueued", "chars": 30, "text": "There's also no way he started", "meta": {"chunk_index": 0, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 18:24:41.297", "stage": "display_chunk_enqueued", "chars": 27, "text": "at this, he didn't start at", "meta": {"chunk_index": 1, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 18:24:41.301", "stage": "display_chunk_enqueued", "chars": 30, "text": "10, he for sure was respecting", "meta": {"chunk_index": 2, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 18:24:42.060", "stage": "display_word_reveal_complete", "chars": 30, "text": "There's also no way he started"}
+{"ts": "2026-02-13 18:24:42.834", "stage": "display_word_reveal_complete", "chars": 27, "text": "at this, he didn't start at"}
+{"ts": "2026-02-13 18:24:43.623", "stage": "display_word_reveal_complete", "chars": 30, "text": "10, he for sure was respecting"}
+{"ts": "2026-02-13 18:24:47.044", "stage": "stt_raw", "chars": 103, "text": "He's got to have been respectful and just wanted to have his voice heard and then they didn't hear him.", "meta": {"engine": "openai", "stt_openai_ms": 1877}}
+{"ts": "2026-02-13 18:24:47.046", "stage": "stt_sanitized", "chars": 103, "text": "He's got to have been respectful and just wanted to have his voice heard and then they didn't hear him.", "meta": {"engine": "openai", "stt_openai_ms": 1877}}
+{"ts": "2026-02-13 18:24:47.049", "stage": "stt_boundary_trim_bypassed", "chars": 103, "text": "He's got to have been respectful and just wanted to have his voice heard and then they didn't hear him.", "meta": {"loopback": false}}
+{"ts": "2026-02-13 18:24:47.052", "stage": "sentence_enqueued", "chars": 103, "text": "He's got to have been respectful and just wanted to have his voice heard and then they didn't hear him.", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 1877, "translate_openai_ms": null}}
+{"ts": "2026-02-13 18:24:47.055", "stage": "translation_input", "chars": 103, "text": "He's got to have been respectful and just wanted to have his voice heard and then they didn't hear him.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 18:24:47.057", "stage": "translation_cleanup_bypassed", "chars": 103, "text": "He's got to have been respectful and just wanted to have his voice heard and then they didn't hear him.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 18:24:47.060", "stage": "translation_output", "chars": 103, "text": "He's got to have been respectful and just wanted to have his voice heard and then they didn't hear him.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 18:24:47.063", "stage": "display_update_input", "chars": 103, "text": "He's got to have been respectful and just wanted to have his voice heard and then they didn't hear him.", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 18:24:47.065", "stage": "display_chunk_enqueued", "chars": 21, "text": "He's got to have been", "meta": {"chunk_index": 0, "chunk_count": 4, "word_by_word": true}}
+{"ts": "2026-02-13 18:24:47.068", "stage": "display_chunk_enqueued", "chars": 29, "text": "respectful and just wanted to", "meta": {"chunk_index": 1, "chunk_count": 4, "word_by_word": true}}
+{"ts": "2026-02-13 18:24:47.072", "stage": "display_chunk_enqueued", "chars": 29, "text": "have his voice heard and then", "meta": {"chunk_index": 2, "chunk_count": 4, "word_by_word": true}}
+{"ts": "2026-02-13 18:24:47.074", "stage": "display_chunk_enqueued", "chars": 21, "text": "they didn't hear him.", "meta": {"chunk_index": 3, "chunk_count": 4, "word_by_word": true}}
+{"ts": "2026-02-13 18:24:47.766", "stage": "display_word_reveal_complete", "chars": 21, "text": "He's got to have been"}
+{"ts": "2026-02-13 18:24:48.464", "stage": "display_word_reveal_complete", "chars": 29, "text": "respectful and just wanted to"}
+{"ts": "2026-02-13 18:24:49.313", "stage": "display_word_reveal_complete", "chars": 29, "text": "have his voice heard and then"}
+{"ts": "2026-02-13 18:24:49.902", "stage": "display_word_reveal_complete", "chars": 21, "text": "they didn't hear him."}
+{"ts": "2026-02-13 18:24:51.001", "stage": "stt_raw", "chars": 99, "text": "They told him to stop talking. They kicked him out. Something happened and he just, you know, yeah.", "meta": {"engine": "openai", "stt_openai_ms": 745}}
+{"ts": "2026-02-13 18:24:51.005", "stage": "stt_sanitized", "chars": 99, "text": "They told him to stop talking. They kicked him out. Something happened and he just, you know, yeah.", "meta": {"engine": "openai", "stt_openai_ms": 745}}
+{"ts": "2026-02-13 18:24:51.009", "stage": "stt_boundary_trim_bypassed", "chars": 99, "text": "They told him to stop talking. They kicked him out. Something happened and he just, you know, yeah.", "meta": {"loopback": false}}
+{"ts": "2026-02-13 18:24:51.012", "stage": "sentence_enqueued", "chars": 99, "text": "They told him to stop talking. They kicked him out. Something happened and he just, you know, yeah.", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 745, "translate_openai_ms": null}}
+{"ts": "2026-02-13 18:24:51.014", "stage": "translation_input", "chars": 99, "text": "They told him to stop talking. They kicked him out. Something happened and he just, you know, yeah.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 18:24:51.020", "stage": "translation_cleanup_bypassed", "chars": 99, "text": "They told him to stop talking. They kicked him out. Something happened and he just, you know, yeah.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 18:24:51.025", "stage": "translation_output", "chars": 99, "text": "They told him to stop talking. They kicked him out. Something happened and he just, you know, yeah.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 18:24:51.030", "stage": "display_update_input", "chars": 99, "text": "They told him to stop talking. They kicked him out. Something happened and he just, you know, yeah.", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 18:24:51.034", "stage": "display_chunk_enqueued", "chars": 30, "text": "They told him to stop talking.", "meta": {"chunk_index": 0, "chunk_count": 4, "word_by_word": true}}
+{"ts": "2026-02-13 18:24:51.038", "stage": "display_chunk_enqueued", "chars": 30, "text": "They kicked him out. Something", "meta": {"chunk_index": 1, "chunk_count": 4, "word_by_word": true}}
+{"ts": "2026-02-13 18:24:51.043", "stage": "display_chunk_enqueued", "chars": 25, "text": "happened and he just, you", "meta": {"chunk_index": 2, "chunk_count": 4, "word_by_word": true}}
+{"ts": "2026-02-13 18:24:51.046", "stage": "display_chunk_enqueued", "chars": 11, "text": "know, yeah.", "meta": {"chunk_index": 3, "chunk_count": 4, "word_by_word": true}}
+{"ts": "2026-02-13 18:24:51.919", "stage": "display_word_reveal_complete", "chars": 30, "text": "They told him to stop talking."}
+{"ts": "2026-02-13 18:24:52.630", "stage": "display_word_reveal_complete", "chars": 30, "text": "They kicked him out. Something"}
+{"ts": "2026-02-13 18:24:53.328", "stage": "display_word_reveal_complete", "chars": 25, "text": "happened and he just, you"}
+{"ts": "2026-02-13 18:24:53.607", "stage": "display_word_reveal_complete", "chars": 11, "text": "know, yeah."}
+{"ts": "2026-02-13 18:24:57.115", "stage": "stt_raw", "chars": 86, "text": "The sentence may be cut off, do not make up words to fill in the rest of the sentence.", "meta": {"engine": "openai", "stt_openai_ms": 1817}}
+{"ts": "2026-02-13 18:24:57.124", "stage": "stt_sanitized", "chars": 86, "text": "The sentence may be cut off, do not make up words to fill in the rest of the sentence.", "meta": {"engine": "openai", "stt_openai_ms": 1817}}
+{"ts": "2026-02-13 18:24:57.129", "stage": "stt_boundary_trim_bypassed", "chars": 86, "text": "The sentence may be cut off, do not make up words to fill in the rest of the sentence.", "meta": {"loopback": false}}
+{"ts": "2026-02-13 18:24:57.135", "stage": "sentence_enqueued", "chars": 86, "text": "The sentence may be cut off, do not make up words to fill in the rest of the sentence.", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 1817, "translate_openai_ms": null}}
+{"ts": "2026-02-13 18:24:57.141", "stage": "translation_input", "chars": 86, "text": "The sentence may be cut off, do not make up words to fill in the rest of the sentence.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 18:24:57.146", "stage": "translation_cleanup_bypassed", "chars": 86, "text": "The sentence may be cut off, do not make up words to fill in the rest of the sentence.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 18:24:57.151", "stage": "translation_output", "chars": 86, "text": "The sentence may be cut off, do not make up words to fill in the rest of the sentence.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 18:24:57.157", "stage": "display_update_input", "chars": 86, "text": "The sentence may be cut off, do not make up words to fill in the rest of the sentence.", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 18:24:57.161", "stage": "display_chunk_enqueued", "chars": 28, "text": "The sentence may be cut off,", "meta": {"chunk_index": 0, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 18:24:57.166", "stage": "display_chunk_enqueued", "chars": 28, "text": "do not make up words to fill", "meta": {"chunk_index": 1, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 18:24:57.170", "stage": "display_chunk_enqueued", "chars": 28, "text": "in the rest of the sentence.", "meta": {"chunk_index": 2, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 18:24:58.114", "stage": "display_word_reveal_complete", "chars": 28, "text": "The sentence may be cut off,"}
+{"ts": "2026-02-13 18:24:59.266", "stage": "display_word_reveal_complete", "chars": 28, "text": "do not make up words to fill"}
+{"ts": "2026-02-13 18:25:00.153", "stage": "display_word_reveal_complete", "chars": 28, "text": "in the rest of the sentence."}
+{"ts": "2026-02-13 18:25:01.656", "stage": "stt_raw", "chars": 89, "text": "With Sean Porter. And let me ask you this. What issue would make you go full bore at your", "meta": {"engine": "openai", "stt_openai_ms": 1000}}
+{"ts": "2026-02-13 18:25:01.661", "stage": "stt_sanitized", "chars": 89, "text": "With Sean Porter. And let me ask you this. What issue would make you go full bore at your", "meta": {"engine": "openai", "stt_openai_ms": 1000}}
+{"ts": "2026-02-13 18:25:01.666", "stage": "stt_boundary_trim_bypassed", "chars": 89, "text": "With Sean Porter. And let me ask you this. What issue would make you go full bore at your", "meta": {"loopback": false}}
+{"ts": "2026-02-13 18:25:01.670", "stage": "sentence_enqueued", "chars": 89, "text": "With Sean Porter. And let me ask you this. What issue would make you go full bore at your", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 1000, "translate_openai_ms": null}}
+{"ts": "2026-02-13 18:25:01.675", "stage": "translation_input", "chars": 89, "text": "With Sean Porter. And let me ask you this. What issue would make you go full bore at your", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 18:25:01.682", "stage": "translation_cleanup_bypassed", "chars": 89, "text": "With Sean Porter. And let me ask you this. What issue would make you go full bore at your", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 18:25:01.687", "stage": "translation_output", "chars": 89, "text": "With Sean Porter. And let me ask you this. What issue would make you go full bore at your", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 18:25:01.692", "stage": "display_update_input", "chars": 89, "text": "With Sean Porter. And let me ask you this. What issue would make you go full bore at your", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 18:25:01.696", "stage": "display_chunk_enqueued", "chars": 28, "text": "With Sean Porter. And let me", "meta": {"chunk_index": 0, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 18:25:01.701", "stage": "display_chunk_enqueued", "chars": 30, "text": "ask you this. What issue would", "meta": {"chunk_index": 1, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 18:25:01.705", "stage": "display_chunk_enqueued", "chars": 29, "text": "make you go full bore at your", "meta": {"chunk_index": 2, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 18:25:02.588", "stage": "display_word_reveal_complete", "chars": 28, "text": "With Sean Porter. And let me"}
+{"ts": "2026-02-13 18:25:03.488", "stage": "display_word_reveal_complete", "chars": 30, "text": "ask you this. What issue would"}
+{"ts": "2026-02-13 18:25:04.529", "stage": "display_word_reveal_complete", "chars": 29, "text": "make you go full bore at your"}
+{"ts": "2026-02-13 18:25:06.724", "stage": "stt_raw", "chars": 87, "text": "Comment below, what are you willing to fight for and how are you going to fight for it?", "meta": {"engine": "openai", "stt_openai_ms": 1007}}
+{"ts": "2026-02-13 18:25:06.729", "stage": "stt_sanitized", "chars": 87, "text": "Comment below, what are you willing to fight for and how are you going to fight for it?", "meta": {"engine": "openai", "stt_openai_ms": 1007}}
+{"ts": "2026-02-13 18:25:06.733", "stage": "stt_boundary_trim_bypassed", "chars": 87, "text": "Comment below, what are you willing to fight for and how are you going to fight for it?", "meta": {"loopback": false}}
+{"ts": "2026-02-13 18:25:06.738", "stage": "sentence_enqueued", "chars": 87, "text": "Comment below, what are you willing to fight for and how are you going to fight for it?", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 1007, "translate_openai_ms": null}}
+{"ts": "2026-02-13 18:25:06.741", "stage": "translation_input", "chars": 87, "text": "Comment below, what are you willing to fight for and how are you going to fight for it?", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 18:25:06.747", "stage": "translation_cleanup_bypassed", "chars": 87, "text": "Comment below, what are you willing to fight for and how are you going to fight for it?", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 18:25:06.752", "stage": "translation_output", "chars": 87, "text": "Comment below, what are you willing to fight for and how are you going to fight for it?", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 18:25:06.756", "stage": "display_update_input", "chars": 87, "text": "Comment below, what are you willing to fight for and how are you going to fight for it?", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 18:25:06.761", "stage": "display_chunk_enqueued", "chars": 27, "text": "Comment below, what are you", "meta": {"chunk_index": 0, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 18:25:06.764", "stage": "display_chunk_enqueued", "chars": 28, "text": "willing to fight for and how", "meta": {"chunk_index": 1, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 18:25:06.768", "stage": "display_chunk_enqueued", "chars": 30, "text": "are you going to fight for it?", "meta": {"chunk_index": 2, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 18:25:07.497", "stage": "display_word_reveal_complete", "chars": 27, "text": "Comment below, what are you"}
+{"ts": "2026-02-13 18:25:08.349", "stage": "display_word_reveal_complete", "chars": 28, "text": "willing to fight for and how"}
+{"ts": "2026-02-13 18:25:09.309", "stage": "display_word_reveal_complete", "chars": 30, "text": "are you going to fight for it?"}
+{"ts": "2026-02-13 18:25:10.528", "stage": "stt_raw", "chars": 9, "text": "Fight it.", "meta": {"engine": "openai", "stt_openai_ms": 1322}}
+{"ts": "2026-02-13 18:25:10.533", "stage": "stt_sanitized", "chars": 9, "text": "Fight it.", "meta": {"engine": "openai", "stt_openai_ms": 1322}}
+{"ts": "2026-02-13 18:25:10.538", "stage": "stt_boundary_trim_bypassed", "chars": 9, "text": "Fight it.", "meta": {"loopback": false}}
+{"ts": "2026-02-13 18:25:10.542", "stage": "sentence_enqueued", "chars": 9, "text": "Fight it.", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 1322, "translate_openai_ms": null}}
+{"ts": "2026-02-13 18:25:10.545", "stage": "translation_input", "chars": 9, "text": "Fight it.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 18:25:10.551", "stage": "translation_cleanup_bypassed", "chars": 9, "text": "Fight it.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 18:25:10.556", "stage": "translation_output", "chars": 9, "text": "Fight it.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 18:25:10.561", "stage": "display_update_input", "chars": 9, "text": "Fight it.", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 18:25:10.566", "stage": "display_chunk_enqueued", "chars": 9, "text": "Fight it.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-13 18:25:10.825", "stage": "display_word_reveal_complete", "chars": 9, "text": "Fight it."}
+{"ts": "2026-02-13 18:25:15.466", "stage": "stt_raw", "chars": 72, "text": "Applejack, what the hell are you doing? Lunch. What do you got in there?", "meta": {"engine": "openai", "stt_openai_ms": 828}}
+{"ts": "2026-02-13 18:25:15.470", "stage": "stt_sanitized", "chars": 72, "text": "Applejack, what the hell are you doing? Lunch. What do you got in there?", "meta": {"engine": "openai", "stt_openai_ms": 828}}
+{"ts": "2026-02-13 18:25:15.476", "stage": "stt_boundary_trim_bypassed", "chars": 72, "text": "Applejack, what the hell are you doing? Lunch. What do you got in there?", "meta": {"loopback": false}}
+{"ts": "2026-02-13 18:25:15.480", "stage": "sentence_enqueued", "chars": 72, "text": "Applejack, what the hell are you doing? Lunch. What do you got in there?", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 828, "translate_openai_ms": null}}
+{"ts": "2026-02-13 18:25:15.483", "stage": "translation_input", "chars": 72, "text": "Applejack, what the hell are you doing? Lunch. What do you got in there?", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 18:25:15.489", "stage": "translation_cleanup_bypassed", "chars": 72, "text": "Applejack, what the hell are you doing? Lunch. What do you got in there?", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 18:25:15.494", "stage": "translation_output", "chars": 72, "text": "Applejack, what the hell are you doing? Lunch. What do you got in there?", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 18:25:15.499", "stage": "display_update_input", "chars": 72, "text": "Applejack, what the hell are you doing? Lunch. What do you got in there?", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 18:25:15.504", "stage": "display_chunk_enqueued", "chars": 28, "text": "Applejack, what the hell are", "meta": {"chunk_index": 0, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 18:25:15.509", "stage": "display_chunk_enqueued", "chars": 29, "text": "you doing? Lunch. What do you", "meta": {"chunk_index": 1, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 18:25:15.514", "stage": "display_chunk_enqueued", "chars": 13, "text": "got in there?", "meta": {"chunk_index": 2, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 18:25:16.250", "stage": "display_word_reveal_complete", "chars": 28, "text": "Applejack, what the hell are"}
+{"ts": "2026-02-13 18:25:17.151", "stage": "display_word_reveal_complete", "chars": 29, "text": "you doing? Lunch. What do you"}
+{"ts": "2026-02-13 18:25:17.678", "stage": "display_word_reveal_complete", "chars": 13, "text": "got in there?"}
+{"ts": "2026-02-13 18:25:20.637", "stage": "stt_raw", "chars": 23, "text": "In the barbeque. Lunch.", "meta": {"engine": "openai", "stt_openai_ms": 1680}}
+{"ts": "2026-02-13 18:25:20.641", "stage": "stt_sanitized", "chars": 23, "text": "In the barbeque. Lunch.", "meta": {"engine": "openai", "stt_openai_ms": 1680}}
+{"ts": "2026-02-13 18:25:20.645", "stage": "stt_boundary_trim_bypassed", "chars": 23, "text": "In the barbeque. Lunch.", "meta": {"loopback": false}}
+{"ts": "2026-02-13 18:25:20.651", "stage": "sentence_enqueued", "chars": 23, "text": "In the barbeque. Lunch.", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 1680, "translate_openai_ms": null}}
+{"ts": "2026-02-13 18:25:20.654", "stage": "translation_input", "chars": 23, "text": "In the barbeque. Lunch.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 18:25:20.661", "stage": "translation_cleanup_bypassed", "chars": 23, "text": "In the barbeque. Lunch.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 18:25:20.665", "stage": "translation_output", "chars": 23, "text": "In the barbeque. Lunch.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 18:25:20.669", "stage": "display_update_input", "chars": 23, "text": "In the barbeque. Lunch.", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 18:25:20.675", "stage": "display_chunk_enqueued", "chars": 23, "text": "In the barbeque. Lunch.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-13 18:25:21.278", "stage": "display_word_reveal_complete", "chars": 23, "text": "In the barbeque. Lunch."}
+{"ts": "2026-02-13 18:25:23.722", "stage": "stt_raw", "chars": 55, "text": "Applejack, are you grilling? Yeah. Yeah, grilling what?", "meta": {"engine": "openai", "stt_openai_ms": 726}}
+{"ts": "2026-02-13 18:25:23.726", "stage": "stt_sanitized", "chars": 55, "text": "Applejack, are you grilling? Yeah. Yeah, grilling what?", "meta": {"engine": "openai", "stt_openai_ms": 726}}
+{"ts": "2026-02-13 18:25:23.731", "stage": "stt_boundary_trim_bypassed", "chars": 55, "text": "Applejack, are you grilling? Yeah. Yeah, grilling what?", "meta": {"loopback": false}}
+{"ts": "2026-02-13 18:25:23.736", "stage": "sentence_enqueued", "chars": 55, "text": "Applejack, are you grilling? Yeah. Yeah, grilling what?", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 726, "translate_openai_ms": null}}
+{"ts": "2026-02-13 18:25:23.738", "stage": "translation_input", "chars": 55, "text": "Applejack, are you grilling? Yeah. Yeah, grilling what?", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 18:25:23.745", "stage": "translation_cleanup_bypassed", "chars": 55, "text": "Applejack, are you grilling? Yeah. Yeah, grilling what?", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 18:25:23.750", "stage": "translation_output", "chars": 55, "text": "Applejack, are you grilling? Yeah. Yeah, grilling what?", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 18:25:23.755", "stage": "display_update_input", "chars": 55, "text": "Applejack, are you grilling? Yeah. Yeah, grilling what?", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 18:25:23.759", "stage": "display_chunk_enqueued", "chars": 28, "text": "Applejack, are you grilling?", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 18:25:23.763", "stage": "display_chunk_enqueued", "chars": 26, "text": "Yeah. Yeah, grilling what?", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 18:25:24.347", "stage": "display_word_reveal_complete", "chars": 28, "text": "Applejack, are you grilling?"}
+{"ts": "2026-02-13 18:25:24.905", "stage": "display_word_reveal_complete", "chars": 26, "text": "Yeah. Yeah, grilling what?"}
+{"ts": "2026-02-13 18:25:29.868", "stage": "stt_raw", "chars": 89, "text": "Oh, dude, whoa, whoa, whoa, whoa. You can't grill that in here. What is that, a placenta?", "meta": {"engine": "openai", "stt_openai_ms": 1232}}
+{"ts": "2026-02-13 18:25:29.873", "stage": "stt_sanitized", "chars": 89, "text": "Oh, dude, whoa, whoa, whoa, whoa. You can't grill that in here. What is that, a placenta?", "meta": {"engine": "openai", "stt_openai_ms": 1232}}
+{"ts": "2026-02-13 18:25:29.878", "stage": "stt_boundary_trim_bypassed", "chars": 89, "text": "Oh, dude, whoa, whoa, whoa, whoa. You can't grill that in here. What is that, a placenta?", "meta": {"loopback": false}}
+{"ts": "2026-02-13 18:25:29.883", "stage": "sentence_enqueued", "chars": 89, "text": "Oh, dude, whoa, whoa, whoa, whoa. You can't grill that in here. What is that, a placenta?", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 1232, "translate_openai_ms": null}}
+{"ts": "2026-02-13 18:25:29.886", "stage": "translation_input", "chars": 89, "text": "Oh, dude, whoa, whoa, whoa, whoa. You can't grill that in here. What is that, a placenta?", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 18:25:29.894", "stage": "translation_cleanup_bypassed", "chars": 89, "text": "Oh, dude, whoa, whoa, whoa, whoa. You can't grill that in here. What is that, a placenta?", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 18:25:29.899", "stage": "translation_output", "chars": 89, "text": "Oh, dude, whoa, whoa, whoa, whoa. You can't grill that in here. What is that, a placenta?", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 18:25:29.904", "stage": "display_update_input", "chars": 89, "text": "Oh, dude, whoa, whoa, whoa, whoa. You can't grill that in here. What is that, a placenta?", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 18:25:29.911", "stage": "display_chunk_enqueued", "chars": 27, "text": "Oh, dude, whoa, whoa, whoa,", "meta": {"chunk_index": 0, "chunk_count": 4, "word_by_word": true}}
+{"ts": "2026-02-13 18:25:29.916", "stage": "display_chunk_enqueued", "chars": 29, "text": "whoa. You can't grill that in", "meta": {"chunk_index": 1, "chunk_count": 4, "word_by_word": true}}
+{"ts": "2026-02-13 18:25:29.922", "stage": "display_chunk_enqueued", "chars": 21, "text": "here. What is that, a", "meta": {"chunk_index": 2, "chunk_count": 4, "word_by_word": true}}
+{"ts": "2026-02-13 18:25:29.927", "stage": "display_chunk_enqueued", "chars": 9, "text": "placenta?", "meta": {"chunk_index": 3, "chunk_count": 4, "word_by_word": true}}
+{"ts": "2026-02-13 18:25:30.633", "stage": "display_word_reveal_complete", "chars": 27, "text": "Oh, dude, whoa, whoa, whoa,"}
+{"ts": "2026-02-13 18:25:31.568", "stage": "display_word_reveal_complete", "chars": 29, "text": "whoa. You can't grill that in"}
+{"ts": "2026-02-13 18:25:32.342", "stage": "display_word_reveal_complete", "chars": 21, "text": "here. What is that, a"}
+{"ts": "2026-02-13 18:25:32.482", "stage": "display_word_reveal_complete", "chars": 9, "text": "placenta?"}
+{"ts": "2026-02-13 18:25:34.041", "stage": "stt_raw", "chars": 35, "text": "I don't care. It's a safety hazard.", "meta": {"engine": "openai", "stt_openai_ms": 963}}
+{"ts": "2026-02-13 18:25:34.046", "stage": "stt_sanitized", "chars": 35, "text": "I don't care. It's a safety hazard.", "meta": {"engine": "openai", "stt_openai_ms": 963}}
+{"ts": "2026-02-13 18:25:34.050", "stage": "stt_boundary_trim_bypassed", "chars": 35, "text": "I don't care. It's a safety hazard.", "meta": {"loopback": false}}
+{"ts": "2026-02-13 18:25:34.055", "stage": "sentence_enqueued", "chars": 35, "text": "I don't care. It's a safety hazard.", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 963, "translate_openai_ms": null}}
+{"ts": "2026-02-13 18:25:34.058", "stage": "translation_input", "chars": 35, "text": "I don't care. It's a safety hazard.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 18:25:34.064", "stage": "translation_cleanup_bypassed", "chars": 35, "text": "I don't care. It's a safety hazard.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 18:25:34.068", "stage": "translation_output", "chars": 35, "text": "I don't care. It's a safety hazard.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 18:25:34.074", "stage": "display_update_input", "chars": 35, "text": "I don't care. It's a safety hazard.", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 18:25:34.079", "stage": "display_chunk_enqueued", "chars": 27, "text": "I don't care. It's a safety", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 18:25:34.083", "stage": "display_chunk_enqueued", "chars": 7, "text": "hazard.", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 18:25:34.938", "stage": "display_word_reveal_complete", "chars": 27, "text": "I don't care. It's a safety"}
+{"ts": "2026-02-13 18:25:35.093", "stage": "display_word_reveal_complete", "chars": 7, "text": "hazard."}
+{"ts": "2026-02-13 18:25:40.767", "stage": "stt_raw", "chars": 133, "text": "No problem with a safety hazard, as everyone here well knows. But you do have a problem with your choice in meat. That is disgusting.", "meta": {"engine": "openai", "stt_openai_ms": 2450}}
+{"ts": "2026-02-13 18:25:40.770", "stage": "stt_sanitized", "chars": 133, "text": "No problem with a safety hazard, as everyone here well knows. But you do have a problem with your choice in meat. That is disgusting.", "meta": {"engine": "openai", "stt_openai_ms": 2450}}
+{"ts": "2026-02-13 18:25:40.774", "stage": "stt_boundary_trim_bypassed", "chars": 133, "text": "No problem with a safety hazard, as everyone here well knows. But you do have a problem with your choice in meat. That is disgusting.", "meta": {"loopback": false}}
+{"ts": "2026-02-13 18:25:40.778", "stage": "sentence_enqueued", "chars": 133, "text": "No problem with a safety hazard, as everyone here well knows. But you do have a problem with your choice in meat. That is disgusting.", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 2450, "translate_openai_ms": null}}
+{"ts": "2026-02-13 18:25:40.781", "stage": "translation_input", "chars": 133, "text": "No problem with a safety hazard, as everyone here well knows. But you do have a problem with your choice in meat. That is disgusting.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 18:25:40.786", "stage": "translation_cleanup_bypassed", "chars": 133, "text": "No problem with a safety hazard, as everyone here well knows. But you do have a problem with your choice in meat. That is disgusting.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 18:25:40.789", "stage": "translation_output", "chars": 133, "text": "No problem with a safety hazard, as everyone here well knows. But you do have a problem with your choice in meat. That is disgusting.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 18:25:40.794", "stage": "display_update_input", "chars": 133, "text": "No problem with a safety hazard, as everyone here well knows. But you do have a problem with your choice in meat. That is disgusting.", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 18:25:40.798", "stage": "display_chunk_enqueued", "chars": 24, "text": "No problem with a safety", "meta": {"chunk_index": 0, "chunk_count": 5, "word_by_word": true}}
+{"ts": "2026-02-13 18:25:40.802", "stage": "display_chunk_enqueued", "chars": 29, "text": "hazard, as everyone here well", "meta": {"chunk_index": 1, "chunk_count": 5, "word_by_word": true}}
+{"ts": "2026-02-13 18:25:40.805", "stage": "display_chunk_enqueued", "chars": 24, "text": "knows. But you do have a", "meta": {"chunk_index": 2, "chunk_count": 5, "word_by_word": true}}
+{"ts": "2026-02-13 18:25:40.808", "stage": "display_chunk_enqueued", "chars": 27, "text": "problem with your choice in", "meta": {"chunk_index": 3, "chunk_count": 5, "word_by_word": true}}
+{"ts": "2026-02-13 18:25:40.811", "stage": "display_chunk_enqueued", "chars": 25, "text": "meat. That is disgusting.", "meta": {"chunk_index": 4, "chunk_count": 5, "word_by_word": true}}
+{"ts": "2026-02-13 18:25:41.504", "stage": "display_word_reveal_complete", "chars": 24, "text": "No problem with a safety"}
+{"ts": "2026-02-13 18:25:42.217", "stage": "display_word_reveal_complete", "chars": 29, "text": "hazard, as everyone here well"}
+{"ts": "2026-02-13 18:25:43.102", "stage": "display_word_reveal_complete", "chars": 24, "text": "knows. But you do have a"}
+{"ts": "2026-02-13 18:25:43.784", "stage": "display_word_reveal_complete", "chars": 27, "text": "problem with your choice in"}
+{"ts": "2026-02-13 18:25:44.343", "stage": "display_word_reveal_complete", "chars": 25, "text": "meat. That is disgusting."}
+{"ts": "2026-02-13 18:25:45.182", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 1825}}
+{"ts": "2026-02-13 18:25:45.187", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 1825}}
+{"ts": "2026-02-13 18:25:50.139", "stage": "stt_raw", "chars": 96, "text": "When you subscribe, become a Backyard Butchers member, go to BackyardButchers.com slash Crowder.", "meta": {"engine": "openai", "stt_openai_ms": 1251}}
+{"ts": "2026-02-13 18:25:50.144", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 1251}}
+{"ts": "2026-02-13 18:25:54.492", "stage": "stt_raw", "chars": 56, "text": "It's much better meat and it's cheaper, more convenient.", "meta": {"engine": "openai", "stt_openai_ms": 1074}}
+{"ts": "2026-02-13 18:25:54.497", "stage": "stt_sanitized", "chars": 56, "text": "It's much better meat and it's cheaper, more convenient.", "meta": {"engine": "openai", "stt_openai_ms": 1074}}
+{"ts": "2026-02-13 18:25:54.501", "stage": "stt_boundary_trim_bypassed", "chars": 56, "text": "It's much better meat and it's cheaper, more convenient.", "meta": {"loopback": false}}
+{"ts": "2026-02-13 18:25:54.505", "stage": "sentence_enqueued", "chars": 56, "text": "It's much better meat and it's cheaper, more convenient.", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 1074, "translate_openai_ms": null}}
+{"ts": "2026-02-13 18:25:54.508", "stage": "translation_input", "chars": 56, "text": "It's much better meat and it's cheaper, more convenient.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 18:25:54.515", "stage": "translation_cleanup_bypassed", "chars": 56, "text": "It's much better meat and it's cheaper, more convenient.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 18:25:54.519", "stage": "translation_output", "chars": 56, "text": "It's much better meat and it's cheaper, more convenient.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 18:25:54.525", "stage": "display_update_input", "chars": 56, "text": "It's much better meat and it's cheaper, more convenient.", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 18:25:54.530", "stage": "display_chunk_enqueued", "chars": 30, "text": "It's much better meat and it's", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 18:25:54.535", "stage": "display_chunk_enqueued", "chars": 25, "text": "cheaper, more convenient.", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 18:25:55.356", "stage": "display_word_reveal_complete", "chars": 30, "text": "It's much better meat and it's"}
+{"ts": "2026-02-13 18:25:55.774", "stage": "display_word_reveal_complete", "chars": 25, "text": "cheaper, more convenient."}
+{"ts": "2026-02-13 18:26:00.067", "stage": "stt_raw", "chars": 78, "text": "Can I borrow your iPad? No, I'm doing the show, Applejack. Get out. All right.", "meta": {"engine": "openai", "stt_openai_ms": 1429}}
+{"ts": "2026-02-13 18:26:00.071", "stage": "stt_sanitized", "chars": 78, "text": "Can I borrow your iPad? No, I'm doing the show, Applejack. Get out. All right.", "meta": {"engine": "openai", "stt_openai_ms": 1429}}
+{"ts": "2026-02-13 18:26:00.076", "stage": "stt_boundary_trim_bypassed", "chars": 78, "text": "Can I borrow your iPad? No, I'm doing the show, Applejack. Get out. All right.", "meta": {"loopback": false}}
+{"ts": "2026-02-13 18:26:00.080", "stage": "sentence_enqueued", "chars": 78, "text": "Can I borrow your iPad? No, I'm doing the show, Applejack. Get out. All right.", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 1429, "translate_openai_ms": null}}
+{"ts": "2026-02-13 18:26:00.084", "stage": "translation_input", "chars": 78, "text": "Can I borrow your iPad? No, I'm doing the show, Applejack. Get out. All right.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 18:26:00.091", "stage": "translation_cleanup_bypassed", "chars": 78, "text": "Can I borrow your iPad? No, I'm doing the show, Applejack. Get out. All right.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 18:26:00.097", "stage": "translation_output", "chars": 78, "text": "Can I borrow your iPad? No, I'm doing the show, Applejack. Get out. All right.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 18:26:00.103", "stage": "display_update_input", "chars": 78, "text": "Can I borrow your iPad? No, I'm doing the show, Applejack. Get out. All right.", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 18:26:00.108", "stage": "display_chunk_enqueued", "chars": 27, "text": "Can I borrow your iPad? No,", "meta": {"chunk_index": 0, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 18:26:00.114", "stage": "display_chunk_enqueued", "chars": 30, "text": "I'm doing the show, Applejack.", "meta": {"chunk_index": 1, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 18:26:00.119", "stage": "display_chunk_enqueued", "chars": 19, "text": "Get out. All right.", "meta": {"chunk_index": 2, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 18:26:00.954", "stage": "display_word_reveal_complete", "chars": 27, "text": "Can I borrow your iPad? No,"}
+{"ts": "2026-02-13 18:26:01.699", "stage": "display_word_reveal_complete", "chars": 30, "text": "I'm doing the show, Applejack."}
+{"ts": "2026-02-13 18:26:02.287", "stage": "display_word_reveal_complete", "chars": 19, "text": "Get out. All right."}
+{"ts": "2026-02-13 18:26:03.414", "stage": "stt_raw", "chars": 35, "text": "Please make all the noise you want.", "meta": {"engine": "openai", "stt_openai_ms": 1177}}
+{"ts": "2026-02-13 18:26:03.419", "stage": "stt_sanitized", "chars": 35, "text": "Please make all the noise you want.", "meta": {"engine": "openai", "stt_openai_ms": 1177}}
+{"ts": "2026-02-13 18:26:03.423", "stage": "stt_boundary_trim_bypassed", "chars": 35, "text": "Please make all the noise you want.", "meta": {"loopback": false}}
+{"ts": "2026-02-13 18:26:03.428", "stage": "sentence_enqueued", "chars": 35, "text": "Please make all the noise you want.", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 1177, "translate_openai_ms": null}}
+{"ts": "2026-02-13 18:26:03.431", "stage": "translation_input", "chars": 35, "text": "Please make all the noise you want.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 18:26:03.438", "stage": "translation_cleanup_bypassed", "chars": 35, "text": "Please make all the noise you want.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 18:26:03.443", "stage": "translation_output", "chars": 35, "text": "Please make all the noise you want.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 18:26:03.448", "stage": "display_update_input", "chars": 35, "text": "Please make all the noise you want.", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 18:26:03.453", "stage": "display_chunk_enqueued", "chars": 29, "text": "Please make all the noise you", "meta": {"chunk_index": 0, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 18:26:03.459", "stage": "display_chunk_enqueued", "chars": 5, "text": "want.", "meta": {"chunk_index": 1, "chunk_count": 2, "word_by_word": true}}
+{"ts": "2026-02-13 18:26:04.354", "stage": "display_word_reveal_complete", "chars": 29, "text": "Please make all the noise you"}
+{"ts": "2026-02-13 18:26:04.540", "stage": "display_word_reveal_complete", "chars": 5, "text": "want."}
+{"ts": "2026-02-13 18:26:07.188", "stage": "stt_raw", "chars": 10, "text": "Thank you.", "meta": {"engine": "openai", "stt_openai_ms": 491}}
+{"ts": "2026-02-13 18:26:07.194", "stage": "stt_sanitized", "chars": 10, "text": "Thank you.", "meta": {"engine": "openai", "stt_openai_ms": 491}}
+{"ts": "2026-02-13 18:26:07.200", "stage": "stt_boundary_trim_bypassed", "chars": 10, "text": "Thank you.", "meta": {"loopback": false}}
+{"ts": "2026-02-13 18:26:07.205", "stage": "sentence_enqueued", "chars": 10, "text": "Thank you.", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 491, "translate_openai_ms": null}}
+{"ts": "2026-02-13 18:26:07.208", "stage": "translation_input", "chars": 10, "text": "Thank you.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 18:26:07.216", "stage": "translation_cleanup_bypassed", "chars": 10, "text": "Thank you.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 18:26:07.220", "stage": "translation_output", "chars": 10, "text": "Thank you.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 18:26:07.226", "stage": "display_update_input", "chars": 10, "text": "Thank you.", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 18:26:07.231", "stage": "display_chunk_enqueued", "chars": 10, "text": "Thank you.", "meta": {"chunk_index": 0, "chunk_count": 1, "word_by_word": true}}
+{"ts": "2026-02-13 18:26:07.523", "stage": "display_word_reveal_complete", "chars": 10, "text": "Thank you."}
+{"ts": "2026-02-13 18:26:08.488", "stage": "stt_raw", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 472}}
+{"ts": "2026-02-13 18:26:08.494", "stage": "stt_sanitized", "chars": 0, "text": "", "meta": {"engine": "openai", "stt_openai_ms": 472}}
+{"ts": "2026-02-13 18:26:15.051", "stage": "stt_raw", "chars": 81, "text": "You think he's alright? Eh, I don't know. I don't care. I don't know that I care.", "meta": {"engine": "openai", "stt_openai_ms": 1873}}
+{"ts": "2026-02-13 18:26:15.058", "stage": "stt_sanitized", "chars": 81, "text": "You think he's alright? Eh, I don't know. I don't care. I don't know that I care.", "meta": {"engine": "openai", "stt_openai_ms": 1873}}
+{"ts": "2026-02-13 18:26:15.065", "stage": "stt_boundary_trim_bypassed", "chars": 81, "text": "You think he's alright? Eh, I don't know. I don't care. I don't know that I care.", "meta": {"loopback": false}}
+{"ts": "2026-02-13 18:26:15.070", "stage": "sentence_enqueued", "chars": 81, "text": "You think he's alright? Eh, I don't know. I don't care. I don't know that I care.", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 1873, "translate_openai_ms": null}}
+{"ts": "2026-02-13 18:26:15.073", "stage": "translation_input", "chars": 81, "text": "You think he's alright? Eh, I don't know. I don't care. I don't know that I care.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 18:26:15.084", "stage": "translation_cleanup_bypassed", "chars": 81, "text": "You think he's alright? Eh, I don't know. I don't care. I don't know that I care.", "meta": {"translation_enabled": false}}
+{"ts": "2026-02-13 18:26:15.090", "stage": "translation_output", "chars": 81, "text": "You think he's alright? Eh, I don't know. I don't care. I don't know that I care.", "meta": {"translation_enabled": false, "translate_openai_ms": null}}
+{"ts": "2026-02-13 18:26:15.097", "stage": "display_update_input", "chars": 81, "text": "You think he's alright? Eh, I don't know. I don't care. I don't know that I care.", "meta": {"word_by_word": true, "raw_debug": false}}
+{"ts": "2026-02-13 18:26:15.103", "stage": "display_chunk_enqueued", "chars": 29, "text": "You think he's alright? Eh, I", "meta": {"chunk_index": 0, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 18:26:15.108", "stage": "display_chunk_enqueued", "chars": 27, "text": "don't know. I don't care. I", "meta": {"chunk_index": 1, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 18:26:15.112", "stage": "display_chunk_enqueued", "chars": 23, "text": "don't know that I care.", "meta": {"chunk_index": 2, "chunk_count": 3, "word_by_word": true}}
+{"ts": "2026-02-13 18:26:16.227", "stage": "display_word_reveal_complete", "chars": 29, "text": "You think he's alright? Eh, I"}
+{"ts": "2026-02-13 18:26:17.331", "stage": "display_word_reveal_complete", "chars": 27, "text": "don't know. I don't care. I"}
+{"ts": "2026-02-13 18:26:18.116", "stage": "display_word_reveal_complete", "chars": 23, "text": "don't know that I care."}
