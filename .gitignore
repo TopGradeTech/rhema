@@ -1,2 +1,28 @@
+.venv/
+
+# Python cache and compiled files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Logs
+logs/
+*.log
+
+# Environment files
+.env
 .env.local
+
+# Editor / OS files
+.vscode/
+*.swp
+Thumbs.db
+Desktop.ini
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+
 
