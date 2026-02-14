@@ -1,7 +1,0 @@
-{"ts": "2026-02-13 16:03:43.178", "stage": "stt_raw", "chars": 51, "text": "Subtítulos realizados por la comunidad de Amara.org", "meta": {"engine": "openai", "stt_openai_ms": 1963}}
-{"ts": "2026-02-13 16:03:43.181", "stage": "stt_debug_passthrough", "chars": 51, "text": "Subtítulos realizados por la comunidad de Amara.org", "meta": {"engine": "openai", "stt_openai_ms": 1963}}
-{"ts": "2026-02-13 16:03:43.184", "stage": "sentence_enqueued", "chars": 51, "text": "Subtítulos realizados por la comunidad de Amara.org", "meta": {"queue_size": 1, "pretranslated": false, "stt_openai_ms": 1963, "translate_openai_ms": null}}
-{"ts": "2026-02-13 16:03:43.185", "stage": "translation_input", "chars": 51, "text": "Subtítulos realizados por la comunidad de Amara.org", "meta": {"translation_enabled": false}}
-{"ts": "2026-02-13 16:03:43.187", "stage": "translation_output", "chars": 51, "text": "Subtítulos realizados por la comunidad de Amara.org", "meta": {"translation_enabled": false, "translate_openai_ms": 0}}
-{"ts": "2026-02-13 16:03:43.188", "stage": "display_update_input", "chars": 51, "text": "Subtítulos realizados por la comunidad de Amara.org", "meta": {"word_by_word": true, "raw_debug": true}}
-{"ts": "2026-02-13 16:03:43.191", "stage": "display_raw_direct", "chars": 51, "text": "Subtítulos realizados por la comunidad de Amara.org"}
