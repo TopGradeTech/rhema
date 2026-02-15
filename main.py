@@ -17,6 +17,7 @@ import sys
 import traceback
 import io
 import math
+import statistics
 import tempfile
 import gc
 import ttkbootstrap as ttkb
@@ -160,10 +161,12 @@ class TranslationApp:
         self.settings_path = os.path.join(os.path.dirname(__file__), "settings.json")
         self.error_log_path = self._get_error_log_path()
         self.transcript_trace_path = self._get_transcript_trace_path()
+        self.finalized_transcript_path = self._get_finalized_transcript_path()
         self.status_log_enabled = True  # TEMP: set False to disable status logging
         self.status_log_lock = Lock()
         self.transcript_trace_enabled = True
         self.transcript_trace_lock = Lock()
+        self.finalized_transcript_lock = Lock()
         self.recognition_lock = Lock()
         self.portaudio_admin_lock = Lock()
         self.last_status_message = None
@@ -245,6 +248,11 @@ class TranslationApp:
         self.dynamic_loopback_chunking = True
         self.loopback_chunk_seconds_min = 0.65
         self.loopback_chunk_seconds_max = 1.85
+        self.loopback_chunk_autotune_enabled = True
+        self.loopback_chunk_autotune_interval_sec = 7.0
+        self.loopback_chunk_autotune_min_samples = 4
+        self.loopback_chunk_autotune_last_eval = 0.0
+        self.loopback_chunk_metrics = deque(maxlen=180)
         self._last_effective_loopback_chunk_seconds = None
         self._last_chunk_tuning_notice = 0.0
         self.loopback_overlap_seconds = 0.35
@@ -268,6 +276,7 @@ class TranslationApp:
         self.faster_whisper_temperature = 0.0
         self.faster_whisper_without_timestamps = True
         self.faster_whisper_no_speech_threshold = 0.7
+        self.last_faster_whisper_confidence = None
         self.faster_whisper_model = None
         self.faster_whisper_model_config = None
         self.device_menu = None
@@ -289,9 +298,13 @@ class TranslationApp:
         self.sentence_queue_high_water_ratio = 0.75
         self.sentence_queue_relief_ratio = 0.5
         self.translation_backlog_batch_max = 4
+        self.finalized_output_queue = queue.Queue(maxsize=180)
+        self.finalized_output_queue_high_water_ratio = 0.8
+        self.finalized_output_queue_relief_ratio = 0.6
         self.queue_backpressure_notice_interval_sec = 2.5
         self.last_queue_backpressure_notice = 0.0
         self.translation_thread = None
+        self.display_thread = None
         self.last_stt_pretranslated = False
         self.preview_widget = None
         self.preview_font = None
@@ -466,6 +479,8 @@ class TranslationApp:
 
         self.translation_thread = Thread(target=self._translation_worker, daemon=True)
         self.translation_thread.start()
+        self.display_thread = Thread(target=self._display_worker, daemon=True)
+        self.display_thread.start()
         self.thread = Thread(target=self.listen_and_translate)
         self.thread.daemon = True
         self.thread.start()
@@ -640,6 +655,16 @@ class TranslationApp:
         timestamp = time.strftime("%Y%m%d-%H%M%S")
         return os.path.join(logs_dir, f"transcript-{timestamp}.log")
 
+    def _get_finalized_transcript_path(self):
+        base_dir = os.path.dirname(__file__)
+        logs_dir = os.path.join(base_dir, "logs")
+        try:
+            os.makedirs(logs_dir, exist_ok=True)
+        except Exception:
+            pass
+        timestamp = time.strftime("%Y%m%d-%H%M%S")
+        return os.path.join(logs_dir, f"finalized-{timestamp}.log")
+
     def _log_status(self, msg):
         if not self.status_log_enabled:
             return
@@ -674,6 +699,27 @@ class TranslationApp:
                 entry["meta"] = meta
             with self.transcript_trace_lock:
                 with open(self.transcript_trace_path, "a", encoding="utf-8") as f:
+                    f.write(json.dumps(entry, ensure_ascii=False) + "\n")
+        except Exception:
+            pass
+
+    def _log_finalized_sentence(self, text, **meta):
+        clean_text = "" if text is None else str(text).strip()
+        if not clean_text:
+            return
+        try:
+            now = time.time()
+            timestamp = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(now))
+            ms = int((now - int(now)) * 1000)
+            entry = {
+                "ts": f"{timestamp}.{ms:03d}",
+                "text": clean_text.replace("\r", " ").replace("\n", " "),
+                "chars": len(clean_text),
+            }
+            if meta:
+                entry["meta"] = meta
+            with self.finalized_transcript_lock:
+                with open(self.finalized_transcript_path, "a", encoding="utf-8") as f:
                     f.write(json.dumps(entry, ensure_ascii=False) + "\n")
         except Exception:
             pass
@@ -799,6 +845,13 @@ class TranslationApp:
         except Exception:
             pass
         self.display_speed_factor = max(0.5, min(self.display_speed_factor, 2.5))
+        self.loopback_chunk_autotune_enabled = self._coerce_bool(
+            data.get(
+                "loopback_chunk_autotune_enabled",
+                self.loopback_chunk_autotune_enabled,
+            ),
+            default=self.loopback_chunk_autotune_enabled,
+        )
         self.translation_enabled = self._coerce_bool(
             data.get("translation_enabled", self.translation_enabled),
             default=self.translation_enabled,
@@ -903,6 +956,7 @@ class TranslationApp:
             "flush_timeout_ms": self.flush_timeout_ms,
             "sentence_flush_ms": self.sentence_flush_ms,
             "display_speed_factor": self.display_speed_factor,
+            "loopback_chunk_autotune_enabled": self.loopback_chunk_autotune_enabled,
             "source_lang": self.source_lang,
             "target_lang": self.target_lang,
             "translation_enabled": self.translation_enabled,
@@ -3506,6 +3560,168 @@ class TranslationApp:
             )
         return tuned_seconds
 
+    def _record_loopback_chunk_metrics(self, capture_meta, text, overlap_words=0):
+        if (self.speech_engine or "").strip().lower() != "faster-whisper":
+            return
+        if not bool((capture_meta or {}).get("loopback")):
+            return
+        try:
+            chunk_seconds = float((capture_meta or {}).get("chunk_seconds") or 0.0)
+        except Exception:
+            chunk_seconds = 0.0
+        if chunk_seconds <= 0.0:
+            try:
+                chunk_seconds = float(self._last_effective_loopback_chunk_seconds or 0.0)
+            except Exception:
+                chunk_seconds = 0.0
+        if chunk_seconds <= 0.0:
+            return
+        stt_ms = self.last_openai_stt_ms
+        if not isinstance(stt_ms, (int, float)) or stt_ms <= 0:
+            return
+        words = len(re.findall(r"[^\W_]+", text or "", flags=re.UNICODE))
+        if words <= 0:
+            return
+        confidence = self.last_faster_whisper_confidence
+        if not isinstance(confidence, (int, float)):
+            confidence = None
+        sample = {
+            "chunk_seconds": float(chunk_seconds),
+            "stt_ms": float(stt_ms),
+            "words": int(words),
+            "overlap_words": max(0, int(overlap_words or 0)),
+            "confidence": confidence,
+            "ts": time.time(),
+        }
+        self.loopback_chunk_metrics.append(sample)
+        self._trace_pipeline(
+            "loopback_chunk_metric",
+            "",
+            chunk_seconds=round(float(chunk_seconds), 3),
+            stt_openai_ms=int(stt_ms),
+            words=words,
+            overlap_words=sample["overlap_words"],
+            stt_confidence=confidence,
+        )
+        self._maybe_autotune_loopback_chunk_seconds()
+
+    def _suggest_optimal_loopback_chunk_seconds(self):
+        samples = list(self.loopback_chunk_metrics)
+        if not samples:
+            return None, []
+        min_samples = max(2, int(self.loopback_chunk_autotune_min_samples))
+        buckets = {}
+        for sample in samples:
+            try:
+                bucket = round(float(sample.get("chunk_seconds", 0.0)), 2)
+            except Exception:
+                continue
+            if bucket <= 0.0:
+                continue
+            buckets.setdefault(bucket, []).append(sample)
+        scored = []
+        for chunk_seconds, bucket_samples in buckets.items():
+            if len(bucket_samples) < min_samples:
+                continue
+            ms_per_sec = [
+                item["stt_ms"] / max(0.25, float(item.get("chunk_seconds", chunk_seconds)))
+                for item in bucket_samples
+            ]
+            overlap_rates = [
+                float(item.get("overlap_words", 0)) / max(1, int(item.get("words", 1)))
+                for item in bucket_samples
+            ]
+            words_per_sec = [
+                float(item.get("words", 0)) / max(0.25, float(item.get("chunk_seconds", chunk_seconds)))
+                for item in bucket_samples
+            ]
+            confidence_values = [
+                float(item["confidence"])
+                for item in bucket_samples
+                if isinstance(item.get("confidence"), (int, float))
+            ]
+            median_ms_per_sec = float(statistics.median(ms_per_sec))
+            median_overlap_rate = float(statistics.median(overlap_rates))
+            median_words_per_sec = float(statistics.median(words_per_sec))
+            avg_confidence = (
+                sum(confidence_values) / len(confidence_values)
+                if confidence_values
+                else 0.75
+            )
+            confidence_penalty = max(0.0, 1.0 - avg_confidence)
+            sparse_penalty = 180.0 if median_words_per_sec < 0.8 else 0.0
+            score = (
+                median_ms_per_sec
+                + (median_overlap_rate * 900.0)
+                + (confidence_penalty * 450.0)
+                + sparse_penalty
+            )
+            scored.append(
+                {
+                    "chunk_seconds": chunk_seconds,
+                    "score": score,
+                    "samples": len(bucket_samples),
+                    "stt_ms_per_sec": median_ms_per_sec,
+                    "overlap_rate": median_overlap_rate,
+                    "avg_confidence": avg_confidence,
+                }
+            )
+        if not scored:
+            return None, []
+        scored.sort(key=lambda item: (item["score"], -item["samples"]))
+        best_chunk_seconds = float(scored[0]["chunk_seconds"])
+        summary = [
+            {
+                "chunk_seconds": item["chunk_seconds"],
+                "score": round(item["score"], 1),
+                "samples": item["samples"],
+                "stt_ms_per_sec": round(item["stt_ms_per_sec"], 1),
+                "overlap_rate": round(item["overlap_rate"], 3),
+                "avg_confidence": round(item["avg_confidence"], 3),
+            }
+            for item in scored[:5]
+        ]
+        return best_chunk_seconds, summary
+
+    def _maybe_autotune_loopback_chunk_seconds(self):
+        if not bool(getattr(self, "loopback_chunk_autotune_enabled", True)):
+            return
+        if not bool(getattr(self, "dynamic_loopback_chunking", True)):
+            return
+        now = time.time()
+        interval_sec = max(2.0, float(self.loopback_chunk_autotune_interval_sec))
+        if now - self.loopback_chunk_autotune_last_eval < interval_sec:
+            return
+        self.loopback_chunk_autotune_last_eval = now
+        recommended, summary = self._suggest_optimal_loopback_chunk_seconds()
+        if recommended is None:
+            return
+        try:
+            min_seconds = max(0.35, float(self.loopback_chunk_seconds_min))
+        except Exception:
+            min_seconds = 0.65
+        try:
+            max_seconds = max(min_seconds, float(self.loopback_chunk_seconds_max))
+        except Exception:
+            max_seconds = 1.85
+        target = max(min_seconds, min(max_seconds, float(recommended)))
+        try:
+            current = float(self.loopback_chunk_seconds)
+        except Exception:
+            current = target
+        blended = round((current * 0.7) + (target * 0.3), 3)
+        blended = max(min_seconds, min(max_seconds, blended))
+        if abs(blended - current) < 0.05:
+            return
+        self.loopback_chunk_seconds = blended
+        self._trace_pipeline(
+            "loopback_chunk_autotune",
+            "",
+            recommended_seconds=round(target, 3),
+            updated_base_seconds=round(blended, 3),
+            ranked_candidates=summary,
+        )
+
     def _pause_if_needed(self):
         if not self.is_paused:
             return False
@@ -3736,6 +3952,7 @@ class TranslationApp:
                 stt_sanitize_enabled = self._whisper_step_enabled(1)
                 self.last_openai_translate_ms = None
                 self.last_stt_pretranslated = False
+                self.last_faster_whisper_confidence = None
                 if engine == "faster-whisper":
                     stt_started = time.time()
                     raw_text = self.recognize_faster_whisper(audio)
@@ -3900,6 +4117,7 @@ class TranslationApp:
         boundary_trim_enabled = self._whisper_step_enabled(3)
         sentence_buffer_enabled = self._whisper_step_enabled(4)
         whisper_gate_enabled = self._whisper_step_enabled(1)
+        overlap_words = 0
         audio_for_stt = self._prepare_audio_for_stt(audio, is_loopback=is_loopback)
         if self.rms_gate_enabled and not raw_debug_active and whisper_gate_enabled:
             try:
@@ -3916,7 +4134,17 @@ class TranslationApp:
         if not text:
             return
         if raw_debug_active:
-            self._enqueue_sentence(text, pretranslated=bool(self.last_stt_pretranslated))
+            self._record_loopback_chunk_metrics(
+                capture_meta,
+                text,
+                overlap_words=0,
+            )
+            self._enqueue_sentence(
+                text,
+                pretranslated=bool(self.last_stt_pretranslated),
+                capture_meta=capture_meta,
+                overlap_words=0,
+            )
             return
         if boundary_trim_enabled:
             text, overlap_words = self._trim_repeated_boundary_words(text)
@@ -3930,8 +4158,18 @@ class TranslationApp:
             self._trace_pipeline("stt_boundary_trim_bypassed", text, loopback=is_loopback)
         if not text:
             return
+        self._record_loopback_chunk_metrics(
+            capture_meta,
+            text,
+            overlap_words=overlap_words,
+        )
         if not sentence_buffer_enabled:
-            self._enqueue_sentence(text, pretranslated=bool(self.last_stt_pretranslated))
+            self._enqueue_sentence(
+                text,
+                pretranslated=bool(self.last_stt_pretranslated),
+                capture_meta=capture_meta,
+                overlap_words=overlap_words,
+            )
             return
         flushed = self._append_sentence_buffer(text)
         if flushed:
@@ -3940,7 +4178,12 @@ class TranslationApp:
                     sentence, pretranslated = sentence_payload
                 else:
                     sentence, pretranslated = sentence_payload, False
-                self._enqueue_sentence(sentence, pretranslated=pretranslated)
+                self._enqueue_sentence(
+                    sentence,
+                    pretranslated=pretranslated,
+                    capture_meta=capture_meta,
+                    overlap_words=overlap_words,
+                )
 
     def _prepare_audio_for_stt(self, audio, is_loopback=False):
         if self._raw_whisper_debug_active():
@@ -4355,6 +4598,10 @@ class TranslationApp:
                 kwargs.pop("without_timestamps", None)
                 kwargs.pop("no_speech_threshold", None)
                 segments, _info = model.transcribe(tmp_path, **kwargs)
+            segments = list(segments)
+            self.last_faster_whisper_confidence = self._estimate_faster_whisper_confidence(
+                segments
+            )
             if raw_debug_active:
                 text = " ".join(
                     (getattr(segment, "text", "") or "") for segment in segments
@@ -4368,6 +4615,34 @@ class TranslationApp:
                     os.unlink(tmp_path)
                 except Exception:
                     pass
+
+    def _estimate_faster_whisper_confidence(self, segments):
+        if not segments:
+            return None
+        segment_scores = []
+        for segment in segments:
+            partial_scores = []
+            avg_logprob = getattr(segment, "avg_logprob", None)
+            if avg_logprob is not None:
+                try:
+                    partial_scores.append(
+                        max(0.0, min(1.0, math.exp(float(avg_logprob))))
+                    )
+                except Exception:
+                    pass
+            no_speech_prob = getattr(segment, "no_speech_prob", None)
+            if no_speech_prob is not None:
+                try:
+                    partial_scores.append(
+                        max(0.0, min(1.0, 1.0 - float(no_speech_prob)))
+                    )
+                except Exception:
+                    pass
+            if partial_scores:
+                segment_scores.append(sum(partial_scores) / len(partial_scores))
+        if not segment_scores:
+            return None
+        return max(0.0, min(1.0, sum(segment_scores) / len(segment_scores)))
 
     def _filter_faster_whisper_segments(self, segments):
         kept = []
@@ -4536,7 +4811,13 @@ class TranslationApp:
         )
         self._enqueue_sentence(buffer_text, pretranslated=buffer_pretranslated)
 
-    def _enqueue_sentence(self, text, pretranslated=False):
+    def _enqueue_sentence(
+        self,
+        text,
+        pretranslated=False,
+        capture_meta=None,
+        overlap_words=0,
+    ):
         if not text:
             return
         if not self.translation_enabled and bool(pretranslated):
@@ -4553,7 +4834,15 @@ class TranslationApp:
             "pretranslated": bool(pretranslated),
             "stt_openai_ms": self.last_openai_stt_ms,
             "translate_openai_ms": self.last_openai_translate_ms,
+            "stt_confidence": self.last_faster_whisper_confidence,
+            "overlap_words": max(0, int(overlap_words or 0)),
         }
+        try:
+            chunk_seconds = float((capture_meta or {}).get("chunk_seconds") or 0.0)
+        except Exception:
+            chunk_seconds = 0.0
+        if chunk_seconds > 0.0:
+            payload["chunk_seconds"] = round(chunk_seconds, 3)
         if self._queue_is_hot(self.sentence_queue, self.sentence_queue_high_water_ratio):
             self._maybe_report_queue_backpressure(
                 "sentence", self.sentence_queue, action="translation backlog"
@@ -4567,6 +4856,9 @@ class TranslationApp:
                 pretranslated=bool(pretranslated),
                 stt_openai_ms=self.last_openai_stt_ms,
                 translate_openai_ms=self.last_openai_translate_ms,
+                stt_confidence=self.last_faster_whisper_confidence,
+                chunk_seconds=payload.get("chunk_seconds"),
+                overlap_words=payload.get("overlap_words"),
             )
             return
         except queue.Full:
@@ -4589,6 +4881,9 @@ class TranslationApp:
                 pretranslated=bool(pretranslated),
                 stt_openai_ms=self.last_openai_stt_ms,
                 translate_openai_ms=self.last_openai_translate_ms,
+                stt_confidence=self.last_faster_whisper_confidence,
+                chunk_seconds=payload.get("chunk_seconds"),
+                overlap_words=payload.get("overlap_words"),
             )
             self._maybe_report_queue_backpressure(
                 "sentence", self.sentence_queue, action=f"overflow fallback drop {dropped}"
@@ -4636,6 +4931,9 @@ class TranslationApp:
         stt_values = []
         translate_values = []
         pretranslated_values = []
+        confidence_values = []
+        chunk_seconds_values = []
+        overlap_values = []
         for _text, _started, meta in merged_items:
             pretranslated_values.append(bool(meta.get("pretranslated")))
             stt_ms = meta.get("stt_openai_ms")
@@ -4644,12 +4942,27 @@ class TranslationApp:
             translate_ms = meta.get("translate_openai_ms")
             if isinstance(translate_ms, (int, float)) and translate_ms >= 0:
                 translate_values.append(int(translate_ms))
+            stt_confidence = meta.get("stt_confidence")
+            if isinstance(stt_confidence, (int, float)):
+                confidence_values.append(float(stt_confidence))
+            chunk_seconds = meta.get("chunk_seconds")
+            if isinstance(chunk_seconds, (int, float)):
+                chunk_seconds_values.append(float(chunk_seconds))
+            overlap_words = meta.get("overlap_words")
+            if isinstance(overlap_words, (int, float)):
+                overlap_values.append(int(overlap_words))
         if pretranslated_values:
             merged_meta["pretranslated"] = all(pretranslated_values)
         if stt_values:
             merged_meta["stt_openai_ms"] = max(stt_values)
         if translate_values:
             merged_meta["translate_openai_ms"] = max(translate_values)
+        if confidence_values:
+            merged_meta["stt_confidence"] = sum(confidence_values) / len(confidence_values)
+        if chunk_seconds_values:
+            merged_meta["chunk_seconds"] = max(chunk_seconds_values)
+        if overlap_values:
+            merged_meta["overlap_words"] = max(overlap_values)
         self._trace_pipeline(
             "sentence_batch_merge",
             merged_text,
@@ -4660,6 +4973,90 @@ class TranslationApp:
             "sentence", self.sentence_queue, action=f"batched {len(merged_items)} items"
         )
         return merged_text, merged_started_at, merged_meta
+
+    def _enqueue_finalized_output(self, text, latency_meta=None):
+        output_text = (text or "").strip()
+        if not output_text:
+            return
+        output_meta = dict(latency_meta or {})
+        output_meta.setdefault("stt_confidence", self.last_faster_whisper_confidence)
+        payload = {
+            "text": output_text,
+            "latency_meta": output_meta,
+        }
+        self._log_finalized_sentence(
+            output_text,
+            translation_enabled=bool(self.translation_enabled),
+            stt_openai_ms=output_meta.get("stt_openai_ms"),
+            translate_openai_ms=output_meta.get("translate_openai_ms"),
+            stt_confidence=output_meta.get("stt_confidence"),
+            pretranslated=bool(output_meta.get("pretranslated")),
+        )
+        if self._queue_is_hot(
+            self.finalized_output_queue, self.finalized_output_queue_high_water_ratio
+        ):
+            self._maybe_report_queue_backpressure(
+                "finalized_output",
+                self.finalized_output_queue,
+                action="display backlog",
+            )
+        try:
+            self.finalized_output_queue.put_nowait(payload)
+            self._trace_pipeline(
+                "finalized_output_enqueued",
+                output_text,
+                queue_size=self.finalized_output_queue.qsize(),
+            )
+            return
+        except queue.Full:
+            dropped = self._trim_queue_to_fill_ratio(
+                self.finalized_output_queue,
+                self.finalized_output_queue_relief_ratio,
+            )
+            if dropped <= 0:
+                try:
+                    self.finalized_output_queue.get_nowait()
+                    dropped = 1
+                except queue.Empty:
+                    dropped = 0
+        try:
+            self.finalized_output_queue.put_nowait(payload)
+            self._trace_pipeline(
+                "finalized_output_enqueued_after_drop",
+                output_text,
+                queue_size=self.finalized_output_queue.qsize(),
+                dropped_count=dropped,
+            )
+            self._maybe_report_queue_backpressure(
+                "finalized_output",
+                self.finalized_output_queue,
+                action=f"overflow fallback drop {dropped}",
+            )
+        except Exception:
+            pass
+
+    def _unpack_finalized_output_payload(self, payload):
+        if isinstance(payload, dict):
+            return payload.get("text", ""), payload.get("latency_meta", {})
+        if isinstance(payload, tuple):
+            if len(payload) == 2:
+                text, meta = payload
+                return text, meta if isinstance(meta, dict) else {}
+        return payload, {}
+
+    def _display_worker(self):
+        while self.listening:
+            try:
+                payload = self.finalized_output_queue.get(timeout=0.1)
+            except queue.Empty:
+                continue
+            text, latency_meta = self._unpack_finalized_output_payload(payload)
+            if not text:
+                continue
+            try:
+                self.update_text(text, latency_meta=latency_meta)
+            except Exception:
+                pass
 
     def _clear_translation_backlog_after_disable(self):
         dropped_sentences = 0
@@ -4678,6 +5075,15 @@ class TranslationApp:
         dropped_display = len(self.word_reveal_queue) + len(self.text_queue)
         self.word_reveal_queue.clear()
         self.text_queue.clear()
+        dropped_finalized = 0
+        while True:
+            try:
+                self.finalized_output_queue.get_nowait()
+                dropped_finalized += 1
+            except queue.Empty:
+                break
+            except Exception:
+                break
         self.pending_text = ""
         self.pending_latency_meta = None
         self.is_flushing_queue = False
@@ -4693,6 +5099,7 @@ class TranslationApp:
             "",
             dropped_sentences=dropped_sentences,
             dropped_display=dropped_display,
+            dropped_finalized=dropped_finalized,
         )
 
     def _translation_worker(self):
@@ -4940,6 +5347,9 @@ class TranslationApp:
         display_meta["queued_at"] = started_at
         display_meta.setdefault("stt_openai_ms", None)
         display_meta.setdefault("translate_openai_ms", None)
+        display_meta.setdefault("stt_confidence", None)
+        display_meta.setdefault("chunk_seconds", None)
+        display_meta.setdefault("overlap_words", 0)
         pretranslated = bool(display_meta.get("pretranslated"))
         if not raw_debug_active and not self.translation_enabled and pretranslated:
             # This payload came from Whisper direct-translation before the toggle changed.
@@ -5026,7 +5436,7 @@ class TranslationApp:
             translation_enabled=self.translation_enabled,
             translate_openai_ms=display_meta.get("translate_openai_ms"),
         )
-        self.update_text(translated, latency_meta=display_meta)
+        self._enqueue_finalized_output(translated, latency_meta=display_meta)
         self.update_status(self.STATUS_LISTENING)
 
     def _is_spanish_output_mode(self):
@@ -5117,6 +5527,9 @@ class TranslationApp:
         meta = latency_meta or {}
         stt_ms = meta.get("stt_openai_ms")
         translate_ms = meta.get("translate_openai_ms")
+        stt_confidence = meta.get("stt_confidence")
+        chunk_seconds = meta.get("chunk_seconds")
+        overlap_words = meta.get("overlap_words")
         detail_parts = [f"Total {elapsed_ms} ms (queue->display)", f"Avg {avg_ms} ms"]
         if isinstance(stt_ms, (int, float)) and stt_ms >= 0:
             stt_ms = int(stt_ms)
@@ -5124,6 +5537,12 @@ class TranslationApp:
         if isinstance(translate_ms, (int, float)) and translate_ms >= 0:
             translate_ms = int(translate_ms)
             detail_parts.append(f"Translate {translate_ms} ms")
+        if isinstance(chunk_seconds, (int, float)) and chunk_seconds > 0:
+            detail_parts.append(f"Chunk {float(chunk_seconds):.2f}s")
+        if isinstance(stt_confidence, (int, float)):
+            detail_parts.append(f"Conf {max(0.0, min(1.0, float(stt_confidence))):.2f}")
+        if isinstance(overlap_words, (int, float)) and int(overlap_words) > 0:
+            detail_parts.append(f"Overlap {int(overlap_words)}w")
         label_text = "Latency: " + " | ".join(detail_parts)
 
         def update():

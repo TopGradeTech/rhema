@@ -1,11 +1,17 @@
 # -*- mode: python ; coding: utf-8 -*-
 
+from PyInstaller.utils.hooks import collect_data_files
+
+faster_whisper_datas = collect_data_files(
+    "faster_whisper",
+    includes=["assets/*.onnx"],
+)
 
 a = Analysis(
     ['main.py'],
     pathex=[],
     binaries=[],
-    datas=[],
+    datas=faster_whisper_datas,
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
