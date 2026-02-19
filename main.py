@@ -85,6 +85,85 @@ class TranslationApp:
     CONFIGURE_EVENT = "<Configure>"
     STATUS_LISTENING = "Listening..."
     OPENAI_AUDIO_MAX_BYTES = 24 * 1024 * 1024
+    OPENAI_API_KEY_MISSING_ERROR = "OpenAI API key is empty. Enter it in Settings."
+    OPENAI_API_ERROR_PREFIX = "OpenAI API error "
+    WORD_TOKEN_RE = re.compile(r"[^\W_]+", flags=re.UNICODE)
+    WORD_CHAR_RE = re.compile(r"[^\W_]", flags=re.UNICODE)
+    LETTER_CHAR_RE = re.compile(r"[^\W\d_]", flags=re.UNICODE)
+    LETTER_TOKEN_RE = re.compile(r"[^\W\d_]+", flags=re.UNICODE)
+    NON_WHITESPACE_TOKEN_RE = re.compile(r"\S+")
+    TERMINAL_PUNCTUATION_RE = re.compile(r"[.!?][\"')\\]]*$")
+    PUNCTUATION_SPACING_RE = re.compile(r"\s+([,.;:!?])")
+    MULTISPACE_RE = re.compile(r"\s{2,}")
+    URL_SCHEME_RE = re.compile(r"(https?://|www\.)")
+    BARE_DOMAIN_RE = re.compile(r"\b(?:[a-z0-9-]+\.)+[a-z]{2,24}\b")
+    SPANISH_ACCENT_MARK_RE = re.compile(r"[\u00e1\u00e9\u00ed\u00f3\u00fa\u00fc\u00f1\u00bf\u00a1]")
+    LIST_TOGGLE_SHOW_TEXT = "Show list"
+    LIST_TOGGLE_HIDE_TEXT = "Hide list"
+    BOOK_1_SAMUEL = "1 Samuel"
+    BOOK_2_SAMUEL = "2 Samuel"
+    BOOK_1_KINGS = "1 Kings"
+    BOOK_2_KINGS = "2 Kings"
+    BOOK_1_CHRONICLES = "1 Chronicles"
+    BOOK_2_CHRONICLES = "2 Chronicles"
+    BOOK_NEHEMIAH = "Nehemiah"
+    BOOK_ECCLESIASTES = "Ecclesiastes"
+    BOOK_SONG_OF_SOLOMON = "Song of Solomon"
+    BOOK_ISAIAH = "Isaiah"
+    BOOK_JEREMIAH = "Jeremiah"
+    BOOK_LAMENTATIONS = "Lamentations"
+    BOOK_EZEKIEL = "Ezekiel"
+    BOOK_DANIEL = "Daniel"
+    BOOK_HOSEA = "Hosea"
+    BOOK_JOEL = "Joel"
+    BOOK_AMOS = "Amos"
+    BOOK_OBADIAH = "Obadiah"
+    BOOK_JONAH = "Jonah"
+    BOOK_MICAH = "Micah"
+    BOOK_NAHUM = "Nahum"
+    BOOK_HABAKKUK = "Habakkuk"
+    BOOK_ZEPHANIAH = "Zephaniah"
+    BOOK_HAGGAI = "Haggai"
+    BOOK_ZECHARIAH = "Zechariah"
+    BOOK_MALACHI = "Malachi"
+    BOOK_MATTHEW = "Matthew"
+    BOOK_MARK = "Mark"
+    BOOK_LUKE = "Luke"
+    BOOK_JOHN = "John"
+    BOOK_ACTS = "Acts"
+    BOOK_ROMANS = "Romans"
+    BOOK_1_CORINTHIANS = "1 Corinthians"
+    BOOK_2_CORINTHIANS = "2 Corinthians"
+    BOOK_GALATIANS = "Galatians"
+    BOOK_EPHESIANS = "Ephesians"
+    BOOK_PHILIPPIANS = "Philippians"
+    BOOK_COLOSSIANS = "Colossians"
+    BOOK_1_THESSALONIANS = "1 Thessalonians"
+    BOOK_2_THESSALONIANS = "2 Thessalonians"
+    BOOK_1_TIMOTHY = "1 Timothy"
+    BOOK_2_TIMOTHY = "2 Timothy"
+    BOOK_TITUS = "Titus"
+    BOOK_PHILEMON = "Philemon"
+    BOOK_HEBREWS = "Hebrews"
+    BOOK_JAMES = "James"
+    BOOK_1_PETER = "1 Peter"
+    BOOK_2_PETER = "2 Peter"
+    BOOK_1_JOHN = "1 John"
+    BOOK_2_JOHN = "2 John"
+    BOOK_3_JOHN = "3 John"
+    BOOK_JUDE = "Jude"
+    BOOK_REVELATION = "Revelation"
+    PERSON_JESUS = "Jesus"
+    PERSON_MOSES = "Moses"
+    PERSON_JOSEPH = "Joseph"
+    PERSON_SOLOMON = "Solomon"
+    PERSON_MARY = "Mary"
+    PLACE_JERUSALEM = "Jerusalem"
+    PLACE_BETHLEHEM = "Bethlehem"
+    PLACE_JERICHO = "Jericho"
+    PLACE_GOLGOTHA = "Golgotha"
+    PLACE_MOUNT_SINAI = "Mount Sinai"
+    PLACE_MOUNT_ZION = "Mount Zion"
     TRANSLATION_NOISE_MARKERS = (
         "please provide",
         "provide the text",
@@ -110,6 +189,17 @@ class TranslationApp:
         "context:",
         "contexto:",
         "transcribe the audio verbatim",
+    )
+    GRATITUDE_SHORT_PHRASES = frozenset(
+        {
+            "thank you",
+            "thanks",
+            "thanks you",
+            "thank you very much",
+            "thank you so much",
+            "thanks very much",
+            "thanks so much",
+        }
     )
     STT_STRICT_NOISE_MARKERS_NORMALIZED = frozenset(
         {
@@ -257,7 +347,8 @@ class TranslationApp:
         self._last_chunk_tuning_notice = 0.0
         self.loopback_overlap_seconds = 0.35
         self.loopback_tail_raw = b""
-        self.phrase_time_limit = 5.0
+        # Keep enough headroom so long scripted lines are less likely to clip.
+        self.phrase_time_limit = 6.0
         self.recommended_host_api = ""
         self.available_host_apis = []
         self.openai_api_key = (os.getenv("OPENAI_API_KEY", "") or "").strip()
@@ -271,10 +362,11 @@ class TranslationApp:
         self.faster_whisper_compute_type = "float16"
         self.faster_whisper_device = "cuda"
         self.faster_whisper_cpu_threads = max(1, (os.cpu_count() or 4) - 1)
-        self.faster_whisper_beam_size = 1
-        self.faster_whisper_best_of = 1
+        self.faster_whisper_beam_size = 5
+        self.faster_whisper_best_of = 5
         self.faster_whisper_temperature = 0.0
         self.faster_whisper_without_timestamps = True
+        # Slightly higher threshold reduces dropped low-confidence speech.
         self.faster_whisper_no_speech_threshold = 0.7
         self.last_faster_whisper_confidence = None
         self.faster_whisper_model = None
@@ -284,10 +376,11 @@ class TranslationApp:
         self.preferred_device_label = ""
         self.device_refresh_in_progress = False
         self.last_display_line_count = 0
-        self.rms_gate_enabled = False
+        self.rms_gate_enabled = True
         self.rms_gate_factor = 1.0
         self.sentence_buffer = ""
         self.sentence_buffer_pretranslated = False
+        self.sentence_buffer_audio_received_at = None
         self.sentence_lock = Lock()
         self.sentence_flush_ms = 100
         self.sentence_last_update = 0.0
@@ -573,7 +666,27 @@ class TranslationApp:
         self.root.quit()
 
     def _install_exception_hook(self):
+        def _is_shutdown_exception(exc_type, exc):
+            try:
+                if exc_type and issubclass(exc_type, (KeyboardInterrupt, SystemExit)):
+                    return True
+            except Exception:
+                pass
+            return isinstance(exc, (KeyboardInterrupt, SystemExit))
+
         def handle_exception(exc_type, exc, tb):
+            if _is_shutdown_exception(exc_type, exc):
+                try:
+                    self._log_status(
+                        f"{getattr(exc_type, '__name__', 'Exception')} received; closing app"
+                    )
+                except Exception:
+                    pass
+                try:
+                    self.root.after(0, self.on_closing)
+                except Exception:
+                    pass
+                return
             try:
                 with open(self.error_log_path, "a", encoding="utf-8") as f:
                     f.write("\n--- Unhandled Exception ---\n")
@@ -593,6 +706,8 @@ class TranslationApp:
             import threading
 
             def _thread_excepthook(args):
+                if _is_shutdown_exception(args.exc_type, args.exc_value):
+                    return
                 try:
                     with open(self.error_log_path, "a", encoding="utf-8") as f:
                         f.write("\n--- Thread Exception ---\n")
@@ -926,10 +1041,10 @@ class TranslationApp:
 
     def _apply_translation_mode_defaults(self):
         # Requested behavior:
-        # - Translation OFF => English output
-        # - Translation ON  => Spanish output
-        self.source_lang = "en"
-        self.target_lang = "es" if self.translation_enabled else "en"
+        # - Translation OFF => English passthrough (English output)
+        # - Translation ON  => Spanish input translated to English output
+        self.source_lang = "es" if self.translation_enabled else "en"
+        self.target_lang = "en"
         self.auto_switch_translation = False
 
     def save_settings(self):
@@ -2086,8 +2201,10 @@ class TranslationApp:
         if was_translation_enabled and not self.translation_enabled:
             self._clear_translation_backlog_after_disable()
 
-    def _apply_audio_vars(self, audio_vars):
-        pass
+    def _apply_audio_vars(self, _audio_vars):
+        # Intentionally empty: audio changes are applied immediately via
+        # trace callbacks in the audio settings controls.
+        return
 
     def _refresh_audio_devices(self):
         # Refresh device list after audio-related settings change.
@@ -2547,12 +2664,9 @@ class TranslationApp:
         display_section.pack(fill=tk.X, pady=(0, 10))
 
         display_vars = self._build_display_controls(
-            content,
             display_section,
             label_opts,
             section_bg,
-            settings_fg,
-            section_font,
             settings_window,
         )
 
@@ -2566,7 +2680,7 @@ class TranslationApp:
             pady=10,
         )
         audio_section.pack(fill=tk.X, pady=(0, 10))
-        audio_vars = self._build_audio_section(audio_section, label_opts, section_bg, settings_fg)
+        audio_vars = self._build_audio_section(audio_section, label_opts)
 
         filters_section = tk.LabelFrame(
             content,
@@ -2652,12 +2766,9 @@ class TranslationApp:
 
     def _build_display_controls(
         self,
-        content,
         display_section,
         label_opts,
         section_bg,
-        settings_fg,
-        section_font,
         settings_window,
     ):
         self._add_setting_label(
@@ -2799,7 +2910,7 @@ class TranslationApp:
             "monitor_labels": monitor_labels,
         }
 
-    def _build_audio_section(self, audio_section, label_opts, section_bg, settings_fg):
+    def _build_audio_section(self, audio_section, label_opts):
         self._add_setting_label(
             audio_section,
             "Audio Device:",
@@ -2854,7 +2965,7 @@ class TranslationApp:
         bad_words_toggle_var = tk.BooleanVar(value=False)
         bad_words_toggle_button = self._make_button(
             filters_section,
-            "Show list",
+            self.LIST_TOGGLE_SHOW_TEXT,
             command=None,
             primary=True,
         )
@@ -2898,7 +3009,7 @@ class TranslationApp:
         custom_vocab_toggle_var = tk.BooleanVar(value=False)
         custom_vocab_toggle_button = self._make_button(
             filters_section,
-            "Show list",
+            self.LIST_TOGGLE_SHOW_TEXT,
             command=None,
             primary=True,
         )
@@ -2933,7 +3044,9 @@ class TranslationApp:
 
         def update_bad_words_visibility():
             show = bad_words_toggle_var.get()
-            bad_words_toggle_button.config(text="Hide list" if show else "Show list")
+            bad_words_toggle_button.config(
+                text=self.LIST_TOGGLE_HIDE_TEXT if show else self.LIST_TOGGLE_SHOW_TEXT
+            )
             if show:
                 bad_words_en_container.pack(
                     fill=tk.BOTH,
@@ -2953,7 +3066,9 @@ class TranslationApp:
 
         def update_custom_vocab_visibility():
             show = custom_vocab_toggle_var.get()
-            custom_vocab_toggle_button.config(text="Hide list" if show else "Show list")
+            custom_vocab_toggle_button.config(
+                text=self.LIST_TOGGLE_HIDE_TEXT if show else self.LIST_TOGGLE_SHOW_TEXT
+            )
             if show:
                 custom_vocab_en_container.pack(fill=tk.BOTH, expand=True, pady=(6, 0))
                 custom_vocab_es_container.pack(fill=tk.BOTH, expand=True, pady=(6, 0))
@@ -3478,7 +3593,7 @@ class TranslationApp:
         translate_row.pack(anchor="w", pady=(0, 8), fill=tk.X)
         translate_check = tk.Checkbutton(
             translate_row,
-            text="Enable English -> Spanish translation",
+            text="Enable Spanish -> English translation",
             variable=enable_translation_var,
             bg=label_opts["bg"],
             fg=label_opts["fg"],
@@ -3488,13 +3603,13 @@ class TranslationApp:
         translate_check.pack(side=tk.LEFT)
         self._create_help_icon(
             translate_row,
-            "Unchecked: output English. Checked: output Spanish.",
+            "Unchecked: English passthrough. Checked: translate Spanish speech to English.",
             label_opts["bg"],
             label_opts["fg"],
         )
         toggle_state_label = tk.Label(
             translation_section,
-            text="Current mode: Translation OFF (English output)",
+            text="Current mode: Translation OFF (English passthrough)",
             bg=label_opts["bg"],
             fg=label_opts["fg"],
             font=(self.ui_font_family, 9),
@@ -3508,19 +3623,29 @@ class TranslationApp:
             font=(self.ui_font_family, 9),
         )
         output_lang_label.pack(anchor="w", pady=(0, 8))
+        input_lang_label = tk.Label(
+            translation_section,
+            text="Input language: English",
+            bg=label_opts["bg"],
+            fg=label_opts["fg"],
+            font=(self.ui_font_family, 9),
+        )
+        input_lang_label.pack(anchor="w")
 
         def _refresh_translation_toggle_label(*_args):
             enabled = self._coerce_bool(enable_translation_var.get(), default=False)
             if enabled:
                 toggle_state_label.config(
-                    text="Current mode: Translation ON (Spanish output)"
-                )
-                output_lang_label.config(text="Output language: Spanish")
-            else:
-                toggle_state_label.config(
-                    text="Current mode: Translation OFF (English output)"
+                    text="Current mode: Translation ON (Spanish -> English)"
                 )
                 output_lang_label.config(text="Output language: English")
+                input_lang_label.config(text="Input language: Spanish")
+            else:
+                toggle_state_label.config(
+                    text="Current mode: Translation OFF (English passthrough)"
+                )
+                output_lang_label.config(text="Output language: English")
+                input_lang_label.config(text="Input language: English")
 
         def _sync_translation_toggle_runtime(*_args):
             enabled = self._coerce_bool(enable_translation_var.get(), default=False)
@@ -3542,14 +3667,6 @@ class TranslationApp:
         enable_translation_var.trace_add("write", _refresh_translation_toggle_label)
         enable_translation_var.trace_add("write", _sync_translation_toggle_runtime)
         _refresh_translation_toggle_label()
-        fixed_input_label = tk.Label(
-            translation_section,
-            text="Input language: English",
-            bg=label_opts["bg"],
-            fg=label_opts["fg"],
-            font=(self.ui_font_family, 9),
-        )
-        fixed_input_label.pack(anchor="w")
 
         return {
             "enable_translation_var": enable_translation_var,
@@ -3800,7 +3917,7 @@ class TranslationApp:
         return None
 
     def _count_spoken_words(self, text):
-        return len(re.findall(r"[^\W_]+", text or "", flags=re.UNICODE))
+        return len(self.WORD_TOKEN_RE.findall(text or ""))
 
     def _suggest_optimal_loopback_chunk_seconds(self):
         samples = list(self.loopback_chunk_metrics)
@@ -3973,7 +4090,10 @@ class TranslationApp:
             return
         self._capture_audio_level(audio)
         self.no_speech_timeout_count = 0
-        payload_meta = {"loopback": bool(use_loopback)}
+        payload_meta = {
+            "loopback": bool(use_loopback),
+            "audio_received_at": time.time(),
+        }
         if chunk_seconds is not None:
             try:
                 payload_meta["chunk_seconds"] = round(float(chunk_seconds), 3)
@@ -4220,6 +4340,18 @@ class TranslationApp:
             if engine == "faster-whisper":
                 self._note_unknown_speech()
             return ""
+        if (
+            engine == "faster-whisper"
+            and not raw_debug_active
+            and self._is_probable_gratitude_hallucination(text)
+        ):
+            self._trace_pipeline(
+                "stt_gratitude_hallucination_suppressed",
+                text,
+                stt_confidence=self.last_faster_whisper_confidence,
+            )
+            self._note_unknown_speech()
+            return ""
         if self._source_filter_blocks_recognized_text(text, raw_debug_active):
             return ""
         self._reset_speech_counters()
@@ -4238,6 +4370,16 @@ class TranslationApp:
         )
         return True
 
+    def _is_probable_gratitude_hallucination(self, text):
+        normalized = re.sub(r"[^\w]+", " ", (text or "").lower(), flags=re.UNICODE).strip()
+        if normalized not in self.GRATITUDE_SHORT_PHRASES:
+            return False
+        confidence = self._coerce_float_or_none(self.last_faster_whisper_confidence)
+        # Keep very confident gratitude phrases to avoid suppressing clearly spoken intent.
+        if confidence is not None and confidence >= 0.9:
+            return False
+        return True
+
     def _reset_recognition_state(self):
         self.last_openai_translate_ms = None
         self.last_stt_pretranslated = False
@@ -4246,11 +4388,17 @@ class TranslationApp:
     def _run_stt_engine(self, audio, engine):
         if engine == "faster-whisper":
             stt_started = time.time()
-            raw_text = self.recognize_faster_whisper(audio)
+            use_direct_translation = self._should_use_faster_whisper_direct_translation()
+            raw_text = self.recognize_faster_whisper(
+                audio,
+                translate_to_english=use_direct_translation,
+            )
             stt_ms = int((time.time() - stt_started) * 1000)
+            if use_direct_translation:
+                self.last_stt_pretranslated = True
             return raw_text, stt_ms
         if not self.openai_api_key:
-            raise ValueError("OpenAI API key is empty. Enter it in Settings.")
+            raise ValueError(self.OPENAI_API_KEY_MISSING_ERROR)
         if self._should_use_whisper_direct_translation():
             raw_text, stt_ms = self.recognize_openai_whisper_translation(
                 audio, self.openai_api_key
@@ -4335,7 +4483,10 @@ class TranslationApp:
         overlap_words = 0
         audio_for_stt = self._prepare_audio_for_stt(audio, is_loopback=is_loopback)
         if self._rms_gate_blocks_audio(
-            audio, raw_debug_active=raw_debug_active, whisper_gate_enabled=whisper_gate_enabled
+            audio,
+            raw_debug_active=raw_debug_active,
+            whisper_gate_enabled=whisper_gate_enabled,
+            is_loopback=is_loopback,
         ):
             return
         text = self._recognize_audio(audio_for_stt)
@@ -4383,8 +4534,13 @@ class TranslationApp:
         audio,
         raw_debug_active=False,
         whisper_gate_enabled=False,
+        is_loopback=False,
     ):
         if not self.rms_gate_enabled or raw_debug_active or not whisper_gate_enabled:
+            return False
+        # For live mics, SpeechRecognition already gates phrase start/end. An
+        # extra chunk RMS gate can suppress valid speech and create dropouts.
+        if not is_loopback:
             return False
         try:
             raw = audio.get_raw_data()
@@ -4410,22 +4566,30 @@ class TranslationApp:
         )
 
     def _enqueue_flushed_sentences_from_buffer(self, text, capture_meta=None, overlap_words=0):
-        flushed = self._append_sentence_buffer(text)
+        flushed = self._append_sentence_buffer(text, capture_meta=capture_meta)
         if not flushed:
             return
         for sentence_payload in flushed:
-            sentence, pretranslated = self._unpack_buffered_sentence_payload(sentence_payload)
+            sentence, pretranslated, audio_received_at = self._unpack_buffered_sentence_payload(
+                sentence_payload
+            )
             self._enqueue_sentence(
                 sentence,
                 pretranslated=pretranslated,
                 capture_meta=capture_meta,
                 overlap_words=overlap_words,
+                audio_received_at=audio_received_at,
             )
 
     def _unpack_buffered_sentence_payload(self, payload):
         if isinstance(payload, tuple):
-            return payload[0], bool(payload[1]) if len(payload) > 1 else False
-        return payload, False
+            text = payload[0]
+            pretranslated = bool(payload[1]) if len(payload) > 1 else False
+            audio_received_at = (
+                self._coerce_timestamp_or_none(payload[2]) if len(payload) > 2 else None
+            )
+            return text, pretranslated, audio_received_at
+        return payload, False, None
 
     def _prepare_audio_for_stt(self, audio, is_loopback=False):
         if self._raw_whisper_debug_active():
@@ -4465,7 +4629,7 @@ class TranslationApp:
         now = time.time()
         if now - self.transcript_context_updated_at > self.transcript_context_ttl_sec:
             self.transcript_context_words = []
-        incoming_words = re.findall(r"[^\W_]+", text.lower(), flags=re.UNICODE)
+        incoming_words = self.WORD_TOKEN_RE.findall(text.lower())
         if not incoming_words:
             self.transcript_context_words = []
             self.transcript_context_updated_at = now
@@ -4496,8 +4660,8 @@ class TranslationApp:
             return text.strip()
         remaining = []
         dropped = 0
-        for token in re.findall(r"\S+", text):
-            if dropped < words_to_drop and re.search(r"[^\W_]", token, flags=re.UNICODE):
+        for token in self.NON_WHITESPACE_TOKEN_RE.findall(text):
+            if dropped < words_to_drop and self.WORD_CHAR_RE.search(token):
                 dropped += 1
                 continue
             remaining.append(token)
@@ -4539,7 +4703,7 @@ class TranslationApp:
         detected = self._detect_language_from_text(text)
         if detected and detected in self.auto_detect_langs:
             return detected == locked_lang
-        tokens = re.findall(r"[^\W_]+", text.lower(), flags=re.UNICODE)
+        tokens = self.WORD_TOKEN_RE.findall(text.lower())
         if not tokens:
             return True
         return self._passes_locked_language_heuristics(text, tokens, locked_lang)
@@ -4553,7 +4717,7 @@ class TranslationApp:
         return True
 
     def _passes_locked_spanish_heuristics(self, text, tokens, token_set):
-        if re.search(r"[\u00e1\u00e9\u00ed\u00f3\u00fa\u00fc\u00f1\u00bf\u00a1]", text.lower()):
+        if self.SPANISH_ACCENT_MARK_RE.search(text.lower()):
             return True
         if token_set & self.spanish_common_words:
             return True
@@ -4562,7 +4726,7 @@ class TranslationApp:
         return len(tokens) < 3
 
     def _passes_locked_english_heuristics(self, text, tokens, token_set):
-        if re.search(r"[\u00e1\u00e9\u00ed\u00f3\u00fa\u00fc\u00f1\u00bf\u00a1]", text.lower()):
+        if self.SPANISH_ACCENT_MARK_RE.search(text.lower()):
             return False
         if token_set & self.english_common_words:
             return True
@@ -4600,7 +4764,7 @@ class TranslationApp:
         if not text:
             return None
         sample = text.lower()
-        tokens = re.findall(r"[a-zÃ¡Ã©Ã­Ã³ÃºÃ¼Ã±]+", sample)
+        tokens = self.LETTER_TOKEN_RE.findall(sample)
         if not tokens:
             return None
         es_score = sum(1 for token in tokens if token in self.spanish_common_words)
@@ -4631,8 +4795,8 @@ class TranslationApp:
         max_bytes = int(max_bytes or self.OPENAI_AUDIO_MAX_BYTES)
         if len(audio_bytes) <= max_bytes:
             return [audio_bytes]
-        AudioSegment, detect_silence = self._require_pydub_for_split()
-        segment = AudioSegment.from_file(io.BytesIO(audio_bytes), format="wav")
+        audio_segment_cls, detect_silence = self._require_pydub_for_split()
+        segment = audio_segment_cls.from_file(io.BytesIO(audio_bytes), format="wav")
         total_ms = int(len(segment) or 0)
         if total_ms <= 0:
             return [audio_bytes]
@@ -4726,7 +4890,7 @@ class TranslationApp:
             total_request_ms += int((time.time() - request_started) * 1000)
             if response.status_code != 200:
                 raise sr.RequestError(
-                    f"OpenAI API error {response.status_code}: {response.text}"
+                    f"{self.OPENAI_API_ERROR_PREFIX}{response.status_code}: {response.text}"
                 )
             payload = response.json()
             text = (payload.get("text", "") or "").strip()
@@ -4832,7 +4996,7 @@ class TranslationApp:
         except Exception:
             pass
 
-    def recognize_faster_whisper(self, audio):
+    def recognize_faster_whisper(self, audio, translate_to_english=False):
         model = self._get_faster_whisper_model()
         audio_bytes = audio.get_wav_data()
         tmp_path = None
@@ -4845,6 +5009,7 @@ class TranslationApp:
             kwargs = self._build_faster_whisper_transcribe_kwargs(
                 raw_debug_active=raw_debug_active,
                 language=lang,
+                translate_to_english=translate_to_english,
             )
             segments, _info = self._transcribe_with_faster_whisper(model, tmp_path, kwargs)
             segments = list(segments)
@@ -4865,21 +5030,28 @@ class TranslationApp:
                 except Exception:
                     pass
 
-    def _build_faster_whisper_transcribe_kwargs(self, raw_debug_active=False, language=""):
+    def _build_faster_whisper_transcribe_kwargs(
+        self,
+        raw_debug_active=False,
+        language="",
+        translate_to_english=False,
+    ):
         kwargs = {}
         if not raw_debug_active:
+            initial_prompt = self._build_faster_whisper_initial_prompt(language=language)
+            hotwords = self._build_faster_whisper_hotwords(language=language)
             kwargs.update(
                 {
-                    # Improve robustness on noise/silence and avoid context carry-over
-                    # that can produce repeated hallucinated phrases.
+                    # Improve robustness on noise/silence for live transcription.
                     "vad_filter": True,
-                    "condition_on_previous_text": False,
-                    # Favor low-latency, deterministic decoding for live captioning.
+                    # Keep context across chunks for long scripted reads.
+                    "condition_on_previous_text": True,
+                    # Favor accuracy over minimum latency.
                     "beam_size": self._safe_int_setting(
-                        "faster_whisper_beam_size", default=1, minimum=1
+                        "faster_whisper_beam_size", default=5, minimum=1
                     ),
                     "best_of": self._safe_int_setting(
-                        "faster_whisper_best_of", default=1, minimum=1
+                        "faster_whisper_best_of", default=5, minimum=1
                     ),
                     "temperature": self._safe_float_setting(
                         "faster_whisper_temperature", default=0.0, minimum=0.0
@@ -4899,8 +5071,14 @@ class TranslationApp:
                     ),
                 }
             )
+            if initial_prompt:
+                kwargs["initial_prompt"] = initial_prompt
+            if hotwords:
+                kwargs["hotwords"] = hotwords
         if language:
             kwargs["language"] = language
+        if translate_to_english:
+            kwargs["task"] = "translate"
         return kwargs
 
     def _safe_int_setting(self, attr_name, default=0, minimum=None):
@@ -4935,6 +5113,8 @@ class TranslationApp:
                 "temperature",
                 "without_timestamps",
                 "no_speech_threshold",
+                "initial_prompt",
+                "hotwords",
             ):
                 fallback_kwargs.pop(key, None)
             return model.transcribe(tmp_path, **fallback_kwargs)
@@ -4969,29 +5149,91 @@ class TranslationApp:
 
     def _filter_faster_whisper_segments(self, segments):
         kept = []
+        fallback_best_text = ""
+        fallback_best_score = None
         for segment in segments:
             text = (getattr(segment, "text", "") or "").strip()
             if not text:
                 continue
             if not self._faster_whisper_segment_passes_filters(segment):
+                score = self._faster_whisper_segment_score(segment)
+                if score is not None and (
+                    fallback_best_score is None or score > fallback_best_score
+                ):
+                    fallback_best_score = score
+                    fallback_best_text = text
                 continue
             kept.append(text)
-        return " ".join(kept).strip()
+        if kept:
+            return " ".join(kept).strip()
+        # If every segment was filtered, keep the strongest candidate when the
+        # score is still reasonable to avoid false empty drops.
+        if fallback_best_text and (fallback_best_score or 0.0) >= 0.28:
+            return fallback_best_text
+        return ""
 
     def _faster_whisper_segment_passes_filters(self, segment):
         no_speech_prob = self._coerce_float_or_none(getattr(segment, "no_speech_prob", None))
-        if no_speech_prob is not None and no_speech_prob >= 0.7:
-            return False
         avg_logprob = self._coerce_float_or_none(getattr(segment, "avg_logprob", None))
-        if avg_logprob is not None and avg_logprob <= -1.2:
+        # Reject only very low-confidence segments; overly strict thresholds
+        # can drop valid speech in live microphone mode.
+        if avg_logprob is not None and avg_logprob <= -2.0:
+            return False
+        if (
+            no_speech_prob is not None
+            and no_speech_prob >= 0.92
+            and (avg_logprob is None or avg_logprob <= -1.4)
+        ):
             return False
         return True
+
+    def _faster_whisper_segment_score(self, segment):
+        partial_scores = []
+        avg_logprob = self._coerce_float_or_none(getattr(segment, "avg_logprob", None))
+        if avg_logprob is not None:
+            try:
+                partial_scores.append(max(0.0, min(1.0, math.exp(float(avg_logprob)))))
+            except Exception:
+                pass
+        no_speech_prob = self._coerce_float_or_none(getattr(segment, "no_speech_prob", None))
+        if no_speech_prob is not None:
+            try:
+                partial_scores.append(max(0.0, min(1.0, 1.0 - float(no_speech_prob))))
+            except Exception:
+                pass
+        if not partial_scores:
+            return None
+        return sum(partial_scores) / len(partial_scores)
 
     def _coerce_float_or_none(self, value):
         try:
             return float(value)
         except Exception:
             return None
+
+    def _coerce_timestamp_or_none(self, value):
+        try:
+            ts = float(value)
+        except Exception:
+            return None
+        if ts <= 0.0:
+            return None
+        return ts
+
+    def _elapsed_ms(self, started_at, ended_at=None):
+        start_ts = self._coerce_timestamp_or_none(started_at)
+        if start_ts is None:
+            return None
+        if ended_at is None:
+            end_ts = time.time()
+        else:
+            end_ts = self._coerce_timestamp_or_none(ended_at)
+            if end_ts is None:
+                return None
+        elapsed = int((end_ts - start_ts) * 1000)
+        if elapsed < 0:
+            return None
+        return elapsed
 
     def _build_openai_transcription_prompt(self):
         return (
@@ -5001,38 +5243,101 @@ class TranslationApp:
             "Omit common bad words."
         )
 
+    def _faster_whisper_vocab_hints(self, language=""):
+        vocab_by_lang = self.custom_vocabulary_by_lang or {}
+        if not vocab_by_lang:
+            return []
+        lang = (language or "").strip().lower()
+        if "-" in lang:
+            lang = lang.split("-", 1)[0]
+        if "_" in lang:
+            lang = lang.split("_", 1)[0]
+        if not lang or lang == "auto":
+            lang = (self._normalized_source_lang_code() or "en").strip().lower()
+        terms = list(vocab_by_lang.get(lang, []))
+        if not terms and lang != "en":
+            terms = list(vocab_by_lang.get("en", []))
+        if not terms:
+            return []
+        if lang == "es":
+            seeded_defaults = {str(item).strip().lower() for item in self.default_biblical_terms_es()}
+        else:
+            seeded_defaults = {str(item).strip().lower() for item in self.default_biblical_terms()}
+        cleaned = []
+        seen = set()
+        for term in terms:
+            value = str(term).strip()
+            if not value:
+                continue
+            key = value.lower()
+            if key in seen:
+                continue
+            seen.add(key)
+            if key in seeded_defaults:
+                continue
+            cleaned.append(value)
+        return cleaned
+
+    def _build_faster_whisper_initial_prompt(self, language=""):
+        prompt = (
+            "Transcribe the audio verbatim with punctuation and capitalization. "
+            "If speech is cut off, do not invent missing words."
+        )
+        vocab_hints = self._faster_whisper_vocab_hints(language=language)
+        if vocab_hints:
+            prompt = f"{prompt} Prefer these terms when spoken: {', '.join(vocab_hints[:24])}."
+        return prompt
+
+    def _build_faster_whisper_hotwords(self, language=""):
+        vocab_hints = self._faster_whisper_vocab_hints(language=language)
+        if not vocab_hints:
+            return ""
+        return ", ".join(vocab_hints[:40])
+
     def _contains_url_like_text(self, text):
         sample = (text or "").strip().lower()
         if not sample:
             return False
-        if re.search(r"(https?://|www\.)", sample):
+        if self.URL_SCHEME_RE.search(sample):
             return True
         # Bare domains (e.g., example.com) without scheme.
-        if re.search(
-            r"\b(?:[a-z0-9-]+\.)+(?:com|org|net|io|co|edu|gov|info|biz|app|dev|ai|us|uk|ca|de|fr|es|mx|tv|me)\b",
-            sample,
-        ):
+        if self.BARE_DOMAIN_RE.search(sample):
             return True
         return False
 
-    def _append_sentence_buffer(self, text):
+    def _append_sentence_buffer(self, text, capture_meta=None):
         text = text.strip()
         if not text:
             return []
         incoming_pretranslated = bool(self.last_stt_pretranslated)
+        incoming_audio_received_at = self._coerce_timestamp_or_none(
+            (capture_meta or {}).get("audio_received_at")
+        )
         with self.sentence_lock:
             if self.sentence_buffer:
                 self.sentence_buffer = f"{self.sentence_buffer} {text}"
                 self.sentence_buffer_pretranslated = (
                     bool(self.sentence_buffer_pretranslated) and incoming_pretranslated
                 )
+                if incoming_audio_received_at is not None:
+                    current_audio_received_at = self._coerce_timestamp_or_none(
+                        self.sentence_buffer_audio_received_at
+                    )
+                    if current_audio_received_at is None:
+                        self.sentence_buffer_audio_received_at = incoming_audio_received_at
+                    else:
+                        self.sentence_buffer_audio_received_at = min(
+                            current_audio_received_at,
+                            incoming_audio_received_at,
+                        )
             else:
                 self.sentence_buffer = text
                 self.sentence_buffer_pretranslated = incoming_pretranslated
+                self.sentence_buffer_audio_received_at = incoming_audio_received_at
             self.sentence_last_update = time.time()
             buffer_text = self.sentence_buffer.strip()
             has_terminal_punctuation = bool(
-                re.search(r"[.!?][\"')\\]]*$", buffer_text)
+                self.TERMINAL_PUNCTUATION_RE.search(buffer_text)
             )
             if (
                 len(buffer_text) >= self.sentence_max_chars
@@ -5051,23 +5356,27 @@ class TranslationApp:
                     chars=len(buffer_text),
                 )
                 pretranslated = bool(self.sentence_buffer_pretranslated)
+                buffered_audio_received_at = self._coerce_timestamp_or_none(
+                    self.sentence_buffer_audio_received_at
+                )
                 self.sentence_buffer = ""
                 self.sentence_buffer_pretranslated = False
-                return [(buffer_text, pretranslated)]
+                self.sentence_buffer_audio_received_at = None
+                return [(buffer_text, pretranslated, buffered_audio_received_at)]
         return []
 
     def _is_likely_sentence_fragment(self, text):
         text = (text or "").strip()
         if not text:
             return False
-        words = re.findall(r"[^\W_]+", text, flags=re.UNICODE)
+        words = self.WORD_TOKEN_RE.findall(text)
         if not words:
             return False
         word_count = len(words)
-        has_terminal = bool(re.search(r"[.!?][\"')\\]]*$", text))
+        has_terminal = bool(self.TERMINAL_PUNCTUATION_RE.search(text))
         if re.search(r"[,;:][\"')\\]]*$", text):
             return True
-        first_letter = re.search(r"[^\W\d_]", text, flags=re.UNICODE)
+        first_letter = self.LETTER_CHAR_RE.search(text)
         starts_lower = bool(first_letter and first_letter.group(0).islower())
         if has_terminal and starts_lower and word_count <= 6:
             return True
@@ -5098,9 +5407,9 @@ class TranslationApp:
                 return
             buffer_text = self.sentence_buffer.strip()
             buffer_pretranslated = bool(self.sentence_buffer_pretranslated)
-            words = re.findall(r"[^\W_]+", buffer_text, flags=re.UNICODE)
+            words = self.WORD_TOKEN_RE.findall(buffer_text)
             word_count = len(words)
-            has_terminal = bool(re.search(r"[.!?][\"')\\]]*$", buffer_text))
+            has_terminal = bool(self.TERMINAL_PUNCTUATION_RE.search(buffer_text))
             if (
                 self._is_likely_sentence_fragment(buffer_text)
                 and age_ms < (self.sentence_flush_ms + fragment_grace_ms)
@@ -5130,14 +5439,22 @@ class TranslationApp:
                     reason="too_short",
                 )
                 return
+            buffer_audio_received_at = self._coerce_timestamp_or_none(
+                self.sentence_buffer_audio_received_at
+            )
             self.sentence_buffer = ""
             self.sentence_buffer_pretranslated = False
+            self.sentence_buffer_audio_received_at = None
         self._trace_pipeline(
             "sentence_buffer_timeout_flush",
             buffer_text,
             wait_ms=self.sentence_flush_ms,
         )
-        self._enqueue_sentence(buffer_text, pretranslated=buffer_pretranslated)
+        self._enqueue_sentence(
+            buffer_text,
+            pretranslated=buffer_pretranslated,
+            audio_received_at=buffer_audio_received_at,
+        )
 
     def _enqueue_sentence(
         self,
@@ -5145,6 +5462,7 @@ class TranslationApp:
         pretranslated=False,
         capture_meta=None,
         overlap_words=0,
+        audio_received_at=None,
     ):
         if not text:
             return
@@ -5155,6 +5473,7 @@ class TranslationApp:
             pretranslated=pretranslated,
             capture_meta=capture_meta,
             overlap_words=overlap_words,
+            audio_received_at=audio_received_at,
         )
         if self._queue_is_hot(self.sentence_queue, self.sentence_queue_high_water_ratio):
             self._maybe_report_queue_backpressure(
@@ -5189,7 +5508,14 @@ class TranslationApp:
         )
         return True
 
-    def _build_sentence_payload(self, text, pretranslated=False, capture_meta=None, overlap_words=0):
+    def _build_sentence_payload(
+        self,
+        text,
+        pretranslated=False,
+        capture_meta=None,
+        overlap_words=0,
+        audio_received_at=None,
+    ):
         payload = {
             "text": text,
             "queued_at": time.time(),
@@ -5205,6 +5531,13 @@ class TranslationApp:
             chunk_seconds = 0.0
         if chunk_seconds > 0.0:
             payload["chunk_seconds"] = round(chunk_seconds, 3)
+        normalized_audio_received_at = self._coerce_timestamp_or_none(audio_received_at)
+        if normalized_audio_received_at is None:
+            normalized_audio_received_at = self._coerce_timestamp_or_none(
+                (capture_meta or {}).get("audio_received_at")
+            )
+        if normalized_audio_received_at is not None:
+            payload["audio_received_at"] = normalized_audio_received_at
         return payload
 
     def _enqueue_sentence_payload(
@@ -5341,6 +5674,14 @@ class TranslationApp:
             for meta in item_meta
             if isinstance(meta.get("overlap_words"), (int, float))
         ]
+        audio_received_values = [
+            ts
+            for ts in (
+                self._coerce_timestamp_or_none(meta.get("audio_received_at"))
+                for meta in item_meta
+            )
+            if ts is not None
+        ]
         if pretranslated_values:
             merged_meta["pretranslated"] = all(pretranslated_values)
         if stt_values:
@@ -5353,6 +5694,8 @@ class TranslationApp:
             merged_meta["chunk_seconds"] = max(chunk_seconds_values)
         if overlap_values:
             merged_meta["overlap_words"] = max(overlap_values)
+        if audio_received_values:
+            merged_meta["audio_received_at"] = min(audio_received_values)
         return merged_meta
 
     def _enqueue_finalized_output(self, text, latency_meta=None):
@@ -5360,6 +5703,19 @@ class TranslationApp:
         if not output_text:
             return
         output_meta = dict(latency_meta or {})
+        now = time.time()
+        audio_to_processing_ms = self._elapsed_ms(
+            output_meta.get("audio_received_at"),
+            ended_at=now,
+        )
+        if audio_to_processing_ms is not None:
+            output_meta["audio_to_processing_ms"] = audio_to_processing_ms
+        queue_to_processing_ms = self._elapsed_ms(
+            output_meta.get("queued_at"),
+            ended_at=now,
+        )
+        if queue_to_processing_ms is not None:
+            output_meta["queue_to_processing_ms"] = queue_to_processing_ms
         output_meta.setdefault("stt_confidence", self.last_faster_whisper_confidence)
         payload = {
             "text": output_text,
@@ -5372,6 +5728,9 @@ class TranslationApp:
             translate_openai_ms=output_meta.get("translate_openai_ms"),
             stt_confidence=output_meta.get("stt_confidence"),
             pretranslated=bool(output_meta.get("pretranslated")),
+            audio_received_at=output_meta.get("audio_received_at"),
+            audio_to_processing_ms=output_meta.get("audio_to_processing_ms"),
+            queue_to_processing_ms=output_meta.get("queue_to_processing_ms"),
         )
         if self._queue_is_hot(
             self.finalized_output_queue, self.finalized_output_queue_high_water_ratio
@@ -5419,10 +5778,9 @@ class TranslationApp:
     def _unpack_finalized_output_payload(self, payload):
         if isinstance(payload, dict):
             return payload.get("text", ""), payload.get("latency_meta", {})
-        if isinstance(payload, tuple):
-            if len(payload) == 2:
-                text, meta = payload
-                return text, meta if isinstance(meta, dict) else {}
+        if isinstance(payload, tuple) and len(payload) == 2:
+            text, meta = payload
+            return text, meta if isinstance(meta, dict) else {}
         return payload, {}
 
     def _display_worker(self):
@@ -5444,6 +5802,7 @@ class TranslationApp:
         with self.sentence_lock:
             self.sentence_buffer = ""
             self.sentence_buffer_pretranslated = False
+            self.sentence_buffer_audio_received_at = None
             self.sentence_last_update = 0.0
         while True:
             try:
@@ -5543,7 +5902,7 @@ class TranslationApp:
             return True
         # Only trigger guard for short/fragment-like source inputs where this
         # behavior appears in practice.
-        src_tokens = re.findall(r"[^\W_]+", src.lower(), flags=re.UNICODE)
+        src_tokens = self.WORD_TOKEN_RE.findall(src.lower())
         if len(src) <= 24 or len(src_tokens) <= 3:
             return True
         return False
@@ -5659,6 +6018,16 @@ class TranslationApp:
         target = (self._effective_target_lang() or "").strip().lower()
         return target.startswith("en")
 
+    def _should_use_faster_whisper_direct_translation(self):
+        if not self.translation_enabled:
+            return False
+        if (self.speech_engine or "").strip().lower() != "faster-whisper":
+            return False
+        if self._raw_whisper_debug_active():
+            return False
+        target = (self._effective_target_lang() or "").strip().lower()
+        return target.startswith("en")
+
     def _raw_whisper_debug_active(self):
         if not self.raw_whisper_debug_mode:
             return False
@@ -5695,7 +6064,7 @@ class TranslationApp:
     def _translate_with_openai(self, text):
         if not self.openai_api_key:
             raise ValueError(
-                "OpenAI API key is empty. Enter it in Settings."
+                self.OPENAI_API_KEY_MISSING_ERROR
             )
         url = "https://api.openai.com/v1/responses"
         headers = {
@@ -5712,7 +6081,7 @@ class TranslationApp:
         request_ms = int((time.time() - request_started) * 1000)
         if response.status_code != 200:
             raise sr.RequestError(
-                f"OpenAI API error {response.status_code}: {response.text}"
+                f"{self.OPENAI_API_ERROR_PREFIX}{response.status_code}: {response.text}"
             )
         output_text = self._extract_openai_output_text(response.json())
         if not output_text:
@@ -5722,7 +6091,7 @@ class TranslationApp:
     def _translate_text(self, text):
         if not self.openai_api_key:
             raise ValueError(
-                "OpenAI API key is empty. Enter it in Settings."
+                self.OPENAI_API_KEY_MISSING_ERROR
             )
         return self._translate_with_openai(text)
 
@@ -5785,6 +6154,7 @@ class TranslationApp:
         display_meta.setdefault("stt_confidence", None)
         display_meta.setdefault("chunk_seconds", None)
         display_meta.setdefault("overlap_words", 0)
+        display_meta.setdefault("audio_received_at", None)
         return display_meta
 
     def _should_drop_pretranslated_translation(
@@ -5930,10 +6300,10 @@ class TranslationApp:
         text = self._add_missing_opening_mark(text, "!", "Â¡")
 
         # Spanish punctuation spacing.
-        text = re.sub(r"\s+([,.;:!?])", r"\1", text)
-        text = re.sub(r"([Â¿Â¡])\s+", r"\1", text)
+        text = self.PUNCTUATION_SPACING_RE.sub(r"\1", text)
+        text = re.sub(r"(Â¿|Â¡)\s+", r"\1", text)
         text = re.sub(r"([,.;:!?])(?![\s\"')\]Â»â€]|$)", r"\1 ", text)
-        text = re.sub(r"\s{2,}", " ", text)
+        text = self.MULTISPACE_RE.sub(" ", text)
         return text.strip()
 
     def _add_missing_opening_mark(self, value, closing_mark, opening_mark):
@@ -5965,7 +6335,7 @@ class TranslationApp:
         lead = re.match(r'[\s"\'(\[{]*', chunk[start:])
         lead_len = len(lead.group(0)) if lead else 0
         insert_at = start + lead_len
-        if re.search(r"[^\W\d_]", chunk[insert_at:], flags=re.UNICODE):
+        if self.LETTER_CHAR_RE.search(chunk[insert_at:]):
             chunk = chunk[:insert_at] + opening_mark + chunk[insert_at:]
         return chunk + closing_mark
 
@@ -5980,21 +6350,31 @@ class TranslationApp:
         return payload, None, {}
 
     def _record_chunk_latency(self, started_at, latency_meta=None, rendered_at=None):
-        if not started_at:
-            return
         end_ts = rendered_at if rendered_at is not None else time.time()
-        elapsed_ms = int((end_ts - started_at) * 1000)
-        if elapsed_ms < 0:
+        elapsed_ms = self._elapsed_ms(started_at, ended_at=end_ts)
+        if elapsed_ms is None:
             return
+        meta = latency_meta if isinstance(latency_meta, dict) else {}
+        audio_to_display_ms = self._elapsed_ms(meta.get("audio_received_at"), ended_at=end_ts)
+        if audio_to_display_ms is not None and "audio_to_display_ms" not in meta:
+            meta["audio_to_display_ms"] = audio_to_display_ms
         self.latency_samples.append(elapsed_ms)
         avg_ms = int(sum(self.latency_samples) / max(1, len(self.latency_samples)))
         detail_parts = self._chunk_latency_detail_parts(
             elapsed_ms,
             avg_ms,
-            latency_meta=latency_meta,
+            latency_meta=meta,
         )
         label_text = "Latency: " + " | ".join(detail_parts)
         self.root.after(0, lambda: self._set_chunk_latency_label_text(label_text))
+        self._trace_pipeline(
+            "latency_recorded",
+            "",
+            queue_to_display_ms=elapsed_ms,
+            audio_to_display_ms=audio_to_display_ms,
+            stt_openai_ms=meta.get("stt_openai_ms"),
+            translate_openai_ms=meta.get("translate_openai_ms"),
+        )
 
     def _chunk_latency_detail_parts(self, elapsed_ms, avg_ms, latency_meta=None):
         meta = latency_meta or {}
@@ -6003,7 +6383,10 @@ class TranslationApp:
         stt_confidence = meta.get("stt_confidence")
         chunk_seconds = meta.get("chunk_seconds")
         overlap_words = meta.get("overlap_words")
+        audio_to_display_ms = meta.get("audio_to_display_ms")
         detail_parts = [f"Total {elapsed_ms} ms (queue->display)", f"Avg {avg_ms} ms"]
+        if isinstance(audio_to_display_ms, (int, float)) and audio_to_display_ms >= 0:
+            detail_parts.append(f"Audio->Display {int(audio_to_display_ms)} ms")
         if isinstance(stt_ms, (int, float)) and stt_ms >= 0:
             detail_parts.append(f"STT {int(stt_ms)} ms")
         if isinstance(translate_ms, (int, float)) and translate_ms >= 0:
@@ -6060,7 +6443,7 @@ class TranslationApp:
         )
         pressure = pressure or (self.is_revealing_words and len(self.word_reveal_queue) >= 1)
         pressure = pressure or len(self.text_queue) >= 2
-        if self.translation_enabled and len(re.findall(r"\S+", text or "")) >= 9:
+        if self.translation_enabled and len(self.NON_WHITESPACE_TOKEN_RE.findall(text or "")) >= 9:
             pressure = True
         meta = latency_meta or {}
         stt_ms = meta.get("stt_openai_ms")
@@ -6307,7 +6690,7 @@ class TranslationApp:
             sentence, self.current_reveal_latency_meta = self._unpack_display_payload(
                 self.word_reveal_queue.popleft()
             )
-            self.current_reveal_words = re.findall(r"\S+", sentence)
+            self.current_reveal_words = self.NON_WHITESPACE_TOKEN_RE.findall(sentence)
 
         next_word = self.current_reveal_words.pop(0)
         if self.current_reveal_text:
@@ -6425,12 +6808,12 @@ class TranslationApp:
         for word in sorted(active_bad_words, key=len, reverse=True):
             pattern = r"\b" + re.escape(word) + r"\b"
             filtered = re.sub(pattern, "", filtered, flags=re.IGNORECASE)
-        filtered = re.sub(r"\s+([,.;:!?])", r"\1", filtered)
+        filtered = self.PUNCTUATION_SPACING_RE.sub(r"\1", filtered)
         filtered = re.sub(r"\(\s+", "(", filtered)
         filtered = re.sub(r"\s+\)", ")", filtered)
         filtered = self.clean_text_spacing(filtered)
         # If bad-word removal leaves only punctuation/symbols, omit it entirely.
-        if not re.search(r"[^\W_]", filtered, flags=re.UNICODE):
+        if not self.WORD_CHAR_RE.search(filtered):
             return ""
         return filtered
 
@@ -6478,8 +6861,8 @@ class TranslationApp:
 
     def clean_text_spacing(self, text):
         text = re.sub(r'([.!?])(?=[^\W\d_])', r'\1 ', text, flags=re.UNICODE)
-        text = re.sub(r"\s+([,.;:!?])", r"\1", text)
-        text = re.sub(r'\s{2,}', ' ', text)
+        text = self.PUNCTUATION_SPACING_RE.sub(r"\1", text)
+        text = self.MULTISPACE_RE.sub(" ", text)
         return text.strip()
 
     def _sanitize_model_text(self, text, suppress_repeated_noise=True):
@@ -6513,7 +6896,7 @@ class TranslationApp:
 
     def _is_symbol_only_text(self, text):
         # Ignore symbol-only outputs so noise does not render as visible text.
-        return not re.search(r"[^\W_]", text, flags=re.UNICODE)
+        return not self.WORD_CHAR_RE.search(text)
 
     def _is_known_non_speech_placeholder(self, text, normalized):
         # OpenAI occasionally returns these exact non-speech placeholders.
@@ -6529,7 +6912,7 @@ class TranslationApp:
             return False
         if "amara.org" in raw and ("subtit" in norm or "comunidad" in norm):
             return True
-        has_link = bool(re.search(r"(https?://|www\.)", raw))
+        has_link = bool(self.URL_SCHEME_RE.search(raw))
         has_domain = bool(re.search(r"\b[\w.-]+\.(com|org|net|io|co)\b", raw))
         if not (has_link or has_domain):
             return False
@@ -6546,7 +6929,7 @@ class TranslationApp:
         return False
 
     def _looks_like_repeated_noise(self, normalized_text):
-        tokens = re.findall(r"[^\W_]+", normalized_text, flags=re.UNICODE)
+        tokens = self.WORD_TOKEN_RE.findall(normalized_text)
         if len(tokens) < 6:
             return False
         unique_ratio = len(set(tokens)) / float(len(tokens))
@@ -6654,119 +7037,119 @@ class TranslationApp:
             ("josue", "Joshua"),
             ("jueces", "Judges"),
             ("rut", "Ruth"),
-            ("1 samuel", "1 Samuel"),
-            ("2 samuel", "2 Samuel"),
-            ("1 reyes", "1 Kings"),
-            ("2 reyes", "2 Kings"),
-            ("1 crÃ³nicas", "1 Chronicles"),
-            ("2 crÃ³nicas", "2 Chronicles"),
-            ("1 cronicas", "1 Chronicles"),
-            ("2 cronicas", "2 Chronicles"),
+            ("1 samuel", self.BOOK_1_SAMUEL),
+            ("2 samuel", self.BOOK_2_SAMUEL),
+            ("1 reyes", self.BOOK_1_KINGS),
+            ("2 reyes", self.BOOK_2_KINGS),
+            ("1 crÃ³nicas", self.BOOK_1_CHRONICLES),
+            ("2 crÃ³nicas", self.BOOK_2_CHRONICLES),
+            ("1 cronicas", self.BOOK_1_CHRONICLES),
+            ("2 cronicas", self.BOOK_2_CHRONICLES),
             ("esdras", "Ezra"),
-            ("nehemÃ­as", "Nehemiah"),
-            ("nehemias", "Nehemiah"),
+            ("nehemÃ­as", self.BOOK_NEHEMIAH),
+            ("nehemias", self.BOOK_NEHEMIAH),
             ("ester", "Esther"),
             ("job", "Job"),
             ("salmos", "Psalms"),
             ("salmo", "Psalm"),
             ("proverbios", "Proverbs"),
-            ("eclesiastÃ©s", "Ecclesiastes"),
-            ("eclesiastes", "Ecclesiastes"),
-            ("cantar de los cantares", "Song of Solomon"),
-            ("cantar de salomÃ³n", "Song of Solomon"),
-            ("cantar de salomon", "Song of Solomon"),
-            ("cantares", "Song of Solomon"),
-            ("isaÃ­as", "Isaiah"),
-            ("isaias", "Isaiah"),
-            ("jeremÃ­as", "Jeremiah"),
-            ("jeremias", "Jeremiah"),
-            ("lamentaciones", "Lamentations"),
-            ("ezequiel", "Ezekiel"),
-            ("daniel", "Daniel"),
-            ("oseas", "Hosea"),
-            ("joel", "Joel"),
-            ("amÃ³s", "Amos"),
-            ("amos", "Amos"),
-            ("abdÃ­as", "Obadiah"),
-            ("abdias", "Obadiah"),
-            ("jonÃ¡s", "Jonah"),
-            ("jonas", "Jonah"),
-            ("miqueas", "Micah"),
-            ("nahÃºm", "Nahum"),
-            ("nahum", "Nahum"),
-            ("habacuc", "Habakkuk"),
-            ("sofÃ³nÃ­as", "Zephaniah"),
-            ("sofonias", "Zephaniah"),
-            ("hageo", "Haggai"),
-            ("zacarÃ­as", "Zechariah"),
-            ("zacarias", "Zechariah"),
-            ("malaquÃ­as", "Malachi"),
-            ("malaquias", "Malachi"),
-            ("mateo", "Matthew"),
-            ("marcos", "Mark"),
-            ("lucas", "Luke"),
-            ("juan", "John"),
-            ("hechos", "Acts"),
-            ("romanos", "Romans"),
-            ("1 corintios", "1 Corinthians"),
-            ("2 corintios", "2 Corinthians"),
-            ("gÃ¡latas", "Galatians"),
-            ("galatas", "Galatians"),
-            ("efesios", "Ephesians"),
-            ("filipenses", "Philippians"),
-            ("colosenses", "Colossians"),
-            ("1 tesalonicenses", "1 Thessalonians"),
-            ("2 tesalonicenses", "2 Thessalonians"),
-            ("1 timoteo", "1 Timothy"),
-            ("2 timoteo", "2 Timothy"),
-            ("tito", "Titus"),
-            ("filemÃ³n", "Philemon"),
-            ("filemon", "Philemon"),
-            ("hebreos", "Hebrews"),
-            ("santiago", "James"),
-            ("1 pedro", "1 Peter"),
-            ("2 pedro", "2 Peter"),
-            ("1 juan", "1 John"),
-            ("2 juan", "2 John"),
-            ("3 juan", "3 John"),
-            ("judas", "Jude"),
-            ("apocalipsis", "Revelation"),
-            ("jesÃºs", "Jesus"),
-            ("jesus", "Jesus"),
-            ("moisÃ©s", "Moses"),
-            ("moises", "Moses"),
+            ("eclesiastÃ©s", self.BOOK_ECCLESIASTES),
+            ("eclesiastes", self.BOOK_ECCLESIASTES),
+            ("cantar de los cantares", self.BOOK_SONG_OF_SOLOMON),
+            ("cantar de salomÃ³n", self.BOOK_SONG_OF_SOLOMON),
+            ("cantar de salomon", self.BOOK_SONG_OF_SOLOMON),
+            ("cantares", self.BOOK_SONG_OF_SOLOMON),
+            ("isaÃ­as", self.BOOK_ISAIAH),
+            ("isaias", self.BOOK_ISAIAH),
+            ("jeremÃ­as", self.BOOK_JEREMIAH),
+            ("jeremias", self.BOOK_JEREMIAH),
+            ("lamentaciones", self.BOOK_LAMENTATIONS),
+            ("ezequiel", self.BOOK_EZEKIEL),
+            ("daniel", self.BOOK_DANIEL),
+            ("oseas", self.BOOK_HOSEA),
+            ("joel", self.BOOK_JOEL),
+            ("amÃ³s", self.BOOK_AMOS),
+            ("amos", self.BOOK_AMOS),
+            ("abdÃ­as", self.BOOK_OBADIAH),
+            ("abdias", self.BOOK_OBADIAH),
+            ("jonÃ¡s", self.BOOK_JONAH),
+            ("jonas", self.BOOK_JONAH),
+            ("miqueas", self.BOOK_MICAH),
+            ("nahÃºm", self.BOOK_NAHUM),
+            ("nahum", self.BOOK_NAHUM),
+            ("habacuc", self.BOOK_HABAKKUK),
+            ("sofÃ³nÃ­as", self.BOOK_ZEPHANIAH),
+            ("sofonias", self.BOOK_ZEPHANIAH),
+            ("hageo", self.BOOK_HAGGAI),
+            ("zacarÃ­as", self.BOOK_ZECHARIAH),
+            ("zacarias", self.BOOK_ZECHARIAH),
+            ("malaquÃ­as", self.BOOK_MALACHI),
+            ("malaquias", self.BOOK_MALACHI),
+            ("mateo", self.BOOK_MATTHEW),
+            ("marcos", self.BOOK_MARK),
+            ("lucas", self.BOOK_LUKE),
+            ("juan", self.BOOK_JOHN),
+            ("hechos", self.BOOK_ACTS),
+            ("romanos", self.BOOK_ROMANS),
+            ("1 corintios", self.BOOK_1_CORINTHIANS),
+            ("2 corintios", self.BOOK_2_CORINTHIANS),
+            ("gÃ¡latas", self.BOOK_GALATIANS),
+            ("galatas", self.BOOK_GALATIANS),
+            ("efesios", self.BOOK_EPHESIANS),
+            ("filipenses", self.BOOK_PHILIPPIANS),
+            ("colosenses", self.BOOK_COLOSSIANS),
+            ("1 tesalonicenses", self.BOOK_1_THESSALONIANS),
+            ("2 tesalonicenses", self.BOOK_2_THESSALONIANS),
+            ("1 timoteo", self.BOOK_1_TIMOTHY),
+            ("2 timoteo", self.BOOK_2_TIMOTHY),
+            ("tito", self.BOOK_TITUS),
+            ("filemÃ³n", self.BOOK_PHILEMON),
+            ("filemon", self.BOOK_PHILEMON),
+            ("hebreos", self.BOOK_HEBREWS),
+            ("santiago", self.BOOK_JAMES),
+            ("1 pedro", self.BOOK_1_PETER),
+            ("2 pedro", self.BOOK_2_PETER),
+            ("1 juan", self.BOOK_1_JOHN),
+            ("2 juan", self.BOOK_2_JOHN),
+            ("3 juan", self.BOOK_3_JOHN),
+            ("judas", self.BOOK_JUDE),
+            ("apocalipsis", self.BOOK_REVELATION),
+            ("jesÃºs", self.PERSON_JESUS),
+            ("jesus", self.PERSON_JESUS),
+            ("moisÃ©s", self.PERSON_MOSES),
+            ("moises", self.PERSON_MOSES),
             ("abraham", "Abraham"),
             ("isaac", "Isaac"),
             ("jacob", "Jacob"),
-            ("josÃ©", "Joseph"),
-            ("jose", "Joseph"),
+            ("josÃ©", self.PERSON_JOSEPH),
+            ("jose", self.PERSON_JOSEPH),
             ("david", "David"),
-            ("salomÃ³n", "Solomon"),
-            ("salomon", "Solomon"),
+            ("salomÃ³n", self.PERSON_SOLOMON),
+            ("salomon", self.PERSON_SOLOMON),
             ("samuel", "Samuel"),
             ("pablo", "Paul"),
             ("pedro", "Peter"),
-            ("marÃ­a", "Mary"),
-            ("maria", "Mary"),
-            ("jerusalÃ©n", "Jerusalem"),
-            ("jerusalen", "Jerusalem"),
-            ("belÃ©n", "Bethlehem"),
-            ("belen", "Bethlehem"),
+            ("marÃ­a", self.PERSON_MARY),
+            ("maria", self.PERSON_MARY),
+            ("jerusalÃ©n", self.PLACE_JERUSALEM),
+            ("jerusalen", self.PLACE_JERUSALEM),
+            ("belÃ©n", self.PLACE_BETHLEHEM),
+            ("belen", self.PLACE_BETHLEHEM),
             ("nazaret", "Nazareth"),
             ("galilea", "Galilee"),
-            ("jericÃ³", "Jericho"),
-            ("jerico", "Jericho"),
+            ("jericÃ³", self.PLACE_JERICHO),
+            ("jerico", self.PLACE_JERICHO),
             ("capernaum", "Capernaum"),
             ("judea", "Judea"),
             ("samaria", "Samaria"),
             ("betania", "Bethany"),
-            ("gÃ³lgota", "Golgotha"),
-            ("golgota", "Golgotha"),
+            ("gÃ³lgota", self.PLACE_GOLGOTHA),
+            ("golgota", self.PLACE_GOLGOTHA),
             ("calvario", "Calvary"),
-            ("monte sinai", "Mount Sinai"),
-            ("monte sinaÃ­", "Mount Sinai"),
-            ("monte sion", "Mount Zion"),
-            ("monte siÃ³n", "Mount Zion"),
+            ("monte sinai", self.PLACE_MOUNT_SINAI),
+            ("monte sinaÃ­", self.PLACE_MOUNT_SINAI),
+            ("monte sion", self.PLACE_MOUNT_ZION),
+            ("monte siÃ³n", self.PLACE_MOUNT_ZION),
             ("jordÃ¡n", "Jordan"),
             ("jordan", "Jordan"),
             ("mar de galilea", "Sea of Galilee"),
@@ -6792,43 +7175,43 @@ class TranslationApp:
     def default_biblical_books(self):
         return [
             "Genesis", "Exodus", "Leviticus", "Numbers", "Deuteronomy",
-            "Joshua", "Judges", "Ruth", "1 Samuel", "2 Samuel",
-            "1 Kings", "2 Kings", "1 Chronicles", "2 Chronicles",
-            "Ezra", "Nehemiah", "Esther", "Job", "Psalms", "Proverbs",
-            "Ecclesiastes", "Song of Solomon", "Isaiah", "Jeremiah",
-            "Lamentations", "Ezekiel", "Daniel", "Hosea", "Joel", "Amos",
-            "Obadiah", "Jonah", "Micah", "Nahum", "Habakkuk",
-            "Zephaniah", "Haggai", "Zechariah", "Malachi",
-            "Matthew", "Mark", "Luke", "John", "Acts", "Romans",
-            "1 Corinthians", "2 Corinthians", "Galatians", "Ephesians",
-            "Philippians", "Colossians", "1 Thessalonians",
-            "2 Thessalonians", "1 Timothy", "2 Timothy", "Titus",
-            "Philemon", "Hebrews", "James", "1 Peter", "2 Peter",
-            "1 John", "2 John", "3 John", "Jude", "Revelation"
+            "Joshua", "Judges", "Ruth", self.BOOK_1_SAMUEL, self.BOOK_2_SAMUEL,
+            self.BOOK_1_KINGS, self.BOOK_2_KINGS, self.BOOK_1_CHRONICLES, self.BOOK_2_CHRONICLES,
+            "Ezra", self.BOOK_NEHEMIAH, "Esther", "Job", "Psalms", "Proverbs",
+            self.BOOK_ECCLESIASTES, self.BOOK_SONG_OF_SOLOMON, self.BOOK_ISAIAH, self.BOOK_JEREMIAH,
+            self.BOOK_LAMENTATIONS, self.BOOK_EZEKIEL, self.BOOK_DANIEL, self.BOOK_HOSEA, self.BOOK_JOEL, self.BOOK_AMOS,
+            self.BOOK_OBADIAH, self.BOOK_JONAH, self.BOOK_MICAH, self.BOOK_NAHUM, self.BOOK_HABAKKUK,
+            self.BOOK_ZEPHANIAH, self.BOOK_HAGGAI, self.BOOK_ZECHARIAH, self.BOOK_MALACHI,
+            self.BOOK_MATTHEW, self.BOOK_MARK, self.BOOK_LUKE, self.BOOK_JOHN, self.BOOK_ACTS, self.BOOK_ROMANS,
+            self.BOOK_1_CORINTHIANS, self.BOOK_2_CORINTHIANS, self.BOOK_GALATIANS, self.BOOK_EPHESIANS,
+            self.BOOK_PHILIPPIANS, self.BOOK_COLOSSIANS, self.BOOK_1_THESSALONIANS,
+            self.BOOK_2_THESSALONIANS, self.BOOK_1_TIMOTHY, self.BOOK_2_TIMOTHY, self.BOOK_TITUS,
+            self.BOOK_PHILEMON, self.BOOK_HEBREWS, self.BOOK_JAMES, self.BOOK_1_PETER, self.BOOK_2_PETER,
+            self.BOOK_1_JOHN, self.BOOK_2_JOHN, self.BOOK_3_JOHN, self.BOOK_JUDE, self.BOOK_REVELATION
         ]
 
     def default_biblical_terms(self):
         return [
             "Genesis", "Exodus", "Leviticus", "Numbers", "Deuteronomy",
-            "Joshua", "Judges", "Ruth", "1 Samuel", "2 Samuel",
-            "1 Kings", "2 Kings", "1 Chronicles", "2 Chronicles",
-            "Ezra", "Nehemiah", "Esther", "Job", "Psalms", "Proverbs",
-            "Ecclesiastes", "Song of Solomon", "Isaiah", "Jeremiah",
-            "Lamentations", "Ezekiel", "Daniel", "Hosea", "Joel", "Amos",
-            "Obadiah", "Jonah", "Micah", "Nahum", "Habakkuk",
-            "Zephaniah", "Haggai", "Zechariah", "Malachi",
-            "Matthew", "Mark", "Luke", "John", "Acts", "Romans",
-            "1 Corinthians", "2 Corinthians", "Galatians", "Ephesians",
-            "Philippians", "Colossians", "1 Thessalonians",
-            "2 Thessalonians", "1 Timothy", "2 Timothy", "Titus",
-            "Philemon", "Hebrews", "James", "1 Peter", "2 Peter",
-            "1 John", "2 John", "3 John", "Jude", "Revelation",
-            "Moses", "Abraham", "Isaac", "Jacob", "Joseph",
-            "David", "Solomon", "Samuel", "Isaiah", "Jeremiah",
-            "Ezekiel", "Daniel", "Paul", "Peter", "Mary", "Jesus",
-            "Jerusalem", "Bethlehem", "Nazareth", "Galilee", "Jericho",
+            "Joshua", "Judges", "Ruth", self.BOOK_1_SAMUEL, self.BOOK_2_SAMUEL,
+            self.BOOK_1_KINGS, self.BOOK_2_KINGS, self.BOOK_1_CHRONICLES, self.BOOK_2_CHRONICLES,
+            "Ezra", self.BOOK_NEHEMIAH, "Esther", "Job", "Psalms", "Proverbs",
+            self.BOOK_ECCLESIASTES, self.BOOK_SONG_OF_SOLOMON, self.BOOK_ISAIAH, self.BOOK_JEREMIAH,
+            self.BOOK_LAMENTATIONS, self.BOOK_EZEKIEL, self.BOOK_DANIEL, self.BOOK_HOSEA, self.BOOK_JOEL, self.BOOK_AMOS,
+            self.BOOK_OBADIAH, self.BOOK_JONAH, self.BOOK_MICAH, self.BOOK_NAHUM, self.BOOK_HABAKKUK,
+            self.BOOK_ZEPHANIAH, self.BOOK_HAGGAI, self.BOOK_ZECHARIAH, self.BOOK_MALACHI,
+            self.BOOK_MATTHEW, self.BOOK_MARK, self.BOOK_LUKE, self.BOOK_JOHN, self.BOOK_ACTS, self.BOOK_ROMANS,
+            self.BOOK_1_CORINTHIANS, self.BOOK_2_CORINTHIANS, self.BOOK_GALATIANS, self.BOOK_EPHESIANS,
+            self.BOOK_PHILIPPIANS, self.BOOK_COLOSSIANS, self.BOOK_1_THESSALONIANS,
+            self.BOOK_2_THESSALONIANS, self.BOOK_1_TIMOTHY, self.BOOK_2_TIMOTHY, self.BOOK_TITUS,
+            self.BOOK_PHILEMON, self.BOOK_HEBREWS, self.BOOK_JAMES, self.BOOK_1_PETER, self.BOOK_2_PETER,
+            self.BOOK_1_JOHN, self.BOOK_2_JOHN, self.BOOK_3_JOHN, self.BOOK_JUDE, self.BOOK_REVELATION,
+            self.PERSON_MOSES, "Abraham", "Isaac", "Jacob", self.PERSON_JOSEPH,
+            "David", self.PERSON_SOLOMON, "Samuel", self.BOOK_ISAIAH, self.BOOK_JEREMIAH,
+            self.BOOK_EZEKIEL, self.BOOK_DANIEL, "Paul", "Peter", self.PERSON_MARY, self.PERSON_JESUS,
+            self.PLACE_JERUSALEM, self.PLACE_BETHLEHEM, "Nazareth", "Galilee", self.PLACE_JERICHO,
             "Capernaum", "Nazareth", "Judea", "Samaria", "Bethany",
-            "Golgotha", "Calvary", "Mount Sinai", "Mount Zion",
+            self.PLACE_GOLGOTHA, "Calvary", self.PLACE_MOUNT_SINAI, self.PLACE_MOUNT_ZION,
             "Jordan", "Sea of Galilee", "Dead Sea", "Damascus",
             "Assyria", "Babylon", "Egypt", "Rome", "Antioch",
             "Corinth", "Ephesus", "Philippi", "Thessalonica",
@@ -6838,7 +7221,7 @@ class TranslationApp:
     def default_biblical_terms_es(self):
         return [
             "GÃ©nesis", "Ã‰xodo", "LevÃ­tico", "NÃºmeros", "Deuteronomio",
-            "JosuÃ©", "Jueces", "Rut", "1 Samuel", "2 Samuel",
+            "JosuÃ©", "Jueces", "Rut", self.BOOK_1_SAMUEL, self.BOOK_2_SAMUEL,
             "1 Reyes", "2 Reyes", "1 CrÃ³nicas", "2 CrÃ³nicas",
             "Esdras", "NehemÃ­as", "Ester", "Job", "Salmos", "Salmo",
             "Proverbios", "EclesiastÃ©s", "Cantar de los Cantares",
