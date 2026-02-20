@@ -366,8 +366,8 @@ class TranslationApp:
         self.faster_whisper_best_of = 5
         self.faster_whisper_temperature = 0.0
         self.faster_whisper_without_timestamps = True
-        # Slightly higher threshold reduces dropped low-confidence speech.
-        self.faster_whisper_no_speech_threshold = 0.7
+        # Keep this conservative so weak speech is not over-dropped.
+        self.faster_whisper_no_speech_threshold = 0.68
         self.last_faster_whisper_confidence = None
         self.faster_whisper_model = None
         self.faster_whisper_model_config = None
@@ -4375,10 +4375,12 @@ class TranslationApp:
         if normalized not in self.GRATITUDE_SHORT_PHRASES:
             return False
         confidence = self._coerce_float_or_none(self.last_faster_whisper_confidence)
-        # Keep very confident gratitude phrases to avoid suppressing clearly spoken intent.
-        if confidence is not None and confidence >= 0.9:
+        # Relax suppression for short gratitude phrases so valid endings are preserved.
+        if confidence is None:
             return False
-        return True
+        token_count = len(normalized.split())
+        suppress_threshold = 0.55 if token_count <= 2 else 0.65
+        return confidence < suppress_threshold
 
     def _reset_recognition_state(self):
         self.last_openai_translate_ms = None
@@ -5065,7 +5067,7 @@ class TranslationApp:
                             1.0,
                             self._safe_float_setting(
                                 "faster_whisper_no_speech_threshold",
-                                default=0.7,
+                                default=0.68,
                             ),
                         ),
                     ),
