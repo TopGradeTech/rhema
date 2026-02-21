@@ -251,6 +251,34 @@ class TranslationApp:
             "the sentence may be cut off do not make up words to fill in the rest of the sentence",
         }
     )
+    CHURCH_OF_CHRIST_STT_HOTWORDS = (
+        "Church of Christ",
+        "Churches of Christ",
+        "Restoration Movement",
+        "Stone-Campbell",
+        "a cappella",
+        "Lord's Supper",
+        "breaking of bread",
+        "baptism for remission of sins",
+        "hear believe repent confess be baptized",
+        "plan of salvation",
+        "invitation song",
+        "elders",
+        "deacons",
+        "evangelist",
+        "gospel preacher",
+        "New Testament church",
+        "book chapter and verse",
+        "first day of the week",
+        "weekly communion",
+        "Alexander Campbell",
+        "Barton W. Stone",
+        "Thomas Campbell",
+    )
+    LATENCY_PROFILE_OPTIONS = (
+        ("Low Latency (Recommended)", "low_latency"),
+        ("Balanced Accuracy", "balanced"),
+    )
 
     def __init__(self):
         self.set_dpi_awareness()
@@ -355,6 +383,8 @@ class TranslationApp:
         self.loopback_tail_raw = b""
         # Keep enough headroom so long scripted lines are less likely to clip.
         self.phrase_time_limit = 4.0
+        self.latency_profile = "balanced"
+        self._apply_latency_profile(self.latency_profile)
         self.recommended_host_api = ""
         self.available_host_apis = []
         self.openai_api_key = (os.getenv("OPENAI_API_KEY", "") or "").strip()
@@ -388,7 +418,7 @@ class TranslationApp:
         self.sentence_buffer_pretranslated = False
         self.sentence_buffer_audio_received_at = None
         self.sentence_lock = Lock()
-        self.sentence_flush_ms = 100
+        self.sentence_flush_ms = 180
         self.sentence_last_update = 0.0
         self.sentence_max_chars = 200
         self.sentence_fragment_grace_ms = 250
@@ -491,9 +521,7 @@ class TranslationApp:
             "en": set(self.default_bad_words_en()),
             "es": set(self.default_bad_words_es()),
         }
-        self.bad_word_filters_enabled = {"en": True, "es": True}
         self.active_bad_words = set()
-        self.custom_vocab_langs_enabled = {"en": True, "es": True}
         self.settings_window = None
         self.is_applying_settings = False
         self.text_queue = deque()
@@ -506,9 +534,9 @@ class TranslationApp:
         self.current_reveal_text = ""
         self.current_reveal_latency_meta = None
         self.chunk_size = 120
-        self.chunk_delay_ms = 90
+        self.chunk_delay_ms = 70
         self.flush_timeout_ms = 2000
-        self.display_speed_factor = 1.0
+        self.display_speed_factor = 1.25
         self.dynamic_fast_display_enabled = True
         self.fast_display_hold_sec = 2.0
         self.fast_display_until = 0.0
@@ -555,7 +583,6 @@ class TranslationApp:
         self.spanish_bible_name_map = self.default_spanish_bible_map()
         self.spanish_bible_pattern = self._build_spanish_bible_pattern()
         self.translation_enabled = False
-        self.auto_switch_translation = False
         self.is_paused = False
         self.text_bbox_height = 0
         self.load_settings()
@@ -933,41 +960,9 @@ class TranslationApp:
             self.bad_words_by_lang["en"] = set(self.default_bad_words_en())
         if "es" not in self.bad_words_by_lang:
             self.bad_words_by_lang["es"] = set(self.default_bad_words_es())
-        enabled = data.get("bad_word_filters_enabled")
-        if isinstance(enabled, dict):
-            self.bad_word_filters_enabled = {
-                lang: bool(enabled.get(lang))
-                for lang in self.bad_words_by_lang.keys()
-            }
-        elif isinstance(enabled, list):
-            enabled_set = {str(lang) for lang in enabled}
-            self.bad_word_filters_enabled = {
-                lang: lang in enabled_set for lang in self.bad_words_by_lang.keys()
-            }
-        # Filters are mandatory; always enable every available language.
-        for lang in self.bad_words_by_lang.keys():
-            self.bad_word_filters_enabled[lang] = True
         self._refresh_bad_words()
 
     def _load_custom_vocabulary_settings(self, data):
-        vocab_enabled = data.get("custom_vocab_langs_enabled")
-        if isinstance(vocab_enabled, dict):
-            self.custom_vocab_langs_enabled = {
-                lang: bool(vocab_enabled.get(lang))
-                for lang in self.custom_vocabulary_by_lang.keys()
-            }
-        elif isinstance(vocab_enabled, list):
-            enabled_set = {str(lang) for lang in vocab_enabled}
-            self.custom_vocab_langs_enabled = {
-                lang: lang in enabled_set for lang in self.custom_vocabulary_by_lang.keys()
-            }
-        else:
-            for lang in self.custom_vocabulary_by_lang.keys():
-                if lang not in self.custom_vocab_langs_enabled:
-                    self.custom_vocab_langs_enabled[lang] = False
-        # Vocabulary filters are mandatory; always enable every available language.
-        for lang in self.custom_vocabulary_by_lang.keys():
-            self.custom_vocab_langs_enabled[lang] = True
         vocab_by_lang = data.get("custom_vocabulary_by_lang")
         if isinstance(vocab_by_lang, dict):
             self.custom_vocabulary_by_lang = {
@@ -992,6 +987,11 @@ class TranslationApp:
         self.chunk_delay_ms = data.get("chunk_delay_ms", self.chunk_delay_ms)
         self.flush_timeout_ms = data.get("flush_timeout_ms", self.flush_timeout_ms)
         self.sentence_flush_ms = data.get("sentence_flush_ms", self.sentence_flush_ms)
+        self.latency_profile = self._coerce_latency_profile(
+            data.get("latency_profile", self.latency_profile),
+            default=self.latency_profile,
+        )
+        self._apply_latency_profile(self.latency_profile)
         try:
             self.display_speed_factor = float(
                 data.get("display_speed_factor", self.display_speed_factor)
@@ -1061,6 +1061,33 @@ class TranslationApp:
                 return False
         return bool(default)
 
+    def _coerce_latency_profile(self, value, default="balanced"):
+        profile = str(value or "").strip().lower()
+        allowed = {code for _label, code in self.LATENCY_PROFILE_OPTIONS}
+        if profile in allowed:
+            return profile
+        fallback = str(default or "").strip().lower()
+        if fallback in allowed:
+            return fallback
+        return "balanced"
+
+    def _latency_profile_values(self, profile):
+        normalized = self._coerce_latency_profile(profile, default=self.latency_profile)
+        if normalized == "balanced":
+            return {"pause_threshold": 0.85, "phrase_time_limit": 6.0}
+        return {"pause_threshold": 0.55, "phrase_time_limit": 4.0}
+
+    def _apply_latency_profile(self, profile=None):
+        normalized = self._coerce_latency_profile(
+            profile if profile is not None else self.latency_profile,
+            default=self.latency_profile,
+        )
+        values = self._latency_profile_values(normalized)
+        self.latency_profile = normalized
+        self.recognizer.pause_threshold = float(values["pause_threshold"])
+        self.phrase_time_limit = float(values["phrase_time_limit"])
+        return values
+
     def _coerce_source_lang(self, value, default="en"):
         lang = str(value or "").strip().lower()
         if "-" in lang:
@@ -1078,7 +1105,6 @@ class TranslationApp:
         # Translation pipeline currently targets English output.
         self.source_lang = self._coerce_source_lang(self.source_lang, default="en")
         self.target_lang = "en"
-        self.auto_switch_translation = False
 
     def save_settings(self):
         if self.settings_window is not None and self.settings_window.winfo_exists():
@@ -1113,25 +1139,18 @@ class TranslationApp:
             "bad_words_by_lang": {
                 lang: sorted(words) for lang, words in self.bad_words_by_lang.items()
             },
-            "bad_word_filters_enabled": sorted(
-                [lang for lang, enabled in self.bad_word_filters_enabled.items() if enabled]
-            ),
             "custom_vocabulary_by_lang": {
                 lang: list(words) for lang, words in self.custom_vocabulary_by_lang.items()
             },
-            "custom_vocab_langs_enabled": sorted(
-                [lang for lang, enabled in self.custom_vocab_langs_enabled.items() if enabled]
-            ),
             "chunk_size": self.chunk_size,
             "chunk_delay_ms": self.chunk_delay_ms,
             "flush_timeout_ms": self.flush_timeout_ms,
             "sentence_flush_ms": self.sentence_flush_ms,
+            "latency_profile": self.latency_profile,
             "display_speed_factor": self.display_speed_factor,
             "loopback_chunk_autotune_enabled": self.loopback_chunk_autotune_enabled,
             "source_lang": self.source_lang,
-            "target_lang": self.target_lang,
             "translation_enabled": self.translation_enabled,
-            "auto_switch_translation": self.auto_switch_translation,
             "biblical_books": self.biblical_books,
             "preferred_device_label": self.preferred_device_label,
             "rms_gate_enabled": self.rms_gate_enabled,
@@ -1744,7 +1763,7 @@ class TranslationApp:
         settings_window.protocol("WM_DELETE_WINDOW", self.on_closing)
 
         content = self._build_settings_canvas(settings_window, settings_bg)
-        display_vars, audio_vars, filters_vars, api_vars, translation_vars, advanced_vars = (
+        display_vars, audio_vars, filters_vars, api_vars, translation_vars = (
             self._build_settings_sections(
                 content,
                 settings_window,
@@ -1845,7 +1864,6 @@ class TranslationApp:
                 filters_vars,
                 api_vars,
                 translation_vars,
-                advanced_vars,
                 dirty_ctx,
             ),
             primary=True,
@@ -1888,7 +1906,6 @@ class TranslationApp:
         self._collect_settings_vars_for_dirty_tracking(filters_vars, dirty_ctx)
         self._collect_settings_vars_for_dirty_tracking(api_vars, dirty_ctx)
         self._collect_settings_vars_for_dirty_tracking(translation_vars, dirty_ctx)
-        self._collect_settings_vars_for_dirty_tracking(advanced_vars, dirty_ctx)
         dirty_ctx["applied_snapshot"] = self._capture_settings_snapshot(dirty_ctx)
         dirty_ctx["dirty_ready"] = True
         self._set_settings_dirty_state(dirty_ctx, False, force=True)
@@ -1968,7 +1985,6 @@ class TranslationApp:
         filters_vars,
         api_vars,
         translation_vars,
-        advanced_vars,
         dirty_ctx,
     ):
         if self.is_applying_settings:
@@ -1985,7 +2001,6 @@ class TranslationApp:
                 filters_vars,
                 api_vars,
                 translation_vars,
-                advanced_vars,
             )
             self._show_apply_success()
             dirty_ctx["applied_snapshot"] = self._capture_settings_snapshot(dirty_ctx)
@@ -2017,14 +2032,12 @@ class TranslationApp:
         filters_vars,
         api_vars,
         translation_vars,
-        advanced_vars,
     ):
         self._apply_display_vars(display_vars)
         self._apply_filter_vars(filters_vars)
         self._apply_api_vars(api_vars)
         self._apply_translation_vars(translation_vars)
         self._apply_audio_vars(audio_vars)
-        self._apply_advanced_vars(advanced_vars)
         self._refresh_audio_devices()
         self.apply_colors()
         self.update_display()
@@ -2059,24 +2072,6 @@ class TranslationApp:
         if settings_monitor_value in monitor_labels:
             self.settings_monitor_index = monitor_labels.index(settings_monitor_value)
 
-    def _apply_advanced_vars(self, advanced_vars):
-        self.chunk_size = max(20, int(advanced_vars["chunk_size_var"].get()))
-        self.chunk_delay_ms = max(50, int(advanced_vars["chunk_delay_var"].get()))
-        self.sentence_flush_ms = max(100, int(advanced_vars["sentence_flush_var"].get()))
-        if "display_speed_var" in advanced_vars:
-            try:
-                self.display_speed_factor = float(advanced_vars["display_speed_var"].get())
-            except Exception:
-                pass
-        self.display_speed_factor = max(0.5, min(self.display_speed_factor, 2.5))
-        self.rms_gate_enabled = bool(advanced_vars["rms_gate_var"].get())
-        try:
-            self.rms_gate_factor = float(advanced_vars["rms_gate_factor_var"].get())
-        except Exception:
-            pass
-        self.rms_gate_factor = max(0.5, min(self.rms_gate_factor, 5.0))
-        self._fit_font_to_lines()
-
     def _apply_filter_vars(self, filters_vars):
         en_text = filters_vars["bad_words_en_text"].get("1.0", tk.END).strip()
         es_text = filters_vars["bad_words_es_text"].get("1.0", tk.END).strip()
@@ -2086,11 +2081,7 @@ class TranslationApp:
         self.bad_words_by_lang["es"] = {
             word.strip().lower() for word in es_text.split(",") if word.strip()
         }
-        for lang in self.bad_words_by_lang.keys():
-            self.bad_word_filters_enabled[lang] = True
         self._refresh_bad_words()
-        for lang in self.custom_vocabulary_by_lang.keys():
-            self.custom_vocab_langs_enabled[lang] = True
         vocab_en_text = filters_vars["custom_vocab_en_text"].get("1.0", tk.END).strip()
         vocab_es_text = filters_vars["custom_vocab_es_text"].get("1.0", tk.END).strip()
         self.custom_vocabulary_by_lang["en"] = [
@@ -2265,10 +2256,29 @@ class TranslationApp:
         if was_translation_enabled and not self.translation_enabled:
             self._clear_translation_backlog_after_disable()
 
-    def _apply_audio_vars(self, _audio_vars):
-        # Intentionally empty: audio changes are applied immediately via
-        # trace callbacks in the audio settings controls.
-        return
+    def _apply_audio_vars(self, audio_vars):
+        selected_profile = self.latency_profile
+        if (
+            "latency_profile_var" in audio_vars
+            and "latency_profile_map" in audio_vars
+        ):
+            label = audio_vars["latency_profile_var"].get()
+            mapping = audio_vars["latency_profile_map"]
+            selected_profile = self._coerce_latency_profile(
+                mapping.get(label, self.latency_profile),
+                default=self.latency_profile,
+            )
+        previous_profile = self.latency_profile
+        profile_values = self._apply_latency_profile(selected_profile)
+        if previous_profile != self.latency_profile:
+            self._trace_pipeline(
+                "latency_profile_applied",
+                "",
+                previous_latency_profile=previous_profile,
+                latency_profile=self.latency_profile,
+                pause_threshold=profile_values.get("pause_threshold"),
+                phrase_time_limit=profile_values.get("phrase_time_limit"),
+            )
 
     def _refresh_audio_devices(self):
         # Refresh device list after audio-related settings change.
@@ -2781,16 +2791,7 @@ class TranslationApp:
         )
         translation_section.pack(fill=tk.X, pady=(10, 0))
         translation_vars = self._build_translation_section(translation_section, label_opts)
-
-        advanced_vars = self._build_advanced_section(
-            content,
-            label_opts,
-            section_bg,
-            settings_fg,
-            section_font,
-        )
-
-        return display_vars, audio_vars, filters_vars, api_vars, translation_vars, advanced_vars
+        return display_vars, audio_vars, filters_vars, api_vars, translation_vars
 
     def _build_settings_canvas(self, settings_window, settings_bg):
         scroll_frame = tk.Frame(settings_window, bg=settings_bg)
@@ -3002,7 +3003,35 @@ class TranslationApp:
         self.device_menu.pack(anchor="w")
         self.device_var.trace_add("write", lambda *_args: self._handle_audio_device_change())
 
+        self._add_setting_label(
+            audio_section,
+            "Latency Profile:",
+            "Low Latency is near real-time. Balanced Accuracy waits longer for phrase completion.",
+            label_opts,
+            pady=(10, 4),
+        )
+        latency_profile_display = [name for name, _ in self.LATENCY_PROFILE_OPTIONS]
+        latency_profile_map = dict(self.LATENCY_PROFILE_OPTIONS)
+        rev_latency_profile_map = {
+            code: name for name, code in self.LATENCY_PROFILE_OPTIONS
+        }
+        latency_profile_var = tk.StringVar(
+            value=rev_latency_profile_map.get(
+                self._coerce_latency_profile(self.latency_profile, default="balanced"),
+                latency_profile_display[0],
+            )
+        )
+        latency_profile_menu = tk.OptionMenu(
+            audio_section,
+            latency_profile_var,
+            *latency_profile_display,
+        )
+        self._apply_option_menu_style(latency_profile_menu)
+        latency_profile_menu.pack(anchor="w")
+
         return {
+            "latency_profile_var": latency_profile_var,
+            "latency_profile_map": latency_profile_map,
         }
 
     def _handle_audio_device_change(self):
@@ -3159,208 +3188,6 @@ class TranslationApp:
             "bad_words_es_text": bad_words_es_text,
             "custom_vocab_en_text": custom_vocab_en_text,
             "custom_vocab_es_text": custom_vocab_es_text,
-        }
-
-    def _build_advanced_section(
-        self,
-        content,
-        label_opts,
-        section_bg,
-        settings_fg,
-        section_font,
-    ):
-        toggle_var = tk.BooleanVar(value=False)
-        toggle_row = tk.Frame(content, bg=self._ui_palette["window_bg"])
-        toggle_row.pack(fill=tk.X, pady=(12, 0))
-        toggle_button = self._make_button(
-            toggle_row,
-            "Show Advanced Settings",
-            command=None,
-            primary=True,
-        )
-        toggle_button.pack(anchor="w")
-
-        advanced_section = tk.LabelFrame(
-            content,
-            text="Advanced",
-            bg=section_bg,
-            fg=settings_fg,
-            font=section_font,
-            padx=10,
-            pady=10,
-        )
-
-        def toggle_advanced():
-            if toggle_var.get():
-                toggle_var.set(False)
-                toggle_button.config(text="Show Advanced Settings")
-                advanced_section.pack_forget()
-            else:
-                toggle_var.set(True)
-                toggle_button.config(text="Hide Advanced Settings")
-                advanced_section.pack(fill=tk.X, pady=(8, 0))
-
-        toggle_button.config(command=toggle_advanced)
-
-        text_section = tk.LabelFrame(
-            advanced_section,
-            text="Text Manipulation",
-            bg=section_bg,
-            fg=settings_fg,
-            font=section_font,
-            padx=10,
-            pady=10,
-        )
-        text_section.pack(fill=tk.X, pady=(0, 10))
-
-        self._add_setting_label(
-            text_section,
-            "Text Chunk Size (chars):",
-            "Target character length before batching text into a line.",
-            label_opts,
-            pady=(0, 4),
-        )
-        chunk_size_var = tk.IntVar(value=self.chunk_size)
-        chunk_size_spin = tk.Spinbox(
-            text_section, from_=20, to=300, textvariable=chunk_size_var
-        )
-        self._apply_input_style(chunk_size_spin)
-        chunk_size_spin.pack(anchor="w")
-
-        self._add_setting_label(
-            text_section,
-            "Chunk Delay (ms):",
-            "Delay between displaying chunks or lines.",
-            label_opts,
-            pady=(10, 4),
-        )
-        chunk_delay_var = tk.IntVar(value=self.chunk_delay_ms)
-        chunk_delay_spin = tk.Spinbox(
-            text_section,
-            from_=50,
-            to=2000,
-            increment=50,
-            textvariable=chunk_delay_var,
-        )
-        self._apply_input_style(chunk_delay_spin)
-        chunk_delay_spin.pack(anchor="w")
-
-        self._add_setting_label(
-            text_section,
-            "Response Delay (ms):",
-            "Wait time after last speech before flushing a sentence.",
-            label_opts,
-            pady=(10, 4),
-        )
-        sentence_flush_var = tk.IntVar(value=self.sentence_flush_ms)
-        sentence_flush_spin = tk.Spinbox(
-            text_section,
-            from_=100,
-            to=3000,
-            increment=100,
-            textvariable=sentence_flush_var,
-        )
-        self._apply_input_style(sentence_flush_spin)
-        sentence_flush_spin.pack(anchor="w")
-
-        self._add_setting_label(
-            text_section,
-            "Display Speed:",
-            "Scales display timing. Higher is faster (uses your current delay settings as base).",
-            label_opts,
-            pady=(10, 4),
-        )
-        speed_row = tk.Frame(text_section, bg=section_bg)
-        speed_row.pack(fill=tk.X)
-        display_speed_var = tk.DoubleVar(value=self.display_speed_factor)
-        speed_value_label = tk.Label(
-            speed_row,
-            text=f"{self.display_speed_factor:.2f}x",
-            bg=section_bg,
-            fg=settings_fg,
-            font=(self.ui_font_family, 9),
-        )
-
-        def _on_speed_change(value):
-            try:
-                speed_value_label.config(text=f"{float(value):.2f}x")
-            except Exception:
-                pass
-
-        speed_scale = tk.Scale(
-            speed_row,
-            from_=0.5,
-            to=2.5,
-            resolution=0.05,
-            orient=tk.HORIZONTAL,
-            variable=display_speed_var,
-            command=_on_speed_change,
-            length=240,
-            bg=section_bg,
-            fg=settings_fg,
-            highlightthickness=0,
-            bd=0,
-        )
-        speed_scale.pack(side=tk.LEFT, fill=tk.X, expand=True)
-        speed_value_label.pack(side=tk.LEFT, padx=(8, 0))
-        _on_speed_change(display_speed_var.get())
-
-        noise_section = tk.LabelFrame(
-            advanced_section,
-            text="Noise Cancellation",
-            bg=section_bg,
-            fg=settings_fg,
-            font=section_font,
-            padx=10,
-            pady=10,
-        )
-        noise_section.pack(fill=tk.X)
-
-        gate_row = tk.Frame(noise_section, bg=section_bg)
-        gate_row.pack(anchor="w", pady=(0, 0), fill=tk.X)
-        rms_gate_var = tk.BooleanVar(value=self.rms_gate_enabled)
-        rms_gate_check = tk.Checkbutton(
-            gate_row,
-            text="Enable noise gate",
-            variable=rms_gate_var,
-            bg=section_bg,
-            fg=settings_fg,
-            selectcolor=section_bg,
-            activebackground=section_bg,
-        )
-        rms_gate_check.pack(side=tk.LEFT)
-        self._create_help_icon(
-            gate_row,
-            "Suppress very quiet audio before transcription.",
-            section_bg,
-            settings_fg,
-        )
-
-        self._add_setting_label(
-            noise_section,
-            "Noise Cancellation (strength):",
-            "Higher values filter more low-level noise.",
-            label_opts,
-            pady=(10, 4),
-        )
-        rms_gate_factor_var = tk.DoubleVar(value=self.rms_gate_factor)
-        rms_gate_spin = tk.Spinbox(
-            noise_section,
-            from_=0.5,
-            to=5.0,
-            increment=0.1,
-            textvariable=rms_gate_factor_var,
-        )
-        self._apply_input_style(rms_gate_spin)
-        rms_gate_spin.pack(anchor="w")
-
-        return {
-            "chunk_size_var": chunk_size_var,
-            "chunk_delay_var": chunk_delay_var,
-            "sentence_flush_var": sentence_flush_var,
-            "display_speed_var": display_speed_var,
-            "rms_gate_var": rms_gate_var,
-            "rms_gate_factor_var": rms_gate_factor_var,
         }
 
     def _build_api_section(self, api_section, label_opts):
@@ -4530,11 +4357,11 @@ class TranslationApp:
         if normalized not in self.GRATITUDE_SHORT_PHRASES:
             return False
         confidence = self._coerce_float_or_none(self.last_faster_whisper_confidence)
-        # Relax suppression for short gratitude phrases so valid endings are preserved.
+        # Keep short gratitude phrases stricter; these are common STT hallucinations.
         if confidence is None:
             return False
         token_count = len(normalized.split())
-        suppress_threshold = 0.55 if token_count <= 2 else 0.65
+        suppress_threshold = 0.80 if token_count <= 2 else 0.70
         return confidence < suppress_threshold
 
     def _reset_recognition_state(self):
@@ -4617,43 +4444,9 @@ class TranslationApp:
             )
             return text
         if stt_sanitize_enabled:
-            raw_value = self._coerce_text(raw_text)
-            text = self._sanitize_model_text(raw_value)
-            relaxed_used = False
-            relaxed_from_streak = 0
-            if raw_value.strip() and not text:
-                self.stt_sanitized_drop_streak += 1
-                drop_threshold = self._stt_sanitize_relax_threshold()
-                if self.stt_sanitized_drop_streak >= drop_threshold:
-                    relaxed_candidate = self._sanitize_model_text_relaxed(raw_value)
-                    if relaxed_candidate:
-                        relaxed_used = True
-                        relaxed_from_streak = int(self.stt_sanitized_drop_streak)
-                        text = relaxed_candidate
-                        self.stt_sanitized_drop_streak = 0
-                        self._trace_pipeline(
-                            "stt_sanitize_relaxed",
-                            text,
-                            engine=engine,
-                            stt_openai_ms=stt_ms,
-                            relaxed_from_streak=relaxed_from_streak,
-                            drop_threshold=int(drop_threshold),
-                        )
-            else:
-                self.stt_sanitized_drop_streak = 0
-            self._trace_pipeline(
-                "stt_sanitized",
-                text,
-                engine=engine,
-                stt_openai_ms=stt_ms,
-                sanitized_drop_streak=int(self.stt_sanitized_drop_streak),
-                relaxed_used=bool(relaxed_used),
-                relaxed_from_streak=int(relaxed_from_streak),
-            )
-            return text
+            return self._sanitize_stt_text_with_fallback(raw_text, engine, stt_ms)
         text = self._strip_url_like_tokens(self._coerce_text(raw_text))
-        normalized = re.sub(r"[^\w]+", " ", text.lower(), flags=re.UNICODE).strip()
-        if self._should_suppress_stt_passthrough(text, normalized):
+        if self._should_suppress_stt_passthrough(text):
             self._trace_pipeline(
                 "stt_noise_suppressed_passthrough",
                 text,
@@ -4669,7 +4462,41 @@ class TranslationApp:
         )
         return text
 
-    def _should_suppress_stt_passthrough(self, text, normalized):
+    def _sanitize_stt_text_with_fallback(self, raw_text, engine, stt_ms):
+        raw_value = self._coerce_text(raw_text)
+        text = self._sanitize_model_text(raw_value)
+        relaxed_used = False
+        if raw_value.strip() and not text:
+            self.stt_sanitized_drop_streak += 1
+            drop_threshold = self._stt_sanitize_relax_threshold()
+            if self.stt_sanitized_drop_streak >= drop_threshold:
+                relaxed_candidate = self._sanitize_model_text_relaxed(raw_value)
+                if relaxed_candidate:
+                    relaxed_used = True
+                    relaxed_from_streak = int(self.stt_sanitized_drop_streak)
+                    text = relaxed_candidate
+                    self.stt_sanitized_drop_streak = 0
+                    self._trace_pipeline(
+                        "stt_sanitize_relaxed",
+                        text,
+                        engine=engine,
+                        stt_openai_ms=stt_ms,
+                        relaxed_from_streak=relaxed_from_streak,
+                        drop_threshold=int(drop_threshold),
+                    )
+        else:
+            self.stt_sanitized_drop_streak = 0
+        self._trace_pipeline(
+            "stt_sanitized",
+            text,
+            engine=engine,
+            stt_openai_ms=stt_ms,
+            sanitized_drop_streak=int(self.stt_sanitized_drop_streak),
+            relaxed_used=bool(relaxed_used),
+        )
+        return text
+
+    def _should_suppress_stt_passthrough(self, text):
         cleaned_text = self._strip_url_like_tokens(text)
         if not cleaned_text:
             return True
@@ -4883,8 +4710,6 @@ class TranslationApp:
         return " ".join(remaining).strip()
 
     def _auto_detect_enabled(self):
-        if self.auto_switch_translation:
-            return True
         return (self.source_lang or "").strip().lower() == "auto"
 
     def _normalized_source_lang_code(self):
@@ -5564,8 +5389,6 @@ class TranslationApp:
 
     def _faster_whisper_vocab_hints(self, language=""):
         vocab_by_lang = self.custom_vocabulary_by_lang or {}
-        if not vocab_by_lang:
-            return []
         lang = (language or "").strip().lower()
         if "-" in lang:
             lang = lang.split("-", 1)[0]
@@ -5573,11 +5396,11 @@ class TranslationApp:
             lang = lang.split("_", 1)[0]
         if not lang or lang == "auto":
             lang = (self._normalized_source_lang_code() or "en").strip().lower()
-        terms = list(vocab_by_lang.get(lang, []))
-        if not terms and lang != "en":
-            terms = list(vocab_by_lang.get("en", []))
-        if not terms:
-            return []
+        terms = []
+        if vocab_by_lang:
+            terms = list(vocab_by_lang.get(lang, []))
+            if not terms and lang != "en":
+                terms = list(vocab_by_lang.get("en", []))
         if lang == "es":
             seeded_defaults = {str(item).strip().lower() for item in self.default_biblical_terms_es()}
         else:
@@ -5595,7 +5418,25 @@ class TranslationApp:
             if key in seeded_defaults:
                 continue
             cleaned.append(value)
-        return cleaned
+        hints = []
+        hint_seen = set()
+        if lang != "es":
+            for term in self.CHURCH_OF_CHRIST_STT_HOTWORDS:
+                value = str(term).strip()
+                if not value:
+                    continue
+                key = value.lower()
+                if key in hint_seen:
+                    continue
+                hint_seen.add(key)
+                hints.append(value)
+        for term in cleaned:
+            key = term.lower()
+            if key in hint_seen:
+                continue
+            hint_seen.add(key)
+            hints.append(term)
+        return hints
 
     def _build_faster_whisper_initial_prompt(self, language=""):
         # Keep the prompt concise to reduce instruction-echo artifacts.
@@ -5610,17 +5451,6 @@ class TranslationApp:
         if not vocab_hints:
             return ""
         return ", ".join(vocab_hints[:40])
-
-    def _contains_url_like_text(self, text):
-        sample = (text or "").strip().lower()
-        if not sample:
-            return False
-        if self.URL_SCHEME_RE.search(sample):
-            return True
-        # Bare domains (e.g., example.com) without scheme.
-        if self.BARE_DOMAIN_RE.search(sample):
-            return True
-        return False
 
     def _strip_url_like_tokens(self, text):
         value = self._coerce_text(text)
@@ -6265,12 +6095,6 @@ class TranslationApp:
             target = target.split("-", 1)[0]
         if "_" in target:
             target = target.split("_", 1)[0]
-        if self.auto_switch_translation and target in ("en", "es"):
-            auto_lang = (self.auto_detect_lang or "").strip().lower()
-            if auto_lang == "en":
-                return "es"
-            if auto_lang == "es":
-                return "en"
         return target or "en"
 
     def _is_same_language_translation_passthrough(self):
@@ -6299,7 +6123,7 @@ class TranslationApp:
 
     def _listening_status_message(self):
         source = (self.source_lang or "").strip().lower()
-        if source == "auto" or self.auto_switch_translation:
+        if source == "auto":
             detected = (self.auto_detect_lang or "").strip().lower()
             if detected:
                 return f"Listening (Detected: {self._language_label(detected)})"
