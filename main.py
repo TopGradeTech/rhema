@@ -188,7 +188,8 @@ class TranslationApp:
 
     def __init__(self):
         self.set_dpi_awareness()
-        self.settings_path = os.path.join(os.path.dirname(__file__), "settings.json")
+        self.app_data_dir = self._get_app_data_dir()
+        self.settings_path = os.path.join(self.app_data_dir, "settings.json")
         self.error_log_path = self._get_error_log_path()
         self.transcript_trace_path = self._get_transcript_trace_path()
         self.finalized_transcript_path = self._get_finalized_transcript_path()
@@ -656,8 +657,22 @@ class TranslationApp:
         except Exception:
             pass
 
+    def _get_app_data_dir(self):
+        if getattr(sys, "frozen", False):
+            exe_dir = os.path.dirname(sys.executable)
+            if os.path.isdir(exe_dir) and os.access(exe_dir, os.W_OK):
+                return exe_dir
+            appdata_root = os.getenv("APPDATA") or os.path.expanduser("~")
+            fallback_dir = os.path.join(appdata_root, "python-translation")
+            try:
+                os.makedirs(fallback_dir, exist_ok=True)
+                return fallback_dir
+            except Exception:
+                return exe_dir
+        return os.path.dirname(os.path.abspath(__file__))
+
     def _get_error_log_path(self):
-        base_dir = os.path.dirname(__file__)
+        base_dir = self.app_data_dir
         if os.name == "nt":
             logs_dir = os.path.join(base_dir, "logs")
             try:
@@ -669,7 +684,7 @@ class TranslationApp:
         return os.path.join(base_dir, "error.log")
 
     def _get_transcript_trace_path(self):
-        base_dir = os.path.dirname(__file__)
+        base_dir = self.app_data_dir
         logs_dir = os.path.join(base_dir, "logs")
         try:
             os.makedirs(logs_dir, exist_ok=True)
@@ -679,7 +694,7 @@ class TranslationApp:
         return os.path.join(logs_dir, f"transcript-{timestamp}.log")
 
     def _get_finalized_transcript_path(self):
-        base_dir = os.path.dirname(__file__)
+        base_dir = self.app_data_dir
         logs_dir = os.path.join(base_dir, "logs")
         try:
             os.makedirs(logs_dir, exist_ok=True)
