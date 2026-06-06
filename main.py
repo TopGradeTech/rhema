@@ -2,6 +2,7 @@ import speech_recognition as sr
 import tkinter as tk
 from tkinter import messagebox
 from tkinter import colorchooser
+from tkinter import filedialog
 from tkinter import font as tkfont
 from threading import Thread, Lock, Event
 import queue
@@ -87,6 +88,8 @@ class TranslationApp:
     CONFIGURE_EVENT = "<Configure>"
     STATUS_LISTENING = "Listening..."
     OPENAI_AUDIO_MAX_BYTES = 24 * 1024 * 1024
+    WINDOWS_RUN_KEY_PATH = r"Software\Microsoft\Windows\CurrentVersion\Run"
+    WINDOWS_STARTUP_VALUE_NAME = "TopGradePythonTranslation"
     TRANSLATION_NOISE_MARKERS = (
         "please provide",
         "provide the text",
@@ -299,6 +302,8 @@ class TranslationApp:
         self.faster_whisper_model_name = "medium"
         self.faster_whisper_compute_type = "float16"
         self.faster_whisper_device = "cuda"
+        self.cuda_directory = ""
+        self._cuda_dll_directory_handles = []
         self.faster_whisper_cpu_threads = max(1, (os.cpu_count() or 4) - 1)
         self.last_faster_whisper_confidence = None
         self.faster_whisper_model = None
@@ -310,6 +315,8 @@ class TranslationApp:
         self.last_display_line_count = 0
         self.rms_gate_enabled = False
         self.rms_gate_factor = 1.0
+        self.start_with_windows = False
+        self.lock_output_focus = False
         self.sentence_buffer = ""
         self.sentence_buffer_pretranslated = False
         self.sentence_lock = Lock()
@@ -330,6 +337,9 @@ class TranslationApp:
         self.translation_thread = None
         self.display_thread = None
         self.last_stt_pretranslated = False
+        self.last_stt_source_text = ""
+        self.last_stt_source_lang = ""
+        self.last_stt_source_lang_confidence = None
         self.preview_widget = None
         self.preview_font = None
         self.preview_placeholder = "Preview will appear here."
@@ -473,7 +483,7 @@ class TranslationApp:
         }
         self.custom_vocabulary_by_lang = {
             "en": self.default_biblical_terms(),
-            "es": [],
+            "es": self.default_biblical_terms_es(),
         }
         self.biblical_books = self.default_biblical_books()
         self.spanish_bible_name_map = {}
@@ -483,6 +493,7 @@ class TranslationApp:
         self.is_paused = False
         self.text_bbox_height = 0
         self.load_settings()
+        self._sync_windows_startup_entry()
         self._refresh_bad_words()
         self.devices = self.get_audio_devices()
         self.microphone_index = 0 if self.devices else None
@@ -671,6 +682,45 @@ class TranslationApp:
                 return exe_dir
         return os.path.dirname(os.path.abspath(__file__))
 
+    def _build_windows_startup_command(self):
+        if getattr(sys, "frozen", False):
+            return f"\"{sys.executable}\""
+        script_path = os.path.abspath(__file__)
+        return f"\"{sys.executable}\" \"{script_path}\""
+
+    def _set_windows_startup_enabled(self, enabled):
+        if os.name != "nt":
+            return
+        import winreg
+
+        access = winreg.KEY_SET_VALUE | winreg.KEY_QUERY_VALUE
+        with winreg.OpenKey(
+            winreg.HKEY_CURRENT_USER,
+            self.WINDOWS_RUN_KEY_PATH,
+            0,
+            access,
+        ) as key:
+            if enabled:
+                command = self._build_windows_startup_command()
+                winreg.SetValueEx(
+                    key,
+                    self.WINDOWS_STARTUP_VALUE_NAME,
+                    0,
+                    winreg.REG_SZ,
+                    command,
+                )
+            else:
+                try:
+                    winreg.DeleteValue(key, self.WINDOWS_STARTUP_VALUE_NAME)
+                except FileNotFoundError:
+                    pass
+
+    def _sync_windows_startup_entry(self):
+        try:
+            self._set_windows_startup_enabled(bool(self.start_with_windows))
+        except Exception:
+            pass
+
     def _get_error_log_path(self):
         base_dir = self.app_data_dir
         if os.name == "nt":
@@ -771,6 +821,7 @@ class TranslationApp:
         self._load_bad_word_settings(data)
         self._load_custom_vocabulary_settings(data)
         self._load_runtime_settings(data)
+        self._configure_cuda_dll_search_path()
         self._resolve_loaded_monitor_settings()
 
     def _read_settings_data(self):
@@ -812,6 +863,10 @@ class TranslationApp:
         self.bg_color = data.get("bg_color", self.bg_color)
         self.text_color = data.get("text_color", self.text_color)
         self.max_lines = data.get("max_lines", self.max_lines)
+        self.lock_output_focus = self._coerce_bool(
+            data.get("lock_output_focus", self.lock_output_focus),
+            default=self.lock_output_focus,
+        )
 
     def _load_bad_word_settings(self, data):
         bad_words_by_lang = data.get("bad_words_by_lang")
@@ -879,7 +934,7 @@ class TranslationApp:
         if "en" not in self.custom_vocabulary_by_lang:
             self.custom_vocabulary_by_lang["en"] = self.default_biblical_terms()
         if "es" not in self.custom_vocabulary_by_lang:
-            self.custom_vocabulary_by_lang["es"] = []
+            self.custom_vocabulary_by_lang["es"] = self.default_biblical_terms_es()
 
     def _load_runtime_settings(self, data):
         self.chunk_size = data.get("chunk_size", self.chunk_size)
@@ -904,13 +959,31 @@ class TranslationApp:
             data.get("translation_enabled", self.translation_enabled),
             default=self.translation_enabled,
         )
-        self._apply_translation_mode_defaults()
+        if any(
+            key in data for key in ("source_lang", "target_lang", "auto_switch_translation")
+        ):
+            self.source_lang = data.get("source_lang", self.source_lang)
+            self.target_lang = data.get("target_lang", self.target_lang)
+            self.auto_switch_translation = self._coerce_bool(
+                data.get("auto_switch_translation", self.auto_switch_translation),
+                default=self.auto_switch_translation,
+            )
+            self._normalize_translation_settings()
+        else:
+            self._apply_translation_mode_defaults()
         self.biblical_books = data.get("biblical_books", self.biblical_books)
         self.preferred_device_label = data.get(
             "preferred_device_label", self.preferred_device_label
         )
         self.rms_gate_enabled = bool(data.get("rms_gate_enabled", self.rms_gate_enabled))
         self.rms_gate_factor = float(data.get("rms_gate_factor", self.rms_gate_factor))
+        self.start_with_windows = self._coerce_bool(
+            data.get("start_with_windows", self.start_with_windows),
+            default=self.start_with_windows,
+        )
+        self.cuda_directory = self._normalize_optional_directory(
+            data.get("cuda_directory", self.cuda_directory)
+        )
         self.settings_geometry = data.get("settings_geometry", self.settings_geometry)
         self.settings_monitor_index = int(
             data.get("settings_monitor_index", self.settings_monitor_index)
@@ -951,6 +1024,35 @@ class TranslationApp:
                 return False
         return bool(default)
 
+    def _normalize_lang_code(self, value, default="", allow_auto=False):
+        lang = str(value or "").strip().lower()
+        if "-" in lang:
+            lang = lang.split("-", 1)[0]
+        if "_" in lang:
+            lang = lang.split("_", 1)[0]
+        if allow_auto and lang == "auto":
+            return "auto"
+        if len(lang) == 2 and lang.isalpha():
+            return lang
+        return default
+
+    def _normalize_translation_settings(self):
+        self.auto_switch_translation = self._coerce_bool(
+            self.auto_switch_translation,
+            default=False,
+        )
+        source_default = "es" if self.translation_enabled else "en"
+        self.source_lang = self._normalize_lang_code(
+            self.source_lang,
+            default=source_default,
+            allow_auto=True,
+        )
+        self.target_lang = self._normalize_lang_code(
+            self.target_lang,
+            default="en",
+            allow_auto=False,
+        )
+
     def _apply_translation_mode_defaults(self):
         self.source_lang = "en"
         self.target_lang = "en"
@@ -987,6 +1089,7 @@ class TranslationApp:
             "bg_color": self.bg_color,
             "text_color": self.text_color,
             "max_lines": self.max_lines,
+            "lock_output_focus": self.lock_output_focus,
             "bad_words_by_lang": {
                 lang: sorted(words) for lang, words in self.bad_words_by_lang.items()
             },
@@ -1013,6 +1116,8 @@ class TranslationApp:
             "preferred_device_label": self.preferred_device_label,
             "rms_gate_enabled": self.rms_gate_enabled,
             "rms_gate_factor": self.rms_gate_factor,
+            "start_with_windows": self.start_with_windows,
+            "cuda_directory": self.cuda_directory,
             "monitor_index": self.monitor_index,
             "monitor_device": monitor_device,
             "monitor_origin": monitor_origin,
@@ -1026,6 +1131,66 @@ class TranslationApp:
                 json.dump(data, f, indent=2)
         except Exception:
             pass
+
+    def _normalize_optional_directory(self, value):
+        path = str(value or "").strip().strip("\"'")
+        if not path:
+            return ""
+        try:
+            path = os.path.expandvars(path)
+            path = os.path.expanduser(path)
+            return os.path.normpath(path)
+        except Exception:
+            return path
+
+    def _resolve_cuda_search_directories(self, directory=None):
+        base = self._normalize_optional_directory(
+            self.cuda_directory if directory is None else directory
+        )
+        if not base:
+            return []
+        root = base
+        base_name = os.path.basename(base).lower()
+        parent_name = os.path.basename(os.path.dirname(base)).lower()
+        if base_name == "bin":
+            root = os.path.dirname(base)
+        elif base_name == "x64" and parent_name == "lib":
+            root = os.path.dirname(os.path.dirname(base))
+        candidates = [
+            os.path.join(root, "bin"),
+            os.path.join(root, "lib", "x64"),
+            root,
+            base,
+        ]
+        resolved = []
+        seen = set()
+        for path in candidates:
+            normalized = self._normalize_optional_directory(path)
+            key = normalized.lower()
+            if not normalized or key in seen or not os.path.isdir(normalized):
+                continue
+            seen.add(key)
+            resolved.append(normalized)
+        return resolved
+
+    def _configure_cuda_dll_search_path(self):
+        handles = getattr(self, "_cuda_dll_directory_handles", [])
+        while handles:
+            handle = handles.pop()
+            try:
+                handle.close()
+            except Exception:
+                pass
+        if os.name != "nt":
+            return
+        add_dll_directory = getattr(os, "add_dll_directory", None)
+        if add_dll_directory is None:
+            return
+        for path in self._resolve_cuda_search_directories():
+            try:
+                self._cuda_dll_directory_handles.append(add_dll_directory(path))
+            except Exception:
+                continue
 
     def get_monitors(self):
         if os.name == "nt":
@@ -1335,12 +1500,21 @@ class TranslationApp:
 
     def _apply_custom_fullscreen(self):
         self.root.overrideredirect(True)
-        self.root.attributes("-topmost", True)
+        self.root.attributes("-topmost", bool(self.lock_output_focus))
         self.root.attributes("-fullscreen", False)
         self.move_window_to_monitor(self.root, self.monitor_index, keep_size=False)
         self.root.update_idletasks()
         # Apply twice to avoid position being offset by window manager.
         self.move_window_to_monitor(self.root, self.monitor_index, keep_size=False)
+        if self.lock_output_focus:
+            try:
+                self.root.lift()
+            except Exception:
+                pass
+            try:
+                self.root.focus_force()
+            except Exception:
+                pass
 
     def _apply_standard_fullscreen(self):
         # Some window managers ignore geometry changes while fullscreen is active.
@@ -1420,6 +1594,8 @@ class TranslationApp:
                 except OSError:
                     continue
                 host_api_name = self._get_host_api_name(p, device_info)
+                if os.name == "nt" and not self._is_mme_host_api(host_api_name):
+                    continue
                 entry = {
                     "index": i,
                     "name": device_info.get("name", "Unknown"),
@@ -1445,6 +1621,9 @@ class TranslationApp:
             return pyaudio_instance.get_host_api_info_by_index(host_api_index).get("name", "")
         except Exception:
             return ""
+
+    def _is_mme_host_api(self, host_api_name):
+        return "mme" in (host_api_name or "").strip().lower()
 
     def _get_available_host_apis(self, device_infos):
         host_apis = {info.get("host_api") for info in device_infos if info.get("host_api")}
@@ -1926,6 +2105,8 @@ class TranslationApp:
         self.max_lines = display_vars["lines_var"].get()
         self.bg_color = display_vars["bg_color_var"].get()
         self.text_color = display_vars["text_color_var"].get()
+        if "lock_output_focus_var" in display_vars:
+            self.lock_output_focus = bool(display_vars["lock_output_focus_var"].get())
         self._apply_scaled_fonts()
         self._fit_font_to_lines()
         monitor_labels = display_vars["monitor_labels"]
@@ -1937,6 +2118,8 @@ class TranslationApp:
             self.settings_monitor_index = monitor_labels.index(settings_monitor_value)
 
     def _apply_advanced_vars(self, advanced_vars):
+        previous_start_with_windows = bool(self.start_with_windows)
+        previous_cuda_directory = self.cuda_directory
         self.chunk_size = max(20, int(advanced_vars["chunk_size_var"].get()))
         self.chunk_delay_ms = max(50, int(advanced_vars["chunk_delay_var"].get()))
         self.sentence_flush_ms = max(100, int(advanced_vars["sentence_flush_var"].get()))
@@ -1952,6 +2135,27 @@ class TranslationApp:
         except Exception:
             pass
         self.rms_gate_factor = max(0.5, min(self.rms_gate_factor, 5.0))
+        if "start_with_windows_var" in advanced_vars:
+            self.start_with_windows = bool(advanced_vars["start_with_windows_var"].get())
+        if "cuda_directory_var" in advanced_vars:
+            next_cuda_directory = self._normalize_optional_directory(
+                advanced_vars["cuda_directory_var"].get()
+            )
+            if next_cuda_directory and not os.path.isdir(next_cuda_directory):
+                raise ValueError(f"CUDA directory not found: {next_cuda_directory}")
+            self.cuda_directory = next_cuda_directory
+        if self.start_with_windows != previous_start_with_windows:
+            try:
+                self._set_windows_startup_enabled(self.start_with_windows)
+            except Exception as exc:
+                self.start_with_windows = previous_start_with_windows
+                raise ValueError(
+                    f"Could not update Windows startup setting: {exc}"
+                ) from exc
+        if self.cuda_directory != previous_cuda_directory:
+            self._configure_cuda_dll_search_path()
+            self.faster_whisper_model = None
+            self.faster_whisper_model_config = None
         self._fit_font_to_lines()
 
     def _apply_filter_vars(self, filters_vars):
@@ -2078,12 +2282,17 @@ class TranslationApp:
 
     def _apply_translation_vars(self, translation_vars):
         was_translation_enabled = bool(self.translation_enabled)
+        new_translation_enabled = was_translation_enabled
         if "enable_translation_var" in translation_vars:
-            self.translation_enabled = self._coerce_bool(
+            new_translation_enabled = self._coerce_bool(
                 translation_vars["enable_translation_var"].get(),
                 default=False,
             )
-        self._apply_translation_mode_defaults()
+        self.translation_enabled = new_translation_enabled
+        if self.translation_enabled != was_translation_enabled:
+            self._apply_translation_mode_defaults()
+        else:
+            self._normalize_translation_settings()
         self._trace_pipeline(
             "translation_toggle_applied",
             "",
@@ -2762,6 +2971,26 @@ class TranslationApp:
         self._apply_option_menu_style(settings_monitor_menu)
         settings_monitor_menu.pack(anchor="w")
 
+        focus_lock_row = tk.Frame(display_section, bg=section_bg)
+        focus_lock_row.pack(anchor="w", fill=tk.X, pady=(10, 0))
+        lock_output_focus_var = tk.BooleanVar(value=self.lock_output_focus)
+        lock_output_focus_check = tk.Checkbutton(
+            focus_lock_row,
+            text="Lock fullscreen output focus",
+            variable=lock_output_focus_var,
+            bg=section_bg,
+            fg=settings_fg,
+            selectcolor=section_bg,
+            activebackground=section_bg,
+        )
+        lock_output_focus_check.pack(side=tk.LEFT)
+        self._create_help_icon(
+            focus_lock_row,
+            "Keeps the fullscreen output window on top and attempts to focus it. Leave this off to let other apps appear above the output window.",
+            section_bg,
+            settings_fg,
+        )
+
         def on_settings_monitor_change(*_args):
             if settings_monitor_var.get() in monitor_labels:
                 self.settings_monitor_index = monitor_labels.index(settings_monitor_var.get())
@@ -2802,6 +3031,7 @@ class TranslationApp:
             "lines_var": lines_var,
             "bg_color_var": bg_color_var,
             "text_color_var": text_color_var,
+            "lock_output_focus_var": lock_output_focus_var,
             "monitor_var": monitor_var,
             "settings_monitor_var": settings_monitor_var,
             "monitor_labels": monitor_labels,
@@ -3183,6 +3413,82 @@ class TranslationApp:
         self._apply_input_style(rms_gate_spin)
         rms_gate_spin.pack(anchor="w")
 
+        startup_section = tk.LabelFrame(
+            advanced_section,
+            text="Startup",
+            bg=section_bg,
+            fg=settings_fg,
+            font=section_font,
+            padx=10,
+            pady=10,
+        )
+        startup_section.pack(fill=tk.X, pady=(10, 0))
+        startup_row = tk.Frame(startup_section, bg=section_bg)
+        startup_row.pack(anchor="w", fill=tk.X)
+        start_with_windows_var = tk.BooleanVar(value=self.start_with_windows)
+        start_with_windows_check = tk.Checkbutton(
+            startup_row,
+            text="Start app when Windows starts",
+            variable=start_with_windows_var,
+            bg=section_bg,
+            fg=settings_fg,
+            selectcolor=section_bg,
+            activebackground=section_bg,
+        )
+        if os.name != "nt":
+            start_with_windows_check.configure(state=tk.DISABLED)
+        start_with_windows_check.pack(side=tk.LEFT)
+        self._create_help_icon(
+            startup_row,
+            "Adds/removes this app in your Windows user startup registry key.",
+            section_bg,
+            settings_fg,
+        )
+
+        gpu_section = tk.LabelFrame(
+            advanced_section,
+            text="Local GPU Runtime",
+            bg=section_bg,
+            fg=settings_fg,
+            font=section_font,
+            padx=10,
+            pady=10,
+        )
+        gpu_section.pack(fill=tk.X, pady=(10, 0))
+        self._add_setting_label(
+            gpu_section,
+            "CUDA directory:",
+            "Optional Windows path used to find CUDA Toolkit 12.x and cuDNN 9.x DLLs for local faster-whisper GPU mode. Select the CUDA toolkit folder or its bin folder.",
+            label_opts,
+            pady=(0, 4),
+        )
+        cuda_directory_var = tk.StringVar(value=self.cuda_directory)
+        cuda_row = tk.Frame(gpu_section, bg=section_bg)
+        cuda_row.pack(fill=tk.X)
+        cuda_directory_entry = tk.Entry(
+            cuda_row,
+            textvariable=cuda_directory_var,
+            width=58,
+        )
+        self._apply_input_style(cuda_directory_entry)
+        cuda_directory_entry.pack(side=tk.LEFT, fill=tk.X, expand=True)
+        cuda_browse_button = self._make_button(
+            cuda_row,
+            "Browse",
+            command=lambda: self.choose_directory(
+                cuda_directory_var,
+                "Select CUDA toolkit or bin directory",
+            ),
+            primary=True,
+        )
+        cuda_browse_button.pack(side=tk.LEFT, padx=(8, 0))
+        cuda_clear_button = self._make_button(
+            cuda_row,
+            "Clear",
+            command=lambda: cuda_directory_var.set(""),
+        )
+        cuda_clear_button.pack(side=tk.LEFT, padx=(8, 0))
+
         return {
             "chunk_size_var": chunk_size_var,
             "chunk_delay_var": chunk_delay_var,
@@ -3190,6 +3496,8 @@ class TranslationApp:
             "display_speed_var": display_speed_var,
             "rms_gate_var": rms_gate_var,
             "rms_gate_factor_var": rms_gate_factor_var,
+            "start_with_windows_var": start_with_windows_var,
+            "cuda_directory_var": cuda_directory_var,
         }
 
     def _build_api_section(self, api_section, label_opts):
@@ -3510,6 +3818,16 @@ class TranslationApp:
         color = colorchooser.askcolor(title=f"Choose {color_type} color", parent=parent)
         if color[1]:  # color[1] is the hex value
             color_var.set(color[1])
+
+    def choose_directory(self, path_var, title):
+        parent = self.settings_window if self.settings_window is not None else self.root
+        selected = filedialog.askdirectory(
+            title=title,
+            parent=parent,
+            mustexist=True,
+        )
+        if selected:
+            path_var.set(self._normalize_optional_directory(selected))
     
     def apply_colors(self):
         self.root.config(bg=self.bg_color)
@@ -4197,6 +4515,8 @@ class TranslationApp:
                 )
                 self._note_unknown_speech()
                 return ""
+            if self._source_filter_blocks_recognized_text(cleaned_text):
+                return ""
             self._reset_speech_counters()
             return cleaned_text
         if self._source_filter_blocks_recognized_text(text):
@@ -4239,21 +4559,28 @@ class TranslationApp:
         return confidence < suppress_threshold
 
     def _source_filter_blocks_recognized_text(self, text):
-        self._update_auto_detect_language(text)
+        filter_text = self._source_filter_candidate_text(text)
+        if filter_text:
+            self._update_auto_detect_language(filter_text)
         if not self._should_apply_source_language_filter():
             return False
-        if self._passes_source_language_filter(text):
+        if self._passes_source_language_filter(filter_text):
             return False
         self._trace_pipeline(
             "stt_source_lang_filtered",
             text,
             source_lang=(self.source_lang or "").strip().lower(),
+            filter_text=filter_text,
+            pretranslated=bool(self.last_stt_pretranslated),
         )
         return True
 
     def _reset_recognition_state(self):
         self.last_openai_translate_ms = None
         self.last_stt_pretranslated = False
+        self.last_stt_source_text = ""
+        self.last_stt_source_lang = ""
+        self.last_stt_source_lang_confidence = None
         self.last_faster_whisper_confidence = None
 
     def _run_stt_engine(self, audio, engine):
@@ -4297,7 +4624,7 @@ class TranslationApp:
         return text
 
     def _should_apply_source_language_filter(self):
-        if self.last_stt_pretranslated:
+        if self.last_stt_pretranslated and not (self.last_stt_source_text or "").strip():
             return False
         source = (self.source_lang or "").strip().lower()
         if source == "auto":
@@ -4305,6 +4632,43 @@ class TranslationApp:
         if self.auto_switch_translation:
             return False
         return True
+
+    def _source_filter_candidate_text(self, text):
+        if self.last_stt_pretranslated:
+            source_text = (self.last_stt_source_text or "").strip()
+            if source_text:
+                return source_text
+        return (text or "").strip()
+
+    def _set_last_stt_source_language_info(self, info):
+        self.last_stt_source_lang = self._normalize_lang_code(
+            getattr(info, "language", ""),
+            default="",
+            allow_auto=False,
+        )
+        probability = getattr(info, "language_probability", None)
+        try:
+            probability = float(probability)
+        except Exception:
+            probability = None
+        if probability is not None:
+            if not math.isfinite(probability):
+                probability = None
+            else:
+                probability = max(0.0, min(1.0, probability))
+        self.last_stt_source_lang_confidence = probability
+
+    def _detected_source_language_from_stt(self, text=""):
+        lang = (self.last_stt_source_lang or "").strip().lower()
+        if lang not in ("en", "es"):
+            return ""
+        confidence = self.last_stt_source_lang_confidence
+        if confidence is None or confidence >= 0.55:
+            return lang
+        heuristic = self._detect_language_from_text(text)
+        if heuristic == lang:
+            return lang
+        return ""
 
     def process_audio(self, audio, capture_meta=None):
         capture_meta = capture_meta or {}
@@ -4455,10 +4819,13 @@ class TranslationApp:
     def _passes_source_language_filter(self, text):
         if not text:
             return False
+        expected = self._normalized_source_lang_code()
+        detected_from_stt = self._detected_source_language_from_stt(text)
+        if expected in ("en", "es") and detected_from_stt in ("en", "es"):
+            return detected_from_stt == expected
         locked_lang = self._locked_auto_detect_language()
         if locked_lang:
             return self._passes_locked_auto_detect_filter(text, locked_lang)
-        expected = self._normalized_source_lang_code()
         # Strict filtering is currently implemented only for EN/ES where we
         # have dedicated lightweight detection heuristics.
         return self._passes_expected_source_language(text, expected)
@@ -4747,7 +5114,10 @@ class TranslationApp:
 
     def _faster_whisper_device_hint(self):
         if str(self.faster_whisper_device).lower() == "cuda":
-            return " Try device=cpu or compute type int8."
+            return (
+                " Try device=cpu or compute type int8. "
+                "If CUDA Toolkit 12.x is installed in a custom location, set Advanced > CUDA directory."
+            )
         return ""
 
     def _notify_faster_whisper_ready(self):
@@ -4769,13 +5139,13 @@ class TranslationApp:
             if not lang or lang == "auto":
                 lang = ""
             if self._should_run_faster_whisper_dual_pass():
-                transcribe_text, transcribe_confidence = self._transcribe_faster_whisper_pass(
+                transcribe_text, transcribe_confidence, transcribe_info = self._transcribe_faster_whisper_pass(
                     model,
                     tmp_path,
-                    language=lang,
+                    language="",
                     task="",
                 )
-                translate_text, translate_confidence = self._transcribe_faster_whisper_pass(
+                translate_text, translate_confidence, _translate_info = self._transcribe_faster_whisper_pass(
                     model,
                     tmp_path,
                     language=lang,
@@ -4789,6 +5159,8 @@ class TranslationApp:
                         translate_confidence,
                     )
                 )
+                self.last_stt_source_text = (transcribe_text or "").strip()
+                self._set_last_stt_source_language_info(transcribe_info)
                 self.last_faster_whisper_confidence = selected_confidence
                 self._trace_pipeline(
                     "stt_faster_whisper_dual_pass_choice",
@@ -4797,17 +5169,24 @@ class TranslationApp:
                     reason=reason,
                     transcribe_confidence=transcribe_confidence,
                     translate_confidence=translate_confidence,
+                    source_detected_lang=self.last_stt_source_lang,
+                    source_lang_confidence=self.last_stt_source_lang_confidence,
                     has_api_key=bool((self.openai_api_key or "").strip()),
                 )
                 return selected_text, selected_pretranslated
             direct_translation = self._should_use_faster_whisper_direct_translation()
             task = "translate" if direct_translation else ""
-            text, confidence = self._transcribe_faster_whisper_pass(
+            text, confidence, info = self._transcribe_faster_whisper_pass(
                 model,
                 tmp_path,
                 language=lang,
                 task=task,
             )
+            self.last_stt_source_text = "" if direct_translation else (text or "").strip()
+            if direct_translation:
+                self._set_last_stt_source_language_info(None)
+            else:
+                self._set_last_stt_source_language_info(info)
             self.last_faster_whisper_confidence = confidence
             return text, direct_translation
         finally:
@@ -4847,11 +5226,11 @@ class TranslationApp:
             language=language,
             task=task,
         )
-        segments, _info = self._transcribe_with_faster_whisper(model, tmp_path, kwargs)
+        segments, info = self._transcribe_with_faster_whisper(model, tmp_path, kwargs)
         segments = list(segments)
         confidence = self._estimate_faster_whisper_confidence(segments)
         text = " ".join((getattr(segment, "text", "") or "") for segment in segments)
-        return text, confidence
+        return text, confidence, info
 
     def _select_faster_whisper_dual_pass_output(
         self,
@@ -6924,6 +7303,33 @@ class TranslationApp:
             "Ã‰feso", "Filipos", "TesalÃ³nica", "Tarso", "Patmos"
         ]
     
+    # Override the legacy mojibake list above with escaped Spanish names.
+    def default_biblical_terms_es(self):
+        return [
+            "G\u00e9nesis", "\u00c9xodo", "Lev\u00edtico", "N\u00fameros", "Deuteronomio",
+            "Josu\u00e9", "Jueces", "Rut", "1 Samuel", "2 Samuel",
+            "1 Reyes", "2 Reyes", "1 Cr\u00f3nicas", "2 Cr\u00f3nicas",
+            "Esdras", "Nehem\u00edas", "Ester", "Job", "Salmos", "Salmo",
+            "Proverbios", "Eclesiast\u00e9s", "Cantar de los Cantares",
+            "Isa\u00edas", "Jerem\u00edas", "Lamentaciones", "Ezequiel", "Daniel",
+            "Oseas", "Joel", "Am\u00f3s", "Abd\u00edas", "Jon\u00e1s", "Miqueas",
+            "Nah\u00fam", "Habacuc", "Sofon\u00edas", "Hageo", "Zacar\u00edas",
+            "Malaqu\u00edas", "Mateo", "Marcos", "Lucas", "Juan", "Hechos",
+            "Romanos", "1 Corintios", "2 Corintios", "G\u00e1latas",
+            "Efesios", "Filipenses", "Colosenses", "1 Tesalonicenses",
+            "2 Tesalonicenses", "1 Timoteo", "2 Timoteo", "Tito",
+            "Filem\u00f3n", "Hebreos", "Santiago", "1 Pedro", "2 Pedro",
+            "1 Juan", "2 Juan", "3 Juan", "Judas", "Apocalipsis",
+            "Jes\u00fas", "Mois\u00e9s", "Abraham", "Isaac", "Jacob", "Jos\u00e9",
+            "David", "Salom\u00f3n", "Samuel", "Pablo", "Pedro", "Mar\u00eda",
+            "Jerusal\u00e9n", "Bel\u00e9n", "Nazaret", "Galilea", "Jeric\u00f3",
+            "Capernaum", "Judea", "Samaria", "Betania", "G\u00f3lgota",
+            "Calvario", "Monte Sina\u00ed", "Monte Si\u00f3n", "Jord\u00e1n",
+            "Mar de Galilea", "Mar Muerto", "Damasco", "Asiria",
+            "Babilonia", "Egipto", "Roma", "Antioqu\u00eda", "Corinto",
+            "\u00c9feso", "Filipos", "Tesal\u00f3nica", "Tarso", "Patmos"
+        ]
+
     def update_display(self):
         def update():
             self.render_text()
