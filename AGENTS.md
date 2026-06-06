@@ -12,12 +12,14 @@ Python desktop app that captures live audio, transcribes speech, optionally tran
 
 ## Quick Start
 1. Create and activate a virtual environment.
-2. Install dependencies: `pip install -r requirements.txt`
-3. Run: `python main.py`
+2. If using `Local (faster-whisper)` with an NVIDIA GPU, install the NVIDIA driver, CUDA Toolkit 12.x, and cuDNN 9.x for CUDA 12 first. CPU mode does not require these GPU libraries.
+3. Install dependencies: `pip install -r requirements.txt`
+4. Run: `python main.py`
 
 ## Speech Engines
 - `OpenAI (gpt-4o-transcribe)` uses the OpenAI API and requires `openai_api_key`.
 - `Local (faster-whisper)` runs locally on GPU/CPU and downloads models as needed. No OpenAI calls for STT.
+- NVIDIA GPU mode for `Local (faster-whisper)` requires CUDA Toolkit 12.x and cuDNN 9.x for CUDA 12 to be installed on the machine.
 
 ## Translation
 - Translation can be enabled/disabled in settings.

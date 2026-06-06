@@ -18,11 +18,12 @@ A simple Python application for real-time speech-to-text translation, similar to
    sudo apt update
    sudo apt install -y python3-tk portaudio19-dev
    ```
-3. Install dependencies:
+3. If you plan to use `Local (faster-whisper)` on an NVIDIA GPU, install the NVIDIA driver, CUDA Toolkit 12.x, and cuDNN 9.x for CUDA 12 first. CPU mode does not require these GPU libraries.
+4. Install dependencies:
    ```
    pip install -r requirements.txt
    ```
-4. Set your OpenAI key as an environment variable:
+5. Set your OpenAI key as an environment variable:
    - PowerShell:
      ```
      $env:OPENAI_API_KEY="sk-..."
@@ -32,10 +33,16 @@ A simple Python application for real-time speech-to-text translation, similar to
      export OPENAI_API_KEY="sk-..."
      ```
    - Optional local file (not committed): copy `.env.example` to `.env.local` and load it in your shell before running.
-5. Run the app:
+6. Run the app:
    ```
    python main.py
    ```
+
+## Speech Engines
+
+- `OpenAI (gpt-4o-transcribe)` uses the OpenAI API and requires `OPENAI_API_KEY`.
+- `Local (faster-whisper)` can run on CPU or NVIDIA GPU.
+- NVIDIA GPU mode requires the NVIDIA driver, CUDA Toolkit 12.x, and cuDNN 9.x for CUDA 12 installed on the machine.
 
 ## Usage
 
