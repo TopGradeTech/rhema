@@ -193,14 +193,31 @@ class TranslationApp:
         self.set_dpi_awareness()
         self.app_data_dir = self._get_app_data_dir()
         self.settings_path = os.path.join(self.app_data_dir, "settings.json")
+        self.log_session_timestamp = time.strftime("%Y%m%d-%H%M%S")
+        self.log_retained_sessions = 5
+        self.session_log_prefixes = (
+            "error",
+            "transcript",
+            "finalized",
+            "transcribed",
+            "translated",
+        )
         self.error_log_path = self._get_error_log_path()
         self.transcript_trace_path = self._get_transcript_trace_path()
         self.finalized_transcript_path = self._get_finalized_transcript_path()
+        self.transcribed_text_path = self._get_transcribed_text_path()
+        self.translated_text_path = self._get_translated_text_path()
+        self._prune_old_log_sessions()
         self.status_log_enabled = True  # TEMP: set False to disable status logging
         self.status_log_lock = Lock()
         self.transcript_trace_enabled = True
         self.transcript_trace_lock = Lock()
         self.finalized_transcript_lock = Lock()
+        self.transcribed_text_lock = Lock()
+        self.translated_text_lock = Lock()
+        self.comparison_logs_enabled = True
+        self.transcribed_log_sequence = 0
+        self.translated_log_sequence = 0
         self.recognition_lock = Lock()
         self.portaudio_admin_lock = Lock()
         self.last_status_message = None
@@ -302,6 +319,11 @@ class TranslationApp:
         self.faster_whisper_model_name = "medium"
         self.faster_whisper_compute_type = "float16"
         self.faster_whisper_device = "cuda"
+        self.faster_whisper_vad_enabled = True
+        self.faster_whisper_vad_threshold = 0.45
+        self.faster_whisper_vad_min_silence_ms = 700
+        self.faster_whisper_vad_speech_pad_ms = 350
+        self.faster_whisper_vad_min_speech_ms = 150
         self.cuda_directory = ""
         self._cuda_dll_directory_handles = []
         self.faster_whisper_cpu_threads = max(1, (os.cpu_count() or 4) - 1)
@@ -319,6 +341,7 @@ class TranslationApp:
         self.lock_output_focus = False
         self.sentence_buffer = ""
         self.sentence_buffer_pretranslated = False
+        self.sentence_buffer_source_text = ""
         self.sentence_lock = Lock()
         self.sentence_flush_ms = 100
         self.sentence_last_update = 0.0
@@ -493,6 +516,7 @@ class TranslationApp:
         self.is_paused = False
         self.text_bbox_height = 0
         self.load_settings()
+        self._log_faster_whisper_runtime_config("startup")
         self._sync_windows_startup_entry()
         self._refresh_bad_words()
         self.devices = self.get_audio_devices()
@@ -729,7 +753,7 @@ class TranslationApp:
                 os.makedirs(logs_dir, exist_ok=True)
             except Exception:
                 pass
-            timestamp = time.strftime("%Y%m%d-%H%M%S")
+            timestamp = getattr(self, "log_session_timestamp", time.strftime("%Y%m%d-%H%M%S"))
             return os.path.join(logs_dir, f"error-{timestamp}.log")
         return os.path.join(base_dir, "error.log")
 
@@ -740,7 +764,7 @@ class TranslationApp:
             os.makedirs(logs_dir, exist_ok=True)
         except Exception:
             pass
-        timestamp = time.strftime("%Y%m%d-%H%M%S")
+        timestamp = getattr(self, "log_session_timestamp", time.strftime("%Y%m%d-%H%M%S"))
         return os.path.join(logs_dir, f"transcript-{timestamp}.log")
 
     def _get_finalized_transcript_path(self):
@@ -750,8 +774,60 @@ class TranslationApp:
             os.makedirs(logs_dir, exist_ok=True)
         except Exception:
             pass
-        timestamp = time.strftime("%Y%m%d-%H%M%S")
+        timestamp = getattr(self, "log_session_timestamp", time.strftime("%Y%m%d-%H%M%S"))
         return os.path.join(logs_dir, f"finalized-{timestamp}.log")
+
+    def _get_transcribed_text_path(self):
+        return self._get_session_log_path("transcribed")
+
+    def _get_translated_text_path(self):
+        return self._get_session_log_path("translated")
+
+    def _get_session_log_path(self, prefix):
+        base_dir = self.app_data_dir
+        logs_dir = os.path.join(base_dir, "logs")
+        try:
+            os.makedirs(logs_dir, exist_ok=True)
+        except Exception:
+            pass
+        timestamp = getattr(self, "log_session_timestamp", time.strftime("%Y%m%d-%H%M%S"))
+        return os.path.join(logs_dir, f"{prefix}-{timestamp}.log")
+
+    def _prune_old_log_sessions(self):
+        try:
+            max_sessions = max(1, int(getattr(self, "log_retained_sessions", 5)))
+        except Exception:
+            max_sessions = 5
+        try:
+            logs_dir = os.path.join(self.app_data_dir, "logs")
+            if not os.path.isdir(logs_dir):
+                return
+            prefixes = tuple(getattr(self, "session_log_prefixes", ()))
+            if not prefixes:
+                return
+            prefix_pattern = "|".join(re.escape(prefix) for prefix in prefixes)
+            pattern = re.compile(rf"^(?:{prefix_pattern})-(\d{{8}}-\d{{6}})\.log$")
+            files_by_session = {}
+            for name in os.listdir(logs_dir):
+                match = pattern.match(name)
+                if not match:
+                    continue
+                session = match.group(1)
+                files_by_session.setdefault(session, []).append(os.path.join(logs_dir, name))
+            current_session = getattr(self, "log_session_timestamp", "")
+            if current_session:
+                files_by_session.setdefault(current_session, [])
+            keep_sessions = set(sorted(files_by_session.keys(), reverse=True)[:max_sessions])
+            for session, paths in files_by_session.items():
+                if session in keep_sessions:
+                    continue
+                for path in paths:
+                    try:
+                        os.remove(path)
+                    except Exception:
+                        pass
+        except Exception:
+            pass
 
     def _log_status(self, msg):
         if not self.status_log_enabled:
@@ -791,6 +867,68 @@ class TranslationApp:
         except Exception:
             pass
 
+    def _log_faster_whisper_runtime_config(self, event, **extra_meta):
+        try:
+            model_kwargs = self._faster_whisper_model_kwargs()
+            meta = {
+                "event": str(event),
+                "speech_engine": (self.speech_engine or "").strip(),
+                "model": (self.faster_whisper_model_name or "").strip(),
+                "device": (self.faster_whisper_device or "").strip(),
+                "compute_type": (self.faster_whisper_compute_type or "").strip(),
+                "model_kwargs": model_kwargs,
+                "vad": self._faster_whisper_vad_settings(),
+            }
+            if extra_meta:
+                meta.update(extra_meta)
+            self._log_status(
+                "faster-whisper config "
+                f"({meta['event']}): model={meta['model'] or 'default'}, "
+                f"device={meta['device'] or 'default'}, "
+                f"compute_type={meta['compute_type'] or 'default'}"
+            )
+            self._trace_pipeline("faster_whisper_config", "", **meta)
+        except Exception:
+            pass
+
+    def _faster_whisper_vad_settings(self):
+        return {
+            "enabled": bool(self.faster_whisper_vad_enabled),
+            "threshold": self._coerce_float_range(
+                self.faster_whisper_vad_threshold,
+                0.45,
+                0.10,
+                0.95,
+            ),
+            "min_silence_duration_ms": self._coerce_int_range(
+                self.faster_whisper_vad_min_silence_ms,
+                700,
+                100,
+                3000,
+            ),
+            "speech_pad_ms": self._coerce_int_range(
+                self.faster_whisper_vad_speech_pad_ms,
+                350,
+                0,
+                1000,
+            ),
+            "min_speech_duration_ms": self._coerce_int_range(
+                self.faster_whisper_vad_min_speech_ms,
+                150,
+                0,
+                1000,
+            ),
+        }
+
+    def _faster_whisper_vad_parameters(self):
+        settings = self._faster_whisper_vad_settings()
+        return {
+            "threshold": settings["threshold"],
+            "min_silence_duration_ms": settings["min_silence_duration_ms"],
+            "speech_pad_ms": settings["speech_pad_ms"],
+            "min_speech_duration_ms": settings["min_speech_duration_ms"],
+        }
+
     def _log_finalized_sentence(self, text, **meta):
         clean_text = "" if text is None else str(text).strip()
         if not clean_text:
@@ -808,6 +946,59 @@ class TranslationApp:
                 entry["meta"] = meta
             with self.finalized_transcript_lock:
                 with open(self.finalized_transcript_path, "a", encoding="utf-8") as f:
+                    f.write(json.dumps(entry, ensure_ascii=False) + "\n")
+        except Exception:
+            pass
+
+    def _log_transcribed_text(self, text, **meta):
+        if not self.comparison_logs_enabled:
+            return
+        clean_text = "" if text is None else str(text).strip()
+        if not clean_text:
+            return
+        try:
+            now = time.time()
+            timestamp = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(now))
+            ms = int((now - int(now)) * 1000)
+            with self.transcribed_text_lock:
+                self.transcribed_log_sequence += 1
+                entry = {
+                    "id": self.transcribed_log_sequence,
+                    "ts": f"{timestamp}.{ms:03d}",
+                    "text": clean_text.replace("\r", " ").replace("\n", " "),
+                    "chars": len(clean_text),
+                }
+                if meta:
+                    entry["meta"] = meta
+                with open(self.transcribed_text_path, "a", encoding="utf-8") as f:
+                    f.write(json.dumps(entry, ensure_ascii=False) + "\n")
+        except Exception:
+            pass
+
+    def _log_translated_text(self, source_text, translated_text, **meta):
+        if not self.comparison_logs_enabled:
+            return
+        clean_translation = "" if translated_text is None else str(translated_text).strip()
+        if not clean_translation:
+            return
+        clean_source = "" if source_text is None else str(source_text).strip()
+        try:
+            now = time.time()
+            timestamp = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(now))
+            ms = int((now - int(now)) * 1000)
+            with self.translated_text_lock:
+                self.translated_log_sequence += 1
+                entry = {
+                    "id": self.translated_log_sequence,
+                    "ts": f"{timestamp}.{ms:03d}",
+                    "source_text": clean_source.replace("\r", " ").replace("\n", " "),
+                    "source_chars": len(clean_source),
+                    "text": clean_translation.replace("\r", " ").replace("\n", " "),
+                    "chars": len(clean_translation),
+                }
+                if meta:
+                    entry["meta"] = meta
+                with open(self.translated_text_path, "a", encoding="utf-8") as f:
                     f.write(json.dumps(entry, ensure_ascii=False) + "\n")
         except Exception:
             pass
@@ -857,6 +1048,43 @@ class TranslationApp:
         )
         self.faster_whisper_device = data.get(
             "faster_whisper_device", self.faster_whisper_device
+        )
+        self.faster_whisper_vad_enabled = self._coerce_bool(
+            data.get("faster_whisper_vad_enabled", self.faster_whisper_vad_enabled),
+            default=self.faster_whisper_vad_enabled,
+        )
+        self.faster_whisper_vad_threshold = self._coerce_float_range(
+            data.get("faster_whisper_vad_threshold", self.faster_whisper_vad_threshold),
+            self.faster_whisper_vad_threshold,
+            0.10,
+            0.95,
+        )
+        self.faster_whisper_vad_min_silence_ms = self._coerce_int_range(
+            data.get(
+                "faster_whisper_vad_min_silence_ms",
+                self.faster_whisper_vad_min_silence_ms,
+            ),
+            self.faster_whisper_vad_min_silence_ms,
+            100,
+            3000,
+        )
+        self.faster_whisper_vad_speech_pad_ms = self._coerce_int_range(
+            data.get(
+                "faster_whisper_vad_speech_pad_ms",
+                self.faster_whisper_vad_speech_pad_ms,
+            ),
+            self.faster_whisper_vad_speech_pad_ms,
+            0,
+            1000,
+        )
+        self.faster_whisper_vad_min_speech_ms = self._coerce_int_range(
+            data.get(
+                "faster_whisper_vad_min_speech_ms",
+                self.faster_whisper_vad_min_speech_ms,
+            ),
+            self.faster_whisper_vad_min_speech_ms,
+            0,
+            1000,
         )
 
     def _load_display_settings(self, data):
@@ -1024,6 +1252,20 @@ class TranslationApp:
                 return False
         return bool(default)
 
+    def _coerce_float_range(self, value, default, minimum, maximum):
+        try:
+            coerced = float(value)
+        except Exception:
+            coerced = float(default)
+        return max(float(minimum), min(float(maximum), coerced))
+
+    def _coerce_int_range(self, value, default, minimum, maximum):
+        try:
+            coerced = int(float(value))
+        except Exception:
+            coerced = int(default)
+        return max(int(minimum), min(int(maximum), coerced))
+
     def _normalize_lang_code(self, value, default="", allow_auto=False):
         lang = str(value or "").strip().lower()
         if "-" in lang:
@@ -1086,6 +1328,11 @@ class TranslationApp:
             "faster_whisper_model_name": self.faster_whisper_model_name,
             "faster_whisper_compute_type": self.faster_whisper_compute_type,
             "faster_whisper_device": self.faster_whisper_device,
+            "faster_whisper_vad_enabled": self.faster_whisper_vad_enabled,
+            "faster_whisper_vad_threshold": self.faster_whisper_vad_threshold,
+            "faster_whisper_vad_min_silence_ms": self.faster_whisper_vad_min_silence_ms,
+            "faster_whisper_vad_speech_pad_ms": self.faster_whisper_vad_speech_pad_ms,
+            "faster_whisper_vad_min_speech_ms": self.faster_whisper_vad_min_speech_ms,
             "bg_color": self.bg_color,
             "text_color": self.text_color,
             "max_lines": self.max_lines,
@@ -2238,6 +2485,42 @@ class TranslationApp:
                 "faster_whisper_device_var",
                 current_value=self.faster_whisper_device,
                 empty_default="cuda",
+            )
+            if "faster_whisper_vad_enabled_var" in api_vars:
+                self.faster_whisper_vad_enabled = bool(
+                    api_vars["faster_whisper_vad_enabled_var"].get()
+                )
+            self.faster_whisper_vad_threshold = self._coerce_float_range(
+                api_vars.get("faster_whisper_vad_threshold_var", None).get()
+                if "faster_whisper_vad_threshold_var" in api_vars
+                else self.faster_whisper_vad_threshold,
+                self.faster_whisper_vad_threshold,
+                0.10,
+                0.95,
+            )
+            self.faster_whisper_vad_min_silence_ms = self._coerce_int_range(
+                api_vars.get("faster_whisper_vad_min_silence_var", None).get()
+                if "faster_whisper_vad_min_silence_var" in api_vars
+                else self.faster_whisper_vad_min_silence_ms,
+                self.faster_whisper_vad_min_silence_ms,
+                100,
+                3000,
+            )
+            self.faster_whisper_vad_speech_pad_ms = self._coerce_int_range(
+                api_vars.get("faster_whisper_vad_speech_pad_var", None).get()
+                if "faster_whisper_vad_speech_pad_var" in api_vars
+                else self.faster_whisper_vad_speech_pad_ms,
+                self.faster_whisper_vad_speech_pad_ms,
+                0,
+                1000,
+            )
+            self.faster_whisper_vad_min_speech_ms = self._coerce_int_range(
+                api_vars.get("faster_whisper_vad_min_speech_var", None).get()
+                if "faster_whisper_vad_min_speech_var" in api_vars
+                else self.faster_whisper_vad_min_speech_ms,
+                self.faster_whisper_vad_min_speech_ms,
+                0,
+                1000,
             )
             next_config = (
                 self.faster_whisper_model_name,
@@ -3705,6 +3988,137 @@ class TranslationApp:
         self._apply_option_menu_style(device_menu)
         device_menu.pack(anchor="w")
 
+        vad_section = tk.LabelFrame(
+            faster_whisper_container,
+            text="Voice Activity Detection",
+            bg=label_opts["bg"],
+            fg=label_opts["fg"],
+            font=(self.ui_font_family, 10, "bold"),
+            padx=10,
+            pady=10,
+        )
+        vad_section.pack(fill=tk.X, pady=(12, 0))
+        faster_whisper_vad_enabled_var = tk.BooleanVar(
+            value=self.faster_whisper_vad_enabled
+        )
+        vad_enabled_row = tk.Frame(vad_section, bg=label_opts["bg"])
+        vad_enabled_row.pack(anchor="w", fill=tk.X)
+        vad_enabled_check = tk.Checkbutton(
+            vad_enabled_row,
+            text="Enable faster-whisper VAD",
+            variable=faster_whisper_vad_enabled_var,
+            bg=label_opts["bg"],
+            fg=label_opts["fg"],
+            selectcolor=label_opts["bg"],
+            activebackground=label_opts["bg"],
+        )
+        vad_enabled_check.pack(side=tk.LEFT)
+        self._create_help_icon(
+            vad_enabled_row,
+            "Silero voice activity detection trims silence before transcription.",
+            label_opts["bg"],
+            label_opts["fg"],
+        )
+
+        faster_whisper_vad_threshold_var = tk.DoubleVar(
+            value=self.faster_whisper_vad_threshold
+        )
+        self._add_setting_label(
+            vad_section,
+            "Speech threshold:",
+            "Lower keeps softer speech; higher rejects more background noise.",
+            label_opts,
+            pady=(10, 4),
+        )
+        vad_threshold_spin = tk.Spinbox(
+            vad_section,
+            from_=0.10,
+            to=0.95,
+            increment=0.05,
+            textvariable=faster_whisper_vad_threshold_var,
+            width=8,
+        )
+        self._apply_input_style(vad_threshold_spin)
+        vad_threshold_spin.pack(anchor="w")
+
+        faster_whisper_vad_min_silence_var = tk.IntVar(
+            value=self.faster_whisper_vad_min_silence_ms
+        )
+        self._add_setting_label(
+            vad_section,
+            "Min silence (ms):",
+            "Silence duration before faster-whisper splits speech chunks.",
+            label_opts,
+            pady=(10, 4),
+        )
+        vad_min_silence_spin = tk.Spinbox(
+            vad_section,
+            from_=100,
+            to=3000,
+            increment=100,
+            textvariable=faster_whisper_vad_min_silence_var,
+            width=8,
+        )
+        self._apply_input_style(vad_min_silence_spin)
+        vad_min_silence_spin.pack(anchor="w")
+
+        faster_whisper_vad_speech_pad_var = tk.IntVar(
+            value=self.faster_whisper_vad_speech_pad_ms
+        )
+        self._add_setting_label(
+            vad_section,
+            "Speech padding (ms):",
+            "Audio kept before and after detected speech to avoid clipped words.",
+            label_opts,
+            pady=(10, 4),
+        )
+        vad_speech_pad_spin = tk.Spinbox(
+            vad_section,
+            from_=0,
+            to=1000,
+            increment=50,
+            textvariable=faster_whisper_vad_speech_pad_var,
+            width=8,
+        )
+        self._apply_input_style(vad_speech_pad_spin)
+        vad_speech_pad_spin.pack(anchor="w")
+
+        faster_whisper_vad_min_speech_var = tk.IntVar(
+            value=self.faster_whisper_vad_min_speech_ms
+        )
+        self._add_setting_label(
+            vad_section,
+            "Min speech (ms):",
+            "Detected speech shorter than this is treated as noise.",
+            label_opts,
+            pady=(10, 4),
+        )
+        vad_min_speech_spin = tk.Spinbox(
+            vad_section,
+            from_=0,
+            to=1000,
+            increment=50,
+            textvariable=faster_whisper_vad_min_speech_var,
+            width=8,
+        )
+        self._apply_input_style(vad_min_speech_spin)
+        vad_min_speech_spin.pack(anchor="w")
+
+        vad_controls = (
+            vad_threshold_spin,
+            vad_min_silence_spin,
+            vad_speech_pad_spin,
+            vad_min_speech_spin,
+        )
+
+        def update_vad_control_state(*_args):
+            state = tk.NORMAL if faster_whisper_vad_enabled_var.get() else tk.DISABLED
+            for control in vad_controls:
+                control.configure(state=state)
+
+        faster_whisper_vad_enabled_var.trace_add("write", update_vad_control_state)
+        update_vad_control_state()
+
         def update_engine_visibility(*_args):
             engine = engine_map.get(speech_engine_var.get(), "openai")
             if engine == "openai":
@@ -3729,6 +4143,11 @@ class TranslationApp:
             "faster_whisper_model_var": faster_whisper_model_var,
             "faster_whisper_compute_var": faster_whisper_compute_var,
             "faster_whisper_device_var": faster_whisper_device_var,
+            "faster_whisper_vad_enabled_var": faster_whisper_vad_enabled_var,
+            "faster_whisper_vad_threshold_var": faster_whisper_vad_threshold_var,
+            "faster_whisper_vad_min_silence_var": faster_whisper_vad_min_silence_var,
+            "faster_whisper_vad_speech_pad_var": faster_whisper_vad_speech_pad_var,
+            "faster_whisper_vad_min_speech_var": faster_whisper_vad_min_speech_var,
         }
 
     def _build_translation_section(self, translation_section, label_opts):
@@ -4621,6 +5040,16 @@ class TranslationApp:
             engine=engine,
             stt_openai_ms=stt_ms,
         )
+        if not self.last_stt_pretranslated:
+            self._log_transcribed_text(
+                text,
+                engine=engine,
+                mode="single_pass_source",
+                stt_openai_ms=stt_ms,
+                source_lang=self._maybe_openai_language(),
+                selected=True,
+                selected_output_pretranslated=False,
+            )
         return text
 
     def _should_apply_source_language_filter(self):
@@ -4718,18 +5147,25 @@ class TranslationApp:
         if not flushed:
             return
         for sentence_payload in flushed:
-            sentence, pretranslated = self._unpack_buffered_sentence_payload(sentence_payload)
+            sentence, pretranslated, source_text = self._unpack_buffered_sentence_payload(
+                sentence_payload
+            )
             self._enqueue_sentence(
                 sentence,
                 pretranslated=pretranslated,
+                source_text=source_text,
                 capture_meta=capture_meta,
                 overlap_words=overlap_words,
             )
 
     def _unpack_buffered_sentence_payload(self, payload):
         if isinstance(payload, tuple):
-            return payload[0], bool(payload[1]) if len(payload) > 1 else False
-        return payload, False
+            return (
+                payload[0],
+                bool(payload[1]) if len(payload) > 1 else False,
+                payload[2] if len(payload) > 2 else "",
+            )
+        return payload, False, ""
 
     def _prepare_audio_for_stt(self, audio, is_loopback=False):
         if not is_loopback:
@@ -4909,6 +5345,43 @@ class TranslationApp:
             return "en"
         return None
 
+    def _language_scores_from_text(self, text):
+        sample = (text or "").lower()
+        tokens = re.findall(r"[^\W_]+", sample, flags=re.UNICODE)
+        if not tokens:
+            return 0, 0, 0
+        spanish_terms = {
+            "dios", "tierra", "luz", "tinieblas", "aguas", "cielos",
+            "cielo", "dia", "noche", "manana", "expansion", "hierba",
+            "semilla", "fruto", "genero", "lumbreras", "mares",
+        }
+        english_terms = {
+            "god", "earth", "light", "darkness", "waters", "heavens",
+            "heaven", "day", "night", "morning", "firmament", "grass",
+            "seed", "fruit", "kind", "signs", "seasons", "years",
+        }
+        es_score = sum(
+            1 for token in tokens if token in self.spanish_common_words or token in spanish_terms
+        )
+        en_score = sum(
+            1 for token in tokens if token in self.english_common_words or token in english_terms
+        )
+        if re.search(r"[\u00e1\u00e9\u00ed\u00f3\u00fa\u00fc\u00f1\u00bf\u00a1]", sample):
+            es_score += 2
+        return es_score, en_score, len(tokens)
+
+    def _looks_like_spanish_text(self, text):
+        es_score, en_score, token_count = self._language_scores_from_text(text)
+        if not token_count:
+            return False
+        return es_score >= 2 and es_score >= en_score + 2
+
+    def _looks_like_english_text(self, text):
+        es_score, en_score, token_count = self._language_scores_from_text(text)
+        if not token_count:
+            return False
+        return en_score >= 2 and en_score >= es_score + 2
+
     def _update_auto_detect_language(self, text):
         if not self._auto_detect_enabled():
             return
@@ -5079,6 +5552,7 @@ class TranslationApp:
                     f"faster-whisper failed to initialize: {exc}.{hint}"
                 ) from exc
             self.faster_whisper_model_config = config
+            self._log_faster_whisper_runtime_config("model_loaded")
             self._notify_faster_whisper_ready()
         return self.faster_whisper_model
 
@@ -5162,6 +5636,16 @@ class TranslationApp:
                 self.last_stt_source_text = (transcribe_text or "").strip()
                 self._set_last_stt_source_language_info(transcribe_info)
                 self.last_faster_whisper_confidence = selected_confidence
+                self._log_transcribed_text(
+                    self.last_stt_source_text,
+                    engine="faster-whisper",
+                    mode="dual_pass_source",
+                    source_lang=self.last_stt_source_lang,
+                    source_lang_confidence=self.last_stt_source_lang_confidence,
+                    stt_confidence=transcribe_confidence,
+                    selected=not bool(selected_pretranslated),
+                    selected_output_pretranslated=bool(selected_pretranslated),
+                )
                 self._trace_pipeline(
                     "stt_faster_whisper_dual_pass_choice",
                     selected_text,
@@ -5187,6 +5671,16 @@ class TranslationApp:
                 self._set_last_stt_source_language_info(None)
             else:
                 self._set_last_stt_source_language_info(info)
+                self._log_transcribed_text(
+                    self.last_stt_source_text,
+                    engine="faster-whisper",
+                    mode="single_pass_source",
+                    source_lang=self.last_stt_source_lang,
+                    source_lang_confidence=self.last_stt_source_lang_confidence,
+                    stt_confidence=confidence,
+                    selected=True,
+                    selected_output_pretranslated=False,
+                )
             self.last_faster_whisper_confidence = confidence
             return text, direct_translation
         finally:
@@ -5209,7 +5703,9 @@ class TranslationApp:
         kwargs["beam_size"] = 5
         kwargs["best_of"] = 5
         kwargs["no_speech_threshold"] = 0.6
-        kwargs["vad_filter"] = True
+        kwargs["vad_filter"] = bool(self.faster_whisper_vad_enabled)
+        if kwargs["vad_filter"]:
+            kwargs["vad_parameters"] = self._faster_whisper_vad_parameters()
         return kwargs
 
     def _should_run_faster_whisper_dual_pass(self):
@@ -5335,6 +5831,7 @@ class TranslationApp:
                 "temperature",
                 "without_timestamps",
                 "no_speech_threshold",
+                "vad_parameters",
                 "task",
             ):
                 fallback_kwargs.pop(key, None)
@@ -5395,15 +5892,24 @@ class TranslationApp:
         if not text:
             return []
         incoming_pretranslated = bool(self.last_stt_pretranslated)
+        incoming_source_text = self._current_sentence_source_text(
+            text,
+            pretranslated=incoming_pretranslated,
+        )
         with self.sentence_lock:
             if self.sentence_buffer:
                 self.sentence_buffer = f"{self.sentence_buffer} {text}"
+                self.sentence_buffer_source_text = self._append_text_fragment(
+                    self.sentence_buffer_source_text,
+                    incoming_source_text,
+                )
                 self.sentence_buffer_pretranslated = (
                     bool(self.sentence_buffer_pretranslated) and incoming_pretranslated
                 )
             else:
                 self.sentence_buffer = text
                 self.sentence_buffer_pretranslated = incoming_pretranslated
+                self.sentence_buffer_source_text = incoming_source_text
             self.sentence_last_update = time.time()
             buffer_text = self.sentence_buffer.strip()
             has_terminal_punctuation = bool(
@@ -5426,10 +5932,27 @@ class TranslationApp:
                     chars=len(buffer_text),
                 )
                 pretranslated = bool(self.sentence_buffer_pretranslated)
+                source_text = self.sentence_buffer_source_text.strip()
                 self.sentence_buffer = ""
                 self.sentence_buffer_pretranslated = False
-                return [(buffer_text, pretranslated)]
+                self.sentence_buffer_source_text = ""
+                return [(buffer_text, pretranslated, source_text)]
         return []
+
+    def _current_sentence_source_text(self, text, pretranslated=False):
+        source_text = (self.last_stt_source_text or "").strip()
+        if source_text:
+            return source_text
+        if not bool(pretranslated):
+            return (text or "").strip()
+        return ""
+
+    def _append_text_fragment(self, existing, fragment):
+        existing = (existing or "").strip()
+        fragment = (fragment or "").strip()
+        if existing and fragment:
+            return f"{existing} {fragment}"
+        return existing or fragment
 
     def _is_likely_sentence_fragment(self, text):
         text = (text or "").strip()
@@ -5473,6 +5996,7 @@ class TranslationApp:
                 return
             buffer_text = self.sentence_buffer.strip()
             buffer_pretranslated = bool(self.sentence_buffer_pretranslated)
+            buffer_source_text = self.sentence_buffer_source_text.strip()
             words = re.findall(r"[^\W_]+", buffer_text, flags=re.UNICODE)
             word_count = len(words)
             has_terminal = bool(re.search(r"[.!?][\"')\\]]*$", buffer_text))
@@ -5507,17 +6031,23 @@ class TranslationApp:
                 return
             self.sentence_buffer = ""
             self.sentence_buffer_pretranslated = False
+            self.sentence_buffer_source_text = ""
         self._trace_pipeline(
             "sentence_buffer_timeout_flush",
             buffer_text,
             wait_ms=self.sentence_flush_ms,
         )
-        self._enqueue_sentence(buffer_text, pretranslated=buffer_pretranslated)
+        self._enqueue_sentence(
+            buffer_text,
+            pretranslated=buffer_pretranslated,
+            source_text=buffer_source_text,
+        )
 
     def _enqueue_sentence(
         self,
         text,
         pretranslated=False,
+        source_text="",
         capture_meta=None,
         overlap_words=0,
     ):
@@ -5528,6 +6058,7 @@ class TranslationApp:
         payload = self._build_sentence_payload(
             text,
             pretranslated=pretranslated,
+            source_text=source_text,
             capture_meta=capture_meta,
             overlap_words=overlap_words,
         )
@@ -5616,7 +6147,14 @@ class TranslationApp:
             return True
         return False
 
-    def _build_sentence_payload(self, text, pretranslated=False, capture_meta=None, overlap_words=0):
+    def _build_sentence_payload(
+        self,
+        text,
+        pretranslated=False,
+        source_text="",
+        capture_meta=None,
+        overlap_words=0,
+    ):
         payload = {
             "text": text,
             "queued_at": time.time(),
@@ -5626,6 +6164,9 @@ class TranslationApp:
             "stt_confidence": self.last_faster_whisper_confidence,
             "overlap_words": max(0, int(overlap_words or 0)),
         }
+        source_text = (source_text or "").strip()
+        if source_text:
+            payload["source_text"] = source_text
         try:
             chunk_seconds = float((capture_meta or {}).get("chunk_seconds") or 0.0)
         except Exception:
@@ -5774,6 +6315,13 @@ class TranslationApp:
             merged_meta["translate_openai_ms"] = max(translate_values)
         if confidence_values:
             merged_meta["stt_confidence"] = sum(confidence_values) / len(confidence_values)
+        source_text_values = [
+            str(meta.get("source_text")).strip()
+            for meta in item_meta
+            if str(meta.get("source_text") or "").strip()
+        ]
+        if source_text_values:
+            merged_meta["source_text"] = " ".join(source_text_values)
         if chunk_seconds_values:
             merged_meta["chunk_seconds"] = max(chunk_seconds_values)
         if overlap_values:
@@ -5869,6 +6417,7 @@ class TranslationApp:
         with self.sentence_lock:
             self.sentence_buffer = ""
             self.sentence_buffer_pretranslated = False
+            self.sentence_buffer_source_text = ""
             self.sentence_last_update = 0.0
         while True:
             try:
@@ -6155,6 +6704,18 @@ class TranslationApp:
             translation_enabled=self.translation_enabled,
             translate_openai_ms=display_meta.get("translate_openai_ms"),
         )
+        if self.translation_enabled:
+            self._log_translated_text(
+                self._translation_log_source_text(text, display_meta),
+                translated,
+                source_lang=(self._effective_source_lang() or "").strip().lower(),
+                target_lang=(self._effective_target_lang() or "").strip().lower(),
+                speech_engine=(self.speech_engine or "").strip().lower(),
+                pretranslated=bool(display_meta.get("pretranslated")),
+                stt_openai_ms=display_meta.get("stt_openai_ms"),
+                translate_openai_ms=display_meta.get("translate_openai_ms"),
+                stt_confidence=display_meta.get("stt_confidence"),
+            )
         self._enqueue_finalized_output(translated, latency_meta=display_meta)
         self.update_status(self.STATUS_LISTENING)
 
@@ -6208,26 +6769,110 @@ class TranslationApp:
                 text,
                 display_meta=display_meta,
             )
-            return self._apply_translation_cleanup_steps(text, translated)
+            cleanup_source = self._translation_cleanup_source_text(text, display_meta)
+            cleaned = self._apply_translation_cleanup_steps(cleanup_source, translated)
+            return self._guard_translation_output_language(
+                text,
+                cleaned,
+                display_meta=display_meta,
+            )
         except Exception as exc:
             self.update_status(f"Translation error: {exc}")
             self._trace_pipeline("translation_error", text, error=str(exc))
-            return text
+            return self._translation_error_fallback_text(text, display_meta=display_meta)
+
+    def _translation_error_fallback_text(self, text, display_meta=None):
+        fallback = (text or "").strip()
+        if not fallback:
+            return fallback
+        if not self._is_raw_faster_whisper_spanish_to_english():
+            return fallback
+        if bool((display_meta or {}).get("pretranslated")) and self._looks_like_english_text(
+            fallback
+        ):
+            return fallback
+        if self._looks_like_spanish_text(fallback):
+            self._trace_pipeline(
+                "translation_error_target_lang_suppressed",
+                fallback,
+                target_lang=(self._effective_target_lang() or "").strip().lower(),
+            )
+            return ""
+        return fallback
+
+    def _translation_cleanup_source_text(self, text, display_meta=None):
+        meta_source = (display_meta or {}).get("translation_source_text")
+        if isinstance(meta_source, str) and meta_source.strip():
+            return meta_source.strip()
+        return text
+
+    def _translation_log_source_text(self, text, display_meta=None):
+        for key in ("translation_source_text", "source_text"):
+            value = (display_meta or {}).get(key)
+            if isinstance(value, str) and value.strip():
+                return value.strip()
+        return (text or "").strip()
+
+    def _guard_translation_output_language(self, original_text, translated_text, display_meta=None):
+        out = (translated_text or "").strip()
+        if not out:
+            return out
+        if not self._is_raw_faster_whisper_spanish_to_english():
+            return out
+        if not self._looks_like_spanish_text(out):
+            return out
+        fallback = ""
+        if bool((display_meta or {}).get("pretranslated")):
+            candidate = (original_text or "").strip()
+            if candidate and self._looks_like_english_text(candidate):
+                fallback = candidate
+        if fallback:
+            self._trace_pipeline(
+                "translation_target_lang_guard_fallback",
+                out,
+                fallback_chars=len(fallback),
+                target_lang=(self._effective_target_lang() or "").strip().lower(),
+            )
+            return fallback
+        self._trace_pipeline(
+            "translation_target_lang_guard_suppressed",
+            out,
+            target_lang=(self._effective_target_lang() or "").strip().lower(),
+        )
+        return ""
 
     def _translate_for_display(self, text, display_meta=None):
         pretranslated = bool((display_meta or {}).get("pretranslated"))
         if not self.translation_enabled:
             return text
+        translation_source = text
         if pretranslated:
             should_retranslate, reason = self._should_force_retranslation_pretranslated(
                 text,
                 display_meta=display_meta,
             )
             if should_retranslate:
+                translation_source = self._pretranslated_retranslation_source(
+                    text,
+                    display_meta=display_meta,
+                )
+                if not translation_source:
+                    if display_meta is not None:
+                        display_meta["translate_openai_ms"] = 0
+                    self._trace_pipeline(
+                        "translation_retranslate_pretranslated_skipped",
+                        text,
+                        reason="missing_source_text",
+                        translation_enabled=self.translation_enabled,
+                    )
+                    return text
+                if display_meta is not None:
+                    display_meta["translation_source_text"] = translation_source
                 self._trace_pipeline(
                     "translation_retranslate_pretranslated",
                     text,
                     reason=reason,
+                    source_chars=len(translation_source),
                     translation_enabled=self.translation_enabled,
                 )
             else:
@@ -6239,7 +6884,10 @@ class TranslationApp:
                     translation_enabled=self.translation_enabled,
                 )
                 return text
-        translated_candidate, translate_ms = self._translate_text(text)
+        else:
+            if display_meta is not None:
+                display_meta["translation_source_text"] = translation_source
+        translated_candidate, translate_ms = self._translate_text(translation_source)
         if not self.translation_enabled:
             # Toggle changed while request was in-flight.
             self._trace_pipeline(
@@ -6252,6 +6900,16 @@ class TranslationApp:
         if display_meta is not None:
             display_meta["translate_openai_ms"] = translate_ms
         return translated_candidate
+
+    def _pretranslated_retranslation_source(self, text, display_meta=None):
+        source_text = (display_meta or {}).get("source_text")
+        if isinstance(source_text, str) and source_text.strip():
+            return source_text.strip()
+        # If the only available text already looks English, avoid sending it
+        # through an es->en translator, which can flip it back to Spanish.
+        if self._looks_like_english_text(text):
+            return ""
+        return (text or "").strip()
 
     def _should_force_retranslation_pretranslated(self, text, display_meta=None):
         if not bool((display_meta or {}).get("pretranslated")):
