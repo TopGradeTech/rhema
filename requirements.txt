@@ -4,3 +4,6 @@ requests
 ttkbootstrap
 faster-whisper
 pydub
+transformers
+sentencepiece
+torch
