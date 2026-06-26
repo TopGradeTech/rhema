@@ -726,67 +726,120 @@ class TranscriptionMixin:
             ) from exc
 
         api_key = (self.kroko_api_key or "").strip()
-        language_code = (self.kroko_language_code or "es").strip()
+        language_code = (self.kroko_language_code or "es-ES").strip()
         if not api_key:
             raise ValueError(self.KROKO_API_KEY_EMPTY_MESSAGE)
 
         pcm_data = self._audio_to_kroko_pcm(audio)
-        header = struct.pack("<II", 16000, len(pcm_data))
-        url = (
-            f"wss://app.kroko.ai/api/v1/transcripts/pre-recorded"
-            f"?apiKey={api_key}&languageCode={language_code}"
-        )
-
-        final_texts = []
-        partial_texts = []
-        ws = websocket.WebSocket()
+        num_samples = len(pcm_data) // 4
         try:
-            ws.connect(url, timeout=30)
-            ws.send_binary(header + pcm_data)
-            ws.send("Done")
-            ws.settimeout(30)
-            while True:
-                try:
-                    msg = ws.recv()
-                except websocket.WebSocketConnectionClosedException:
-                    break
-                except Exception:
-                    break
-                if not msg:
-                    break
-                try:
-                    raw_msg = msg if isinstance(msg, str) else msg.decode("utf-8", errors="replace")
-                    payload = json.loads(raw_msg)
-                    msg_type = payload.get("type", "")
-                    text = (payload.get("text") or "").strip()
-                    if text:
+            from urllib.parse import urlencode
+            qs = urlencode({"apiKey": api_key, "languageCode": language_code})
+        except Exception:
+            qs = f"apiKey={api_key}&languageCode={language_code}"
+
+        # Try the streaming endpoint first (no header, simpler protocol).
+        # Fall back to pre-recorded with both sample-count and byte-count
+        # interpretations of the file-size header field if streaming fails.
+        _timeout = 8
+
+        for attempt, (endpoint, send_fn) in enumerate([
+            ("streaming",    lambda ws: ws.send_binary(pcm_data)),
+            ("pre-recorded-samples", lambda ws: (
+                ws.send_binary(struct.pack("<II", 16000, num_samples) + pcm_data),
+                ws.send("Done"),
+            )),
+            ("pre-recorded-bytes", lambda ws: (
+                ws.send_binary(struct.pack("<II", 16000, len(pcm_data)) + pcm_data),
+                ws.send("Done"),
+            )),
+        ]):
+            url = (
+                f"wss://app.kroko.ai/api/v1/transcripts/streaming?{qs}"
+                if endpoint == "streaming"
+                else f"wss://app.kroko.ai/api/v1/transcripts/pre-recorded?{qs}"
+            )
+            ws = websocket.WebSocket()
+            attempt_texts = []
+            try:
+                ws.connect(url, timeout=_timeout)
+                ws.settimeout(_timeout)
+                connected_msg = ws.recv()
+                self._trace_pipeline(
+                    "stt_kroko_connected",
+                    "",
+                    raw=connected_msg if isinstance(connected_msg, str) else repr(connected_msg),
+                    endpoint=endpoint,
+                    language_code=language_code,
+                    pcm_bytes=len(pcm_data),
+                    num_samples=num_samples,
+                    duration_ms=int(num_samples / 16000 * 1000),
+                )
+                send_fn(ws)
+                # Streaming sends cumulative partials (each replaces the last).
+                # Pre-recorded closes after "Done" is processed.
+                # We use the final message if it arrives, otherwise the last
+                # partial — streaming rarely emits "final" for discrete chunks.
+                last_partial = ""
+                got_final = False
+                while True:
+                    try:
+                        msg = ws.recv()
+                    except websocket.WebSocketConnectionClosedException:
+                        break
+                    except Exception as recv_exc:
+                        self._trace_pipeline(
+                            "stt_kroko_recv_error", "",
+                            error=str(recv_exc),
+                            endpoint=endpoint,
+                            final_count=len(attempt_texts),
+                        )
+                        break
+                    if not msg:
+                        break
+                    try:
+                        raw_msg = msg if isinstance(msg, str) else msg.decode("utf-8", errors="replace")
+                        payload = json.loads(raw_msg)
+                        msg_type = payload.get("type", "")
+                        text = (payload.get("text") or "").strip()
+                        self._trace_pipeline(
+                            "stt_kroko_message", text,
+                            msg_type=msg_type,
+                            endpoint=endpoint,
+                        )
                         if msg_type == "final":
-                            final_texts.append(text)
-                        else:
-                            partial_texts.append(text)
+                            if text:
+                                attempt_texts.append(text)
+                            got_final = True
+                            break
+                        elif text:
+                            last_partial = text
+                    except Exception:
+                        pass
+                if not got_final and last_partial:
+                    attempt_texts.append(last_partial)
+            except websocket.WebSocketBadStatusException as exc:
+                self._trace_pipeline(
+                    "stt_kroko_bad_status", "",
+                    error=str(exc), endpoint=endpoint,
+                )
+                continue
+            except Exception as exc:
+                self._trace_pipeline(
+                    "stt_kroko_connect_error", "",
+                    error=str(exc), endpoint=endpoint,
+                )
+                continue
+            finally:
+                try:
+                    ws.close()
                 except Exception:
                     pass
-        except websocket.WebSocketBadStatusException as exc:
-            err = str(exc)
-            if "4003" in err:
-                raise sr.RequestError(
-                    "Kroko usage limit reached or payment required. Check your plan at kroko.ai."
-                ) from exc
-            raise sr.RequestError(f"Kroko ASR rejected the connection: {exc}") from exc
-        except sr.RequestError:
-            raise
-        except Exception as exc:
-            raise sr.RequestError(f"Kroko ASR connection error: {exc}") from exc
-        finally:
-            try:
-                ws.close()
-            except Exception:
-                pass
+            if attempt_texts:
+                return " ".join(attempt_texts).strip()
 
-        result = " ".join(final_texts).strip()
-        if not result:
-            result = " ".join(partial_texts).strip()
-        return result
+        # All attempts failed — return empty so the normal no-speech path applies.
+        return ""
 
     def _audio_to_kroko_pcm(self, audio):
         raw = audio.get_raw_data()
@@ -1058,7 +1111,7 @@ class TranscriptionMixin:
         kwargs["temperature"] = 0.0
         kwargs["beam_size"] = 5
         kwargs["best_of"] = 5
-        kwargs["no_speech_threshold"] = 0.6
+        kwargs["no_speech_threshold"] = 0.45
         kwargs["vad_filter"] = bool(self.faster_whisper_vad_enabled)
         if kwargs["vad_filter"]:
             kwargs["vad_parameters"] = self._faster_whisper_vad_parameters()
