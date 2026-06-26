@@ -56,6 +56,23 @@ class AudioCaptureMixin:
                 self.update_status(f"Error: {e}")
 
     def _run_listen_iteration(self):
+        is_kroko = (self.speech_engine or "").strip().lower() == "kroko"
+
+        if is_kroko:
+            if not getattr(self, "kroko_live_active", False):
+                self._start_kroko_live_stream()
+            elif self._kroko_stream_needs_restart():
+                self._stop_kroko_live_stream()
+                self._start_kroko_live_stream()
+            if self._pause_if_needed():
+                return
+            self._flush_sentence_buffer_if_due()
+            time.sleep(0.05)
+            return
+
+        if getattr(self, "kroko_live_active", False):
+            self._stop_kroko_live_stream()
+
         if self._pause_if_needed():
             return
         self._flush_sentence_buffer_if_due()
@@ -512,6 +529,11 @@ class AudioCaptureMixin:
                 time.sleep(0.5)
 
     def _capture_loop_should_wait(self):
+        if getattr(self, "kroko_live_active", False):
+            # Kroko streaming opens its own PyAudio stream; suspend the
+            # speech_recognition capture loop to avoid mic conflicts.
+            time.sleep(0.05)
+            return True
         if self.capture_suspend_event.is_set():
             self.capture_suspended_event.set()
             time.sleep(0.05)
@@ -625,8 +647,34 @@ class AudioCaptureMixin:
         self.unknown_speech_count = 0
 
     def _recognize_audio(self, audio):
-        with self.recognition_lock:
-            return self._recognize_audio_locked(audio)
+        engine = (self.speech_engine or "").strip().lower()
+
+        # Pre-load faster-whisper model before recognition so the lock in
+        # _apply_api_vars is never blocked waiting on model initialization.
+        if engine == "faster-whisper":
+            try:
+                self._get_faster_whisper_model()
+            except Exception:
+                pass
+
+        # All engines run outside recognition_lock. Each engine snapshots the
+        # settings it needs at the top of its call, so mid-call Apply changes
+        # take effect cleanly on the next chunk with no UI freeze.
+        return self._recognize_audio_unlocked(audio, engine)
+
+    def _recognize_audio_unlocked(self, audio, engine):
+        """Run I/O-bound engines outside recognition_lock to keep Apply responsive."""
+        try:
+            text, out_engine = self._recognize_audio_core(audio)
+            return self._finalize_recognized_audio(text, out_engine)
+        except sr.UnknownValueError:
+            self._note_unknown_speech()
+            self._trace_pipeline("stt_unknown_value", "", engine=engine)
+            return ""
+        except Exception as exc:
+            self.update_status(f"Speech error: {exc}")
+            self._trace_pipeline("stt_error", "", engine=engine, error=str(exc))
+            return ""
 
     def _recognize_audio_locked(self, audio):
         try:

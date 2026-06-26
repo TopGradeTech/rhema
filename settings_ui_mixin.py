@@ -584,13 +584,14 @@ class SettingsUIMixin:
                 "kroko_api_key_var",
                 current_value=self.kroko_api_key,
             )
-            kroko_lang = self._optional_string_api_setting(
+            kroko_lang = self._optional_mapped_api_setting(
                 api_vars,
                 "kroko_language_code_var",
+                "kroko_language_code_map",
                 current_value=self.kroko_language_code,
-                empty_default="es",
+                mapped_default="en-US",
             )
-            self.kroko_language_code = kroko_lang if kroko_lang else "es"
+            self.kroko_language_code = kroko_lang if kroko_lang else "en-US"
             next_config = (
                 self.faster_whisper_model_name,
                 self.faster_whisper_compute_type,
@@ -742,35 +743,49 @@ class SettingsUIMixin:
         return None
 
     def _refresh_audio_devices(self):
-        # Refresh device list after audio-related settings change.
-        suspend_timeout = max(2.0, float(self.phrase_time_limit) + 1.0)
-        suspended = self._suspend_capture_for_device_scan(timeout=suspend_timeout)
-        if not suspended:
-            self._log_status("Skipping device refresh while capture is active")
-            return
-        self.device_refresh_in_progress = True
-        try:
-            self.devices = self.get_audio_devices()
-            if self.device_menu is not None:
-                menu = self.device_menu["menu"]
-                menu.delete(0, "end")
-                for device in self.devices:
-                    menu.add_command(
-                        label=device,
-                        command=tk._setit(self.device_var, device),
-                    )
-            preferred_label = self._resolve_preferred_device_label(self.preferred_device_label)
-            if preferred_label:
-                self.device_var.set(preferred_label)
-            elif self.device_var.get() not in self.devices:
-                self.device_var.set(self.devices[0] if self.devices else "No devices")
-            if self.device_var.get() in self.device_indices:
-                self.microphone_index = self.devices.index(self.device_var.get())
-            else:
-                self.microphone_index = None
-        finally:
-            self.device_refresh_in_progress = False
-            self._resume_capture_after_device_scan()
+        from threading import Thread
+
+        def _worker():
+            suspend_timeout = max(2.0, float(self.phrase_time_limit) + 1.0)
+            suspended = self._suspend_capture_for_device_scan(timeout=suspend_timeout)
+            if not suspended:
+                self._log_status("Skipping device refresh while capture is active")
+                return
+            self.device_refresh_in_progress = True
+            try:
+                devices = self.get_audio_devices()
+            finally:
+                self.device_refresh_in_progress = False
+                self._resume_capture_after_device_scan()
+
+            def _update_ui():
+                self.devices = devices
+                if self.device_menu is not None:
+                    menu = self.device_menu["menu"]
+                    menu.delete(0, "end")
+                    for device in devices:
+                        menu.add_command(
+                            label=device,
+                            command=tk._setit(self.device_var, device),
+                        )
+                preferred_label = self._resolve_preferred_device_label(
+                    self.preferred_device_label
+                )
+                if preferred_label:
+                    self.device_var.set(preferred_label)
+                elif self.device_var.get() not in devices:
+                    self.device_var.set(devices[0] if devices else "No devices")
+                if self.device_var.get() in self.device_indices:
+                    self.microphone_index = devices.index(self.device_var.get())
+                else:
+                    self.microphone_index = None
+
+            try:
+                self.root.after(0, _update_ui)
+            except Exception:
+                pass
+
+        Thread(target=_worker, daemon=True).start()
 
     def _apply_settings_geometry(self, settings_window):
         settings_window.geometry("960x1280")
@@ -2515,17 +2530,37 @@ class SettingsUIMixin:
 
         self._add_setting_label(
             kroko_container,
-            "Language code:",
-            "ISO 639-1 code for the spoken language (e.g. es for Spanish, en for English). See kroko.ai docs for supported codes.",
+            "Language:",
+            "Language spoken in the audio. Kroko pre-recorded API supports these languages.",
             label_opts,
             pady=(10, 4),
         )
-        kroko_language_code_var = tk.StringVar(value=self.kroko_language_code)
-        kroko_language_entry = tk.Entry(
-            kroko_container, textvariable=kroko_language_code_var, width=12
+        kroko_language_options = [
+            ("English (en-US)", "en-US"),
+            ("Spanish (es-ES)", "es-ES"),
+            ("French (fr-FR)", "fr-FR"),
+            ("German (de-DE)", "de-DE"),
+            ("Dutch (nl-NL)", "nl-NL"),
+            ("Italian (it-IT)", "it-IT"),
+            ("Portuguese (pt-PT)", "pt-PT"),
+            ("Bulgarian (bg-BG)", "bg-BG"),
+            ("Swedish (sv-SV)", "sv-SV"),
+        ]
+        kroko_language_display = [name for name, _ in kroko_language_options]
+        kroko_language_code_map = dict(kroko_language_options)
+        kroko_language_rev_map = {code: name for name, code in kroko_language_options}
+        kroko_language_code_var = tk.StringVar(
+            value=kroko_language_rev_map.get(
+                self.kroko_language_code, kroko_language_display[0]
+            )
         )
-        self._apply_input_style(kroko_language_entry)
-        kroko_language_entry.pack(anchor="w")
+        kroko_language_menu = tk.OptionMenu(
+            kroko_container,
+            kroko_language_code_var,
+            *kroko_language_display,
+        )
+        self._apply_option_menu_style(kroko_language_menu)
+        kroko_language_menu.pack(anchor="w")
 
         def update_engine_visibility(*_args):
             engine = engine_map.get(speech_engine_var.get(), "openai")
@@ -2570,6 +2605,7 @@ class SettingsUIMixin:
             "omnilingual_sidecar_timeout_var": omnilingual_sidecar_timeout_var,
             "kroko_api_key_var": kroko_api_key_var,
             "kroko_language_code_var": kroko_language_code_var,
+            "kroko_language_code_map": kroko_language_code_map,
         }
 
     def _build_translation_section(self, translation_section, label_opts):

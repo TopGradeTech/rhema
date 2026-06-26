@@ -38,6 +38,7 @@ from transcription_mixin import TranscriptionMixin
 from translation_mixin import TranslationMixin
 from text_filter_mixin import TextFilterMixin
 from display_mixin import DisplayMixin
+from kroko_streaming_mixin import KrokoStreamingMixin
 
 class TranslationApp(
     LoggingMixin,
@@ -49,6 +50,7 @@ class TranslationApp(
     TranslationMixin,
     TextFilterMixin,
     DisplayMixin,
+    KrokoStreamingMixin,
 ):
     SCROLL_EVENTS = ("<MouseWheel>", "<Button-4>", "<Button-5>")
     CONFIGURE_EVENT = "<Configure>"
@@ -65,7 +67,7 @@ class TranslationApp(
     SPANISH_WORD_PATTERN = r"[a-z\u00e1\u00e9\u00ed\u00f3\u00fa\u00fc\u00f1]+"
     SPANISH_DIACRITIC_PATTERN = r"[\u00e1\u00e9\u00ed\u00f3\u00fa\u00fc\u00f1\u00bf\u00a1]"
     TERMINAL_PUNCTUATION_PATTERN = r"[.!?][\"')\]]*$"
-    TRAILING_EDGE_PUNCTUATION_PATTERN = r"(?:^[\s\-:;,.!?]+|[\s\-:;,.!?]+$)"
+    TRAILING_EDGE_PUNCTUATION_PATTERN = r"(?:^(?:\.{2,}|[\s\-:;,])+|(?:\.{2,}|[\s\-:;,])+$)"
     PUNCTUATION_SPACING_PATTERN = r"\s+([,.;:!?])"
     URL_SCHEME_PATTERN = r"(?:https?://|www\.)"
     BARE_DOMAIN_PATTERN = r"\b(?:[a-z0-9-]+\.)+[a-z]{2,24}\b"
@@ -427,8 +429,8 @@ class TranslationApp(
         except Exception:
             self.rounded_buttons_supported = False
         self.recognizer = sr.Recognizer()
-        self.recognizer.pause_threshold = 0.45
-        self.recognizer.non_speaking_duration = 0.25
+        self.recognizer.pause_threshold = 0.65
+        self.recognizer.non_speaking_duration = 0.30
         self.recognizer.phrase_threshold = 0.2
         self.allow_loopback = False
         self.loopback_chunk_seconds = 1.0
@@ -449,7 +451,8 @@ class TranslationApp(
         self.available_host_apis = []
         self.openai_api_key = (os.getenv("OPENAI_API_KEY", "") or "").strip()
         self.kroko_api_key = (os.getenv("KROKO_API_KEY", "") or "").strip()
-        self.kroko_language_code = "es"
+        self.kroko_language_code = "es-ES"
+        self._kroko_stream_defaults()
         self.openai_stt_model = "whisper-1"
         self.openai_translation_mode = "whisper"
         self.openai_translate_model = "gpt-4o"
@@ -485,7 +488,7 @@ class TranslationApp(
         self.faster_whisper_compute_type = "float16"
         self.faster_whisper_device = "cuda"
         self.faster_whisper_vad_enabled = True
-        self.faster_whisper_vad_threshold = 0.50
+        self.faster_whisper_vad_threshold = 0.35
         self.faster_whisper_vad_min_silence_ms = 700
         self.faster_whisper_vad_speech_pad_ms = 350
         self.faster_whisper_vad_min_speech_ms = 150
@@ -805,6 +808,10 @@ class TranslationApp(
         except Exception:
             pass
         self.listening = False
+        try:
+            self._stop_kroko_live_stream()
+        except Exception:
+            pass
         self.root.quit()
 
 

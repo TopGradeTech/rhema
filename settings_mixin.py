@@ -161,7 +161,12 @@ class SettingsMixin:
             600,
         )
         kroko_lang = str(data.get("kroko_language_code", self.kroko_language_code)).strip()
-        self.kroko_language_code = kroko_lang if kroko_lang else "es"
+        _kroko_legacy = {
+            "en": "en-US", "es": "es-ES", "fr": "fr-FR", "de": "de-DE",
+            "nl": "nl-NL", "it": "it-IT", "pt": "pt-PT", "bg": "bg-BG", "sv": "sv-SV",
+        }
+        kroko_lang = _kroko_legacy.get(kroko_lang, kroko_lang)
+        self.kroko_language_code = kroko_lang if kroko_lang else "es-ES"
 
     def _load_display_settings(self, data):
         self.bg_color = data.get("bg_color", self.bg_color)
