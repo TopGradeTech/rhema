@@ -803,7 +803,15 @@ class TranslationApp(
             self._stop_realtime_stt()
         except Exception:
             pass
-        self.root.quit()
+        try:
+            self.root.quit()
+        except Exception:
+            pass
+        # Hard-exit so RealtimeSTT's multiprocessing child processes are also
+        # killed. root.quit() alone only exits the Tkinter loop; os._exit()
+        # terminates the entire process tree immediately.
+        import os as _os
+        _os._exit(0)
 
 
 if __name__ == "__main__":
