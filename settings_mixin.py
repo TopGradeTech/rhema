@@ -160,6 +160,8 @@ class SettingsMixin:
             5,
             600,
         )
+        kroko_lang = str(data.get("kroko_language_code", self.kroko_language_code)).strip()
+        self.kroko_language_code = kroko_lang if kroko_lang else "es"
 
     def _load_display_settings(self, data):
         self.bg_color = data.get("bg_color", self.bg_color)
@@ -631,6 +633,7 @@ class SettingsMixin:
             "omnilingual_sidecar_language": self.omnilingual_sidecar_language,
             "omnilingual_sidecar_response_format": self.omnilingual_sidecar_response_format,
             "omnilingual_sidecar_timeout_sec": self.omnilingual_sidecar_timeout_sec,
+            "kroko_language_code": self.kroko_language_code,
             "bg_color": self.bg_color,
             "text_color": self.text_color,
             "max_lines": self.max_lines,
