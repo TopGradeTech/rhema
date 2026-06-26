@@ -655,8 +655,8 @@ class AudioCaptureMixin:
         self._reset_recognition_state()
         raw_text, stt_ms = self._run_stt_engine(audio, engine)
         self.last_openai_stt_ms = stt_ms
-        if engine in ("faster-whisper", "omnilingual-sidecar"):
-            # Keep local-model output raw so we can evaluate baseline behavior.
+        if engine in ("faster-whisper", "omnilingual-sidecar", "kroko"):
+            # Keep local/cloud-passthrough output raw so we can evaluate baseline behavior.
             self._trace_pipeline("stt_raw", raw_text, engine=engine, stt_openai_ms=stt_ms)
             text = self._coerce_text(raw_text).strip()
             self._trace_pipeline("stt_passthrough", text, engine=engine, stt_openai_ms=stt_ms)
@@ -676,13 +676,36 @@ class AudioCaptureMixin:
             return self._finalize_omnilingual_sidecar_text(text, engine)
         if engine == "faster-whisper":
             return self._finalize_faster_whisper_text(text, engine)
+        if engine == "kroko":
+            return self._finalize_kroko_text(text, engine)
         if self._source_filter_blocks_recognized_text(text, engine=engine):
             return ""
         self._reset_speech_counters()
         return text
 
+    def _finalize_kroko_text(self, text, engine):
+        cleaned_text, stripped_noise = self._sanitize_faster_whisper_output(text)
+        if not cleaned_text:
+            self._trace_pipeline("stt_kroko_noise_suppressed", text)
+            self._note_unknown_speech()
+            return ""
+        if stripped_noise and cleaned_text != text:
+            self._trace_pipeline("stt_kroko_noise_trimmed", cleaned_text)
+        if self._source_filter_blocks_recognized_text(cleaned_text, engine=engine):
+            return ""
+        self._log_transcribed_text(
+            cleaned_text,
+            engine="kroko",
+            mode="single_pass_source",
+            source_lang=self.kroko_language_code,
+            selected=True,
+            selected_output_pretranslated=False,
+        )
+        self._reset_speech_counters()
+        return cleaned_text
+
     def _note_empty_recognition(self, engine):
-        if engine in ("faster-whisper", "omnilingual-sidecar"):
+        if engine in ("faster-whisper", "omnilingual-sidecar", "kroko"):
             self._note_unknown_speech()
 
     def _finalize_omnilingual_sidecar_text(self, text, engine):
@@ -834,6 +857,12 @@ class AudioCaptureMixin:
         if engine == "omnilingual-sidecar":
             stt_started = time.time()
             raw_text = self.recognize_omnilingual_sidecar(audio)
+            self.last_stt_pretranslated = False
+            stt_ms = int((time.time() - stt_started) * 1000)
+            return raw_text, stt_ms
+        if engine == "kroko":
+            stt_started = time.time()
+            raw_text = self.recognize_kroko(audio)
             self.last_stt_pretranslated = False
             stt_ms = int((time.time() - stt_started) * 1000)
             return raw_text, stt_ms
