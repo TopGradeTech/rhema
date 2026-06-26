@@ -414,22 +414,6 @@ class TranslationApp(
             background=[("active", "#4A7FEA"), ("pressed", "#4A7FEA")],
             foreground=[("disabled", "#FFFFFF")],
         )
-        try:
-            self.style.configure(
-                "primary.round.TButton",
-                background="#5B8FF7",
-                foreground="#FFFFFF",
-                font=(self.ui_font_family, 10, "bold"),
-                padding=(12, 6),
-            )
-            self.style.map(
-                "primary.round.TButton",
-                background=[("active", "#4A7FEA"), ("pressed", "#4A7FEA")],
-                foreground=[("disabled", "#FFFFFF")],
-            )
-            self.rounded_buttons_supported = True
-        except Exception:
-            self.rounded_buttons_supported = False
         self.recognizer = sr.Recognizer()
         self.recognizer.pause_threshold = 0.65
         self.recognizer.non_speaking_duration = 0.30

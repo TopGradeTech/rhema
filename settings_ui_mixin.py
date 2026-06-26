@@ -164,10 +164,7 @@ class SettingsUIMixin:
             pass
         save_button.pack(side=tk.RIGHT, padx=10, pady=10)
 
-        if self.rounded_buttons_supported:
-            apply_style = "apply.primary.round.TButton"
-        else:
-            apply_style = "apply.primary.TButton"
+        apply_style = "apply.primary.TButton"
         try:
             self.style.configure(
                 apply_style,
@@ -905,10 +902,7 @@ class SettingsUIMixin:
         }
 
     def _make_button(self, parent, text, command=None, primary=False):
-        if self.rounded_buttons_supported:
-            bootstyle = "primary,round" if primary else "round"
-        else:
-            bootstyle = PRIMARY if primary else None
+        bootstyle = PRIMARY if primary else None
         button = ttkb.Button(parent, text=text, command=command, bootstyle=bootstyle)
         try:
             button.configure(takefocus=0)
