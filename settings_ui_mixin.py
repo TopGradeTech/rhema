@@ -579,6 +579,18 @@ class SettingsUIMixin:
                 5,
                 600,
             )
+            self.kroko_api_key = self._optional_string_api_setting(
+                api_vars,
+                "kroko_api_key_var",
+                current_value=self.kroko_api_key,
+            )
+            kroko_lang = self._optional_string_api_setting(
+                api_vars,
+                "kroko_language_code_var",
+                current_value=self.kroko_language_code,
+                empty_default="es",
+            )
+            self.kroko_language_code = kroko_lang if kroko_lang else "es"
             next_config = (
                 self.faster_whisper_model_name,
                 self.faster_whisper_compute_type,
@@ -1977,6 +1989,7 @@ class SettingsUIMixin:
             ("OpenAI (cloud)", "openai"),
             ("Local (faster-whisper)", "faster-whisper"),
             ("Local (Omnilingual sidecar)", "omnilingual-sidecar"),
+            ("Kroko ASR (cloud, low-cost)", "kroko"),
         ]
         engine_display = [name for name, _ in speech_engine_options]
         engine_map = dict(speech_engine_options)
@@ -2467,17 +2480,67 @@ class SettingsUIMixin:
         )
         health_status_label.pack(anchor="w", pady=(6, 0))
 
+        kroko_container = tk.Frame(api_section, bg=label_opts["bg"])
+        self._add_setting_label(
+            kroko_container,
+            "Kroko API Key:",
+            "API key from kroko.ai. Read from KROKO_API_KEY environment variable at startup; set it there for persistence.",
+            label_opts,
+            pady=(0, 4),
+        )
+        kroko_api_key_var = tk.StringVar(value=self.kroko_api_key)
+        kroko_key_frame = tk.Frame(kroko_container, bg=label_opts["bg"])
+        kroko_key_frame.pack(fill=tk.X)
+        kroko_key_entry = tk.Entry(
+            kroko_key_frame, textvariable=kroko_api_key_var, width=50, show="*"
+        )
+        self._apply_input_style(kroko_key_entry)
+        kroko_key_entry.pack(side=tk.LEFT)
+        kroko_show_var = tk.BooleanVar(value=False)
+
+        def toggle_kroko_show():
+            kroko_key_entry.config(show="" if kroko_show_var.get() else "*")
+
+        kroko_show_button = tk.Checkbutton(
+            kroko_key_frame,
+            text="Show",
+            variable=kroko_show_var,
+            command=toggle_kroko_show,
+            bg=label_opts["bg"],
+            fg=label_opts["fg"],
+            selectcolor=label_opts["bg"],
+            activebackground=label_opts["bg"],
+        )
+        kroko_show_button.pack(side=tk.LEFT, padx=(8, 0))
+
+        self._add_setting_label(
+            kroko_container,
+            "Language code:",
+            "ISO 639-1 code for the spoken language (e.g. es for Spanish, en for English). See kroko.ai docs for supported codes.",
+            label_opts,
+            pady=(10, 4),
+        )
+        kroko_language_code_var = tk.StringVar(value=self.kroko_language_code)
+        kroko_language_entry = tk.Entry(
+            kroko_container, textvariable=kroko_language_code_var, width=12
+        )
+        self._apply_input_style(kroko_language_entry)
+        kroko_language_entry.pack(anchor="w")
+
         def update_engine_visibility(*_args):
             engine = engine_map.get(speech_engine_var.get(), "openai")
             openai_key_container.pack_forget()
             faster_whisper_container.pack_forget()
             omnilingual_sidecar_container.pack_forget()
+            kroko_container.pack_forget()
             if engine == "openai":
                 openai_key_container.pack(fill=tk.X)
             elif engine == "faster-whisper":
                 faster_whisper_container.pack(fill=tk.X, pady=(10, 0))
             elif engine == "omnilingual-sidecar":
                 omnilingual_sidecar_container.pack(fill=tk.X, pady=(10, 0))
+            elif engine == "kroko":
+                kroko_container.pack(fill=tk.X, pady=(10, 0))
 
         speech_engine_var.trace_add("write", update_engine_visibility)
         update_engine_visibility()
@@ -2505,6 +2568,8 @@ class SettingsUIMixin:
             "omnilingual_sidecar_language_var": omnilingual_sidecar_language_var,
             "omnilingual_sidecar_response_format_var": omnilingual_sidecar_response_format_var,
             "omnilingual_sidecar_timeout_var": omnilingual_sidecar_timeout_var,
+            "kroko_api_key_var": kroko_api_key_var,
+            "kroko_language_code_var": kroko_language_code_var,
         }
 
     def _build_translation_section(self, translation_section, label_opts):
@@ -3488,6 +3553,7 @@ class SettingsUIMixin:
         dependency_error = self._local_nllb_dependencies_error()
         if dependency_error:
             raise sr.RequestError(dependency_error)
+        os.environ.setdefault("HF_HUB_OFFLINE", "1")
         try:
             import torch as torch_module
             from transformers import AutoModelForSeq2SeqLM, AutoTokenizer

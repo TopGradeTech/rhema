@@ -114,6 +114,7 @@ class TranslationApp(
         "transcription. Try a longer recording, check microphone input, or inspect "
         "the saved debug WAV."
     )
+    KROKO_API_KEY_EMPTY_MESSAGE = "Kroko API key is empty. Enter it in Settings."
     OMNILINGUAL_SIDECAR_DEBUG_WAV_KEEP_COUNT = 5
     OMNILINGUAL_TEXT_KEYS = ("text", "transcription", "result", "transcript")
     OMNILINGUAL_COLLECTION_KEYS = (
@@ -426,8 +427,8 @@ class TranslationApp(
         except Exception:
             self.rounded_buttons_supported = False
         self.recognizer = sr.Recognizer()
-        self.recognizer.pause_threshold = 0.85
-        self.recognizer.non_speaking_duration = 0.4
+        self.recognizer.pause_threshold = 0.45
+        self.recognizer.non_speaking_duration = 0.25
         self.recognizer.phrase_threshold = 0.2
         self.allow_loopback = False
         self.loopback_chunk_seconds = 1.0
@@ -443,10 +444,12 @@ class TranslationApp(
         self._last_chunk_tuning_notice = 0.0
         self.loopback_overlap_seconds = 0.35
         self.loopback_tail_raw = b""
-        self.phrase_time_limit = 5.0
+        self.phrase_time_limit = 3.5
         self.recommended_host_api = ""
         self.available_host_apis = []
         self.openai_api_key = (os.getenv("OPENAI_API_KEY", "") or "").strip()
+        self.kroko_api_key = (os.getenv("KROKO_API_KEY", "") or "").strip()
+        self.kroko_language_code = "es"
         self.openai_stt_model = "whisper-1"
         self.openai_translation_mode = "whisper"
         self.openai_translate_model = "gpt-4o"
@@ -482,7 +485,7 @@ class TranslationApp(
         self.faster_whisper_compute_type = "float16"
         self.faster_whisper_device = "cuda"
         self.faster_whisper_vad_enabled = True
-        self.faster_whisper_vad_threshold = 0.45
+        self.faster_whisper_vad_threshold = 0.50
         self.faster_whisper_vad_min_silence_ms = 700
         self.faster_whisper_vad_speech_pad_ms = 350
         self.faster_whisper_vad_min_speech_ms = 150
@@ -637,7 +640,7 @@ class TranslationApp(
         self.current_reveal_latency_meta = None
         self.chunk_size = 120
         self.chunk_delay_ms = 90
-        self.flush_timeout_ms = 2000
+        self.flush_timeout_ms = 1400
         self.display_speed_factor = 1.0
         self.dynamic_fast_display_enabled = True
         self.fast_display_hold_sec = 2.0
@@ -653,7 +656,7 @@ class TranslationApp(
         self.flush_after_id = None
         self.transcript_context_words = []
         self.transcript_context_updated_at = 0.0
-        self.transcript_context_ttl_sec = 2.5
+        self.transcript_context_ttl_sec = 4.0
         self.transcript_context_max_words = 14
         self.source_lang = "auto"
         self.target_lang = "en"

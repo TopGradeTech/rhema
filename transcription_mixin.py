@@ -717,6 +717,124 @@ class TranscriptionMixin:
             )
         return text
 
+    def recognize_kroko(self, audio):
+        try:
+            import websocket
+        except ImportError as exc:
+            raise sr.RequestError(
+                "websocket-client is not installed. Run: pip install websocket-client"
+            ) from exc
+
+        api_key = (self.kroko_api_key or "").strip()
+        language_code = (self.kroko_language_code or "es").strip()
+        if not api_key:
+            raise ValueError(self.KROKO_API_KEY_EMPTY_MESSAGE)
+
+        pcm_data = self._audio_to_kroko_pcm(audio)
+        header = struct.pack("<II", 16000, len(pcm_data))
+        url = (
+            f"wss://app.kroko.ai/api/v1/transcripts/pre-recorded"
+            f"?apiKey={api_key}&languageCode={language_code}"
+        )
+
+        final_texts = []
+        partial_texts = []
+        ws = websocket.WebSocket()
+        try:
+            ws.connect(url, timeout=30)
+            ws.send_binary(header + pcm_data)
+            ws.send("Done")
+            ws.settimeout(30)
+            while True:
+                try:
+                    msg = ws.recv()
+                except websocket.WebSocketConnectionClosedException:
+                    break
+                except Exception:
+                    break
+                if not msg:
+                    break
+                try:
+                    raw_msg = msg if isinstance(msg, str) else msg.decode("utf-8", errors="replace")
+                    payload = json.loads(raw_msg)
+                    msg_type = payload.get("type", "")
+                    text = (payload.get("text") or "").strip()
+                    if text:
+                        if msg_type == "final":
+                            final_texts.append(text)
+                        else:
+                            partial_texts.append(text)
+                except Exception:
+                    pass
+        except websocket.WebSocketBadStatusException as exc:
+            err = str(exc)
+            if "4003" in err:
+                raise sr.RequestError(
+                    "Kroko usage limit reached or payment required. Check your plan at kroko.ai."
+                ) from exc
+            raise sr.RequestError(f"Kroko ASR rejected the connection: {exc}") from exc
+        except sr.RequestError:
+            raise
+        except Exception as exc:
+            raise sr.RequestError(f"Kroko ASR connection error: {exc}") from exc
+        finally:
+            try:
+                ws.close()
+            except Exception:
+                pass
+
+        result = " ".join(final_texts).strip()
+        if not result:
+            result = " ".join(partial_texts).strip()
+        return result
+
+    def _audio_to_kroko_pcm(self, audio):
+        raw = audio.get_raw_data()
+        sample_rate = int(getattr(audio, "sample_rate", 16000) or 16000)
+        sample_width = int(getattr(audio, "sample_width", 2) or 2)
+        target_rate = 16000
+
+        try:
+            import numpy as np
+            if sample_width == 1:
+                arr = (np.frombuffer(raw, dtype=np.uint8).astype(np.float32) - 128.0) / 128.0
+            elif sample_width == 2:
+                arr = np.frombuffer(raw, dtype=np.int16).astype(np.float32) / 32768.0
+            elif sample_width == 4:
+                arr = np.frombuffer(raw, dtype=np.int32).astype(np.float32) / 2147483648.0
+            else:
+                arr = np.frombuffer(raw, dtype=np.int16).astype(np.float32) / 32768.0
+            if sample_rate != target_rate and sample_rate > 0:
+                new_len = max(1, int(len(arr) * target_rate / sample_rate))
+                arr = np.interp(
+                    np.linspace(0, len(arr) - 1, new_len),
+                    np.arange(len(arr)),
+                    arr,
+                ).astype(np.float32)
+            return arr.tobytes()
+        except ImportError:
+            pass
+
+        import array as _array
+        n = len(raw) // sample_width
+        if sample_width == 2:
+            samples = [s / 32768.0 for s in struct.unpack(f"<{n}h", raw[: n * 2])]
+        elif sample_width == 4:
+            samples = [s / 2147483648.0 for s in struct.unpack(f"<{n}i", raw[: n * 4])]
+        elif sample_width == 1:
+            samples = [(b - 128) / 128.0 for b in struct.unpack(f"{n}B", raw[:n])]
+        else:
+            samples = [s / 32768.0 for s in struct.unpack(f"<{n}h", raw[: n * 2])]
+        if sample_rate != target_rate and sample_rate > 0:
+            orig_len = len(samples)
+            new_n = max(1, int(orig_len * target_rate / sample_rate))
+            samples = [
+                samples[min(int(i * orig_len / new_n), orig_len - 1)]
+                for i in range(new_n)
+            ]
+        out = _array.array("f", samples)
+        return bytes(out.tobytes())
+
     def _extract_omnilingual_sidecar_text(self, response):
         try:
             payload = response.json()

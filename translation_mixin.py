@@ -204,6 +204,8 @@ class TranslationMixin:
                 cache_dir,
                 local_files_only=True,
             )
+            if resolved_device != "cpu":
+                kwargs["torch_dtype"] = torch_module.float16
             try:
                 tokenizer = AutoTokenizer.from_pretrained(
                     model_name,
@@ -213,6 +215,7 @@ class TranslationMixin:
                 model = AutoModelForSeq2SeqLM.from_pretrained(model_name, **kwargs)
                 model.to(resolved_device)
                 model.eval()
+                model.generation_config.max_length = None
                 self._set_local_nllb_tokenizer_source(tokenizer, src_lang)
             except RuntimeError as exc:
                 if self._is_local_nllb_cuda_oom_exception(exc):
