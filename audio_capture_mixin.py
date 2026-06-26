@@ -56,7 +56,9 @@ class AudioCaptureMixin:
                 self.update_status(f"Error: {e}")
 
     def _run_listen_iteration(self):
-        is_kroko = (self.speech_engine or "").strip().lower() == "kroko"
+        engine = (self.speech_engine or "").strip().lower()
+        is_kroko = engine == "kroko"
+        is_realtime_stt = engine == "realtime-stt"
 
         if is_kroko:
             if not getattr(self, "kroko_live_active", False):
@@ -72,6 +74,18 @@ class AudioCaptureMixin:
 
         if getattr(self, "kroko_live_active", False):
             self._stop_kroko_live_stream()
+
+        if is_realtime_stt:
+            if not getattr(self, "realtime_stt_active", False):
+                self._start_realtime_stt()
+            if self._pause_if_needed():
+                return
+            self._flush_sentence_buffer_if_due()
+            time.sleep(0.05)
+            return
+
+        if getattr(self, "realtime_stt_active", False):
+            self._stop_realtime_stt()
 
         if self._pause_if_needed():
             return
@@ -532,6 +546,10 @@ class AudioCaptureMixin:
         if getattr(self, "kroko_live_active", False):
             # Kroko streaming opens its own PyAudio stream; suspend the
             # speech_recognition capture loop to avoid mic conflicts.
+            time.sleep(0.05)
+            return True
+        if getattr(self, "realtime_stt_active", False):
+            # RealtimeSTT opens its own PyAudio stream internally.
             time.sleep(0.05)
             return True
         if self.capture_suspend_event.is_set():
