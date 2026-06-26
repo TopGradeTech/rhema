@@ -592,6 +592,32 @@ class SettingsUIMixin:
                 mapped_default="en-US",
             )
             self.kroko_language_code = kroko_lang if kroko_lang else "en-US"
+            self.realtime_stt_final_model = self._optional_string_api_setting(
+                api_vars, "realtime_stt_final_model_var",
+                current_value=self.realtime_stt_final_model,
+                empty_default="large-v3",
+            )
+            self.realtime_stt_realtime_model = self._optional_string_api_setting(
+                api_vars, "realtime_stt_realtime_model_var",
+                current_value=self.realtime_stt_realtime_model,
+                empty_default="tiny",
+            )
+            self.realtime_stt_silero_sensitivity = self._coerce_float_range(
+                api_vars["realtime_stt_silero_var"].get()
+                if "realtime_stt_silero_var" in api_vars
+                else self.realtime_stt_silero_sensitivity,
+                self.realtime_stt_silero_sensitivity, 0.1, 0.9,
+            )
+            self.realtime_stt_post_speech_silence = self._coerce_float_range(
+                api_vars["realtime_stt_silence_var"].get()
+                if "realtime_stt_silence_var" in api_vars
+                else self.realtime_stt_post_speech_silence,
+                self.realtime_stt_post_speech_silence, 0.1, 3.0,
+            )
+            if "realtime_stt_interim_var" in api_vars:
+                self.realtime_stt_enable_interim = bool(
+                    api_vars["realtime_stt_interim_var"].get()
+                )
             next_config = (
                 self.faster_whisper_model_name,
                 self.faster_whisper_compute_type,
@@ -2005,6 +2031,7 @@ class SettingsUIMixin:
             ("Local (faster-whisper)", "faster-whisper"),
             ("Local (Omnilingual sidecar)", "omnilingual-sidecar"),
             ("Kroko ASR (cloud, low-cost)", "kroko"),
+            ("RealtimeSTT (local, real-time)", "realtime-stt"),
         ]
         engine_display = [name for name, _ in speech_engine_options]
         engine_map = dict(speech_engine_options)
@@ -2562,12 +2589,88 @@ class SettingsUIMixin:
         self._apply_option_menu_style(kroko_language_menu)
         kroko_language_menu.pack(anchor="w")
 
+        # ── RealtimeSTT settings panel ─────────────────────────────────
+        realtime_stt_container = tk.Frame(api_section, bg=label_opts["bg"])
+        self._add_setting_label(
+            realtime_stt_container,
+            "Final model:",
+            "Accurate faster-whisper model used after each utterance ends (e.g. large-v3, medium, small).",
+            label_opts, pady=(0, 4),
+        )
+        realtime_stt_final_model_var = tk.StringVar(value=self.realtime_stt_final_model)
+        realtime_stt_final_model_entry = tk.Entry(
+            realtime_stt_container, textvariable=realtime_stt_final_model_var, width=20
+        )
+        self._apply_input_style(realtime_stt_final_model_entry)
+        realtime_stt_final_model_entry.pack(anchor="w")
+
+        self._add_setting_label(
+            realtime_stt_container,
+            "Realtime model:",
+            "Fast model used for live interim display every 0.2 s (e.g. tiny, base). Ignored when interim display is off.",
+            label_opts, pady=(10, 4),
+        )
+        realtime_stt_realtime_model_options = ["tiny", "base", "small"]
+        realtime_stt_realtime_model_var = tk.StringVar(value=self.realtime_stt_realtime_model)
+        realtime_stt_realtime_model_menu = tk.OptionMenu(
+            realtime_stt_container,
+            realtime_stt_realtime_model_var,
+            *realtime_stt_realtime_model_options,
+        )
+        self._apply_option_menu_style(realtime_stt_realtime_model_menu)
+        realtime_stt_realtime_model_menu.pack(anchor="w")
+
+        self._add_setting_label(
+            realtime_stt_container,
+            "Silero sensitivity:",
+            "Voice activity detection threshold (0.1–0.9). Higher = less sensitive; lower catches softer speech.",
+            label_opts, pady=(10, 4),
+        )
+        realtime_stt_silero_var = tk.DoubleVar(value=self.realtime_stt_silero_sensitivity)
+        realtime_stt_silero_spin = tk.Spinbox(
+            realtime_stt_container, from_=0.1, to=0.9, increment=0.05,
+            textvariable=realtime_stt_silero_var, width=8,
+        )
+        self._apply_input_style(realtime_stt_silero_spin)
+        realtime_stt_silero_spin.pack(anchor="w")
+
+        self._add_setting_label(
+            realtime_stt_container,
+            "Post-speech silence (s):",
+            "Seconds of silence after speech before the utterance is finalised and sent to the pipeline.",
+            label_opts, pady=(10, 4),
+        )
+        realtime_stt_silence_var = tk.DoubleVar(value=self.realtime_stt_post_speech_silence)
+        realtime_stt_silence_spin = tk.Spinbox(
+            realtime_stt_container, from_=0.1, to=3.0, increment=0.1,
+            textvariable=realtime_stt_silence_var, width=8,
+        )
+        self._apply_input_style(realtime_stt_silence_spin)
+        realtime_stt_silence_spin.pack(anchor="w")
+
+        realtime_stt_interim_var = tk.BooleanVar(value=self.realtime_stt_enable_interim)
+        interim_row = tk.Frame(realtime_stt_container, bg=label_opts["bg"])
+        interim_row.pack(anchor="w", pady=(12, 0), fill=tk.X)
+        tk.Checkbutton(
+            interim_row,
+            text="Show live interim text while speaking",
+            variable=realtime_stt_interim_var,
+            bg=label_opts["bg"], fg=label_opts["fg"],
+            selectcolor=label_opts["bg"], activebackground=label_opts["bg"],
+        ).pack(side=tk.LEFT)
+        self._create_help_icon(
+            interim_row,
+            "Displays stabilized partial transcription on the live line as you speak. Disable for a cleaner display that only shows committed sentences.",
+            label_opts["bg"], label_opts["fg"],
+        )
+
         def update_engine_visibility(*_args):
             engine = engine_map.get(speech_engine_var.get(), "openai")
             openai_key_container.pack_forget()
             faster_whisper_container.pack_forget()
             omnilingual_sidecar_container.pack_forget()
             kroko_container.pack_forget()
+            realtime_stt_container.pack_forget()
             if engine == "openai":
                 openai_key_container.pack(fill=tk.X)
             elif engine == "faster-whisper":
@@ -2576,6 +2679,8 @@ class SettingsUIMixin:
                 omnilingual_sidecar_container.pack(fill=tk.X, pady=(10, 0))
             elif engine == "kroko":
                 kroko_container.pack(fill=tk.X, pady=(10, 0))
+            elif engine == "realtime-stt":
+                realtime_stt_container.pack(fill=tk.X, pady=(10, 0))
 
         speech_engine_var.trace_add("write", update_engine_visibility)
         update_engine_visibility()
@@ -2606,6 +2711,11 @@ class SettingsUIMixin:
             "kroko_api_key_var": kroko_api_key_var,
             "kroko_language_code_var": kroko_language_code_var,
             "kroko_language_code_map": kroko_language_code_map,
+            "realtime_stt_final_model_var": realtime_stt_final_model_var,
+            "realtime_stt_realtime_model_var": realtime_stt_realtime_model_var,
+            "realtime_stt_silero_var": realtime_stt_silero_var,
+            "realtime_stt_silence_var": realtime_stt_silence_var,
+            "realtime_stt_interim_var": realtime_stt_interim_var,
         }
 
     def _build_translation_section(self, translation_section, label_opts):

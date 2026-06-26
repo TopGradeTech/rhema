@@ -39,6 +39,7 @@ from translation_mixin import TranslationMixin
 from text_filter_mixin import TextFilterMixin
 from display_mixin import DisplayMixin
 from kroko_streaming_mixin import KrokoStreamingMixin
+from realtime_stt_mixin import RealtimeSttMixin
 
 class TranslationApp(
     LoggingMixin,
@@ -51,6 +52,7 @@ class TranslationApp(
     TextFilterMixin,
     DisplayMixin,
     KrokoStreamingMixin,
+    RealtimeSttMixin,
 ):
     SCROLL_EVENTS = ("<MouseWheel>", "<Button-4>", "<Button-5>")
     CONFIGURE_EVENT = "<Configure>"
@@ -453,6 +455,7 @@ class TranslationApp(
         self.kroko_api_key = (os.getenv("KROKO_API_KEY", "") or "").strip()
         self.kroko_language_code = "es-ES"
         self._kroko_stream_defaults()
+        self._realtime_stt_defaults()
         self.openai_stt_model = "whisper-1"
         self.openai_translation_mode = "whisper"
         self.openai_translate_model = "gpt-4o"
@@ -810,6 +813,10 @@ class TranslationApp(
         self.listening = False
         try:
             self._stop_kroko_live_stream()
+        except Exception:
+            pass
+        try:
+            self._stop_realtime_stt()
         except Exception:
             pass
         self.root.quit()

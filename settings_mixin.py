@@ -167,6 +167,24 @@ class SettingsMixin:
         }
         kroko_lang = _kroko_legacy.get(kroko_lang, kroko_lang)
         self.kroko_language_code = kroko_lang if kroko_lang else "es-ES"
+        self.realtime_stt_final_model = str(
+            data.get("realtime_stt_final_model", self.realtime_stt_final_model)
+        ).strip() or "large-v3"
+        self.realtime_stt_realtime_model = str(
+            data.get("realtime_stt_realtime_model", self.realtime_stt_realtime_model)
+        ).strip() or "tiny"
+        self.realtime_stt_silero_sensitivity = self._coerce_float_range(
+            data.get("realtime_stt_silero_sensitivity", self.realtime_stt_silero_sensitivity),
+            0.4, 0.1, 0.9,
+        )
+        self.realtime_stt_post_speech_silence = self._coerce_float_range(
+            data.get("realtime_stt_post_speech_silence", self.realtime_stt_post_speech_silence),
+            0.6, 0.1, 3.0,
+        )
+        self.realtime_stt_enable_interim = self._coerce_bool(
+            data.get("realtime_stt_enable_interim", self.realtime_stt_enable_interim),
+            default=True,
+        )
 
     def _load_display_settings(self, data):
         self.bg_color = data.get("bg_color", self.bg_color)
@@ -639,6 +657,11 @@ class SettingsMixin:
             "omnilingual_sidecar_response_format": self.omnilingual_sidecar_response_format,
             "omnilingual_sidecar_timeout_sec": self.omnilingual_sidecar_timeout_sec,
             "kroko_language_code": self.kroko_language_code,
+            "realtime_stt_final_model": self.realtime_stt_final_model,
+            "realtime_stt_realtime_model": self.realtime_stt_realtime_model,
+            "realtime_stt_silero_sensitivity": self.realtime_stt_silero_sensitivity,
+            "realtime_stt_post_speech_silence": self.realtime_stt_post_speech_silence,
+            "realtime_stt_enable_interim": self.realtime_stt_enable_interim,
             "bg_color": self.bg_color,
             "text_color": self.text_color,
             "max_lines": self.max_lines,
