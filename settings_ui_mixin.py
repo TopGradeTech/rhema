@@ -611,10 +611,6 @@ class SettingsUIMixin:
                 else self.realtime_stt_post_speech_silence,
                 self.realtime_stt_post_speech_silence, 0.1, 3.0,
             )
-            if "realtime_stt_interim_var" in api_vars:
-                self.realtime_stt_enable_interim = bool(
-                    api_vars["realtime_stt_interim_var"].get()
-                )
             next_config = (
                 self.faster_whisper_model_name,
                 self.faster_whisper_compute_type,
@@ -2642,22 +2638,6 @@ class SettingsUIMixin:
         self._apply_input_style(realtime_stt_silence_spin)
         realtime_stt_silence_spin.pack(anchor="w")
 
-        realtime_stt_interim_var = tk.BooleanVar(value=self.realtime_stt_enable_interim)
-        interim_row = tk.Frame(realtime_stt_container, bg=label_opts["bg"])
-        interim_row.pack(anchor="w", pady=(12, 0), fill=tk.X)
-        tk.Checkbutton(
-            interim_row,
-            text="Show live interim text while speaking",
-            variable=realtime_stt_interim_var,
-            bg=label_opts["bg"], fg=label_opts["fg"],
-            selectcolor=label_opts["bg"], activebackground=label_opts["bg"],
-        ).pack(side=tk.LEFT)
-        self._create_help_icon(
-            interim_row,
-            "Displays stabilized partial transcription on the live line as you speak. Disable for a cleaner display that only shows committed sentences.",
-            label_opts["bg"], label_opts["fg"],
-        )
-
         def update_engine_visibility(*_args):
             engine = engine_map.get(speech_engine_var.get(), "openai")
             openai_key_container.pack_forget()
@@ -2709,7 +2689,6 @@ class SettingsUIMixin:
             "realtime_stt_realtime_model_var": realtime_stt_realtime_model_var,
             "realtime_stt_silero_var": realtime_stt_silero_var,
             "realtime_stt_silence_var": realtime_stt_silence_var,
-            "realtime_stt_interim_var": realtime_stt_interim_var,
         }
 
     def _build_translation_section(self, translation_section, label_opts):

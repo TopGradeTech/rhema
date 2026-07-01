@@ -532,6 +532,17 @@ class DisplayMixin:
         frames_per_buffer = 1024
         try:
             while self.listening:
+                # Suspend while RealtimeSTT or Kroko have their own PyAudio
+                # input stream open — two simultaneous mic streams on the same
+                # device causes audio contention and slows transcription.
+                if getattr(self, "realtime_stt_active", False) or getattr(self, "kroko_live_active", False):
+                    if stream is not None:
+                        stream = self._close_audio_level_stream_handle(stream)
+                        pa = self._close_audio_level_pyaudio(pa)
+                        current_key = None
+                    self.audio_level_target = 0.0
+                    time.sleep(0.1)
+                    continue
                 device_index = self._resolve_audio_level_device_index()
                 if device_index is None:
                     current_key = self._handle_missing_audio_level_device()

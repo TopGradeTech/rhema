@@ -31,7 +31,6 @@ class RealtimeSttMixin:
         self.realtime_stt_silero_sensitivity = 0.4
         self.realtime_stt_post_speech_silence = 0.6
         self.realtime_stt_min_recording_length = 0.5
-        self.realtime_stt_enable_interim = False
 
     # ------------------------------------------------------------------ #
     # Lifecycle                                                             #
@@ -94,9 +93,7 @@ class RealtimeSttMixin:
             "realtime_model_type": self.realtime_stt_realtime_model,
             "enable_realtime_transcription": True,
             "on_realtime_transcription_update": on_update,
-            "on_realtime_transcription_stabilized": (
-                on_interim if self.realtime_stt_enable_interim else None
-            ),
+            "on_realtime_transcription_stabilized": on_interim,
             "device": self.faster_whisper_device,
             "compute_type": "int8",
             "silero_sensitivity": float(self.realtime_stt_silero_sensitivity),
@@ -151,6 +148,12 @@ class RealtimeSttMixin:
 
         def on_update(text):
             self._realtime_stt_adjust_silence(text)
+            if not self.realtime_stt_active:
+                return
+            try:
+                self.root.after(0, lambda t=text: self._realtime_stt_queue_interim(t))
+            except Exception:
+                pass
 
         try:
             recorder = AudioToTextRecorder(
@@ -219,61 +222,17 @@ class RealtimeSttMixin:
 
     def _on_realtime_stt_final(self, text):
         text = (text or "").strip()
-        if not text or getattr(self, "is_paused", False):
+        if not text:
             return
-        # Clear live line now that we have a committed final
+        self._trace_pipeline("realtime_stt_final", text)
         try:
-            self.root.after(0, lambda: self._realtime_stt_set_live_line(""))
+            self.root.after(0, lambda t=text: self._realtime_stt_show(t))
         except Exception:
             pass
-        # Light sanitization — remove hallucination patterns
-        try:
-            cleaned, _ = self._sanitize_faster_whisper_output(text)
-        except Exception:
-            cleaned = text
-        if not cleaned:
-            return
-        if self._source_filter_blocks_recognized_text(cleaned, engine="realtime-stt"):
-            return
-        self._log_transcribed_text(
-            cleaned,
-            engine="realtime-stt",
-            mode="single_pass_source",
-            source_lang=self._normalized_source_lang_code(),
-            selected=True,
-            selected_output_pretranslated=False,
-        )
-        self._reset_speech_counters()
-        self._trace_pipeline("realtime_stt_final", cleaned)
-        # When interim display is on and translation is off, the user already
-        # saw this exact text build up word-by-word on the live line.
-        # Committing through the word-by-word reveal pipeline would show the
-        # same text a second time.  Append directly instead.
-        if self.realtime_stt_enable_interim and not self.translation_enabled:
-            try:
-                self.root.after(0, lambda t=cleaned: self._realtime_stt_commit_direct(t))
-            except Exception:
-                pass
-        else:
-            # Translation enabled: translated text is new content the user
-            # hasn't seen, so word-by-word reveal is appropriate.
-            # Interim off: no text was shown yet, reveal is the primary animation.
-            self._enqueue_flushed_sentences_from_buffer(cleaned, overlap_words=0)
 
-    def _realtime_stt_commit_direct(self, text):
-        """Append a final to the display immediately — no word-by-word rebuild."""
+    def _realtime_stt_show(self, text):
+        """Put a RealtimeSTT final directly on screen — no processing whatsoever."""
         self.live_line = ""
-        filtered = self.filter_bad_words(text)
-        if not filtered:
-            return
-        self.translations.append(filtered)
+        self.translations.append(text)
         self._trim_translation_history()
         self.render_text()
-        self._log_finalized_sentence(
-            filtered,
-            translation_enabled=False,
-            stt_openai_ms=None,
-            translate_openai_ms=None,
-            stt_confidence=None,
-            pretranslated=False,
-        )
