@@ -181,10 +181,6 @@ class SettingsMixin:
             data.get("realtime_stt_post_speech_silence", self.realtime_stt_post_speech_silence),
             0.6, 0.1, 3.0,
         )
-        self.realtime_stt_enable_interim = self._coerce_bool(
-            data.get("realtime_stt_enable_interim", self.realtime_stt_enable_interim),
-            default=True,
-        )
 
     def _load_display_settings(self, data):
         self.bg_color = data.get("bg_color", self.bg_color)
@@ -661,7 +657,6 @@ class SettingsMixin:
             "realtime_stt_realtime_model": self.realtime_stt_realtime_model,
             "realtime_stt_silero_sensitivity": self.realtime_stt_silero_sensitivity,
             "realtime_stt_post_speech_silence": self.realtime_stt_post_speech_silence,
-            "realtime_stt_enable_interim": self.realtime_stt_enable_interim,
             "bg_color": self.bg_color,
             "text_color": self.text_color,
             "max_lines": self.max_lines,

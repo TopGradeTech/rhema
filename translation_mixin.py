@@ -205,7 +205,7 @@ class TranslationMixin:
                 local_files_only=True,
             )
             if resolved_device != "cpu":
-                kwargs["torch_dtype"] = torch_module.float16
+                kwargs["dtype"] = torch_module.float16
             try:
                 tokenizer = AutoTokenizer.from_pretrained(
                     model_name,
