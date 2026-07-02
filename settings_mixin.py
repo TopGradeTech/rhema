@@ -50,123 +50,7 @@ class SettingsMixin:
             return None
 
     def _load_model_and_engine_settings(self, data):
-        self.openai_stt_model = str(
-            data.get("openai_stt_model", self.openai_stt_model)
-        ).strip() or "whisper-1"
-        if self.openai_stt_model not in ("whisper-1", "gpt-4o-transcribe"):
-            self.openai_stt_model = "whisper-1"
-        self.openai_translation_mode = str(
-            data.get("openai_translation_mode", self.openai_translation_mode)
-        ).strip() or "whisper"
-        if self.openai_translation_mode not in ("whisper", "gpt-4o"):
-            self.openai_translation_mode = "whisper"
-        self.openai_translate_model = str(
-            data.get("openai_translate_model", self.openai_translate_model)
-        ).strip() or "gpt-4o"
-        self.speech_engine = data.get("speech_engine", self.speech_engine)
-        self.faster_whisper_model_name = data.get(
-            "faster_whisper_model_name", self.faster_whisper_model_name
-        )
-        self.faster_whisper_compute_type = data.get(
-            "faster_whisper_compute_type", self.faster_whisper_compute_type
-        )
-        self.faster_whisper_device = data.get(
-            "faster_whisper_device", self.faster_whisper_device
-        )
-        self.faster_whisper_vad_enabled = self._coerce_bool(
-            data.get("faster_whisper_vad_enabled", self.faster_whisper_vad_enabled),
-            default=self.faster_whisper_vad_enabled,
-        )
-        self.faster_whisper_vad_threshold = self._coerce_float_range(
-            data.get("faster_whisper_vad_threshold", self.faster_whisper_vad_threshold),
-            self.faster_whisper_vad_threshold,
-            0.10,
-            0.95,
-        )
-        self.faster_whisper_vad_min_silence_ms = self._coerce_int_range(
-            data.get(
-                "faster_whisper_vad_min_silence_ms",
-                self.faster_whisper_vad_min_silence_ms,
-            ),
-            self.faster_whisper_vad_min_silence_ms,
-            100,
-            3000,
-        )
-        self.faster_whisper_vad_speech_pad_ms = self._coerce_int_range(
-            data.get(
-                "faster_whisper_vad_speech_pad_ms",
-                self.faster_whisper_vad_speech_pad_ms,
-            ),
-            self.faster_whisper_vad_speech_pad_ms,
-            0,
-            1000,
-        )
-        self.faster_whisper_vad_min_speech_ms = self._coerce_int_range(
-            data.get(
-                "faster_whisper_vad_min_speech_ms",
-                self.faster_whisper_vad_min_speech_ms,
-            ),
-            self.faster_whisper_vad_min_speech_ms,
-            0,
-            1000,
-        )
-        legacy_sidecar_url = str(data.get("omnilingual_sidecar_url", "") or "").strip()
-        self.omnilingual_sidecar_base_url = (
-            self._normalize_omnilingual_sidecar_base_url(
-                data.get(
-                    "omnilingual_sidecar_base_url",
-                    legacy_sidecar_url or self.omnilingual_sidecar_base_url,
-                )
-            )
-        )
-        self.omnilingual_sidecar_endpoint_path = (
-            self._normalize_omnilingual_sidecar_endpoint_path(
-                data.get(
-                    "omnilingual_sidecar_endpoint_path",
-                    self.omnilingual_sidecar_endpoint_path,
-                )
-            )
-        )
-        if (
-            "omnilingual_sidecar_model" in data
-            or "omnilingual_sidecar_model_card" in data
-        ):
-            self.omnilingual_sidecar_model = str(
-                data.get(
-                    "omnilingual_sidecar_model",
-                    data.get("omnilingual_sidecar_model_card", ""),
-                )
-            ).strip()
-        self.omnilingual_sidecar_language = str(
-            data.get(
-                "omnilingual_sidecar_language",
-                data.get("omnilingual_sidecar_lang", self.omnilingual_sidecar_language),
-            )
-        ).strip()
-        self.omnilingual_sidecar_response_format = (
-            self._normalize_omnilingual_sidecar_response_format(
-                data.get(
-                    "omnilingual_sidecar_response_format",
-                    self.omnilingual_sidecar_response_format,
-                )
-            )
-        )
-        self.omnilingual_sidecar_timeout_sec = self._coerce_int_range(
-            data.get(
-                "omnilingual_sidecar_timeout_sec",
-                self.omnilingual_sidecar_timeout_sec,
-            ),
-            self.omnilingual_sidecar_timeout_sec,
-            5,
-            600,
-        )
-        kroko_lang = str(data.get("kroko_language_code", self.kroko_language_code)).strip()
-        _kroko_legacy = {
-            "en": "en-US", "es": "es-ES", "fr": "fr-FR", "de": "de-DE",
-            "nl": "nl-NL", "it": "it-IT", "pt": "pt-PT", "bg": "bg-BG", "sv": "sv-SV",
-        }
-        kroko_lang = _kroko_legacy.get(kroko_lang, kroko_lang)
-        self.kroko_language_code = kroko_lang if kroko_lang else "es-ES"
+        self.stt_device = data.get("stt_device", data.get("faster_whisper_device", self.stt_device))
         self.realtime_stt_final_model = str(
             data.get("realtime_stt_final_model", self.realtime_stt_final_model)
         ).strip() or "large-v3"
@@ -275,13 +159,6 @@ class SettingsMixin:
         except Exception:
             pass
         self.display_speed_factor = max(0.5, min(self.display_speed_factor, 2.5))
-        self.loopback_chunk_autotune_enabled = self._coerce_bool(
-            data.get(
-                "loopback_chunk_autotune_enabled",
-                self.loopback_chunk_autotune_enabled,
-            ),
-            default=self.loopback_chunk_autotune_enabled,
-        )
         self.translation_enabled = self._coerce_bool(
             data.get("translation_enabled", self.translation_enabled),
             default=self.translation_enabled,
@@ -327,18 +204,6 @@ class SettingsMixin:
         )
 
     def _load_text_translation_settings(self, data):
-        provider_value = data.get("text_translation_provider", None)
-        if provider_value is None:
-            provider_value = "openai" if self.translation_enabled else "none"
-        self.text_translation_provider = self._normalize_text_translation_provider(
-            provider_value
-        )
-        if self.text_translation_provider == "local_nllb":
-            self.previous_text_translation_provider = (
-                "openai" if self.translation_enabled else "none"
-            )
-        else:
-            self.previous_text_translation_provider = self.text_translation_provider
         self.local_nllb_model_name = str(
             data.get("local_nllb_model_name", self.local_nllb_model_name)
         ).strip() or self.LOCAL_NLLB_DEFAULT_MODEL_NAME
@@ -435,47 +300,6 @@ class SettingsMixin:
         self.transcript_trace_enabled = self.logging_mode in ("debug", "full")
         self.comparison_logs_enabled = self.logging_mode in ("evaluation", "full")
 
-    def _normalize_omnilingual_sidecar_base_url(self, value):
-        url = str(value or "").strip()
-        if not url:
-            return self.OMNILINGUAL_SIDECAR_DEFAULT_BASE_URL
-        url = url.rstrip("/")
-        known_paths = (
-            self.OMNILINGUAL_SIDECAR_DEFAULT_ENDPOINT_PATH,
-            "/transcribe",
-        )
-        lowered = url.lower()
-        for path in known_paths:
-            if lowered.endswith(path.lower()):
-                url = url[: -len(path)].rstrip("/")
-                break
-        return url or self.OMNILINGUAL_SIDECAR_DEFAULT_BASE_URL
-
-    def _normalize_omnilingual_sidecar_endpoint_path(self, value):
-        path = str(value or "").strip()
-        if not path:
-            return self.OMNILINGUAL_SIDECAR_DEFAULT_ENDPOINT_PATH
-        if not path.startswith("/"):
-            path = f"/{path}"
-        return path
-
-    def _normalize_omnilingual_sidecar_response_format(self, value):
-        response_format = str(value or "").strip().lower()
-        if response_format in ("json", "text"):
-            return response_format
-        return self.OMNILINGUAL_SIDECAR_DEFAULT_RESPONSE_FORMAT
-
-    def _build_omnilingual_sidecar_url(self, base_url=None, endpoint_path=None):
-        base = self._normalize_omnilingual_sidecar_base_url(
-            self.omnilingual_sidecar_base_url if base_url is None else base_url
-        )
-        path = self._normalize_omnilingual_sidecar_endpoint_path(
-            self.omnilingual_sidecar_endpoint_path
-            if endpoint_path is None
-            else endpoint_path
-        )
-        return f"{base}{path}"
-
     def _short_response_preview(self, value, limit=500):
         preview = str(value or "").replace("\r", " ").replace("\n", " ").strip()
         if len(preview) > limit:
@@ -495,27 +319,8 @@ class SettingsMixin:
         return default
 
     def _normalize_text_translation_provider(self, value):
-        provider = str(value or "").strip().lower()
-        provider = provider.replace("-", "_").replace(" ", "_")
-        aliases = {
-            "": "none",
-            "off": "none",
-            "disabled": "none",
-            "no_translation": "none",
-            "existing_cloud_provider": "openai",
-            "cloud": "openai",
-            "openai_api": "openai",
-            "openai_api_cloud": "openai",
-            "api": "openai",
-            "nllb": "local_nllb",
-            "local": "local_nllb",
-            "local_nllb_200": "local_nllb",
-            "local_nllb_200_distilled_600m": "local_nllb",
-        }
-        provider = aliases.get(provider, provider)
-        if provider not in self.TEXT_TRANSLATION_PROVIDER_OPTIONS:
-            return "none"
-        return provider
+        # Local NLLB is the only supported text translation provider.
+        return "local_nllb"
 
     def _normalize_local_nllb_device(self, value):
         device = str(value or "").strip().lower()
@@ -564,12 +369,6 @@ class SettingsMixin:
             "selected_source",
             "auto_from_selected_source_language",
         ):
-            if (self.speech_engine or "").strip().lower() == "omnilingual-sidecar":
-                sidecar_lang = self._normalized_omnilingual_sidecar_language_code()
-                if sidecar_lang:
-                    mapped = self._nllb_language_code_for_app_language(sidecar_lang)
-                    if mapped:
-                        return mapped
             mapped = self._nllb_language_code_for_app_language(
                 self._effective_source_lang() or self.source_lang
             )
@@ -642,25 +441,8 @@ class SettingsMixin:
         self.settings_monitor_device = settings_device
         self.settings_monitor_origin = settings_origin
         data = {
-            "openai_stt_model": self.openai_stt_model,
-            "openai_translation_mode": self.openai_translation_mode,
-            "openai_translate_model": self.openai_translate_model,
             "speech_engine": self.speech_engine,
-            "faster_whisper_model_name": self.faster_whisper_model_name,
-            "faster_whisper_compute_type": self.faster_whisper_compute_type,
-            "faster_whisper_device": self.faster_whisper_device,
-            "faster_whisper_vad_enabled": self.faster_whisper_vad_enabled,
-            "faster_whisper_vad_threshold": self.faster_whisper_vad_threshold,
-            "faster_whisper_vad_min_silence_ms": self.faster_whisper_vad_min_silence_ms,
-            "faster_whisper_vad_speech_pad_ms": self.faster_whisper_vad_speech_pad_ms,
-            "faster_whisper_vad_min_speech_ms": self.faster_whisper_vad_min_speech_ms,
-            "omnilingual_sidecar_base_url": self.omnilingual_sidecar_base_url,
-            "omnilingual_sidecar_endpoint_path": self.omnilingual_sidecar_endpoint_path,
-            "omnilingual_sidecar_model": self.omnilingual_sidecar_model,
-            "omnilingual_sidecar_language": self.omnilingual_sidecar_language,
-            "omnilingual_sidecar_response_format": self.omnilingual_sidecar_response_format,
-            "omnilingual_sidecar_timeout_sec": self.omnilingual_sidecar_timeout_sec,
-            "kroko_language_code": self.kroko_language_code,
+            "stt_device": self.stt_device,
             "realtime_stt_final_model": self.realtime_stt_final_model,
             "realtime_stt_realtime_model": self.realtime_stt_realtime_model,
             "realtime_stt_silero_sensitivity": self.realtime_stt_silero_sensitivity,
@@ -686,12 +468,10 @@ class SettingsMixin:
             "flush_timeout_ms": self.flush_timeout_ms,
             "sentence_flush_ms": self.sentence_flush_ms,
             "display_speed_factor": self.display_speed_factor,
-            "loopback_chunk_autotune_enabled": self.loopback_chunk_autotune_enabled,
             "logging_mode": self.logging_mode,
             "source_lang": self.source_lang,
             "target_lang": self.target_lang,
             "translation_enabled": self.translation_enabled,
-            "text_translation_provider": self.text_translation_provider,
             "local_nllb_model_name": self.local_nllb_model_name,
             "local_nllb_device": self.local_nllb_device,
             "local_nllb_source_lang": self.local_nllb_source_lang,

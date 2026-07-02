@@ -280,68 +280,6 @@ class LoggingMixin:
         except Exception:
             pass
 
-    def _log_faster_whisper_runtime_config(self, event, **extra_meta):
-        try:
-            model_kwargs = self._faster_whisper_model_kwargs()
-            meta = {
-                "event": str(event),
-                "speech_engine": (self.speech_engine or "").strip(),
-                "model": (self.faster_whisper_model_name or "").strip(),
-                "device": (self.faster_whisper_device or "").strip(),
-                "compute_type": (self.faster_whisper_compute_type or "").strip(),
-                "model_kwargs": model_kwargs,
-                "vad": self._faster_whisper_vad_settings(),
-            }
-            if extra_meta:
-                meta.update(extra_meta)
-            self._log_status(
-                "faster-whisper config "
-                f"({meta['event']}): model={meta['model'] or 'default'}, "
-                f"device={meta['device'] or 'default'}, "
-                f"compute_type={meta['compute_type'] or 'default'}"
-            )
-            self._trace_pipeline("faster_whisper_config", "", **meta)
-        except Exception:
-            pass
-
-    def _faster_whisper_vad_settings(self):
-        return {
-            "enabled": bool(self.faster_whisper_vad_enabled),
-            "threshold": self._coerce_float_range(
-                self.faster_whisper_vad_threshold,
-                0.45,
-                0.10,
-                0.95,
-            ),
-            "min_silence_duration_ms": self._coerce_int_range(
-                self.faster_whisper_vad_min_silence_ms,
-                700,
-                100,
-                3000,
-            ),
-            "speech_pad_ms": self._coerce_int_range(
-                self.faster_whisper_vad_speech_pad_ms,
-                350,
-                0,
-                1000,
-            ),
-            "min_speech_duration_ms": self._coerce_int_range(
-                self.faster_whisper_vad_min_speech_ms,
-                150,
-                0,
-                1000,
-            ),
-        }
-
-    def _faster_whisper_vad_parameters(self):
-        settings = self._faster_whisper_vad_settings()
-        return {
-            "threshold": settings["threshold"],
-            "min_silence_duration_ms": settings["min_silence_duration_ms"],
-            "speech_pad_ms": settings["speech_pad_ms"],
-            "min_speech_duration_ms": settings["min_speech_duration_ms"],
-        }
-
     def _log_finalized_sentence(self, text, **meta):
         if not getattr(self, "finalized_logs_enabled", True):
             return
