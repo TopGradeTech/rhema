@@ -4,7 +4,7 @@ from tkinter import messagebox
 from tkinter import colorchooser
 from tkinter import filedialog
 from tkinter import font as tkfont
-from threading import Thread, Lock, Event
+from threading import Thread, Lock
 import queue
 import time
 import re
@@ -35,7 +35,6 @@ from transcription_mixin import TranscriptionMixin
 from translation_mixin import TranslationMixin
 from text_filter_mixin import TextFilterMixin
 from display_mixin import DisplayMixin
-from kroko_streaming_mixin import KrokoStreamingMixin
 from realtime_stt_mixin import RealtimeSttMixin
 
 class TranslationApp(
@@ -48,17 +47,14 @@ class TranslationApp(
     TranslationMixin,
     TextFilterMixin,
     DisplayMixin,
-    KrokoStreamingMixin,
     RealtimeSttMixin,
 ):
     SCROLL_EVENTS = ("<MouseWheel>", "<Button-4>", "<Button-5>")
     CONFIGURE_EVENT = "<Configure>"
     STATUS_LISTENING = "Listening..."
-    OPENAI_AUDIO_MAX_BYTES = 24 * 1024 * 1024
     SHOW_LIST_LABEL = "Show list"
     HIDE_LIST_LABEL = "Hide list"
     OUTPUT_LANGUAGE_ENGLISH_LABEL = "Output language: English"
-    OPENAI_API_KEY_EMPTY_MESSAGE = "OpenAI API key is empty. Enter it in Settings."
     NON_WORD_PATTERN = r"[^\w]+"
     UNICODE_WORD_PATTERN = r"[^\W_]+"
     UNICODE_WORD_CHAR_PATTERN = r"[^\W_]"
@@ -106,27 +102,6 @@ class TranslationApp(
     BOOK_2_CORINTHIANS = "2 Corinthians"
     BOOK_1_THESSALONIANS = "1 Thessalonians"
     BOOK_2_THESSALONIANS = "2 Thessalonians"
-    OMNILINGUAL_SIDECAR_DEFAULT_BASE_URL = "http://127.0.0.1:8765"
-    OMNILINGUAL_SIDECAR_DEFAULT_ENDPOINT_PATH = "/v1/audio/transcriptions"
-    OMNILINGUAL_SIDECAR_DEFAULT_MODEL = "omniASR_CTC_300M_v2"
-    OMNILINGUAL_SIDECAR_DEFAULT_RESPONSE_FORMAT = "json"
-    OMNILINGUAL_SIDECAR_EMPTY_TRANSCRIPTION_MESSAGE = (
-        "The local Omnilingual server processed the audio but returned an empty "
-        "transcription. Try a longer recording, check microphone input, or inspect "
-        "the saved debug WAV."
-    )
-    KROKO_API_KEY_EMPTY_MESSAGE = "Kroko API key is empty. Enter it in Settings."
-    OMNILINGUAL_SIDECAR_DEBUG_WAV_KEEP_COUNT = 5
-    OMNILINGUAL_TEXT_KEYS = ("text", "transcription", "result", "transcript")
-    OMNILINGUAL_COLLECTION_KEYS = (
-        "texts",
-        "transcripts",
-        "transcriptions",
-        "results",
-        "segments",
-        "data",
-    )
-    TEXT_TRANSLATION_PROVIDER_OPTIONS = ("none", "openai", "local_nllb")
     LOCAL_NLLB_DEFAULT_MODEL_NAME = "facebook/nllb-200-distilled-600M"
     LOCAL_NLLB_DEFAULT_SOURCE_LANG = "auto_from_selected_source_language"
     LOCAL_NLLB_DEFAULT_TARGET_LANG = "eng_Latn"
@@ -225,32 +200,6 @@ class TranslationApp(
     LOGGING_MODE_OPTIONS = ("normal", "debug", "evaluation", "full")
     WINDOWS_RUN_KEY_PATH = r"Software\Microsoft\Windows\CurrentVersion\Run"
     WINDOWS_STARTUP_VALUE_NAME = "TopGradePythonTranslation"
-    TRANSLATION_NOISE_MARKERS = (
-        "please provide",
-        "provide the text",
-        "you need translated",
-        "i need the text",
-        "could you please provide",
-        "of course!",
-        "certainly!",
-        "i'm sorry",
-        "lo siento",
-        "text to translate",
-        "texto a traducir",
-        "input text",
-        "no puedo ayudar",
-        "no puedo asistir",
-        "no puedo ayudar con eso",
-        "i can't help with that",
-        "i cannot help with that",
-        "can't help with that",
-        "cannot help with that",
-        "i can't assist with that",
-        "i cannot assist with that",
-        "context:",
-        "contexto:",
-        "transcribe the audio verbatim",
-    )
     GRATITUDE_SHORT_PHRASES = frozenset(
         {
             "thank you",
@@ -376,19 +325,8 @@ class TranslationApp(
         self.audio_level_thread = None
         self.audio_level_restart_requested = False
         self._audio_level_last_error_log = 0.0
-        self.audio_queue = queue.Queue(maxsize=180)
-        self.audio_queue_high_water_ratio = 0.8
-        self.audio_queue_relief_ratio = 0.65
-        self.capture_thread = None
-        self.capture_restart_requested = False
-        self.capture_suspend_event = Event()
-        self.capture_suspended_event = Event()
-        self.listener_restart_min_interval = 2.0
-        self.listener_restart_time = 0.0
         self.no_speech_timeout_count = 0
-        self.last_no_speech_notice = 0.0
         self.unknown_speech_count = 0
-        self.last_unknown_notice = 0.0
         self.root = tk.Tk()
         self.root.title("Translation Output")
         self.font_family = self.pick_font_family(
@@ -412,35 +350,11 @@ class TranslationApp(
             foreground=[("disabled", "#FFFFFF")],
         )
         self.recognizer = sr.Recognizer()
-        self.recognizer.pause_threshold = 0.65
-        self.recognizer.non_speaking_duration = 0.30
-        self.recognizer.phrase_threshold = 0.2
         self.allow_loopback = False
-        self.loopback_chunk_seconds = 1.0
-        self.dynamic_loopback_chunking = True
-        self.loopback_chunk_seconds_min = 0.65
-        self.loopback_chunk_seconds_max = 1.85
-        self.loopback_chunk_autotune_enabled = True
-        self.loopback_chunk_autotune_interval_sec = 7.0
-        self.loopback_chunk_autotune_min_samples = 4
-        self.loopback_chunk_autotune_last_eval = 0.0
-        self.loopback_chunk_metrics = deque(maxlen=180)
-        self._last_effective_loopback_chunk_seconds = None
-        self._last_chunk_tuning_notice = 0.0
-        self.loopback_overlap_seconds = 0.35
-        self.loopback_tail_raw = b""
-        self.phrase_time_limit = 3.5
         self.recommended_host_api = ""
         self.available_host_apis = []
-        self.openai_api_key = (os.getenv("OPENAI_API_KEY", "") or "").strip()
-        self.kroko_api_key = (os.getenv("KROKO_API_KEY", "") or "").strip()
-        self.kroko_language_code = "es-ES"
-        self._kroko_stream_defaults()
         self._realtime_stt_defaults()
-        self.openai_stt_model = "whisper-1"
-        self.openai_translation_mode = "whisper"
-        self.openai_translate_model = "gpt-4o"
-        self.text_translation_provider = "none"
+        self.text_translation_provider = "local_nllb"
         self.local_nllb_model_name = self.LOCAL_NLLB_DEFAULT_MODEL_NAME
         self.local_nllb_device = "auto"
         self.local_nllb_source_lang = self.LOCAL_NLLB_DEFAULT_SOURCE_LANG
@@ -459,40 +373,17 @@ class TranslationApp(
         self.nllb_last_error = ""
         self.nllb_status_detail = ""
         self.nllb_ready_config = None
-        self.previous_text_translation_provider = "none"
         self.local_nllb_last_unready_notice = 0.0
         self.local_nllb_status_var = None
         self.local_nllb_message_var = None
         self.local_nllb_download_button = None
         self.local_nllb_retry_button = None
         self.local_nllb_test_button = None
-        self.suppress_local_nllb_provider_check = False
-        self.speech_engine = "openai"
-        self.faster_whisper_model_name = "medium"
-        self.faster_whisper_compute_type = "float16"
-        self.faster_whisper_device = "cuda"
-        self.faster_whisper_vad_enabled = True
-        self.faster_whisper_vad_threshold = 0.35
-        self.faster_whisper_vad_min_silence_ms = 700
-        self.faster_whisper_vad_speech_pad_ms = 350
-        self.faster_whisper_vad_min_speech_ms = 150
+        self.speech_engine = "realtime-stt"
+        self.stt_device = "cuda"
         self.cuda_directory = ""
         self._cuda_dll_directory_handles = []
-        self.faster_whisper_cpu_threads = max(1, (os.cpu_count() or 4) - 1)
         self.last_faster_whisper_confidence = None
-        self.faster_whisper_model = None
-        self.faster_whisper_model_config = None
-        self.omnilingual_sidecar_base_url = self.OMNILINGUAL_SIDECAR_DEFAULT_BASE_URL
-        self.omnilingual_sidecar_endpoint_path = (
-            self.OMNILINGUAL_SIDECAR_DEFAULT_ENDPOINT_PATH
-        )
-        self.omnilingual_sidecar_model = self.OMNILINGUAL_SIDECAR_DEFAULT_MODEL
-        self.omnilingual_sidecar_language = ""
-        self.omnilingual_sidecar_response_format = (
-            self.OMNILINGUAL_SIDECAR_DEFAULT_RESPONSE_FORMAT
-        )
-        self.omnilingual_sidecar_timeout_sec = 120
-        self.omnilingual_sidecar_debug_wav_sequence = 0
         self.device_menu = None
         self.device_sample_rates_by_index = {}
         self.preferred_device_label = ""
@@ -641,10 +532,6 @@ class TranslationApp(
         self.last_openai_stt_ms = None
         self.last_openai_translate_ms = None
         self.flush_after_id = None
-        self.transcript_context_words = []
-        self.transcript_context_updated_at = 0.0
-        self.transcript_context_ttl_sec = 4.0
-        self.transcript_context_max_words = 14
         self.source_lang = "auto"
         self.target_lang = "en"
         self.auto_detect_langs = ["en", "es"]
@@ -679,7 +566,6 @@ class TranslationApp(
         self.is_paused = False
         self.text_bbox_height = 0
         self.load_settings()
-        self._log_faster_whisper_runtime_config("startup")
         self._sync_windows_startup_entry()
         self._refresh_bad_words()
         self.devices = self.get_audio_devices()
@@ -792,10 +678,6 @@ class TranslationApp(
         except Exception:
             pass
         self.listening = False
-        try:
-            self._stop_kroko_live_stream()
-        except Exception:
-            pass
         try:
             self._stop_realtime_stt()
         except Exception:

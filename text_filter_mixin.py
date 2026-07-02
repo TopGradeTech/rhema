@@ -37,8 +37,6 @@ class TextFilterMixin:
     def _effective_filter_lang(self):
         if self.translation_enabled:
             lang = (self._effective_target_lang() or "").strip().lower()
-        elif (self.speech_engine or "").strip().lower() == "omnilingual-sidecar":
-            lang = self._normalized_omnilingual_sidecar_language_code()
         else:
             lang = (self._effective_source_lang() or "").strip().lower()
         if "-" in lang:

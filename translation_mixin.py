@@ -1,58 +1,9 @@
 import speech_recognition as sr
-import tkinter as tk
-from tkinter import messagebox
-from tkinter import colorchooser
-from tkinter import filedialog
-from tkinter import font as tkfont
-from threading import Thread, Lock, Event
-import queue
 import time
 import re
-import requests
-import struct
-import json
-import pyaudio
-from collections import deque, Counter
-import os
-import sys
-import traceback
-import io
-import math
-import statistics
-import tempfile
-import gc
-import wave
-import importlib.util
-import ttkbootstrap as ttkb
-from ttkbootstrap.constants import PRIMARY
 
 
 class TranslationMixin:
-    def _translate_with_openai(self, text):
-        if not self.openai_api_key:
-            raise ValueError(self.OPENAI_API_KEY_EMPTY_MESSAGE)
-        url = "https://api.openai.com/v1/responses"
-        headers = {
-            "Authorization": f"Bearer {self.openai_api_key}",
-            "Content-Type": "application/json",
-        }
-        payload = {
-            "model": self.openai_translate_model,
-            "input": self._build_openai_translation_prompt(text),
-            "temperature": 0,
-        }
-        request_started = time.time()
-        response = requests.post(url, headers=headers, json=payload, timeout=20)
-        request_ms = int((time.time() - request_started) * 1000)
-        if response.status_code != 200:
-            raise sr.RequestError(
-                f"OpenAI API error {response.status_code}: {response.text}"
-            )
-        output_text = self._extract_openai_output_text(response.json())
-        if not output_text:
-            raise sr.RequestError("OpenAI API returned empty translation")
-        return output_text, request_ms
-
     def _active_text_translation_provider(self):
         return self._normalize_text_translation_provider(
             getattr(self, "text_translation_provider", "none")
@@ -320,12 +271,7 @@ class TranslationMixin:
         return "out of memory" in message and ("cuda" in message or "gpu" in message)
 
     def _translate_text(self, text):
-        provider = self._active_text_translation_provider()
-        if provider == "none":
-            return text, 0
-        if provider == "local_nllb":
-            return self._translate_with_local_nllb(text)
-        return self._translate_with_openai(text)
+        return self._translate_with_local_nllb(text)
 
     def _translate_and_display(self, text, started_at=None, latency_meta=None):
         self._update_translation_status()
@@ -335,12 +281,6 @@ class TranslationMixin:
             translation_enabled=self.translation_enabled,
         )
         display_meta = self._build_translation_display_meta(started_at, latency_meta)
-        if self._should_drop_pretranslated_translation(
-            text,
-            started_at=started_at,
-            display_meta=display_meta,
-        ):
-            return
         translated = self._translate_for_display_safe(
             text,
             display_meta=display_meta,
@@ -410,30 +350,6 @@ class TranslationMixin:
         display_meta.setdefault("overlap_words", 0)
         return display_meta
 
-    def _should_drop_pretranslated_translation(
-        self,
-        text,
-        started_at=None,
-        display_meta=None,
-    ):
-        pretranslated = bool((display_meta or {}).get("pretranslated"))
-        if self.translation_enabled or not pretranslated:
-            return False
-        # This payload came from Whisper direct-translation before the toggle changed.
-        # Drop it to enforce "translation off" strictly.
-        self._trace_pipeline(
-            "translation_disabled_drop_pretranslated",
-            text,
-            translation_enabled=self.translation_enabled,
-        )
-        self._record_chunk_latency(
-            started_at,
-            latency_meta=display_meta,
-            rendered_at=time.time(),
-        )
-        self.update_status(self.STATUS_LISTENING)
-        return True
-
     def _translate_for_display_safe(
         self,
         text,
@@ -446,8 +362,7 @@ class TranslationMixin:
             )
             if bool((display_meta or {}).get("local_nllb_unavailable_passthrough")):
                 return (translated or "").strip()
-            cleanup_source = self._translation_cleanup_source_text(text, display_meta)
-            cleaned = self._apply_translation_cleanup_steps(cleanup_source, translated)
+            cleaned = self._apply_translation_cleanup_steps(translated)
             return self._guard_translation_output_language(
                 text,
                 cleaned,
@@ -459,29 +374,7 @@ class TranslationMixin:
             return self._translation_error_fallback_text(text, display_meta=display_meta)
 
     def _translation_error_fallback_text(self, text, display_meta=None):
-        fallback = (text or "").strip()
-        if not fallback:
-            return fallback
-        if not self._is_raw_faster_whisper_spanish_to_english():
-            return fallback
-        if bool((display_meta or {}).get("pretranslated")) and self._looks_like_english_text(
-            fallback
-        ):
-            return fallback
-        if self._looks_like_spanish_text(fallback):
-            self._trace_pipeline(
-                "translation_error_target_lang_suppressed",
-                fallback,
-                target_lang=(self._effective_target_lang() or "").strip().lower(),
-            )
-            return ""
-        return fallback
-
-    def _translation_cleanup_source_text(self, text, display_meta=None):
-        meta_source = (display_meta or {}).get("translation_source_text")
-        if isinstance(meta_source, str) and meta_source.strip():
-            return meta_source.strip()
-        return text
+        return (text or "").strip()
 
     def _translation_log_source_text(self, text, display_meta=None):
         for key in ("translation_source_text", "source_text"):
@@ -491,81 +384,14 @@ class TranslationMixin:
         return (text or "").strip()
 
     def _guard_translation_output_language(self, original_text, translated_text, display_meta=None):
-        out = (translated_text or "").strip()
-        if not out:
-            return out
-        if not self._is_raw_faster_whisper_spanish_to_english():
-            return out
-        if not self._looks_like_spanish_text(out):
-            return out
-        fallback = ""
-        if bool((display_meta or {}).get("pretranslated")):
-            candidate = (original_text or "").strip()
-            if candidate and self._looks_like_english_text(candidate):
-                fallback = candidate
-        if fallback:
-            self._trace_pipeline(
-                "translation_target_lang_guard_fallback",
-                out,
-                fallback_chars=len(fallback),
-                target_lang=(self._effective_target_lang() or "").strip().lower(),
-            )
-            return fallback
-        self._trace_pipeline(
-            "translation_target_lang_guard_suppressed",
-            out,
-            target_lang=(self._effective_target_lang() or "").strip().lower(),
-        )
-        return ""
+        return (translated_text or "").strip()
 
     def _translate_for_display(self, text, display_meta=None):
-        pretranslated = bool((display_meta or {}).get("pretranslated"))
         if not self.translation_enabled:
             return text
         translation_source = text
-        if pretranslated:
-            should_retranslate, reason = self._should_force_retranslation_pretranslated(
-                text,
-                display_meta=display_meta,
-            )
-            if should_retranslate:
-                translation_source = self._pretranslated_retranslation_source(
-                    text,
-                    display_meta=display_meta,
-                )
-                if not translation_source:
-                    if display_meta is not None:
-                        display_meta["translate_openai_ms"] = 0
-                        display_meta["translate_provider_ms"] = 0
-                    self._trace_pipeline(
-                        "translation_retranslate_pretranslated_skipped",
-                        text,
-                        reason="missing_source_text",
-                        translation_enabled=self.translation_enabled,
-                    )
-                    return text
-                if display_meta is not None:
-                    display_meta["translation_source_text"] = translation_source
-                self._trace_pipeline(
-                    "translation_retranslate_pretranslated",
-                    text,
-                    reason=reason,
-                    source_chars=len(translation_source),
-                    translation_enabled=self.translation_enabled,
-                )
-            else:
-                if display_meta is not None:
-                    display_meta["translate_openai_ms"] = 0
-                    display_meta["translate_provider_ms"] = 0
-                self._trace_pipeline(
-                    "translation_skipped_pretranslated",
-                    text,
-                    translation_enabled=self.translation_enabled,
-                )
-                return text
-        else:
-            if display_meta is not None:
-                display_meta["translation_source_text"] = translation_source
+        if display_meta is not None:
+            display_meta["translation_source_text"] = translation_source
         if (
             self._active_text_translation_provider() == "local_nllb"
             and not self._local_nllb_ready_for_translation()
@@ -602,100 +428,8 @@ class TranslationMixin:
             )
         return translated_candidate
 
-    def _pretranslated_retranslation_source(self, text, display_meta=None):
-        source_text = (display_meta or {}).get("source_text")
-        if isinstance(source_text, str) and source_text.strip():
-            return source_text.strip()
-        # If the only available text already looks English, avoid sending it
-        # through an es->en translator, which can flip it back to Spanish.
-        if self._looks_like_english_text(text):
-            return ""
-        return (text or "").strip()
-
-    def _should_force_retranslation_pretranslated(self, text, display_meta=None):
-        if not bool((display_meta or {}).get("pretranslated")):
-            return False, "not_pretranslated"
-        if not self.translation_enabled:
-            return False, "translation_disabled"
-        if not bool((self.openai_api_key or "").strip()):
-            return False, "no_api_key"
-        if not self._effective_target_lang().startswith("en"):
-            return False, "non_english_target"
-        candidate = (text or "").strip()
-        if not candidate:
-            return True, "empty_text"
-        if self._pretranslated_text_looks_unstable(candidate):
-            return True, "unstable_text"
-        confidence = (display_meta or {}).get("stt_confidence")
-        try:
-            conf_value = float(confidence)
-        except Exception:
-            conf_value = None
-        if conf_value is not None and conf_value < 0.75:
-            return True, "low_confidence"
-        return False, "confidence_ok"
-
-    def _pretranslated_text_looks_unstable(self, text):
-        raw = (text or "").strip()
-        if not raw:
-            return True
-        lowered = raw.lower()
-        if "..." in raw or "\u2026" in raw:
-            return True
-        words = re.findall(self.UNICODE_WORD_PATTERN, lowered, flags=re.UNICODE)
-        if not words:
-            return True
-        token_set = set(words)
-        english_hits = len(token_set & self.english_common_words)
-        spanish_hits = len(token_set & self.spanish_common_words)
-        if spanish_hits >= 2 and english_hits == 0:
-            return True
-        if spanish_hits >= 2 and spanish_hits >= english_hits:
-            return True
-        return False
-
-    def _is_raw_faster_whisper_spanish_to_english(self):
-        if not self.translation_enabled:
-            return False
-        if (self.speech_engine or "").strip().lower() != "faster-whisper":
-            return False
-        source = (self._effective_source_lang() or "").strip().lower()
-        target = (self._effective_target_lang() or "").strip().lower()
-        return source.startswith("es") and target.startswith("en")
-
-    def _apply_translation_cleanup_steps(self, source_text, translated_text):
-        if (
-            self._is_raw_faster_whisper_spanish_to_english()
-            and self._looks_like_passthrough_translation(source_text, translated_text)
-        ):
-            raw_out = self._coerce_text(translated_text).strip()
-            cleaned_out = self._sanitize_model_text(raw_out)
-            if not cleaned_out:
-                self._trace_pipeline(
-                    "translation_raw_passthrough_suppressed",
-                    raw_out,
-                    source_lang=(self._effective_source_lang() or "").strip().lower(),
-                    target_lang=(self._effective_target_lang() or "").strip().lower(),
-                    speech_engine=(self.speech_engine or "").strip().lower(),
-                )
-                return ""
-            self._trace_pipeline(
-                "translation_raw_passthrough",
-                cleaned_out,
-                source_lang=(self._effective_source_lang() or "").strip().lower(),
-                target_lang=(self._effective_target_lang() or "").strip().lower(),
-                speech_engine=(self.speech_engine or "").strip().lower(),
-                sanitized=(cleaned_out != raw_out),
-            )
-            return cleaned_out
-        translated = self._strip_translation_wrappers(translated_text)
-        if self._looks_like_nontranslation_response(source_text, translated):
-            self._trace_pipeline(
-                "translation_guard_fallback",
-                translated,
-                reason="non_translation_response",
-            )
-            translated = source_text
+    def _apply_translation_cleanup_steps(self, translated_text):
+        translated = (translated_text or "").strip()
         translated = self.apply_custom_vocabulary(translated)
         if self.translation_enabled and self._effective_target_lang().startswith("en"):
             translated = self.apply_spanish_bible_name_map(translated)
@@ -704,17 +438,6 @@ class TranslationMixin:
             translated = self._normalize_spanish_text(translated)
         translated = self.clean_text_spacing(translated)
         return self._sanitize_model_text(translated, suppress_repeated_noise=False)
-
-    def _looks_like_passthrough_translation(self, source_text, translated_text):
-        src = self._coerce_text(source_text).strip()
-        out = self._coerce_text(translated_text).strip()
-        if not src or not out:
-            return False
-        if src == out:
-            return True
-        src_norm = re.sub(r"\s+", " ", src.lower(), flags=re.UNICODE).strip()
-        out_norm = re.sub(r"\s+", " ", out.lower(), flags=re.UNICODE).strip()
-        return src_norm == out_norm
 
     def _is_spanish_output_mode(self):
         if self.translation_enabled:

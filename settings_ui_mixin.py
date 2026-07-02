@@ -409,8 +409,6 @@ class SettingsUIMixin:
                 ) from exc
         if self.cuda_directory != previous_cuda_directory:
             self._configure_cuda_dll_search_path()
-            self.faster_whisper_model = None
-            self.faster_whisper_model_config = None
         self._fit_font_to_lines()
 
     def _apply_filter_vars(self, filters_vars):
@@ -437,158 +435,13 @@ class SettingsUIMixin:
         ]
 
     def _apply_api_vars(self, api_vars):
-        previous_config = (
-            self.faster_whisper_model_name,
-            self.faster_whisper_compute_type,
-            self.faster_whisper_device,
-        )
-        next_config = previous_config
         with self.recognition_lock:
-            self.speech_engine = self._optional_mapped_api_setting(
+            self.stt_device = self._optional_string_api_setting(
                 api_vars,
-                "speech_engine_var",
-                "speech_engine_map",
-                current_value=self.speech_engine,
-                mapped_default="openai",
-            )
-            self.openai_stt_model = self._optional_mapped_api_setting(
-                api_vars,
-                "openai_stt_model_var",
-                "openai_stt_model_map",
-                current_value=self.openai_stt_model,
-                mapped_default="whisper-1",
-            )
-            self.openai_translation_mode = self._optional_mapped_api_setting(
-                api_vars,
-                "openai_translation_mode_var",
-                "openai_translation_mode_map",
-                current_value=self.openai_translation_mode,
-                mapped_default="whisper",
-            )
-            self.openai_translate_model = self._optional_string_api_setting(
-                api_vars,
-                "openai_translate_model_var",
-                current_value=self.openai_translate_model,
-                empty_default="gpt-4o",
-            )
-            self.openai_api_key = self._optional_string_api_setting(
-                api_vars,
-                "openai_api_key_var",
-                current_value=self.openai_api_key,
-            )
-            self.faster_whisper_model_name = self._optional_string_api_setting(
-                api_vars,
-                "faster_whisper_model_var",
-                current_value=self.faster_whisper_model_name,
-                empty_default="medium",
-            )
-            self.faster_whisper_compute_type = self._optional_string_api_setting(
-                api_vars,
-                "faster_whisper_compute_var",
-                current_value=self.faster_whisper_compute_type,
-                empty_default="float16",
-            )
-            self.faster_whisper_device = self._optional_string_api_setting(
-                api_vars,
-                "faster_whisper_device_var",
-                current_value=self.faster_whisper_device,
+                "stt_device_var",
+                current_value=self.stt_device,
                 empty_default="cuda",
             )
-            if "faster_whisper_vad_enabled_var" in api_vars:
-                self.faster_whisper_vad_enabled = bool(
-                    api_vars["faster_whisper_vad_enabled_var"].get()
-                )
-            self.faster_whisper_vad_threshold = self._coerce_float_range(
-                api_vars.get("faster_whisper_vad_threshold_var", None).get()
-                if "faster_whisper_vad_threshold_var" in api_vars
-                else self.faster_whisper_vad_threshold,
-                self.faster_whisper_vad_threshold,
-                0.10,
-                0.95,
-            )
-            self.faster_whisper_vad_min_silence_ms = self._coerce_int_range(
-                api_vars.get("faster_whisper_vad_min_silence_var", None).get()
-                if "faster_whisper_vad_min_silence_var" in api_vars
-                else self.faster_whisper_vad_min_silence_ms,
-                self.faster_whisper_vad_min_silence_ms,
-                100,
-                3000,
-            )
-            self.faster_whisper_vad_speech_pad_ms = self._coerce_int_range(
-                api_vars.get("faster_whisper_vad_speech_pad_var", None).get()
-                if "faster_whisper_vad_speech_pad_var" in api_vars
-                else self.faster_whisper_vad_speech_pad_ms,
-                self.faster_whisper_vad_speech_pad_ms,
-                0,
-                1000,
-            )
-            self.faster_whisper_vad_min_speech_ms = self._coerce_int_range(
-                api_vars.get("faster_whisper_vad_min_speech_var", None).get()
-                if "faster_whisper_vad_min_speech_var" in api_vars
-                else self.faster_whisper_vad_min_speech_ms,
-                self.faster_whisper_vad_min_speech_ms,
-                0,
-                1000,
-            )
-            self.omnilingual_sidecar_base_url = self._normalize_omnilingual_sidecar_base_url(
-                self._optional_string_api_setting(
-                    api_vars,
-                    "omnilingual_sidecar_base_url_var",
-                    current_value=self.omnilingual_sidecar_base_url,
-                    empty_default=self.OMNILINGUAL_SIDECAR_DEFAULT_BASE_URL,
-                )
-            )
-            self.omnilingual_sidecar_endpoint_path = (
-                self._normalize_omnilingual_sidecar_endpoint_path(
-                    self._optional_string_api_setting(
-                        api_vars,
-                        "omnilingual_sidecar_endpoint_path_var",
-                        current_value=self.omnilingual_sidecar_endpoint_path,
-                        empty_default=self.OMNILINGUAL_SIDECAR_DEFAULT_ENDPOINT_PATH,
-                    )
-                )
-            )
-            self.omnilingual_sidecar_model = self._optional_string_api_setting(
-                api_vars,
-                "omnilingual_sidecar_model_var",
-                current_value=self.omnilingual_sidecar_model,
-            )
-            self.omnilingual_sidecar_language = self._optional_string_api_setting(
-                api_vars,
-                "omnilingual_sidecar_language_var",
-                current_value=self.omnilingual_sidecar_language,
-            )
-            self.omnilingual_sidecar_response_format = (
-                self._normalize_omnilingual_sidecar_response_format(
-                    self._optional_string_api_setting(
-                        api_vars,
-                        "omnilingual_sidecar_response_format_var",
-                        current_value=self.omnilingual_sidecar_response_format,
-                        empty_default=self.OMNILINGUAL_SIDECAR_DEFAULT_RESPONSE_FORMAT,
-                    )
-                )
-            )
-            self.omnilingual_sidecar_timeout_sec = self._coerce_int_range(
-                api_vars.get("omnilingual_sidecar_timeout_var", None).get()
-                if "omnilingual_sidecar_timeout_var" in api_vars
-                else self.omnilingual_sidecar_timeout_sec,
-                self.omnilingual_sidecar_timeout_sec,
-                5,
-                600,
-            )
-            self.kroko_api_key = self._optional_string_api_setting(
-                api_vars,
-                "kroko_api_key_var",
-                current_value=self.kroko_api_key,
-            )
-            kroko_lang = self._optional_mapped_api_setting(
-                api_vars,
-                "kroko_language_code_var",
-                "kroko_language_code_map",
-                current_value=self.kroko_language_code,
-                mapped_default="en-US",
-            )
-            self.kroko_language_code = kroko_lang if kroko_lang else "en-US"
             self.realtime_stt_final_model = self._optional_string_api_setting(
                 api_vars, "realtime_stt_final_model_var",
                 current_value=self.realtime_stt_final_model,
@@ -611,19 +464,6 @@ class SettingsUIMixin:
                 else self.realtime_stt_post_speech_silence,
                 self.realtime_stt_post_speech_silence, 0.1, 3.0,
             )
-            next_config = (
-                self.faster_whisper_model_name,
-                self.faster_whisper_compute_type,
-                self.faster_whisper_device,
-            )
-            if next_config != previous_config:
-                # Safe handoff: unload the old local model only while recognition
-                # is locked so we never tear it down mid-transcription.
-                self.faster_whisper_model = None
-                self.faster_whisper_model_config = None
-        if next_config != previous_config:
-            gc.collect()
-
     def _optional_mapped_api_setting(
         self,
         api_vars,
@@ -658,7 +498,6 @@ class SettingsUIMixin:
             self.local_nllb_device,
             self.local_nllb_cache_dir,
         )
-        previous_provider = self._active_text_translation_provider()
         was_translation_enabled = bool(self.translation_enabled)
         new_translation_enabled = was_translation_enabled
         if "enable_translation_var" in translation_vars:
@@ -671,17 +510,6 @@ class SettingsUIMixin:
             self._apply_translation_mode_defaults()
         else:
             self._normalize_translation_settings()
-        if "text_translation_provider_var" in translation_vars:
-            provider = self._optional_mapped_api_setting(
-                translation_vars,
-                "text_translation_provider_var",
-                "text_translation_provider_map",
-                current_value=self.text_translation_provider,
-                mapped_default=self.text_translation_provider,
-            )
-            self.text_translation_provider = self._normalize_text_translation_provider(
-                provider
-            )
         self.local_nllb_model_name = self._optional_string_api_setting(
             translation_vars,
             "local_nllb_model_name_var",
@@ -747,16 +575,10 @@ class SettingsUIMixin:
         )
         if was_translation_enabled and not self.translation_enabled:
             self._clear_translation_backlog_after_disable()
-        if self.text_translation_provider == "local_nllb":
-            if previous_provider != "local_nllb":
-                self.previous_text_translation_provider = previous_provider
-            self._start_local_nllb_cache_check(
-                self._local_nllb_runtime_config(),
-                prompt_if_missing=True,
-            )
-        else:
-            self.previous_text_translation_provider = self.text_translation_provider
-            self._set_local_nllb_status("Not selected", "")
+        self._start_local_nllb_cache_check(
+            self._local_nllb_runtime_config(),
+            prompt_if_missing=True,
+        )
 
     def _apply_audio_vars(self, audio_vars):
         # Audio device changes are applied immediately by the device-menu callback.
@@ -767,11 +589,7 @@ class SettingsUIMixin:
         from threading import Thread
 
         def _worker():
-            suspend_timeout = max(2.0, float(self.phrase_time_limit) + 1.0)
-            suspended = self._suspend_capture_for_device_scan(timeout=suspend_timeout)
-            if not suspended:
-                self._log_status("Skipping device refresh while capture is active")
-                return
+            self._suspend_capture_for_device_scan()
             self.device_refresh_in_progress = True
             try:
                 devices = self.get_audio_devices()
@@ -1894,7 +1712,7 @@ class SettingsUIMixin:
         self._add_setting_label(
             logging_section,
             "Logging mode:",
-            "Normal keeps status/error and finalized output logs. Debug adds pipeline traces and Omnilingual WAVs. Evaluation adds raw transcribed/translated comparison logs. Full enables all logs.",
+            "Normal keeps status/error and finalized output logs. Debug adds pipeline traces. Evaluation adds raw transcribed/translated comparison logs. Full enables all logs.",
             label_opts,
             pady=(0, 4),
         )
@@ -2011,583 +1829,31 @@ class SettingsUIMixin:
         }
 
     def _build_api_section(self, api_section, label_opts):
+        # ── RealtimeSTT settings panel ─────────────────────────────────
+        realtime_stt_container = tk.Frame(api_section, bg=label_opts["bg"])
+        realtime_stt_container.pack(fill=tk.X, pady=(10, 0))
         self._add_setting_label(
-            api_section,
-            "Speech API Engine:",
-            "Select the speech-to-text engine.",
-            label_opts,
-            pady=(0, 4),
-        )
-        speech_engine_options = [
-            ("OpenAI (cloud)", "openai"),
-            ("Local (faster-whisper)", "faster-whisper"),
-            ("Local (Omnilingual sidecar)", "omnilingual-sidecar"),
-            ("Kroko ASR (cloud, low-cost)", "kroko"),
-            ("RealtimeSTT (local, real-time)", "realtime-stt"),
-        ]
-        engine_display = [name for name, _ in speech_engine_options]
-        engine_map = dict(speech_engine_options)
-        rev_engine_map = {code: name for name, code in speech_engine_options}
-        speech_engine_var = tk.StringVar(
-            value=rev_engine_map.get(self.speech_engine, engine_display[0])
-        )
-        speech_engine_menu = tk.OptionMenu(
-            api_section,
-            speech_engine_var,
-            *engine_display,
-        )
-        self._apply_option_menu_style(speech_engine_menu)
-        speech_engine_menu.pack(anchor="w")
-
-        openai_key_container = tk.Frame(api_section, bg=label_opts["bg"])
-        openai_key_container.pack(fill=tk.X)
-        self._add_setting_label(
-            openai_key_container,
-            "OpenAI API Key:",
-            "API key for OpenAI transcription (and translation if enabled). Read from the OPENAI_API_KEY environment variable at startup; set it there for persistence.",
-            label_opts,
-            pady=(0, 4),
-        )
-        openai_key_var = tk.StringVar(value=self.openai_api_key)
-        openai_key_frame = tk.Frame(openai_key_container, bg=label_opts["bg"])
-        openai_key_frame.pack(fill=tk.X)
-        openai_key_entry = tk.Entry(openai_key_frame, textvariable=openai_key_var, width=50, show="*")
-        self._apply_input_style(openai_key_entry)
-        openai_key_entry.pack(side=tk.LEFT)
-
-        openai_show_var = tk.BooleanVar(value=False)
-
-        def toggle_openai_show():
-            show = "" if openai_show_var.get() else "*"
-            openai_key_entry.config(show=show)
-
-        openai_show_button = tk.Checkbutton(
-            openai_key_frame,
-            text="Show",
-            variable=openai_show_var,
-            command=toggle_openai_show,
-            bg=label_opts["bg"],
-            fg=label_opts["fg"],
-            selectcolor=label_opts["bg"],
-            activebackground=label_opts["bg"],
-        )
-        openai_show_button.pack(side=tk.LEFT, padx=(8, 0))
-        self._create_help_icon(
-            openai_key_frame,
-            "Reveal or hide the OpenAI API key in this field.",
-            label_opts["bg"],
-            label_opts["fg"],
-        )
-        self._add_setting_label(
-            openai_key_container,
-            "OpenAI STT Model:",
-            "Use Whisper primarily for cloud transcription; GPT-4o remains available.",
-            label_opts,
-            pady=(10, 4),
-        )
-        openai_stt_model_options = [
-            ("Whisper (whisper-1) [Primary]", "whisper-1"),
-            ("GPT-4o (gpt-4o-transcribe)", "gpt-4o-transcribe"),
-        ]
-        openai_stt_model_display = [name for name, _ in openai_stt_model_options]
-        openai_stt_model_map = dict(openai_stt_model_options)
-        rev_openai_stt_model_map = {code: name for name, code in openai_stt_model_options}
-        openai_stt_model_var = tk.StringVar(
-            value=rev_openai_stt_model_map.get(
-                self.openai_stt_model, openai_stt_model_display[0]
-            )
-        )
-        openai_stt_model_menu = tk.OptionMenu(
-            openai_key_container,
-            openai_stt_model_var,
-            *openai_stt_model_display,
-        )
-        self._apply_option_menu_style(openai_stt_model_menu)
-        openai_stt_model_menu.pack(anchor="w")
-
-        self._add_setting_label(
-            openai_key_container,
-            "OpenAI Translation Mode:",
-            "Whisper mode uses audio translation to English when possible; otherwise GPT-4o is used.",
-            label_opts,
-            pady=(10, 4),
-        )
-        openai_translation_mode_options = [
-            ("Whisper (audio->English) [Primary]", "whisper"),
-            ("GPT-4o (text translation)", "gpt-4o"),
-        ]
-        openai_translation_mode_display = [
-            name for name, _ in openai_translation_mode_options
-        ]
-        openai_translation_mode_map = dict(openai_translation_mode_options)
-        rev_openai_translation_mode_map = {
-            code: name for name, code in openai_translation_mode_options
-        }
-        openai_translation_mode_var = tk.StringVar(
-            value=rev_openai_translation_mode_map.get(
-                self.openai_translation_mode, openai_translation_mode_display[0]
-            )
-        )
-        openai_translation_mode_menu = tk.OptionMenu(
-            openai_key_container,
-            openai_translation_mode_var,
-            *openai_translation_mode_display,
-        )
-        self._apply_option_menu_style(openai_translation_mode_menu)
-        openai_translation_mode_menu.pack(anchor="w")
-
-        gpt_translate_model_container = tk.Frame(openai_key_container, bg=label_opts["bg"])
-        self._add_setting_label(
-            gpt_translate_model_container,
-            "GPT Translation Model:",
-            "Used when translation mode is GPT-4o, or when Whisper translation is unavailable.",
-            label_opts,
-            pady=(0, 4),
-        )
-        openai_translate_model_options = ["gpt-4o", "gpt-4o-mini"]
-        openai_translate_model_var = tk.StringVar(value=self.openai_translate_model)
-        openai_translate_model_menu = tk.OptionMenu(
-            gpt_translate_model_container,
-            openai_translate_model_var,
-            *openai_translate_model_options,
-        )
-        self._apply_option_menu_style(openai_translate_model_menu)
-        openai_translate_model_menu.pack(anchor="w")
-
-        def update_openai_translation_mode_visibility(*_args):
-            selected_mode = openai_translation_mode_map.get(
-                openai_translation_mode_var.get(), "whisper"
-            )
-            if selected_mode == "gpt-4o":
-                gpt_translate_model_container.pack(fill=tk.X, pady=(10, 0))
-            else:
-                gpt_translate_model_container.pack_forget()
-
-        openai_translation_mode_var.trace_add(
-            "write", update_openai_translation_mode_visibility
-        )
-        update_openai_translation_mode_visibility()
-
-        faster_whisper_container = tk.Frame(api_section, bg=label_opts["bg"])
-        faster_whisper_container.pack(fill=tk.X, pady=(10, 0))
-        self._add_setting_label(
-            faster_whisper_container,
-            "faster-whisper model:",
-            "Model name (smaller = faster, e.g. tiny/base/small/medium/large-v3).",
-            label_opts,
-            pady=(0, 4),
-        )
-        faster_whisper_model_var = tk.StringVar(value=self.faster_whisper_model_name)
-        faster_whisper_model_entry = tk.Entry(
-            faster_whisper_container, textvariable=faster_whisper_model_var, width=30
-        )
-        self._apply_input_style(faster_whisper_model_entry)
-        faster_whisper_model_entry.pack(anchor="w")
-
-        self._add_setting_label(
-            faster_whisper_container,
-            "Compute type:",
-            "float16 (GPU) is fastest; int8 for CPU or lower VRAM.",
-            label_opts,
-            pady=(10, 4),
-        )
-        compute_options = ["float16", "int8_float16", "int8"]
-        faster_whisper_compute_var = tk.StringVar(value=self.faster_whisper_compute_type)
-        compute_menu = tk.OptionMenu(
-            faster_whisper_container,
-            faster_whisper_compute_var,
-            *compute_options,
-        )
-        self._apply_option_menu_style(compute_menu)
-        compute_menu.pack(anchor="w")
-
-        self._add_setting_label(
-            faster_whisper_container,
+            realtime_stt_container,
             "Device:",
             "Use cuda for NVIDIA GPUs, cpu for local CPU.",
             label_opts,
-            pady=(10, 4),
-        )
-        device_options = ["cuda", "cpu"]
-        faster_whisper_device_var = tk.StringVar(value=self.faster_whisper_device)
-        device_menu = tk.OptionMenu(
-            faster_whisper_container,
-            faster_whisper_device_var,
-            *device_options,
-        )
-        self._apply_option_menu_style(device_menu)
-        device_menu.pack(anchor="w")
-
-        vad_section = tk.LabelFrame(
-            faster_whisper_container,
-            text="Voice Activity Detection",
-            bg=label_opts["bg"],
-            fg=label_opts["fg"],
-            font=(self.ui_font_family, 10, "bold"),
-            padx=10,
-            pady=10,
-        )
-        vad_section.pack(fill=tk.X, pady=(12, 0))
-        faster_whisper_vad_enabled_var = tk.BooleanVar(
-            value=self.faster_whisper_vad_enabled
-        )
-        vad_enabled_row = tk.Frame(vad_section, bg=label_opts["bg"])
-        vad_enabled_row.pack(anchor="w", fill=tk.X)
-        vad_enabled_check = tk.Checkbutton(
-            vad_enabled_row,
-            text="Enable faster-whisper VAD",
-            variable=faster_whisper_vad_enabled_var,
-            bg=label_opts["bg"],
-            fg=label_opts["fg"],
-            selectcolor=label_opts["bg"],
-            activebackground=label_opts["bg"],
-        )
-        vad_enabled_check.pack(side=tk.LEFT)
-        self._create_help_icon(
-            vad_enabled_row,
-            "Silero voice activity detection trims silence before transcription.",
-            label_opts["bg"],
-            label_opts["fg"],
-        )
-
-        faster_whisper_vad_threshold_var = tk.DoubleVar(
-            value=self.faster_whisper_vad_threshold
-        )
-        self._add_setting_label(
-            vad_section,
-            "Speech threshold:",
-            "Lower keeps softer speech; higher rejects more background noise.",
-            label_opts,
-            pady=(10, 4),
-        )
-        vad_threshold_spin = tk.Spinbox(
-            vad_section,
-            from_=0.10,
-            to=0.95,
-            increment=0.05,
-            textvariable=faster_whisper_vad_threshold_var,
-            width=8,
-        )
-        self._apply_input_style(vad_threshold_spin)
-        vad_threshold_spin.pack(anchor="w")
-
-        faster_whisper_vad_min_silence_var = tk.IntVar(
-            value=self.faster_whisper_vad_min_silence_ms
-        )
-        self._add_setting_label(
-            vad_section,
-            "Min silence (ms):",
-            "Silence duration before faster-whisper splits speech chunks.",
-            label_opts,
-            pady=(10, 4),
-        )
-        vad_min_silence_spin = tk.Spinbox(
-            vad_section,
-            from_=100,
-            to=3000,
-            increment=100,
-            textvariable=faster_whisper_vad_min_silence_var,
-            width=8,
-        )
-        self._apply_input_style(vad_min_silence_spin)
-        vad_min_silence_spin.pack(anchor="w")
-
-        faster_whisper_vad_speech_pad_var = tk.IntVar(
-            value=self.faster_whisper_vad_speech_pad_ms
-        )
-        self._add_setting_label(
-            vad_section,
-            "Speech padding (ms):",
-            "Audio kept before and after detected speech to avoid clipped words.",
-            label_opts,
-            pady=(10, 4),
-        )
-        vad_speech_pad_spin = tk.Spinbox(
-            vad_section,
-            from_=0,
-            to=1000,
-            increment=50,
-            textvariable=faster_whisper_vad_speech_pad_var,
-            width=8,
-        )
-        self._apply_input_style(vad_speech_pad_spin)
-        vad_speech_pad_spin.pack(anchor="w")
-
-        faster_whisper_vad_min_speech_var = tk.IntVar(
-            value=self.faster_whisper_vad_min_speech_ms
-        )
-        self._add_setting_label(
-            vad_section,
-            "Min speech (ms):",
-            "Detected speech shorter than this is treated as noise.",
-            label_opts,
-            pady=(10, 4),
-        )
-        vad_min_speech_spin = tk.Spinbox(
-            vad_section,
-            from_=0,
-            to=1000,
-            increment=50,
-            textvariable=faster_whisper_vad_min_speech_var,
-            width=8,
-        )
-        self._apply_input_style(vad_min_speech_spin)
-        vad_min_speech_spin.pack(anchor="w")
-
-        vad_controls = (
-            vad_threshold_spin,
-            vad_min_silence_spin,
-            vad_speech_pad_spin,
-            vad_min_speech_spin,
-        )
-
-        def update_vad_control_state(*_args):
-            state = tk.NORMAL if faster_whisper_vad_enabled_var.get() else tk.DISABLED
-            for control in vad_controls:
-                control.configure(state=state)
-
-        faster_whisper_vad_enabled_var.trace_add("write", update_vad_control_state)
-        update_vad_control_state()
-
-        omnilingual_sidecar_container = tk.Frame(api_section, bg=label_opts["bg"])
-        self._add_setting_label(
-            omnilingual_sidecar_container,
-            "Sidecar base URL:",
-            "Base URL for the syaffers/omniasr-server Docker sidecar.",
-            label_opts,
             pady=(0, 4),
         )
-        omnilingual_sidecar_base_url_var = tk.StringVar(
-            value=self.omnilingual_sidecar_base_url
+        stt_device_options = ["cuda", "cpu"]
+        stt_device_var = tk.StringVar(value=self.stt_device)
+        stt_device_menu = tk.OptionMenu(
+            realtime_stt_container,
+            stt_device_var,
+            *stt_device_options,
         )
-        omnilingual_sidecar_base_url_entry = tk.Entry(
-            omnilingual_sidecar_container,
-            textvariable=omnilingual_sidecar_base_url_var,
-            width=50,
-        )
-        self._apply_input_style(omnilingual_sidecar_base_url_entry)
-        omnilingual_sidecar_base_url_entry.pack(anchor="w", fill=tk.X)
+        self._apply_option_menu_style(stt_device_menu)
+        stt_device_menu.pack(anchor="w")
 
-        self._add_setting_label(
-            omnilingual_sidecar_container,
-            "Transcription endpoint path:",
-            "OpenAI Whisper-compatible endpoint path on the local sidecar.",
-            label_opts,
-            pady=(10, 4),
-        )
-        omnilingual_sidecar_endpoint_path_var = tk.StringVar(
-            value=self.omnilingual_sidecar_endpoint_path
-        )
-        omnilingual_sidecar_endpoint_path_entry = tk.Entry(
-            omnilingual_sidecar_container,
-            textvariable=omnilingual_sidecar_endpoint_path_var,
-            width=50,
-        )
-        self._apply_input_style(omnilingual_sidecar_endpoint_path_entry)
-        omnilingual_sidecar_endpoint_path_entry.pack(anchor="w", fill=tk.X)
-
-        self._add_setting_label(
-            omnilingual_sidecar_container,
-            "Model:",
-            "Optional model value sent to the sidecar; the Docker server may ignore it because the hosted model is configured separately.",
-            label_opts,
-            pady=(10, 4),
-        )
-        omnilingual_sidecar_model_var = tk.StringVar(
-            value=self.omnilingual_sidecar_model
-        )
-        omnilingual_sidecar_model_entry = tk.Entry(
-            omnilingual_sidecar_container,
-            textvariable=omnilingual_sidecar_model_var,
-            width=36,
-        )
-        self._apply_input_style(omnilingual_sidecar_model_entry)
-        omnilingual_sidecar_model_entry.pack(anchor="w")
-
-        self._add_setting_label(
-            omnilingual_sidecar_container,
-            "Language:",
-            "Optional language hint, e.g. es or spa_Latn for Spanish transcription even when translation is off. Leave blank to let the sidecar decide.",
-            label_opts,
-            pady=(10, 4),
-        )
-        omnilingual_sidecar_language_var = tk.StringVar(
-            value=self.omnilingual_sidecar_language
-        )
-        omnilingual_sidecar_language_entry = tk.Entry(
-            omnilingual_sidecar_container,
-            textvariable=omnilingual_sidecar_language_var,
-            width=20,
-        )
-        self._apply_input_style(omnilingual_sidecar_language_entry)
-        omnilingual_sidecar_language_entry.pack(anchor="w")
-
-        self._add_setting_label(
-            omnilingual_sidecar_container,
-            "Response format:",
-            "Response format field sent with transcription requests.",
-            label_opts,
-            pady=(10, 4),
-        )
-        omnilingual_sidecar_response_format_var = tk.StringVar(
-            value=self.omnilingual_sidecar_response_format
-            or self.OMNILINGUAL_SIDECAR_DEFAULT_RESPONSE_FORMAT
-        )
-        omnilingual_sidecar_response_format_menu = tk.OptionMenu(
-            omnilingual_sidecar_container,
-            omnilingual_sidecar_response_format_var,
-            "json",
-            "text",
-        )
-        self._apply_option_menu_style(omnilingual_sidecar_response_format_menu)
-        omnilingual_sidecar_response_format_menu.pack(anchor="w")
-
-        self._add_setting_label(
-            omnilingual_sidecar_container,
-            "Request timeout (seconds):",
-            "Allow extra time for first-run model load or slow CPU sidecars.",
-            label_opts,
-            pady=(10, 4),
-        )
-        omnilingual_sidecar_timeout_var = tk.IntVar(
-            value=self.omnilingual_sidecar_timeout_sec
-        )
-        omnilingual_sidecar_timeout_spin = tk.Spinbox(
-            omnilingual_sidecar_container,
-            from_=5,
-            to=600,
-            increment=5,
-            textvariable=omnilingual_sidecar_timeout_var,
-            width=8,
-        )
-        self._apply_input_style(omnilingual_sidecar_timeout_spin)
-        omnilingual_sidecar_timeout_spin.pack(anchor="w")
-
-        health_row = tk.Frame(omnilingual_sidecar_container, bg=label_opts["bg"])
-        health_row.pack(fill=tk.X, pady=(12, 0))
-        omnilingual_sidecar_health_var = tk.StringVar(value="Not checked")
-        health_details = {"text": ""}
-
-        def show_sidecar_health_details():
-            detail = health_details.get("text") or "No details available."
-            parent = self.settings_window if self.settings_window is not None else self.root
-            try:
-                messagebox.showinfo("Sidecar Details", detail, parent=parent)
-            except TypeError:
-                messagebox.showinfo("Sidecar Details", detail)
-
-        health_details_button = self._make_button(
-            health_row,
-            "View details",
-            command=show_sidecar_health_details,
-        )
-        try:
-            health_details_button.configure(state=tk.DISABLED)
-        except Exception:
-            pass
-
-        def run_sidecar_health_check():
-            self._check_omnilingual_sidecar_from_settings(
-                omnilingual_sidecar_base_url_var,
-                omnilingual_sidecar_health_var,
-                health_details,
-                health_check_button,
-                health_details_button,
-            )
-
-        health_check_button = self._make_button(
-            health_row,
-            "Check sidecar",
-            command=run_sidecar_health_check,
-            primary=True,
-        )
-        health_check_button.pack(side=tk.LEFT)
-        health_details_button.pack(side=tk.LEFT, padx=(8, 0))
-        health_status_label = tk.Label(
-            omnilingual_sidecar_container,
-            textvariable=omnilingual_sidecar_health_var,
-            bg=label_opts["bg"],
-            fg=label_opts["fg"],
-            font=(self.ui_font_family, 9),
-            wraplength=620,
-            justify="left",
-        )
-        health_status_label.pack(anchor="w", pady=(6, 0))
-
-        kroko_container = tk.Frame(api_section, bg=label_opts["bg"])
-        self._add_setting_label(
-            kroko_container,
-            "Kroko API Key:",
-            "API key from kroko.ai. Read from KROKO_API_KEY environment variable at startup; set it there for persistence.",
-            label_opts,
-            pady=(0, 4),
-        )
-        kroko_api_key_var = tk.StringVar(value=self.kroko_api_key)
-        kroko_key_frame = tk.Frame(kroko_container, bg=label_opts["bg"])
-        kroko_key_frame.pack(fill=tk.X)
-        kroko_key_entry = tk.Entry(
-            kroko_key_frame, textvariable=kroko_api_key_var, width=50, show="*"
-        )
-        self._apply_input_style(kroko_key_entry)
-        kroko_key_entry.pack(side=tk.LEFT)
-        kroko_show_var = tk.BooleanVar(value=False)
-
-        def toggle_kroko_show():
-            kroko_key_entry.config(show="" if kroko_show_var.get() else "*")
-
-        kroko_show_button = tk.Checkbutton(
-            kroko_key_frame,
-            text="Show",
-            variable=kroko_show_var,
-            command=toggle_kroko_show,
-            bg=label_opts["bg"],
-            fg=label_opts["fg"],
-            selectcolor=label_opts["bg"],
-            activebackground=label_opts["bg"],
-        )
-        kroko_show_button.pack(side=tk.LEFT, padx=(8, 0))
-
-        self._add_setting_label(
-            kroko_container,
-            "Language:",
-            "Language spoken in the audio. Kroko pre-recorded API supports these languages.",
-            label_opts,
-            pady=(10, 4),
-        )
-        kroko_language_options = [
-            ("English (en-US)", "en-US"),
-            ("Spanish (es-ES)", "es-ES"),
-            ("French (fr-FR)", "fr-FR"),
-            ("German (de-DE)", "de-DE"),
-            ("Dutch (nl-NL)", "nl-NL"),
-            ("Italian (it-IT)", "it-IT"),
-            ("Portuguese (pt-PT)", "pt-PT"),
-            ("Bulgarian (bg-BG)", "bg-BG"),
-            ("Swedish (sv-SV)", "sv-SV"),
-        ]
-        kroko_language_display = [name for name, _ in kroko_language_options]
-        kroko_language_code_map = dict(kroko_language_options)
-        kroko_language_rev_map = {code: name for name, code in kroko_language_options}
-        kroko_language_code_var = tk.StringVar(
-            value=kroko_language_rev_map.get(
-                self.kroko_language_code, kroko_language_display[0]
-            )
-        )
-        kroko_language_menu = tk.OptionMenu(
-            kroko_container,
-            kroko_language_code_var,
-            *kroko_language_display,
-        )
-        self._apply_option_menu_style(kroko_language_menu)
-        kroko_language_menu.pack(anchor="w")
-
-        # ── RealtimeSTT settings panel ─────────────────────────────────
-        realtime_stt_container = tk.Frame(api_section, bg=label_opts["bg"])
         self._add_setting_label(
             realtime_stt_container,
             "Final model:",
             "Accurate faster-whisper model used after each utterance ends (e.g. large-v3, medium, small).",
-            label_opts, pady=(0, 4),
+            label_opts, pady=(10, 4),
         )
         realtime_stt_final_model_var = tk.StringVar(value=self.realtime_stt_final_model)
         realtime_stt_final_model_entry = tk.Entry(
@@ -2640,53 +1906,8 @@ class SettingsUIMixin:
         self._apply_input_style(realtime_stt_silence_spin)
         realtime_stt_silence_spin.pack(anchor="w")
 
-        def update_engine_visibility(*_args):
-            engine = engine_map.get(speech_engine_var.get(), "openai")
-            openai_key_container.pack_forget()
-            faster_whisper_container.pack_forget()
-            omnilingual_sidecar_container.pack_forget()
-            kroko_container.pack_forget()
-            realtime_stt_container.pack_forget()
-            if engine == "openai":
-                openai_key_container.pack(fill=tk.X)
-            elif engine == "faster-whisper":
-                faster_whisper_container.pack(fill=tk.X, pady=(10, 0))
-            elif engine == "omnilingual-sidecar":
-                omnilingual_sidecar_container.pack(fill=tk.X, pady=(10, 0))
-            elif engine == "kroko":
-                kroko_container.pack(fill=tk.X, pady=(10, 0))
-            elif engine == "realtime-stt":
-                realtime_stt_container.pack(fill=tk.X, pady=(10, 0))
-
-        speech_engine_var.trace_add("write", update_engine_visibility)
-        update_engine_visibility()
         return {
-            "speech_engine_var": speech_engine_var,
-            "speech_engine_map": engine_map,
-            "openai_api_key_var": openai_key_var,
-            "openai_stt_model_var": openai_stt_model_var,
-            "openai_stt_model_map": openai_stt_model_map,
-            "openai_translation_mode_var": openai_translation_mode_var,
-            "openai_translation_mode_map": openai_translation_mode_map,
-            "openai_translate_model_var": openai_translate_model_var,
-            "openai_key_container": openai_key_container,
-            "faster_whisper_model_var": faster_whisper_model_var,
-            "faster_whisper_compute_var": faster_whisper_compute_var,
-            "faster_whisper_device_var": faster_whisper_device_var,
-            "faster_whisper_vad_enabled_var": faster_whisper_vad_enabled_var,
-            "faster_whisper_vad_threshold_var": faster_whisper_vad_threshold_var,
-            "faster_whisper_vad_min_silence_var": faster_whisper_vad_min_silence_var,
-            "faster_whisper_vad_speech_pad_var": faster_whisper_vad_speech_pad_var,
-            "faster_whisper_vad_min_speech_var": faster_whisper_vad_min_speech_var,
-            "omnilingual_sidecar_base_url_var": omnilingual_sidecar_base_url_var,
-            "omnilingual_sidecar_endpoint_path_var": omnilingual_sidecar_endpoint_path_var,
-            "omnilingual_sidecar_model_var": omnilingual_sidecar_model_var,
-            "omnilingual_sidecar_language_var": omnilingual_sidecar_language_var,
-            "omnilingual_sidecar_response_format_var": omnilingual_sidecar_response_format_var,
-            "omnilingual_sidecar_timeout_var": omnilingual_sidecar_timeout_var,
-            "kroko_api_key_var": kroko_api_key_var,
-            "kroko_language_code_var": kroko_language_code_var,
-            "kroko_language_code_map": kroko_language_code_map,
+            "stt_device_var": stt_device_var,
             "realtime_stt_final_model_var": realtime_stt_final_model_var,
             "realtime_stt_realtime_model_var": realtime_stt_realtime_model_var,
             "realtime_stt_silero_var": realtime_stt_silero_var,
@@ -2711,38 +1932,10 @@ class SettingsUIMixin:
         translate_check.pack(side=tk.LEFT)
         self._create_help_icon(
             translate_row,
-            "Translation OFF: transcripts pass through. Translation ON: source text is translated by the selected text translation provider.",
+            "Translation OFF: transcripts pass through. Translation ON: source text is translated by Local NLLB.",
             label_opts["bg"],
             label_opts["fg"],
         )
-        self._add_setting_label(
-            translation_section,
-            "Text translation provider:",
-            "Select None, OpenAI API, or Local NLLB for text translation after ASR.",
-            label_opts,
-            pady=(0, 4),
-        )
-        provider_options = [
-            ("None", "none"),
-            ("OpenAI API (cloud)", "openai"),
-            ("Local NLLB-200 distilled 600M", "local_nllb"),
-        ]
-        provider_display = [name for name, _code in provider_options]
-        provider_map = dict(provider_options)
-        rev_provider_map = {code: name for name, code in provider_options}
-        text_translation_provider_var = tk.StringVar(
-            value=rev_provider_map.get(
-                self.text_translation_provider,
-                provider_display[0],
-            )
-        )
-        provider_menu = tk.OptionMenu(
-            translation_section,
-            text_translation_provider_var,
-            *provider_display,
-        )
-        self._apply_option_menu_style(provider_menu)
-        provider_menu.pack(anchor="w", pady=(0, 8))
         toggle_state_label = tk.Label(
             translation_section,
             text="Current mode: Translation OFF",
@@ -2761,6 +1954,7 @@ class SettingsUIMixin:
         output_lang_label.pack(anchor="w", pady=(0, 8))
 
         nllb_container = tk.Frame(translation_section, bg=section_bg)
+        nllb_container.pack(fill=tk.X, pady=(0, 8))
         nllb_help = (
             "Local NLLB uses Meta's NLLB-200 distilled 600M model for offline "
             "text translation. The app will ask before downloading the model. "
@@ -3034,61 +2228,14 @@ class SettingsUIMixin:
 
         refresh_label = lambda *_args: self._refresh_translation_toggle_label(
             enable_translation_var,
-            text_translation_provider_var,
-            provider_map,
             toggle_state_label,
             output_lang_label,
-        )
-        refresh_visibility = lambda *_args: self._refresh_translation_provider_visibility(
-            text_translation_provider_var,
-            provider_map,
-            nllb_container,
-            refresh_label,
         )
         sync_runtime = lambda *_args: self._sync_translation_toggle_runtime(
             enable_translation_var
         )
-        provider_state = {
-            "previous": self._translation_provider_from_var(
-                text_translation_provider_var,
-                provider_map,
-            )
-        }
-
-        def handle_provider_change(*_args):
-            refresh_visibility()
-            provider = self._translation_provider_from_var(
-                text_translation_provider_var,
-                provider_map,
-            )
-            if self.suppress_local_nllb_provider_check:
-                provider_state["previous"] = provider
-                return
-            if provider == "local_nllb":
-                previous = provider_state.get("previous") or self.previous_text_translation_provider
-                if previous != "local_nllb":
-                    self.previous_text_translation_provider = previous
-                self._start_local_nllb_cache_check(
-                    self._local_nllb_config_from_vars(
-                        local_nllb_model_name_var,
-                        local_nllb_device_var,
-                        local_nllb_cache_dir_var,
-                        local_nllb_max_chars_var,
-                    ),
-                    prompt_if_missing=True,
-                    provider_var=text_translation_provider_var,
-                    provider_map=provider_map,
-                )
-            else:
-                provider_state["previous"] = provider
 
         def handle_nllb_config_change(*_args):
-            provider = self._translation_provider_from_var(
-                text_translation_provider_var,
-                provider_map,
-            )
-            if provider != "local_nllb":
-                return
             if self.nllb_status in ("Checking", "Downloading", "Loading"):
                 return
             config = self._local_nllb_config_from_vars(
@@ -3108,21 +2255,20 @@ class SettingsUIMixin:
 
         enable_translation_var.trace_add("write", refresh_label)
         enable_translation_var.trace_add("write", sync_runtime)
-        text_translation_provider_var.trace_add("write", handle_provider_change)
         local_nllb_model_name_var.trace_add("write", handle_nllb_config_change)
         local_nllb_device_var.trace_add("write", handle_nllb_config_change)
         local_nllb_cache_dir_var.trace_add("write", handle_nllb_config_change)
         refresh_label()
-        refresh_visibility()
         self._refresh_local_nllb_runtime_ui()
-        if (
-            self._translation_provider_from_var(
-                text_translation_provider_var,
-                provider_map,
-            )
-            == "local_nllb"
-        ):
-            handle_provider_change()
+        self._start_local_nllb_cache_check(
+            self._local_nllb_config_from_vars(
+                local_nllb_model_name_var,
+                local_nllb_device_var,
+                local_nllb_cache_dir_var,
+                local_nllb_max_chars_var,
+            ),
+            prompt_if_missing=True,
+        )
         fixed_input_label = tk.Label(
             translation_section,
             text="Default input language: English when OFF, Spanish when ON",
@@ -3134,8 +2280,6 @@ class SettingsUIMixin:
 
         return {
             "enable_translation_var": enable_translation_var,
-            "text_translation_provider_var": text_translation_provider_var,
-            "text_translation_provider_map": provider_map,
             "local_nllb_model_name_var": local_nllb_model_name_var,
             "local_nllb_device_var": local_nllb_device_var,
             "local_nllb_source_lang_var": local_nllb_source_lang_var,
@@ -3391,8 +2535,6 @@ class SettingsUIMixin:
         self,
         config,
         prompt_if_missing=False,
-        provider_var=None,
-        provider_map=None,
     ):
         config = dict(config or self._local_nllb_runtime_config())
         config_tuple = self._local_nllb_config_tuple_from_config(config)
@@ -3422,8 +2564,6 @@ class SettingsUIMixin:
             target=lambda: self._run_local_nllb_cache_check_worker(
                 config,
                 prompt_if_missing,
-                provider_var,
-                provider_map,
             ),
             daemon=True,
         ).start()
@@ -3432,8 +2572,6 @@ class SettingsUIMixin:
         self,
         config,
         prompt_if_missing,
-        provider_var,
-        provider_map,
     ):
         result = {"cached": False, "error": ""}
         try:
@@ -3452,8 +2590,6 @@ class SettingsUIMixin:
             self._finish_local_nllb_cache_check(
                 config,
                 prompt_if_missing,
-                provider_var,
-                provider_map,
                 result,
             )
 
@@ -3466,8 +2602,6 @@ class SettingsUIMixin:
         self,
         config,
         prompt_if_missing,
-        provider_var,
-        provider_map,
         result,
     ):
         self.nllb_check_in_progress = False
@@ -3496,7 +2630,6 @@ class SettingsUIMixin:
             self.LOCAL_NLLB_DOWNLOAD_CANCELED_MESSAGE,
         )
         self.update_status(self.LOCAL_NLLB_DOWNLOAD_CANCELED_MESSAGE)
-        self._revert_local_nllb_provider_selection(provider_var, provider_map)
 
     def _start_local_nllb_verification(self, config):
         self._set_local_nllb_status(
@@ -3672,25 +2805,6 @@ class SettingsUIMixin:
         dialog.wait_window()
         return bool(result["download"])
 
-    def _revert_local_nllb_provider_selection(self, provider_var, provider_map):
-        if provider_var is None or provider_map is None:
-            return
-        previous = self.previous_text_translation_provider or "none"
-        if previous == "local_nllb":
-            previous = "none"
-        self.suppress_local_nllb_provider_check = True
-        try:
-            self._set_translation_provider_var_code(provider_var, provider_map, previous)
-        finally:
-            self.suppress_local_nllb_provider_check = False
-
-    def _set_translation_provider_var_code(self, provider_var, provider_map, provider_code):
-        for label, code in provider_map.items():
-            if code == provider_code:
-                provider_var.set(label)
-                return
-        provider_var.set("None")
-
     def _local_nllb_dependencies_error(self):
         missing = []
         for module_name, package_name in (
@@ -3826,45 +2940,18 @@ class SettingsUIMixin:
             message = self.nllb_last_error
         self.update_status(message)
 
-    def _translation_provider_from_var(self, provider_var, provider_map):
-        return provider_map.get(provider_var.get(), self.text_translation_provider)
-
     def _refresh_translation_toggle_label(
         self,
         enable_translation_var,
-        provider_var,
-        provider_map,
         toggle_state_label,
         output_lang_label,
     ):
         enabled = self._coerce_bool(enable_translation_var.get(), default=False)
-        provider = self._translation_provider_from_var(provider_var, provider_map)
         if enabled:
-            provider_label = {
-                "none": "no text provider selected",
-                "openai": "OpenAI API",
-                "local_nllb": "Local NLLB",
-            }.get(provider, provider)
-            toggle_state_label.config(
-                text=f"Current mode: Translation ON ({provider_label})"
-            )
+            toggle_state_label.config(text="Current mode: Translation ON (Local NLLB)")
         else:
             toggle_state_label.config(text="Current mode: Translation OFF")
         output_lang_label.config(text=self.OUTPUT_LANGUAGE_ENGLISH_LABEL)
-
-    def _refresh_translation_provider_visibility(
-        self,
-        provider_var,
-        provider_map,
-        nllb_container,
-        refresh_label,
-    ):
-        provider = self._translation_provider_from_var(provider_var, provider_map)
-        if provider == "local_nllb":
-            nllb_container.pack(fill=tk.X, pady=(0, 8))
-        else:
-            nllb_container.pack_forget()
-        refresh_label()
 
     def _sync_translation_toggle_runtime(self, enable_translation_var):
         enabled = self._coerce_bool(enable_translation_var.get(), default=False)
@@ -3898,183 +2985,6 @@ class SettingsUIMixin:
         )
         if selected:
             path_var.set(self._normalize_optional_directory(selected))
-
-    def _check_omnilingual_sidecar_from_settings(
-        self,
-        base_url_var,
-        status_var,
-        details_holder,
-        check_button,
-        details_button,
-    ):
-        base_url = self._normalize_omnilingual_sidecar_base_url(base_url_var.get())
-        status_var.set("Checking...")
-        details_holder["text"] = ""
-        try:
-            check_button.configure(state=tk.DISABLED)
-            details_button.configure(state=tk.DISABLED)
-        except Exception:
-            pass
-
-        def worker():
-            result = self._probe_omnilingual_sidecar(base_url)
-
-            def finish():
-                status_var.set(result.get("message", "Error - view details"))
-                details_holder["text"] = result.get("details", "")
-                try:
-                    check_button.configure(state=tk.NORMAL)
-                    detail_state = (
-                        tk.NORMAL if result.get("show_details") else tk.DISABLED
-                    )
-                    details_button.configure(state=detail_state)
-                except Exception:
-                    pass
-
-            try:
-                self.root.after(0, finish)
-            except Exception:
-                pass
-
-        Thread(target=worker, daemon=True).start()
-
-    def _probe_omnilingual_sidecar(self, base_url):
-        base_url = self._normalize_omnilingual_sidecar_base_url(base_url)
-        health_url = f"{base_url}/health-check"
-        try:
-            response = requests.get(health_url, timeout=5)
-        except requests.exceptions.ConnectionError as exc:
-            return {
-                "message": "Not installed or not running",
-                "details": (
-                    "Could not connect to the Local Omnilingual server at "
-                    f"{health_url}. Start the Docker sidecar, then try again. {exc}"
-                ),
-                "show_details": True,
-            }
-        except requests.exceptions.Timeout as exc:
-            return {
-                "message": "Error - view details",
-                "details": (
-                    "Timed out while checking the Local Omnilingual server at "
-                    f"{health_url}. The model may still be loading. {exc}"
-                ),
-                "show_details": True,
-            }
-        except requests.RequestException as exc:
-            return {
-                "message": "Error - view details",
-                "details": f"Could not check {health_url}. {exc}",
-                "show_details": True,
-            }
-
-        if response.status_code == 404:
-            return self._probe_omnilingual_sidecar_docs(base_url, health_url, response)
-        if 200 <= response.status_code < 300:
-            state, detail = self._omnilingual_health_state_from_response(response)
-            return {
-                "message": state,
-                "details": detail,
-                "show_details": state != "Ready",
-            }
-        return {
-            "message": "Error - view details",
-            "details": (
-                f"{health_url} returned HTTP {response.status_code}. "
-                f"Response preview: {self._short_response_preview(response.text)}"
-            ),
-            "show_details": True,
-        }
-
-    def _probe_omnilingual_sidecar_docs(self, base_url, health_url, health_response):
-        docs_url = f"{base_url}/docs"
-        try:
-            response = requests.get(docs_url, timeout=5)
-        except requests.exceptions.ConnectionError as exc:
-            return {
-                "message": "Not installed or not running",
-                "details": (
-                    f"{health_url} returned 404, then {docs_url} was unreachable. "
-                    f"Start the Docker sidecar, then try again. {exc}"
-                ),
-                "show_details": True,
-            }
-        except requests.exceptions.Timeout as exc:
-            return {
-                "message": "Error - view details",
-                "details": (
-                    f"{health_url} returned 404, then {docs_url} timed out. "
-                    f"The model may still be loading. {exc}"
-                ),
-                "show_details": True,
-            }
-        except requests.RequestException as exc:
-            return {
-                "message": "Error - view details",
-                "details": f"{health_url} returned 404, then {docs_url} failed. {exc}",
-                "show_details": True,
-            }
-        if 200 <= response.status_code < 300:
-            return {
-                "message": "Reachable - API reachable; health endpoint unavailable.",
-                "details": (
-                    f"{health_url} returned 404, but {docs_url} returned "
-                    f"HTTP {response.status_code}."
-                ),
-                "show_details": False,
-            }
-        return {
-            "message": "Error - view details",
-            "details": (
-                f"{health_url} returned HTTP {health_response.status_code}, then "
-                f"{docs_url} returned HTTP {response.status_code}. "
-                f"Response preview: {self._short_response_preview(response.text)}"
-            ),
-            "show_details": True,
-        }
-
-    def _omnilingual_health_state_from_response(self, response):
-        try:
-            payload = response.json()
-        except Exception:
-            return "Ready", (
-                f"/health-check returned HTTP {response.status_code}. "
-                "No JSON health payload was provided."
-            )
-        if not isinstance(payload, dict):
-            return "Ready", (
-                f"/health-check returned HTTP {response.status_code}. "
-                f"Payload preview: {self._short_response_preview(payload)}"
-            )
-        for key in ("ready", "healthy", "ok"):
-            if isinstance(payload.get(key), bool):
-                if payload.get(key):
-                    return "Ready", f"/health-check returned {key}=true."
-                return "Reachable", f"/health-check returned {key}=false."
-        status = str(
-            payload.get("status")
-            or payload.get("state")
-            or payload.get("health")
-            or ""
-        ).strip().lower()
-        ready_statuses = {"ok", "ready", "healthy", "up", "running"}
-        loading_statuses = {
-            "loading",
-            "starting",
-            "warming",
-            "not_ready",
-            "not ready",
-            "unhealthy",
-            "down",
-        }
-        if status in ready_statuses:
-            return "Ready", f"/health-check status is {status}."
-        if status in loading_statuses:
-            return "Reachable", f"/health-check status is {status}."
-        return "Ready", (
-            f"/health-check returned HTTP {response.status_code}. "
-            f"Payload preview: {self._short_response_preview(payload)}"
-        )
 
     def apply_colors(self):
         self.root.config(bg=self.bg_color)
