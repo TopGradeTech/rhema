@@ -102,7 +102,7 @@ class RealtimeSttMixin:
             "enable_realtime_transcription": True,
             "on_realtime_transcription_update": on_update,
             "on_realtime_transcription_stabilized": on_interim,
-            "device": self.faster_whisper_device,
+            "device": self.stt_device,
             "compute_type": "int8",
             "silero_sensitivity": float(self.realtime_stt_silero_sensitivity),
             "post_speech_silence_duration": float(self.realtime_stt_post_speech_silence),
@@ -120,7 +120,7 @@ class RealtimeSttMixin:
             "realtime_stt_started", "",
             final_model=self.realtime_stt_final_model,
             realtime_model=self.realtime_stt_realtime_model,
-            device=self.faster_whisper_device,
+            device=self.stt_device,
         )
         try:
             self.update_status("RealtimeSTT ready")

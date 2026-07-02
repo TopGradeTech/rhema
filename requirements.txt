@@ -3,14 +3,12 @@ pyaudio
 requests
 ttkbootstrap
 faster-whisper
-pydub
 transformers
 sentencepiece
 # CPU-only (default): torch
 # CUDA 12.1 (GPU): pip install torch --index-url https://download.pytorch.org/whl/cu121
 # CUDA 11.8 (GPU): pip install torch --index-url https://download.pytorch.org/whl/cu118
 torch
-websocket-client
 # RealtimeSTT — local real-time transcription with dual VAD + two-pass models
 # GPU build: pip install RealtimeSTT[gpu]
 RealtimeSTT
