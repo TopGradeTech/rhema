@@ -83,7 +83,15 @@ class RealtimeSttMixin:
 
     def _realtime_stt_recorder_kwargs(self, on_update, on_interim):
         """Build the AudioToTextRecorder constructor kwargs from current settings."""
-        lang = self._normalized_source_lang_code()
+        # Must agree with _source_language_filter_expected(), which gates the
+        # final text this recorder produces. If Whisper is told a different
+        # language than the filter expects (e.g. legacy self.source_lang="es"
+        # while Local NLLB is configured for English), it mis-transcribes
+        # speech into the wrong language and the filter then silently drops
+        # that segment as a language mismatch -- losing real speech.
+        lang = self._source_language_filter_expected(engine="realtime-stt") or (
+            self._normalized_source_lang_code()
+        )
         # int8 compute type: RealtimeSTT loads the realtime model on CPU even
         # when device=cuda; float16 is unsupported on CPU ctranslate2 backends.
         # enable_realtime_transcription is always True so on_update fires for
@@ -204,7 +212,18 @@ class RealtimeSttMixin:
         self.render_text()
 
     def _realtime_stt_queue_interim(self, text):
-        """Debounced live-line update for interim text (called on main thread)."""
+        """Debounced live-line update for interim text (called on main thread).
+
+        Interim text is always in the source language, never translated, so
+        showing it while translation is on means the viewer sees raw source
+        words that then get yanked and replaced by the translated final —
+        the "jump" this exists to avoid. Suppress the preview in that mode
+        and let the translated final commit directly, same as the NLLB path.
+        """
+        if self.translation_enabled:
+            if self.live_line:
+                self._realtime_stt_set_live_line("")
+            return
         self._realtime_stt_pending_interim = text
         if self._realtime_stt_interim_after_id is not None:
             try:
@@ -224,14 +243,31 @@ class RealtimeSttMixin:
         text = (text or "").strip()
         if not text:
             return
-        self._trace_pipeline("realtime_stt_final", text)
-        try:
-            self.root.after(0, lambda t=text: self._realtime_stt_show(t))
-        except Exception:
-            pass
+        cleaned, _ = self._sanitize_faster_whisper_output(text)
+        if not cleaned:
+            return
+        if self._source_filter_blocks_recognized_text(cleaned, engine="realtime-stt"):
+            return
+        self._log_transcribed_text(
+            cleaned,
+            engine="realtime-stt",
+            mode="single_pass_source",
+            source_lang=self._normalized_source_lang_code(),
+            selected=True,
+            selected_output_pretranslated=False,
+        )
+        self._reset_speech_counters()
+        self._trace_pipeline("realtime_stt_final", cleaned)
+        if self.translation_enabled:
+            self._enqueue_flushed_sentences_from_buffer(cleaned, overlap_words=0)
+        else:
+            try:
+                self.root.after(0, lambda t=cleaned: self._realtime_stt_show(t))
+            except Exception:
+                pass
 
     def _realtime_stt_show(self, text):
-        """Put a RealtimeSTT final directly on screen — no processing whatsoever."""
+        """Direct commit to display — used when translation is off."""
         self.live_line = ""
         self.translations.append(text)
         self._trim_translation_history()

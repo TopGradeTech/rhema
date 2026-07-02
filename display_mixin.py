@@ -231,7 +231,9 @@ class DisplayMixin:
             incoming,
             word_by_word=self.word_by_word,
         )
-        if self._display_should_fast_path(incoming, latency_meta):
+        if self._is_local_nllb_output(latency_meta) or self._display_should_fast_path(
+            incoming, latency_meta
+        ):
             self._drain_display_queues_immediately()
             self._append_display_text_immediate(
                 incoming,
@@ -243,6 +245,13 @@ class DisplayMixin:
             self.enqueue_text(incoming, latency_meta=latency_meta)
             return
         self._queue_pending_display_text(incoming, latency_meta=latency_meta)
+
+    def _is_local_nllb_output(self, latency_meta):
+        # Local NLLB translation is already fast/local by the time it reaches
+        # display, so it should commit instantly like the untranslated
+        # RealtimeSTT path instead of trickling out through the word-by-word
+        # reveal queue.
+        return bool(latency_meta) and latency_meta.get("text_translation_provider") == "local_nllb"
 
     def _coerce_incoming_display_text(self, text):
         return (text or "").strip()
