@@ -692,18 +692,20 @@ class SettingsUIMixin:
             self.local_nllb_device = self._normalize_local_nllb_device(
                 translation_vars["local_nllb_device_var"].get()
             )
-        if "local_nllb_source_lang_var" in translation_vars:
-            self.local_nllb_source_lang = self._normalize_local_nllb_lang_setting(
-                translation_vars["local_nllb_source_lang_var"].get(),
-                default=self.LOCAL_NLLB_DEFAULT_SOURCE_LANG,
-                allow_auto=True,
-            )
-        if "local_nllb_target_lang_var" in translation_vars:
-            self.local_nllb_target_lang = self._normalize_local_nllb_lang_setting(
-                translation_vars["local_nllb_target_lang_var"].get(),
-                default=self.LOCAL_NLLB_DEFAULT_TARGET_LANG,
-                allow_auto=False,
-            )
+        self.local_nllb_source_lang = self._optional_mapped_api_setting(
+            translation_vars,
+            "local_nllb_source_lang_var",
+            "local_nllb_source_lang_map",
+            current_value=self.local_nllb_source_lang,
+            mapped_default=self.LOCAL_NLLB_DEFAULT_SOURCE_LANG,
+        )
+        self.local_nllb_target_lang = self._optional_mapped_api_setting(
+            translation_vars,
+            "local_nllb_target_lang_var",
+            "local_nllb_target_lang_map",
+            current_value=self.local_nllb_target_lang,
+            mapped_default=self.LOCAL_NLLB_DEFAULT_TARGET_LANG,
+        )
         self.local_nllb_max_chars = self._coerce_int_range(
             translation_vars.get("local_nllb_max_chars_var", None).get()
             if "local_nllb_max_chars_var" in translation_vars
@@ -2857,6 +2859,24 @@ class SettingsUIMixin:
         self._apply_option_menu_style(nllb_device_menu)
         nllb_device_menu.pack(anchor="w", pady=(0, 8))
 
+        nllb_language_options = [
+            ("English", "eng_Latn"),
+            ("Spanish", "spa_Latn"),
+            ("French", "fra_Latn"),
+            ("German", "deu_Latn"),
+            ("Italian", "ita_Latn"),
+            ("Portuguese", "por_Latn"),
+            ("Dutch", "nld_Latn"),
+            ("Russian", "rus_Cyrl"),
+            ("Ukrainian", "ukr_Cyrl"),
+            ("Arabic", "arb_Arab"),
+            ("Hindi", "hin_Deva"),
+            ("Chinese (Simplified)", "zho_Hans"),
+            ("Chinese (Traditional)", "zho_Hant"),
+            ("Japanese", "jpn_Jpan"),
+            ("Korean", "kor_Hang"),
+        ]
+
         lang_row = tk.Frame(nllb_container, bg=section_bg)
         lang_row.pack(fill=tk.X, pady=(0, 8))
         source_col = tk.Frame(lang_row, bg=section_bg)
@@ -2865,34 +2885,51 @@ class SettingsUIMixin:
         target_col.pack(side=tk.LEFT, fill=tk.X, expand=True)
         self._add_setting_label(
             source_col,
-            "Source language code:",
-            "Use auto_from_selected_source_language or an NLLB code such as spa_Latn.",
+            "Source language:",
+            "Auto uses the app's selected source language.",
             label_opts,
             pady=(0, 4),
         )
-        local_nllb_source_lang_var = tk.StringVar(value=self.local_nllb_source_lang)
-        nllb_source_entry = tk.Entry(
-            source_col,
-            textvariable=local_nllb_source_lang_var,
-            width=28,
+        nllb_source_options = [
+            ("Auto (use selected source language)", self.LOCAL_NLLB_DEFAULT_SOURCE_LANG)
+        ] + nllb_language_options
+        nllb_source_display = [name for name, _ in nllb_source_options]
+        local_nllb_source_lang_map = dict(nllb_source_options)
+        nllb_source_rev_map = {code: name for name, code in nllb_source_options}
+        local_nllb_source_lang_var = tk.StringVar(
+            value=nllb_source_rev_map.get(
+                self.local_nllb_source_lang, nllb_source_display[0]
+            )
         )
-        self._apply_input_style(nllb_source_entry)
-        nllb_source_entry.pack(anchor="w", fill=tk.X)
+        nllb_source_menu = tk.OptionMenu(
+            source_col,
+            local_nllb_source_lang_var,
+            *nllb_source_display,
+        )
+        self._apply_option_menu_style(nllb_source_menu)
+        nllb_source_menu.pack(anchor="w", fill=tk.X)
         self._add_setting_label(
             target_col,
-            "Target language code:",
-            "Use an NLLB code such as eng_Latn.",
+            "Target language:",
+            "Language the translated transcript is produced in.",
             label_opts,
             pady=(0, 4),
         )
-        local_nllb_target_lang_var = tk.StringVar(value=self.local_nllb_target_lang)
-        nllb_target_entry = tk.Entry(
-            target_col,
-            textvariable=local_nllb_target_lang_var,
-            width=28,
+        nllb_target_display = [name for name, _ in nllb_language_options]
+        local_nllb_target_lang_map = dict(nllb_language_options)
+        nllb_target_rev_map = {code: name for name, code in nllb_language_options}
+        local_nllb_target_lang_var = tk.StringVar(
+            value=nllb_target_rev_map.get(
+                self.local_nllb_target_lang, nllb_target_display[0]
+            )
         )
-        self._apply_input_style(nllb_target_entry)
-        nllb_target_entry.pack(anchor="w", fill=tk.X)
+        nllb_target_menu = tk.OptionMenu(
+            target_col,
+            local_nllb_target_lang_var,
+            *nllb_target_display,
+        )
+        self._apply_option_menu_style(nllb_target_menu)
+        nllb_target_menu.pack(anchor="w", fill=tk.X)
 
         self._add_setting_label(
             nllb_container,
@@ -3102,7 +3139,9 @@ class SettingsUIMixin:
             "local_nllb_model_name_var": local_nllb_model_name_var,
             "local_nllb_device_var": local_nllb_device_var,
             "local_nllb_source_lang_var": local_nllb_source_lang_var,
+            "local_nllb_source_lang_map": local_nllb_source_lang_map,
             "local_nllb_target_lang_var": local_nllb_target_lang_var,
+            "local_nllb_target_lang_map": local_nllb_target_lang_map,
             "local_nllb_max_chars_var": local_nllb_max_chars_var,
             "local_nllb_cache_dir_var": local_nllb_cache_dir_var,
         }

@@ -25,9 +25,6 @@ import importlib.util
 import ttkbootstrap as ttkb
 from ttkbootstrap.constants import PRIMARY
 
-#TODO: Remove Spanish hallucinations 'Gracias' and 'Thank you very much'
-#TODO: Run tests with declaration of independence and improve Spanish accuracy.
-
 from tooltip import Tooltip
 from logging_mixin import LoggingMixin
 from settings_mixin import SettingsMixin
