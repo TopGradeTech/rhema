@@ -592,6 +592,14 @@ class SettingsMixin:
             raise ValueError(self.LOCAL_NLLB_UNSUPPORTED_LANGUAGE_MESSAGE)
         return mapped
 
+    def _nllb_code_to_two_letter(self, code):
+        code = (code or "").strip().lower()
+        if code.startswith("eng"):
+            return "en"
+        if code.startswith("spa"):
+            return "es"
+        return ""
+
     def _normalize_translation_settings(self):
         self.auto_switch_translation = self._coerce_bool(
             self.auto_switch_translation,
