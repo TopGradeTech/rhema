@@ -1,4 +1,3 @@
-import speech_recognition as sr
 import tkinter as tk
 from tkinter import messagebox
 from tkinter import colorchooser
@@ -304,7 +303,6 @@ class TranslationApp(
         self.comparison_logs_enabled = False
         self.transcribed_log_sequence = 0
         self.translated_log_sequence = 0
-        self.recognition_lock = Lock()
         self.portaudio_admin_lock = Lock()
         self.last_status_message = None
         self.latency_samples = deque(maxlen=20)
@@ -312,7 +310,6 @@ class TranslationApp(
         self.audio_level_label = None
         self.audio_level_bar = None
         self.audio_level_fill_item = None
-        self.audio_level_gate_item = None
         self.audio_level_value = 0.0
         self.audio_level_target = 0.0
         self.audio_level_last_update = 0.0
@@ -349,7 +346,6 @@ class TranslationApp(
             background=[("active", "#4A7FEA"), ("pressed", "#4A7FEA")],
             foreground=[("disabled", "#FFFFFF")],
         )
-        self.recognizer = sr.Recognizer()
         self.allow_loopback = False
         self.recommended_host_api = ""
         self.available_host_apis = []
@@ -389,8 +385,6 @@ class TranslationApp(
         self.preferred_device_label = ""
         self.device_refresh_in_progress = False
         self.last_display_line_count = 0
-        self.rms_gate_enabled = False
-        self.rms_gate_factor = 1.0
         self.start_with_windows = False
         self.lock_output_focus = False
         self.sentence_buffer = ""
@@ -526,10 +520,8 @@ class TranslationApp(
         self.fast_display_sentence_queue_ratio = 0.25
         self.fast_display_reveal_queue_items = 2
         self.fast_display_translate_ms = 1200
-        self.fast_display_stt_ms = 1500
         self.pending_text = ""
         self.pending_latency_meta = None
-        self.last_openai_stt_ms = None
         self.last_openai_translate_ms = None
         self.flush_after_id = None
         self.source_lang = "auto"

@@ -358,7 +358,6 @@ class TranscriptionMixin:
             "text": text,
             "queued_at": time.time(),
             "pretranslated": bool(pretranslated),
-            "stt_openai_ms": self.last_openai_stt_ms,
             "translate_openai_ms": self.last_openai_translate_ms,
             "stt_confidence": self.last_faster_whisper_confidence,
             "overlap_words": max(0, int(overlap_words or 0)),
@@ -389,7 +388,6 @@ class TranscriptionMixin:
         trace_meta = {
             "queue_size": self.sentence_queue.qsize(),
             "pretranslated": bool(pretranslated),
-            "stt_openai_ms": self.last_openai_stt_ms,
             "translate_openai_ms": self.last_openai_translate_ms,
             "stt_confidence": self.last_faster_whisper_confidence,
             "chunk_seconds": payload.get("chunk_seconds"),
@@ -479,12 +477,6 @@ class TranscriptionMixin:
         merged_meta["batched_items"] = len(merged_items)
         item_meta = [meta for _text, _started, meta in merged_items]
         pretranslated_values = [bool(meta.get("pretranslated")) for meta in item_meta]
-        stt_values = [
-            int(meta.get("stt_openai_ms"))
-            for meta in item_meta
-            if isinstance(meta.get("stt_openai_ms"), (int, float))
-            and meta.get("stt_openai_ms") >= 0
-        ]
         translate_values = [
             int(meta.get("translate_openai_ms"))
             for meta in item_meta
@@ -508,8 +500,6 @@ class TranscriptionMixin:
         ]
         if pretranslated_values:
             merged_meta["pretranslated"] = all(pretranslated_values)
-        if stt_values:
-            merged_meta["stt_openai_ms"] = max(stt_values)
         if translate_values:
             merged_meta["translate_openai_ms"] = max(translate_values)
         if confidence_values:
@@ -540,7 +530,6 @@ class TranscriptionMixin:
         self._log_finalized_sentence(
             output_text,
             translation_enabled=bool(self.translation_enabled),
-            stt_openai_ms=output_meta.get("stt_openai_ms"),
             translate_openai_ms=output_meta.get("translate_openai_ms"),
             stt_confidence=output_meta.get("stt_confidence"),
             pretranslated=bool(output_meta.get("pretranslated")),
