@@ -315,7 +315,6 @@ class TranslationMixin:
                 speech_engine=(self.speech_engine or "").strip().lower(),
                 text_translation_provider=display_meta.get("text_translation_provider"),
                 pretranslated=bool(display_meta.get("pretranslated")),
-                stt_openai_ms=display_meta.get("stt_openai_ms"),
                 translate_openai_ms=display_meta.get("translate_openai_ms"),
                 translate_provider_ms=display_meta.get("translate_provider_ms"),
                 stt_confidence=display_meta.get("stt_confidence"),
@@ -338,7 +337,6 @@ class TranslationMixin:
     def _build_translation_display_meta(self, started_at=None, latency_meta=None):
         display_meta = dict(latency_meta or {})
         display_meta["queued_at"] = started_at
-        display_meta.setdefault("stt_openai_ms", None)
         display_meta.setdefault("translate_openai_ms", None)
         display_meta.setdefault("translate_provider_ms", None)
         display_meta.setdefault(

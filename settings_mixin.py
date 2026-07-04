@@ -180,8 +180,6 @@ class SettingsMixin:
         self.preferred_device_label = data.get(
             "preferred_device_label", self.preferred_device_label
         )
-        self.rms_gate_enabled = bool(data.get("rms_gate_enabled", self.rms_gate_enabled))
-        self.rms_gate_factor = float(data.get("rms_gate_factor", self.rms_gate_factor))
         self.start_with_windows = self._coerce_bool(
             data.get("start_with_windows", self.start_with_windows),
             default=self.start_with_windows,
@@ -481,8 +479,6 @@ class SettingsMixin:
             "auto_switch_translation": self.auto_switch_translation,
             "biblical_books": self.biblical_books,
             "preferred_device_label": self.preferred_device_label,
-            "rms_gate_enabled": self.rms_gate_enabled,
-            "rms_gate_factor": self.rms_gate_factor,
             "start_with_windows": self.start_with_windows,
             "cuda_directory": self.cuda_directory,
             "monitor_index": self.monitor_index,

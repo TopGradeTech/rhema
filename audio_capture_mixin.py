@@ -34,6 +34,7 @@ class AudioCaptureMixin:
                 self.update_status(f"Error: {e}")
 
     def _run_listen_iteration(self):
+        self._service_realtime_stt_restart()
         if not getattr(self, "realtime_stt_active", False):
             self._start_realtime_stt()
         if self._pause_if_needed():
