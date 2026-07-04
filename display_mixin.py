@@ -57,14 +57,11 @@ class DisplayMixin:
 
     def _chunk_latency_detail_parts(self, elapsed_ms, avg_ms, latency_meta=None):
         meta = latency_meta or {}
-        stt_ms = meta.get("stt_openai_ms")
         translate_ms = meta.get("translate_openai_ms")
         stt_confidence = meta.get("stt_confidence")
         chunk_seconds = meta.get("chunk_seconds")
         overlap_words = meta.get("overlap_words")
         detail_parts = [f"Total {elapsed_ms} ms (queue->display)", f"Avg {avg_ms} ms"]
-        if isinstance(stt_ms, (int, float)) and stt_ms >= 0:
-            detail_parts.append(f"STT {int(stt_ms)} ms")
         if isinstance(translate_ms, (int, float)) and translate_ms >= 0:
             detail_parts.append(f"Translate {int(translate_ms)} ms")
         if isinstance(chunk_seconds, (int, float)) and chunk_seconds > 0:
@@ -97,7 +94,6 @@ class DisplayMixin:
             sentence_fill_ratio=round(pressure["sentence_fill"], 3),
             reveal_queue=len(self.word_reveal_queue),
             text_queue=len(self.text_queue),
-            stt_openai_ms=pressure["stt_ms"],
             translate_openai_ms=pressure["translate_ms"],
         )
         return True
@@ -120,12 +116,7 @@ class DisplayMixin:
         if self.translation_enabled and len(re.findall(r"\S+", text or "")) >= 9:
             pressure = True
         meta = latency_meta or {}
-        stt_ms = meta.get("stt_openai_ms")
         translate_ms = meta.get("translate_openai_ms")
-        if isinstance(stt_ms, (int, float)) and stt_ms >= int(
-            getattr(self, "fast_display_stt_ms", 1500)
-        ):
-            pressure = True
         if isinstance(translate_ms, (int, float)) and translate_ms >= int(
             getattr(self, "fast_display_translate_ms", 1200)
         ):
@@ -133,7 +124,6 @@ class DisplayMixin:
         return {
             "enabled": pressure,
             "sentence_fill": sentence_fill,
-            "stt_ms": stt_ms,
             "translate_ms": translate_ms,
         }
 
@@ -484,21 +474,6 @@ class DisplayMixin:
         # Perceptual curve for a Windows-mixer-like visual response.
         return (norm ** 0.62) * 100.0
 
-    def _current_noise_gate_meter_level(self):
-        if not self.rms_gate_enabled:
-            return None
-        try:
-            sample_width = 2
-            full_scale = float((1 << ((sample_width * 8) - 1)) - 1)
-            if full_scale <= 0:
-                return None
-            threshold = float(self.recognizer.energy_threshold) * float(self.rms_gate_factor)
-            ratio = max(1.0 / full_scale, threshold / full_scale)
-            db_gate = 20.0 * math.log10(ratio)
-            return max(0.0, min(100.0, self._meter_level_from_dbfs(db_gate)))
-        except Exception:
-            return None
-
     def _resolve_audio_level_device_index(self):
         device_name = self._get_selected_device_name()
         if not device_name:
@@ -702,25 +677,8 @@ class DisplayMixin:
                     fill_width,
                     height,
                 )
-            self._render_audio_gate_marker(width, height)
         except Exception:
             pass
-
-    def _render_audio_gate_marker(self, width, height):
-        gate_level = self._current_noise_gate_meter_level()
-        if gate_level is None or self.audio_level_gate_item is None:
-            if self.audio_level_gate_item is not None:
-                self.audio_level_bar.itemconfigure(self.audio_level_gate_item, state="hidden")
-            return
-        gate_x = width * max(0.0, min(1.0, gate_level / 100.0))
-        self.audio_level_bar.coords(
-            self.audio_level_gate_item,
-            gate_x,
-            0,
-            gate_x,
-            height,
-        )
-        self.audio_level_bar.itemconfigure(self.audio_level_gate_item, state="normal")
 
     def toggle_pause(self):
         self.is_paused = not self.is_paused

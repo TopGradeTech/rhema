@@ -8,9 +8,9 @@ class RealtimeSttMixin:
     """Integration with the RealtimeSTT library for low-latency local transcription.
 
     RealtimeSTT owns audio capture, dual VAD, and model scheduling entirely.
-    We provide two seams:
-      - Interim (stabilized) text  → live_line (word-by-word visual feedback)
-      - Final text                 → translation/display pipeline (unchanged)
+    Only finalized text is ever shown — no live word-by-word preview, since
+    the display had to fully re-wrap/reflow on every partial update, which
+    read as jerky.
 
     The normal speech_recognition capture loop is suspended while active so
     both paths never compete for the microphone.
@@ -22,9 +22,8 @@ class RealtimeSttMixin:
         self._realtime_stt_thread = None
         self._realtime_stt_recorder = None
         self._realtime_stt_last_start = 0.0        # for retry cooldown
-        self._realtime_stt_pending_interim = ""    # latest unrendered interim text
-        self._realtime_stt_interim_after_id = None # pending debounce timer
         self._realtime_stt_prev_update_text = ""   # tracks previous partial for silence logic
+        self._realtime_stt_restart_requested = False  # serviced by _run_listen_iteration
         # Persisted settings
         self.realtime_stt_final_model = "large-v3"
         self.realtime_stt_realtime_model = "tiny"
@@ -50,6 +49,27 @@ class RealtimeSttMixin:
             target=self._realtime_stt_worker, daemon=True
         )
         self._realtime_stt_thread.start()
+
+    def _request_capture_restart(self):
+        """Ask the capture loop to rebuild the recorder with fresh settings
+        (device index, STT model, etc.), which RealtimeSTT only reads at
+        construction time. The actual stop/start happens on the capture
+        thread via _service_realtime_stt_restart, never inline here, so
+        callers on the Tk main thread (e.g. the device_var trace) don't
+        block on RealtimeSTT's teardown, which can take several seconds.
+        """
+        self._realtime_stt_last_start = 0.0  # bypass the failure-retry cooldown
+        self._realtime_stt_restart_requested = True
+
+    def _service_realtime_stt_restart(self):
+        """Perform a pending restart. Must only be called from the capture
+        thread (_run_listen_iteration) so stop-then-start stays sequential
+        and never races the self-healing rebuild against an in-progress
+        teardown.
+        """
+        if self._realtime_stt_restart_requested:
+            self._realtime_stt_restart_requested = False
+            self._stop_realtime_stt()
 
     def _stop_realtime_stt(self):
         if not self.realtime_stt_active:
@@ -81,7 +101,7 @@ class RealtimeSttMixin:
     _SILENCE_SENTENCE_END = 0.45  # clear sentence end punctuation — commit fast
     _SILENCE_UNKNOWN = 0.7        # everything else — middle ground
 
-    def _realtime_stt_recorder_kwargs(self, on_update, on_interim):
+    def _realtime_stt_recorder_kwargs(self, on_update):
         """Build the AudioToTextRecorder constructor kwargs from current settings."""
         # Must agree with _source_language_filter_expected(), which gates the
         # final text this recorder produces. If Whisper is told a different
@@ -95,13 +115,12 @@ class RealtimeSttMixin:
         # int8 compute type: RealtimeSTT loads the realtime model on CPU even
         # when device=cuda; float16 is unsupported on CPU ctranslate2 backends.
         # enable_realtime_transcription is always True so on_update fires for
-        # dynamic silence adjustment regardless of whether interim display is on.
+        # dynamic silence adjustment even though its text is never displayed.
         kwargs = {
             "model": self.realtime_stt_final_model,
             "realtime_model_type": self.realtime_stt_realtime_model,
             "enable_realtime_transcription": True,
             "on_realtime_transcription_update": on_update,
-            "on_realtime_transcription_stabilized": on_interim,
             "device": self.stt_device,
             "compute_type": "int8",
             "silero_sensitivity": float(self.realtime_stt_silero_sensitivity),
@@ -110,8 +129,10 @@ class RealtimeSttMixin:
         }
         if lang and len(lang) == 2 and lang.isalpha():
             kwargs["language"] = lang
-        if self.microphone_index is not None:
-            kwargs["input_device_index"] = self.microphone_index
+        device_name = self._get_selected_device_name()
+        real_device_index = self.device_indices.get(device_name) if device_name else None
+        if real_device_index is not None:
+            kwargs["input_device_index"] = real_device_index
         return kwargs
 
     def _realtime_stt_run_loop(self, recorder):
@@ -144,28 +165,12 @@ class RealtimeSttMixin:
             self.realtime_stt_active = False
             return
 
-        def on_interim_stabilized(text):
-            if not self.realtime_stt_active:
-                return
-            try:
-                self.root.after(
-                    0, lambda t=text: self._realtime_stt_queue_interim(t)
-                )
-            except Exception:
-                pass
-
         def on_update(text):
             self._realtime_stt_adjust_silence(text)
-            if not self.realtime_stt_active:
-                return
-            try:
-                self.root.after(0, lambda t=text: self._realtime_stt_queue_interim(t))
-            except Exception:
-                pass
 
         try:
             recorder = AudioToTextRecorder(
-                **self._realtime_stt_recorder_kwargs(on_update, on_interim_stabilized)
+                **self._realtime_stt_recorder_kwargs(on_update)
             )
             self._realtime_stt_recorder = recorder
             self._realtime_stt_run_loop(recorder)
@@ -209,34 +214,6 @@ class RealtimeSttMixin:
     def _realtime_stt_set_live_line(self, text):
         """Direct live-line update — used for clears only."""
         self.live_line = text
-        self.render_text()
-
-    def _realtime_stt_queue_interim(self, text):
-        """Debounced live-line update for interim text (called on main thread).
-
-        Interim text is always in the source language, never translated, so
-        showing it while translation is on means the viewer sees raw source
-        words that then get yanked and replaced by the translated final —
-        the "jump" this exists to avoid. Suppress the preview in that mode
-        and let the translated final commit directly, same as the NLLB path.
-        """
-        if self.translation_enabled:
-            if self.live_line:
-                self._realtime_stt_set_live_line("")
-            return
-        self._realtime_stt_pending_interim = text
-        if self._realtime_stt_interim_after_id is not None:
-            try:
-                self.root.after_cancel(self._realtime_stt_interim_after_id)
-            except Exception:
-                pass
-        self._realtime_stt_interim_after_id = self.root.after(
-            100, self._realtime_stt_flush_interim
-        )
-
-    def _realtime_stt_flush_interim(self):
-        self._realtime_stt_interim_after_id = None
-        self.live_line = self._realtime_stt_pending_interim
         self.render_text()
 
     def _on_realtime_stt_final(self, text):

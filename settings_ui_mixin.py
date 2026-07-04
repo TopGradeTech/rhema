@@ -125,9 +125,6 @@ class SettingsUIMixin:
         self.audio_level_fill_item = self.audio_level_bar.create_rectangle(
             0, 0, 0, 12, fill="#5B8FF7", outline=""
         )
-        self.audio_level_gate_item = self.audio_level_bar.create_line(
-            0, 0, 0, 12, fill="#FF7A59", width=2, state="hidden"
-        )
         self.pause_button = self._make_button(
             status_section,
             "Pause",
@@ -378,12 +375,6 @@ class SettingsUIMixin:
             except Exception:
                 pass
         self.display_speed_factor = max(0.5, min(self.display_speed_factor, 2.5))
-        self.rms_gate_enabled = bool(advanced_vars["rms_gate_var"].get())
-        try:
-            self.rms_gate_factor = float(advanced_vars["rms_gate_factor_var"].get())
-        except Exception:
-            pass
-        self.rms_gate_factor = max(0.5, min(self.rms_gate_factor, 5.0))
         if "logging_mode_var" in advanced_vars and "logging_mode_map" in advanced_vars:
             selected = advanced_vars["logging_mode_var"].get()
             self.logging_mode = self._normalize_logging_mode(
@@ -435,35 +426,48 @@ class SettingsUIMixin:
         ]
 
     def _apply_api_vars(self, api_vars):
-        with self.recognition_lock:
-            self.stt_device = self._optional_string_api_setting(
-                api_vars,
-                "stt_device_var",
-                current_value=self.stt_device,
-                empty_default="cuda",
-            )
-            self.realtime_stt_final_model = self._optional_string_api_setting(
-                api_vars, "realtime_stt_final_model_var",
-                current_value=self.realtime_stt_final_model,
-                empty_default="large-v3",
-            )
-            self.realtime_stt_realtime_model = self._optional_string_api_setting(
-                api_vars, "realtime_stt_realtime_model_var",
-                current_value=self.realtime_stt_realtime_model,
-                empty_default="tiny",
-            )
-            self.realtime_stt_silero_sensitivity = self._coerce_float_range(
-                api_vars["realtime_stt_silero_var"].get()
-                if "realtime_stt_silero_var" in api_vars
-                else self.realtime_stt_silero_sensitivity,
-                self.realtime_stt_silero_sensitivity, 0.1, 0.9,
-            )
-            self.realtime_stt_post_speech_silence = self._coerce_float_range(
-                api_vars["realtime_stt_silence_var"].get()
-                if "realtime_stt_silence_var" in api_vars
-                else self.realtime_stt_post_speech_silence,
-                self.realtime_stt_post_speech_silence, 0.1, 3.0,
-            )
+        previous_device = self.stt_device
+        previous_final_model = self.realtime_stt_final_model
+        previous_realtime_model = self.realtime_stt_realtime_model
+        previous_silero_sensitivity = self.realtime_stt_silero_sensitivity
+        self.stt_device = self._optional_string_api_setting(
+            api_vars,
+            "stt_device_var",
+            current_value=self.stt_device,
+            empty_default="cuda",
+        )
+        self.realtime_stt_final_model = self._optional_string_api_setting(
+            api_vars, "realtime_stt_final_model_var",
+            current_value=self.realtime_stt_final_model,
+            empty_default="large-v3",
+        )
+        self.realtime_stt_realtime_model = self._optional_string_api_setting(
+            api_vars, "realtime_stt_realtime_model_var",
+            current_value=self.realtime_stt_realtime_model,
+            empty_default="tiny",
+        )
+        self.realtime_stt_silero_sensitivity = self._coerce_float_range(
+            api_vars["realtime_stt_silero_var"].get()
+            if "realtime_stt_silero_var" in api_vars
+            else self.realtime_stt_silero_sensitivity,
+            self.realtime_stt_silero_sensitivity, 0.1, 0.9,
+        )
+        self.realtime_stt_post_speech_silence = self._coerce_float_range(
+            api_vars["realtime_stt_silence_var"].get()
+            if "realtime_stt_silence_var" in api_vars
+            else self.realtime_stt_post_speech_silence,
+            self.realtime_stt_post_speech_silence, 0.1, 3.0,
+        )
+        # device/model/sensitivity are only read when RealtimeSTT constructs
+        # its recorder, so a live rebuild is needed for the change to apply.
+        if (
+            self.stt_device != previous_device
+            or self.realtime_stt_final_model != previous_final_model
+            or self.realtime_stt_realtime_model != previous_realtime_model
+            or self.realtime_stt_silero_sensitivity != previous_silero_sensitivity
+        ):
+            self._request_capture_restart()
+
     def _optional_mapped_api_setting(
         self,
         api_vars,
@@ -1355,12 +1359,15 @@ class SettingsUIMixin:
         if label not in self.device_indices:
             self.microphone_index = None
             return
-        self.microphone_index = self.devices.index(label)
+        new_index = self.devices.index(label)
+        device_changed = new_index != self.microphone_index
+        self.microphone_index = new_index
         if not self.device_refresh_in_progress:
             self.preferred_device_label = label
             self.save_settings()
-        self._request_capture_restart()
-        self._request_audio_level_stream_restart()
+        if device_changed:
+            self._request_capture_restart()
+            self._request_audio_level_stream_restart()
 
     def _build_filters_section(self, filters_section, label_opts, section_bg):
         self._add_setting_label(
@@ -1650,55 +1657,6 @@ class SettingsUIMixin:
         speed_value_label.pack(side=tk.LEFT, padx=(8, 0))
         _on_speed_change(display_speed_var.get())
 
-        noise_section = tk.LabelFrame(
-            advanced_section,
-            text="Noise Cancellation",
-            bg=section_bg,
-            fg=settings_fg,
-            font=section_font,
-            padx=10,
-            pady=10,
-        )
-        noise_section.pack(fill=tk.X)
-
-        gate_row = tk.Frame(noise_section, bg=section_bg)
-        gate_row.pack(anchor="w", pady=(0, 0), fill=tk.X)
-        rms_gate_var = tk.BooleanVar(value=self.rms_gate_enabled)
-        rms_gate_check = tk.Checkbutton(
-            gate_row,
-            text="Enable noise gate",
-            variable=rms_gate_var,
-            bg=section_bg,
-            fg=settings_fg,
-            selectcolor=section_bg,
-            activebackground=section_bg,
-        )
-        rms_gate_check.pack(side=tk.LEFT)
-        self._create_help_icon(
-            gate_row,
-            "Suppress very quiet audio before transcription.",
-            section_bg,
-            settings_fg,
-        )
-
-        self._add_setting_label(
-            noise_section,
-            "Noise Cancellation (strength):",
-            "Higher values filter more low-level noise.",
-            label_opts,
-            pady=(10, 4),
-        )
-        rms_gate_factor_var = tk.DoubleVar(value=self.rms_gate_factor)
-        rms_gate_spin = tk.Spinbox(
-            noise_section,
-            from_=0.5,
-            to=5.0,
-            increment=0.1,
-            textvariable=rms_gate_factor_var,
-        )
-        self._apply_input_style(rms_gate_spin)
-        rms_gate_spin.pack(anchor="w")
-
         logging_section = tk.LabelFrame(
             advanced_section,
             text="Logging",
@@ -1820,8 +1778,6 @@ class SettingsUIMixin:
             "chunk_delay_var": chunk_delay_var,
             "sentence_flush_var": sentence_flush_var,
             "display_speed_var": display_speed_var,
-            "rms_gate_var": rms_gate_var,
-            "rms_gate_factor_var": rms_gate_factor_var,
             "logging_mode_var": logging_mode_var,
             "logging_mode_map": logging_mode_map,
             "start_with_windows_var": start_with_windows_var,
