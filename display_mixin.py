@@ -287,8 +287,13 @@ class DisplayMixin:
         speed = self._effective_display_speed()
         return max(int(minimum_ms), int(round(max(0.0, base) / speed)))
 
+    def _effective_max_lines(self):
+        if self.display_mode == "overlay":
+            return max(1, int(self.overlay_max_lines))
+        return max(1, int(self.max_lines))
+
     def _trim_translation_history(self):
-        max_entries = max(50, int(self.max_lines) * 12)
+        max_entries = max(50, self._effective_max_lines() * 12)
         if len(self.translations) > max_entries:
             self.translations = self.translations[-max_entries:]
 
@@ -708,7 +713,7 @@ class DisplayMixin:
             [merged_text],
             width,
         )
-        display_lines = wrapped_lines[-self.max_lines:]
+        display_lines = wrapped_lines[-self._effective_max_lines():]
         self.last_display_line_count = len(display_lines)
         display_text = "\n".join(display_lines)
         self.text_canvas.itemconfigure(self.text_item, text="", state="hidden")

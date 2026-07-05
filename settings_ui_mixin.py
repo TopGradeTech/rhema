@@ -133,13 +133,30 @@ class SettingsUIMixin:
         )
         self.pause_button.pack(anchor="w", pady=(8, 0))
 
-        toggle_fullscreen_button = self._make_button(
+        self.toggle_fullscreen_button = self._make_button(
             button_frame,
             "Toggle Fullscreen",
             command=self.toggle_fullscreen,
             primary=True,
         )
-        toggle_fullscreen_button.pack(side=tk.RIGHT, padx=(0, 10), pady=10)
+        self.toggle_fullscreen_button.pack(side=tk.RIGHT, padx=(0, 10), pady=10)
+        self._sync_toggle_fullscreen_button_state()
+
+        def _on_toggle_output_mode():
+            self.toggle_output_mode()
+            rev_map = {code: name for name, code in display_vars["display_mode_map"].items()}
+            display_mode_var = display_vars["display_mode_var"]
+            display_mode_var.set(rev_map.get(self.display_mode, display_mode_var.get()))
+            dirty_ctx["applied_snapshot"] = self._capture_settings_snapshot(dirty_ctx)
+            self._update_settings_dirty_state(dirty_ctx, force=True)
+
+        toggle_output_mode_button = self._make_button(
+            button_frame,
+            "Toggle Output Mode",
+            command=_on_toggle_output_mode,
+            primary=True,
+        )
+        toggle_output_mode_button.pack(side=tk.RIGHT, padx=(0, 10), pady=10)
 
         save_button = self._make_button(
             button_frame,
@@ -434,6 +451,7 @@ class SettingsUIMixin:
         translation_vars,
         advanced_vars,
     ):
+        previous_mode = self.display_mode
         self._apply_display_vars(display_vars)
         self._apply_transcription_vars(transcription_vars)
         self._apply_translation_vars(translation_vars)
@@ -442,8 +460,7 @@ class SettingsUIMixin:
         self._refresh_audio_devices()
         self.apply_colors()
         self.update_display()
-        if self.is_fullscreen:
-            self.enter_fullscreen()
+        self._apply_display_mode(previous_mode=previous_mode)
         self.save_settings()
 
     def _show_apply_success(self):
@@ -465,6 +482,24 @@ class SettingsUIMixin:
         self.text_color = display_vars["text_color_var"].get()
         if "lock_output_focus_var" in display_vars:
             self.lock_output_focus = bool(display_vars["lock_output_focus_var"].get())
+        if "display_mode_var" in display_vars and "display_mode_map" in display_vars:
+            self.display_mode = self._normalize_display_mode(
+                display_vars["display_mode_map"].get(
+                    display_vars["display_mode_var"].get(), self.display_mode
+                )
+            )
+        if "overlay_position_var" in display_vars and "overlay_position_map" in display_vars:
+            self.overlay_position = self._normalize_overlay_position(
+                display_vars["overlay_position_map"].get(
+                    display_vars["overlay_position_var"].get(), self.overlay_position
+                )
+            )
+        if "overlay_lines_var" in display_vars:
+            self.overlay_max_lines = self._coerce_int_range(
+                display_vars["overlay_lines_var"].get(), 2, 1, 4
+            )
+        if "overlay_chroma_color_var" in display_vars:
+            self.overlay_chroma_color = display_vars["overlay_chroma_color_var"].get()
         self._apply_scaled_fonts()
         self._fit_font_to_lines()
         monitor_labels = display_vars["monitor_labels"]
@@ -869,7 +904,7 @@ class SettingsUIMixin:
     
     def _compute_scaled_font_size(self):
         base_size = max(12, int(self.font_size))
-        lines = max(1, int(self.max_lines))
+        lines = self._effective_max_lines()
         scaled = int(round(base_size * (8.0 / lines)))
         return max(12, min(scaled, 120))
 
@@ -913,7 +948,7 @@ class SettingsUIMixin:
             return
         available_height = max(1, height - (self.text_padding * 2))
         available_width = max(1, width - (self.text_padding * 2))
-        lines = max(1, int(self.max_lines))
+        lines = self._effective_max_lines()
         min_size, max_size = self._font_size_bounds_for_canvas(
             available_height,
             lines,
@@ -1059,7 +1094,7 @@ class SettingsUIMixin:
     def _update_line_items(self, display_lines):
         height = self.text_canvas.winfo_height()
         available = max(1, height - (self.text_padding * 2))
-        lines = max(1, int(self.max_lines))
+        lines = self._effective_max_lines()
         self._ensure_line_items(lines)
         line_height = self.text_font.metrics("linespace") or 1
         if lines > 1 and available > line_height:
@@ -1279,6 +1314,102 @@ class SettingsUIMixin:
 
         self._add_setting_label(
             display_section,
+            "Display Mode:",
+            "Full Screen takes over a monitor. Video Overlay shows a small "
+            "chroma-key caption bar for OBS/streaming capture.",
+            label_opts,
+            pady=(10, 4),
+        )
+        display_mode_options = [("Full Screen", "fullscreen"), ("Video Overlay", "overlay")]
+        display_mode_display = [name for name, _code in display_mode_options]
+        display_mode_map = dict(display_mode_options)
+        rev_display_mode_map = {code: name for name, code in display_mode_options}
+        display_mode_var = tk.StringVar(
+            value=rev_display_mode_map.get(self.display_mode, display_mode_display[0])
+        )
+        display_mode_menu = tk.OptionMenu(
+            display_section,
+            display_mode_var,
+            *display_mode_display,
+            command=lambda _value: on_display_mode_change(),
+        )
+        self._apply_option_menu_style(display_mode_menu)
+        display_mode_menu.pack(anchor="w")
+
+        overlay_options_frame = tk.Frame(display_section, bg=section_bg)
+
+        self._add_setting_label(
+            overlay_options_frame,
+            "Overlay Position:",
+            "Which edge of the output monitor the caption bar is docked to.",
+            label_opts,
+            pady=(10, 4),
+        )
+        overlay_position_options = [("Top", "top"), ("Bottom", "bottom")]
+        overlay_position_display = [name for name, _code in overlay_position_options]
+        overlay_position_map = dict(overlay_position_options)
+        rev_overlay_position_map = {code: name for name, code in overlay_position_options}
+        overlay_position_var = tk.StringVar(
+            value=rev_overlay_position_map.get(self.overlay_position, overlay_position_display[0])
+        )
+        overlay_position_menu = tk.OptionMenu(
+            overlay_options_frame,
+            overlay_position_var,
+            *overlay_position_display,
+        )
+        self._apply_option_menu_style(overlay_position_menu)
+        overlay_position_menu.pack(anchor="w")
+
+        self._add_setting_label(
+            overlay_options_frame,
+            "Overlay Line Count:",
+            "Number of caption lines shown in the overlay bar (kept small for streaming captions).",
+            label_opts,
+            pady=(10, 4),
+        )
+        overlay_lines_var = tk.IntVar(value=self.overlay_max_lines)
+        overlay_lines_spinbox = tk.Spinbox(
+            overlay_options_frame, from_=1, to=4, textvariable=overlay_lines_var
+        )
+        self._apply_input_style(overlay_lines_spinbox)
+        overlay_lines_spinbox.pack(anchor="w")
+
+        chroma_label_row = tk.Frame(overlay_options_frame, bg=section_bg)
+        chroma_label_row.pack(fill=tk.X, pady=(10, 4))
+        tk.Label(chroma_label_row, text="Chroma Key Color:", **label_opts).pack(side=tk.LEFT)
+        self._create_help_icon(
+            chroma_label_row,
+            "Solid background color for the overlay bar. Add OBS's built-in "
+            "Chroma Key filter on this color to remove the background.",
+            section_bg,
+            settings_fg,
+        )
+        chroma_frame = tk.Frame(overlay_options_frame, bg=section_bg)
+        chroma_frame.pack(fill=tk.X)
+        overlay_chroma_color_var = tk.StringVar(value=self.overlay_chroma_color)
+        chroma_entry = tk.Entry(chroma_frame, textvariable=overlay_chroma_color_var, width=20)
+        self._apply_input_style(chroma_entry)
+        chroma_entry.pack(side=tk.LEFT)
+        chroma_button = self._make_button(
+            chroma_frame,
+            "Choose",
+            command=lambda: self.choose_color(overlay_chroma_color_var, "chroma key", settings_window),
+            primary=True,
+        )
+        chroma_button.pack(side=tk.LEFT, padx=(8, 0))
+
+        def on_display_mode_change(*_args):
+            if display_mode_var.get() == "Video Overlay":
+                overlay_options_frame.pack(fill=tk.X, pady=(0, 0))
+            else:
+                overlay_options_frame.pack_forget()
+
+        # Also handle programmatic changes (e.g. the "Toggle Output Mode" button).
+        display_mode_var.trace_add("write", lambda *_args: on_display_mode_change())
+        on_display_mode_change()
+
+        self._add_setting_label(
+            display_section,
             "Background Color:",
             "Background color for the output overlay and preview.",
             label_opts,
@@ -1322,7 +1453,7 @@ class SettingsUIMixin:
         self._add_setting_label(
             display_section,
             "Output Monitor:",
-            "Monitor where the fullscreen translation output appears.",
+            "Monitor where the translation output appears (Full Screen or Video Overlay).",
             label_opts,
             pady=(10, 4),
         )
@@ -1397,7 +1528,9 @@ class SettingsUIMixin:
                 )
                 self.monitor_device = monitor_device
                 self.monitor_origin = monitor_origin
-                if self.is_fullscreen:
+                if self.display_mode == "overlay" and self.caption_overlay_active:
+                    self._apply_overlay_geometry()
+                elif self.is_fullscreen:
                     self.enter_fullscreen()
                 else:
                     self.move_window_to_monitor(self.root, self.monitor_index, keep_size=False)
@@ -1423,6 +1556,12 @@ class SettingsUIMixin:
             "monitor_var": monitor_var,
             "settings_monitor_var": settings_monitor_var,
             "monitor_labels": monitor_labels,
+            "display_mode_var": display_mode_var,
+            "display_mode_map": display_mode_map,
+            "overlay_position_var": overlay_position_var,
+            "overlay_position_map": overlay_position_map,
+            "overlay_lines_var": overlay_lines_var,
+            "overlay_chroma_color_var": overlay_chroma_color_var,
         }
 
     def _build_audio_section(self, audio_section, label_opts):
@@ -3193,8 +3332,9 @@ class SettingsUIMixin:
             path_var.set(self._normalize_optional_directory(selected))
 
     def apply_colors(self):
-        self.root.config(bg=self.bg_color)
-        self.text_canvas.config(bg=self.bg_color)
+        bg = self.overlay_chroma_color if self.display_mode == "overlay" else self.bg_color
+        self.root.config(bg=bg)
+        self.text_canvas.config(bg=bg)
         self.text_canvas.itemconfigure(self.text_item, fill=self.text_color)
         for item in self.text_line_items:
             self.text_canvas.itemconfigure(item, fill=self.text_color)
@@ -3223,6 +3363,17 @@ class SettingsUIMixin:
             pass
 
     def _apply_canvas_padding(self):
-        pad = 0 if self.is_fullscreen else self.canvas_margin
+        docked = self.is_fullscreen or self.display_mode == "overlay"
+        pad = 0 if docked else self.canvas_margin
         self.text_canvas.grid_configure(padx=pad, pady=pad)
+
+    def _sync_toggle_fullscreen_button_state(self):
+        if self.toggle_fullscreen_button is None:
+            return
+        try:
+            self.toggle_fullscreen_button.config(
+                state=tk.DISABLED if self.display_mode == "overlay" else tk.NORMAL
+            )
+        except Exception:
+            pass
     
