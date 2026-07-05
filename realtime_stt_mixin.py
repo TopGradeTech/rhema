@@ -28,7 +28,6 @@ class RealtimeSttMixin:
         self.realtime_stt_final_model = "large-v3"
         self.realtime_stt_realtime_model = "tiny"
         self.realtime_stt_silero_sensitivity = 0.4
-        self.realtime_stt_post_speech_silence = 0.6
         self.realtime_stt_min_recording_length = 0.5
 
     # ------------------------------------------------------------------ #
@@ -97,9 +96,28 @@ class RealtimeSttMixin:
     # ------------------------------------------------------------------ #
 
     _SENTENCE_END_MARKS = frozenset('.!?。')
+    _SILENCE_INITIAL = 0.6        # constructor value, before the first dynamic adjustment
     _SILENCE_MID_SENTENCE = 2.0   # text ends with ... — speaker still going
     _SILENCE_SENTENCE_END = 0.45  # clear sentence end punctuation — commit fast
     _SILENCE_UNKNOWN = 0.7        # everything else — middle ground
+
+    def _resolve_stt_device(self, device):
+        """Resolve auto/cuda/cpu to an actually-usable device.
+
+        Mirrors _resolve_local_nllb_device (translation_mixin.py): "cuda" is
+        only ever handed to the recorder if CUDA is actually available, so a
+        non-NVIDIA machine (AMD GPU, CPU-only, missing drivers) doesn't spin
+        forever retrying a construction that will never succeed.
+        """
+        device = self._normalize_stt_device(device)
+        if device == "cpu":
+            return "cpu"
+        try:
+            import torch
+            cuda_available = bool(torch.cuda.is_available())
+        except Exception:
+            cuda_available = False
+        return "cuda" if cuda_available else "cpu"
 
     def _realtime_stt_recorder_kwargs(self, on_update):
         """Build the AudioToTextRecorder constructor kwargs from current settings."""
@@ -121,11 +139,20 @@ class RealtimeSttMixin:
             "realtime_model_type": self.realtime_stt_realtime_model,
             "enable_realtime_transcription": True,
             "on_realtime_transcription_update": on_update,
-            "device": self.stt_device,
+            "device": self._resolve_stt_device(self.stt_device),
             "compute_type": "int8",
             "silero_sensitivity": float(self.realtime_stt_silero_sensitivity),
-            "post_speech_silence_duration": float(self.realtime_stt_post_speech_silence),
+            "post_speech_silence_duration": self._SILENCE_INITIAL,
             "min_length_of_recording": float(self.realtime_stt_min_recording_length),
+            # spinner=False: RealtimeSTT's own "speak now"/"recording"/
+            # "transcribing" spinner writes straight to the terminal. Route
+            # the same state transitions through the app's Status bar instead
+            # via the on_vad_detect_start/on_recording_start/
+            # on_transcription_start callbacks below.
+            "spinner": False,
+            "on_vad_detect_start": self._realtime_stt_on_listening,
+            "on_recording_start": self._realtime_stt_on_recording_start,
+            "on_transcription_start": self._realtime_stt_on_transcription_start,
         }
         if lang and len(lang) == 2 and lang.isalpha():
             kwargs["language"] = lang
@@ -135,18 +162,53 @@ class RealtimeSttMixin:
             kwargs["input_device_index"] = real_device_index
         return kwargs
 
+    def _realtime_stt_on_listening(self):
+        """Fires when RealtimeSTT starts waiting for voice (was "speak now")."""
+        try:
+            self.update_status(self.STATUS_LISTENING)
+        except Exception:
+            pass
+
+    def _realtime_stt_on_recording_start(self):
+        try:
+            self.update_status("Recording speech...")
+        except Exception:
+            pass
+
+    def _realtime_stt_on_transcription_start(self, _audio):
+        try:
+            self.update_status("Transcribing...")
+        except Exception:
+            pass
+        return None  # falsy: must not abort RealtimeSTT's transcription
+
+    def _mark_startup_stt_ready(self):
+        """Signal that RealtimeSTT's initial load has reached a terminal
+        state (ready, failed to import, or failed to construct), so the
+        startup loading overlay (settings_ui_mixin.py) can drop its half of
+        the readiness gate.
+        """
+        if self.startup_stt_ready:
+            return
+        self.startup_stt_ready = True
+        try:
+            self.root.after(0, self._check_startup_ready)
+        except Exception:
+            pass
+
     def _realtime_stt_run_loop(self, recorder):
         """Consume transcriptions from recorder until the stop event fires."""
         self._trace_pipeline(
             "realtime_stt_started", "",
             final_model=self.realtime_stt_final_model,
             realtime_model=self.realtime_stt_realtime_model,
-            device=self.stt_device,
+            device=self._resolve_stt_device(self.stt_device),
         )
         try:
             self.update_status("RealtimeSTT ready")
         except Exception:
             pass
+        self._mark_startup_stt_ready()
         while not self._realtime_stt_stop_event.is_set():
             try:
                 text = recorder.text()
@@ -163,6 +225,7 @@ class RealtimeSttMixin:
                 "RealtimeSTT not installed. Run: pip install RealtimeSTT"
             )
             self.realtime_stt_active = False
+            self._mark_startup_stt_ready()
             return
 
         def on_update(text):
@@ -180,6 +243,7 @@ class RealtimeSttMixin:
                 self.update_status(f"RealtimeSTT error: {exc}")
             except Exception:
                 pass  # root may be shutting down
+            self._mark_startup_stt_ready()
         finally:
             self._realtime_stt_recorder = None
             self.realtime_stt_active = False

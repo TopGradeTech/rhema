@@ -375,8 +375,20 @@ class TranslationApp(
         self.local_nllb_download_button = None
         self.local_nllb_retry_button = None
         self.local_nllb_test_button = None
+        # Startup readiness gate: the settings window shows a blocking
+        # loading overlay (see _show_startup_loading_overlay in
+        # settings_ui_mixin.py) until both the RealtimeSTT model and Local
+        # NLLB are done loading/verifying, so the user can't change settings
+        # out from under an in-progress load.
+        self.startup_stt_ready = False
+        self.startup_translation_ready = False
+        self.app_startup_ready = False
+        self._startup_loading_overlay = None
+        self._startup_loading_progress = None
+        self._startup_overlay_stt_var = None
+        self._startup_overlay_translation_var = None
         self.speech_engine = "realtime-stt"
-        self.stt_device = "cuda"
+        self.stt_device = "auto"
         self.cuda_directory = ""
         self._cuda_dll_directory_handles = []
         self.last_faster_whisper_confidence = None
