@@ -267,8 +267,8 @@ class TextFilterMixin:
 
     def default_bad_words_es(self):
         return [
-            "cabrÃ³n",
-            "coÃ±o",
+            "cabrón",
+            "coño",
             "cabron",
             "carajo",
             "chingar",

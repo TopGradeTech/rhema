@@ -259,7 +259,7 @@ class TranslationApp(
             "i can t assist with that",
             "i cannot assist with that",
             "subtitulos realizados por la comunidad de amara org",
-            "subtÃ­tulos realizados por la comunidad de amara org",
+            "subtítulos realizados por la comunidad de amara org",
             "please see the complete disclaimer",
             "thank you for watching",
             "thanks for watching",
@@ -551,12 +551,12 @@ class TranslationApp(
         }
         self.spanish_common_words = {
             "el", "la", "los", "las", "de", "que", "y", "en", "un", "una",
-            "con", "por", "para", "del", "se", "al", "lo", "como", "mÃ¡s",
-            "pero", "sus", "le", "ya", "o", "este", "sÃ­", "porque", "esta",
-            "son", "entre", "cuando", "muy", "sin", "sobre", "tambiÃ©n",
+            "con", "por", "para", "del", "se", "al", "lo", "como", "más",
+            "pero", "sus", "le", "ya", "o", "este", "sí", "porque", "esta",
+            "son", "entre", "cuando", "muy", "sin", "sobre", "también",
             "me", "hasta", "hay", "donde", "quien", "desde", "todo", "nos",
             "durante", "todos", "uno", "les", "ni", "contra", "otros",
-            "fue", "ese", "eso", "habÃ­a", "ante", "ellos",
+            "fue", "ese", "eso", "había", "ante", "ellos",
         }
         self.custom_vocabulary_by_lang = {
             "en": self.default_biblical_terms(),
