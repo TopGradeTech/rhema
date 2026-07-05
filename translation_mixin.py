@@ -467,13 +467,13 @@ class TranslationMixin:
         )
 
         # Add opening punctuation when a sentence has only closing punctuation.
-        text = self._add_missing_opening_mark(text, "?", "Â¿")
-        text = self._add_missing_opening_mark(text, "!", "Â¡")
+        text = self._add_missing_opening_mark(text, "?", "¿")
+        text = self._add_missing_opening_mark(text, "!", "¡")
 
         # Spanish punctuation spacing.
         text = re.sub(self.PUNCTUATION_SPACING_PATTERN, r"\1", text)
-        text = re.sub(r"([Â¿Â¡])\s+", r"\1", text)
-        text = re.sub(r"([,.;:!?])(?![\s\"')\]Â»â€]|$)", r"\1 ", text)
+        text = re.sub(r"([¿¡])\s+", r"\1", text)
+        text = re.sub(r"([,.;:!?])(?![\s\"')\]»”]|$)", r"\1 ", text)
         text = re.sub(r"\s{2,}", " ", text)
         return text.strip()
 
