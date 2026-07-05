@@ -50,7 +50,9 @@ class SettingsMixin:
             return None
 
     def _load_model_and_engine_settings(self, data):
-        self.stt_device = data.get("stt_device", data.get("faster_whisper_device", self.stt_device))
+        self.stt_device = self._normalize_stt_device(
+            data.get("stt_device", data.get("faster_whisper_device", self.stt_device))
+        )
         self.realtime_stt_final_model = str(
             data.get("realtime_stt_final_model", self.realtime_stt_final_model)
         ).strip() or "large-v3"
@@ -60,10 +62,6 @@ class SettingsMixin:
         self.realtime_stt_silero_sensitivity = self._coerce_float_range(
             data.get("realtime_stt_silero_sensitivity", self.realtime_stt_silero_sensitivity),
             0.4, 0.1, 0.9,
-        )
-        self.realtime_stt_post_speech_silence = self._coerce_float_range(
-            data.get("realtime_stt_post_speech_silence", self.realtime_stt_post_speech_silence),
-            0.6, 0.1, 3.0,
         )
 
     def _load_display_settings(self, data):
@@ -148,17 +146,7 @@ class SettingsMixin:
             data.get("logging_mode", self.logging_mode)
         )
         self._apply_logging_mode_flags()
-        self.chunk_size = data.get("chunk_size", self.chunk_size)
-        self.chunk_delay_ms = data.get("chunk_delay_ms", self.chunk_delay_ms)
         self.flush_timeout_ms = data.get("flush_timeout_ms", self.flush_timeout_ms)
-        self.sentence_flush_ms = data.get("sentence_flush_ms", self.sentence_flush_ms)
-        try:
-            self.display_speed_factor = float(
-                data.get("display_speed_factor", self.display_speed_factor)
-            )
-        except Exception:
-            pass
-        self.display_speed_factor = max(0.5, min(self.display_speed_factor, 2.5))
         self.translation_enabled = self._coerce_bool(
             data.get("translation_enabled", self.translation_enabled),
             default=self.translation_enabled,
@@ -321,6 +309,12 @@ class SettingsMixin:
         return "local_nllb"
 
     def _normalize_local_nllb_device(self, value):
+        return self._normalize_device_choice(value)
+
+    def _normalize_stt_device(self, value):
+        return self._normalize_device_choice(value)
+
+    def _normalize_device_choice(self, value):
         device = str(value or "").strip().lower()
         if device in ("auto", "cuda", "cpu"):
             return device
@@ -444,7 +438,6 @@ class SettingsMixin:
             "realtime_stt_final_model": self.realtime_stt_final_model,
             "realtime_stt_realtime_model": self.realtime_stt_realtime_model,
             "realtime_stt_silero_sensitivity": self.realtime_stt_silero_sensitivity,
-            "realtime_stt_post_speech_silence": self.realtime_stt_post_speech_silence,
             "bg_color": self.bg_color,
             "text_color": self.text_color,
             "max_lines": self.max_lines,
@@ -461,11 +454,7 @@ class SettingsMixin:
             "custom_vocab_langs_enabled": sorted(
                 [lang for lang, enabled in self.custom_vocab_langs_enabled.items() if enabled]
             ),
-            "chunk_size": self.chunk_size,
-            "chunk_delay_ms": self.chunk_delay_ms,
             "flush_timeout_ms": self.flush_timeout_ms,
-            "sentence_flush_ms": self.sentence_flush_ms,
-            "display_speed_factor": self.display_speed_factor,
             "logging_mode": self.logging_mode,
             "source_lang": self.source_lang,
             "target_lang": self.target_lang,
