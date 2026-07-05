@@ -197,6 +197,11 @@ class TranslationApp(
         "zho": "zho_Hans",
     }
     LOGGING_MODE_OPTIONS = ("normal", "debug", "evaluation", "full")
+    DISPLAY_MODE_OPTIONS = ("fullscreen", "overlay")
+    OVERLAY_POSITION_OPTIONS = ("top", "bottom")
+    OVERLAY_LINE_HEIGHT_RATIO = 0.11
+    OVERLAY_MIN_HEIGHT_PX = 90
+    OVERLAY_MAX_HEIGHT_RATIO = 0.5
     WINDOWS_RUN_KEY_PATH = r"Software\Microsoft\Windows\CurrentVersion\Run"
     WINDOWS_STARTUP_VALUE_NAME = "TopGradePythonTranslation"
     GRATITUDE_SHORT_PHRASES = frozenset(
@@ -452,6 +457,13 @@ class TranslationApp(
         self.text_color = "#ffffff"  # Text color
         self.font_size = 50  # Font size
 
+        self.display_mode = "fullscreen"
+        self.overlay_position = "bottom"
+        self.overlay_max_lines = 2
+        self.overlay_chroma_color = "#00FF00"
+        self.caption_overlay_active = False
+        self.toggle_fullscreen_button = None
+
         self.text_font = tkfont.Font(family=self.font_family, size=self.font_size)
         self.canvas_margin = 10
         self.text_canvas = tk.Canvas(self.root, bg=self.bg_color, highlightthickness=0)
@@ -490,10 +502,7 @@ class TranslationApp(
         self.prev_geometry = None
         self.prev_overrideredirect = None
         self.prev_topmost = None
-        if self.is_fullscreen:
-            self.root.after(0, self.enter_fullscreen)
-        else:
-            self.root.after(0, self.maximize_window)
+        self.root.after(0, self._enter_configured_display_mode)
         self.root.after(50, self.show_status_temporarily)
         self.root.bind_all("<F11>", self.toggle_fullscreen_event)
         self.root.bind_all("<Control-Alt-f>", self.toggle_fullscreen_event)
@@ -601,6 +610,8 @@ class TranslationApp(
         self.root.mainloop()
     
     def toggle_fullscreen(self):
+        if self.display_mode == "overlay":
+            return
         self.is_fullscreen = not self.is_fullscreen
         if self.is_fullscreen:
             self.enter_fullscreen()
