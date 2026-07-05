@@ -52,7 +52,7 @@ class SettingsUIMixin:
         settings_window.protocol("WM_DELETE_WINDOW", self.on_closing)
 
         content = self._build_settings_canvas(settings_window, settings_bg)
-        display_vars, audio_vars, filters_vars, api_vars, translation_vars, advanced_vars = (
+        display_vars, audio_vars, transcription_vars, translation_vars, advanced_vars = (
             self._build_settings_sections(
                 content,
                 settings_window,
@@ -147,8 +147,7 @@ class SettingsUIMixin:
             command=lambda: self._apply_settings_from_controller(
                 display_vars,
                 audio_vars,
-                filters_vars,
-                api_vars,
+                transcription_vars,
                 translation_vars,
                 advanced_vars,
                 dirty_ctx,
@@ -187,14 +186,131 @@ class SettingsUIMixin:
 
         self._collect_settings_vars_for_dirty_tracking(display_vars, dirty_ctx)
         self._collect_settings_vars_for_dirty_tracking(audio_vars, dirty_ctx)
-        self._collect_settings_vars_for_dirty_tracking(filters_vars, dirty_ctx)
-        self._collect_settings_vars_for_dirty_tracking(api_vars, dirty_ctx)
+        self._collect_settings_vars_for_dirty_tracking(transcription_vars, dirty_ctx)
         self._collect_settings_vars_for_dirty_tracking(translation_vars, dirty_ctx)
         self._collect_settings_vars_for_dirty_tracking(advanced_vars, dirty_ctx)
         dirty_ctx["applied_snapshot"] = self._capture_settings_snapshot(dirty_ctx)
         dirty_ctx["dirty_ready"] = True
         self._set_settings_dirty_state(dirty_ctx, False, force=True)
         self._start_audio_level_updates()
+        if not self.app_startup_ready:
+            self._show_startup_loading_overlay(settings_window, settings_bg, settings_fg)
+
+    def _show_startup_loading_overlay(self, settings_window, settings_bg, settings_fg):
+        """Block settings interaction behind a full-window overlay until both
+        RealtimeSTT and Local NLLB have finished their initial load/verify
+        pass, so the user can't change device/model settings out from under
+        a load already in progress. Shown once per app run; see
+        _check_startup_ready/_mark_startup_stt_ready/
+        _mark_startup_translation_ready.
+        """
+        overlay = tk.Frame(settings_window, bg=settings_bg)
+        overlay.place(relx=0, rely=0, relwidth=1, relheight=1)
+        overlay.lift()
+        overlay.bind("<Button-1>", lambda _e: "break")
+
+        center = tk.Frame(overlay, bg=settings_bg)
+        center.place(relx=0.5, rely=0.45, anchor="center")
+        tk.Label(
+            center,
+            text="Starting up...",
+            bg=settings_bg,
+            fg=settings_fg,
+            font=(self.ui_font_family, 14, "bold"),
+        ).pack(pady=(0, 8))
+        tk.Label(
+            center,
+            text="Loading speech recognition and translation models.",
+            bg=settings_bg,
+            fg=settings_fg,
+            font=(self.ui_font_family, 10),
+            wraplength=420,
+            justify="center",
+        ).pack(pady=(0, 14))
+        progress = ttkb.Progressbar(center, mode="indeterminate", length=320)
+        progress.pack(pady=(0, 10))
+        progress.start(15)
+        # Two dedicated lines instead of mirroring the shared status bar:
+        # once RealtimeSTT is ready it fires a "Listening..." update on every
+        # idle cycle, which drowned out Local NLLB's (much rarer, often much
+        # slower) download/loading messages and made a still-working NLLB
+        # load look identical to a hang.
+        self._startup_overlay_stt_var = tk.StringVar(value="Speech recognition: Loading...")
+        tk.Label(
+            center,
+            textvariable=self._startup_overlay_stt_var,
+            bg=settings_bg,
+            fg=settings_fg,
+            font=(self.ui_font_family, 9),
+            wraplength=420,
+            justify="center",
+        ).pack()
+        self._startup_overlay_translation_var = tk.StringVar(value="Translation: Loading...")
+        tk.Label(
+            center,
+            textvariable=self._startup_overlay_translation_var,
+            bg=settings_bg,
+            fg=settings_fg,
+            font=(self.ui_font_family, 9),
+            wraplength=420,
+            justify="center",
+        ).pack()
+
+        self._startup_loading_overlay = overlay
+        self._startup_loading_progress = progress
+        self._poll_startup_overlay_status()
+
+    def _poll_startup_overlay_status(self):
+        if self._startup_loading_overlay is None:
+            return
+        try:
+            self._startup_overlay_stt_var.set(
+                "Speech recognition: "
+                + ("Ready" if self.startup_stt_ready else "Loading...")
+            )
+            self._startup_overlay_translation_var.set(
+                f"Translation: {self._local_nllb_status_message() or self.nllb_status}"
+            )
+        except Exception:
+            pass
+        self._check_startup_ready()
+        if self._startup_loading_overlay is not None:
+            self.root.after(500, self._poll_startup_overlay_status)
+
+    def _hide_startup_loading_overlay(self):
+        progress = self._startup_loading_progress
+        if progress is not None:
+            try:
+                progress.stop()
+            except Exception:
+                pass
+        overlay = self._startup_loading_overlay
+        if overlay is not None:
+            try:
+                overlay.destroy()
+            except Exception:
+                pass
+        self._startup_loading_overlay = None
+        self._startup_loading_progress = None
+        self._startup_overlay_stt_var = None
+        self._startup_overlay_translation_var = None
+
+    def _check_startup_ready(self):
+        if self.app_startup_ready:
+            return
+        if not (self.startup_stt_ready and self.startup_translation_ready):
+            return
+        self.app_startup_ready = True
+        self._hide_startup_loading_overlay()
+
+    def _mark_startup_translation_ready(self):
+        if self.startup_translation_ready:
+            return
+        self.startup_translation_ready = True
+        try:
+            self.root.after(0, self._check_startup_ready)
+        except Exception:
+            pass
 
     def _new_settings_dirty_context(self):
         return {
@@ -267,8 +383,7 @@ class SettingsUIMixin:
         self,
         display_vars,
         audio_vars,
-        filters_vars,
-        api_vars,
+        transcription_vars,
         translation_vars,
         advanced_vars,
         dirty_ctx,
@@ -284,8 +399,7 @@ class SettingsUIMixin:
             self._apply_settings_vars(
                 display_vars,
                 audio_vars,
-                filters_vars,
-                api_vars,
+                transcription_vars,
                 translation_vars,
                 advanced_vars,
             )
@@ -316,14 +430,12 @@ class SettingsUIMixin:
         self,
         display_vars,
         audio_vars,
-        filters_vars,
-        api_vars,
+        transcription_vars,
         translation_vars,
         advanced_vars,
     ):
         self._apply_display_vars(display_vars)
-        self._apply_filter_vars(filters_vars)
-        self._apply_api_vars(api_vars)
+        self._apply_transcription_vars(transcription_vars)
         self._apply_translation_vars(translation_vars)
         self._apply_audio_vars(audio_vars)
         self._apply_advanced_vars(advanced_vars)
@@ -366,15 +478,6 @@ class SettingsUIMixin:
     def _apply_advanced_vars(self, advanced_vars):
         previous_start_with_windows = bool(self.start_with_windows)
         previous_cuda_directory = self.cuda_directory
-        self.chunk_size = max(20, int(advanced_vars["chunk_size_var"].get()))
-        self.chunk_delay_ms = max(50, int(advanced_vars["chunk_delay_var"].get()))
-        self.sentence_flush_ms = max(100, int(advanced_vars["sentence_flush_var"].get()))
-        if "display_speed_var" in advanced_vars:
-            try:
-                self.display_speed_factor = float(advanced_vars["display_speed_var"].get())
-            except Exception:
-                pass
-        self.display_speed_factor = max(0.5, min(self.display_speed_factor, 2.5))
         if "logging_mode_var" in advanced_vars and "logging_mode_map" in advanced_vars:
             selected = advanced_vars["logging_mode_var"].get()
             self.logging_mode = self._normalize_logging_mode(
@@ -401,62 +504,58 @@ class SettingsUIMixin:
         if self.cuda_directory != previous_cuda_directory:
             self._configure_cuda_dll_search_path()
         self._fit_font_to_lines()
+        if "bad_words_en_text" in advanced_vars and "bad_words_es_text" in advanced_vars:
+            en_text = advanced_vars["bad_words_en_text"].get("1.0", tk.END).strip()
+            es_text = advanced_vars["bad_words_es_text"].get("1.0", tk.END).strip()
+            self.bad_words_by_lang["en"] = {
+                word.strip().lower() for word in en_text.split(",") if word.strip()
+            }
+            self.bad_words_by_lang["es"] = {
+                word.strip().lower() for word in es_text.split(",") if word.strip()
+            }
+            for lang in self.bad_words_by_lang.keys():
+                self.bad_word_filters_enabled[lang] = True
+            self._refresh_bad_words()
+        if "custom_vocab_en_text" in advanced_vars and "custom_vocab_es_text" in advanced_vars:
+            for lang in self.custom_vocabulary_by_lang.keys():
+                self.custom_vocab_langs_enabled[lang] = True
+            vocab_en_text = advanced_vars["custom_vocab_en_text"].get("1.0", tk.END).strip()
+            vocab_es_text = advanced_vars["custom_vocab_es_text"].get("1.0", tk.END).strip()
+            self.custom_vocabulary_by_lang["en"] = [
+                v.strip() for v in vocab_en_text.split(",") if v.strip()
+            ]
+            self.custom_vocabulary_by_lang["es"] = [
+                v.strip() for v in vocab_es_text.split(",") if v.strip()
+            ]
 
-    def _apply_filter_vars(self, filters_vars):
-        en_text = filters_vars["bad_words_en_text"].get("1.0", tk.END).strip()
-        es_text = filters_vars["bad_words_es_text"].get("1.0", tk.END).strip()
-        self.bad_words_by_lang["en"] = {
-            word.strip().lower() for word in en_text.split(",") if word.strip()
-        }
-        self.bad_words_by_lang["es"] = {
-            word.strip().lower() for word in es_text.split(",") if word.strip()
-        }
-        for lang in self.bad_words_by_lang.keys():
-            self.bad_word_filters_enabled[lang] = True
-        self._refresh_bad_words()
-        for lang in self.custom_vocabulary_by_lang.keys():
-            self.custom_vocab_langs_enabled[lang] = True
-        vocab_en_text = filters_vars["custom_vocab_en_text"].get("1.0", tk.END).strip()
-        vocab_es_text = filters_vars["custom_vocab_es_text"].get("1.0", tk.END).strip()
-        self.custom_vocabulary_by_lang["en"] = [
-            v.strip() for v in vocab_en_text.split(",") if v.strip()
-        ]
-        self.custom_vocabulary_by_lang["es"] = [
-            v.strip() for v in vocab_es_text.split(",") if v.strip()
-        ]
-
-    def _apply_api_vars(self, api_vars):
+    def _apply_transcription_vars(self, transcription_vars):
         previous_device = self.stt_device
         previous_final_model = self.realtime_stt_final_model
         previous_realtime_model = self.realtime_stt_realtime_model
         previous_silero_sensitivity = self.realtime_stt_silero_sensitivity
-        self.stt_device = self._optional_string_api_setting(
-            api_vars,
-            "stt_device_var",
-            current_value=self.stt_device,
-            empty_default="cuda",
-        )
-        self.realtime_stt_final_model = self._optional_string_api_setting(
-            api_vars, "realtime_stt_final_model_var",
+        if "stt_device_var" in transcription_vars:
+            self.stt_device = self._normalize_stt_device(
+                transcription_vars["stt_device_var"].get()
+            )
+        self.realtime_stt_final_model = self._optional_mapped_api_setting(
+            transcription_vars,
+            "realtime_stt_final_model_var",
+            "realtime_stt_final_model_map",
             current_value=self.realtime_stt_final_model,
-            empty_default="large-v3",
+            mapped_default="large-v3",
         )
-        self.realtime_stt_realtime_model = self._optional_string_api_setting(
-            api_vars, "realtime_stt_realtime_model_var",
+        self.realtime_stt_realtime_model = self._optional_mapped_api_setting(
+            transcription_vars,
+            "realtime_stt_realtime_model_var",
+            "realtime_stt_realtime_model_map",
             current_value=self.realtime_stt_realtime_model,
-            empty_default="tiny",
+            mapped_default="tiny",
         )
         self.realtime_stt_silero_sensitivity = self._coerce_float_range(
-            api_vars["realtime_stt_silero_var"].get()
-            if "realtime_stt_silero_var" in api_vars
+            transcription_vars["realtime_stt_silero_var"].get()
+            if "realtime_stt_silero_var" in transcription_vars
             else self.realtime_stt_silero_sensitivity,
             self.realtime_stt_silero_sensitivity, 0.1, 0.9,
-        )
-        self.realtime_stt_post_speech_silence = self._coerce_float_range(
-            api_vars["realtime_stt_silence_var"].get()
-            if "realtime_stt_silence_var" in api_vars
-            else self.realtime_stt_post_speech_silence,
-            self.realtime_stt_post_speech_silence, 0.1, 3.0,
         )
         # device/model/sensitivity are only read when RealtimeSTT constructs
         # its recorder, so a live rebuild is needed for the change to apply.
@@ -514,11 +613,12 @@ class SettingsUIMixin:
             self._apply_translation_mode_defaults()
         else:
             self._normalize_translation_settings()
-        self.local_nllb_model_name = self._optional_string_api_setting(
+        self.local_nllb_model_name = self._optional_mapped_api_setting(
             translation_vars,
             "local_nllb_model_name_var",
+            "local_nllb_model_name_map",
             current_value=self.local_nllb_model_name,
-            empty_default=self.LOCAL_NLLB_DEFAULT_MODEL_NAME,
+            mapped_default=self.LOCAL_NLLB_DEFAULT_MODEL_NAME,
         )
         if "local_nllb_device_var" in translation_vars:
             self.local_nllb_device = self._normalize_local_nllb_device(
@@ -1073,29 +1173,17 @@ class SettingsUIMixin:
         audio_section.pack(fill=tk.X, pady=(0, 10))
         audio_vars = self._build_audio_section(audio_section, label_opts)
 
-        filters_section = tk.LabelFrame(
+        transcription_section = tk.LabelFrame(
             content,
-            text="Filters",
+            text="Transcription",
             bg=section_bg,
             fg=settings_fg,
             font=section_font,
             padx=10,
             pady=10,
         )
-        filters_section.pack(fill=tk.BOTH, expand=True, pady=(0, 10))
-        filters_vars = self._build_filters_section(filters_section, label_opts, section_bg)
-
-        api_section = tk.LabelFrame(
-            content,
-            text="API",
-            bg=section_bg,
-            fg=settings_fg,
-            font=section_font,
-            padx=10,
-            pady=10,
-        )
-        api_section.pack(fill=tk.X)
-        api_vars = self._build_api_section(api_section, label_opts)
+        transcription_section.pack(fill=tk.X)
+        transcription_vars = self._build_transcription_section(transcription_section, label_opts)
 
         translation_section = tk.LabelFrame(
             content,
@@ -1109,6 +1197,20 @@ class SettingsUIMixin:
         translation_section.pack(fill=tk.X, pady=(10, 0))
         translation_vars = self._build_translation_section(translation_section, label_opts)
 
+        hardware_section = tk.LabelFrame(
+            content,
+            text="Hardware Autodetect",
+            bg=section_bg,
+            fg=settings_fg,
+            font=section_font,
+            padx=10,
+            pady=10,
+        )
+        hardware_section.pack(fill=tk.X, pady=(10, 0))
+        self._build_hardware_autodetect_section(
+            hardware_section, label_opts, transcription_vars, translation_vars
+        )
+
         advanced_vars = self._build_advanced_section(
             content,
             label_opts,
@@ -1117,7 +1219,7 @@ class SettingsUIMixin:
             section_font,
         )
 
-        return display_vars, audio_vars, filters_vars, api_vars, translation_vars, advanced_vars
+        return display_vars, audio_vars, transcription_vars, translation_vars, advanced_vars
 
     def _build_settings_canvas(self, settings_window, settings_bg):
         scroll_frame = tk.Frame(settings_window, bg=settings_bg)
@@ -1262,7 +1364,7 @@ class SettingsUIMixin:
         lock_output_focus_var = tk.BooleanVar(value=self.lock_output_focus)
         lock_output_focus_check = tk.Checkbutton(
             focus_lock_row,
-            text="Lock fullscreen output focus",
+            text="Always keep on top of other apps",
             variable=lock_output_focus_var,
             bg=section_bg,
             fg=settings_fg,
@@ -1272,7 +1374,7 @@ class SettingsUIMixin:
         lock_output_focus_check.pack(side=tk.LEFT)
         self._create_help_icon(
             focus_lock_row,
-            "Keeps the fullscreen output window on top and attempts to focus it. Leave this off to let other apps appear above the output window.",
+            "Keeps the fullscreen output window on top of other windows and attempts to focus it. Leave this off to let other apps appear above the output window.",
             section_bg,
             settings_fg,
         )
@@ -1369,7 +1471,57 @@ class SettingsUIMixin:
             self._request_capture_restart()
             self._request_audio_level_stream_restart()
 
-    def _build_filters_section(self, filters_section, label_opts, section_bg):
+    def _build_advanced_section(
+        self,
+        content,
+        label_opts,
+        section_bg,
+        settings_fg,
+        section_font,
+    ):
+        toggle_var = tk.BooleanVar(value=False)
+        toggle_row = tk.Frame(content, bg=self._ui_palette["window_bg"])
+        toggle_row.pack(fill=tk.X, pady=(12, 0))
+        toggle_button = self._make_button(
+            toggle_row,
+            "Show Advanced Settings",
+            command=None,
+            primary=True,
+        )
+        toggle_button.pack(anchor="w")
+
+        advanced_section = tk.LabelFrame(
+            content,
+            text="Advanced",
+            bg=section_bg,
+            fg=settings_fg,
+            font=section_font,
+            padx=10,
+            pady=10,
+        )
+
+        def toggle_advanced():
+            if toggle_var.get():
+                toggle_var.set(False)
+                toggle_button.config(text="Show Advanced Settings")
+                advanced_section.pack_forget()
+            else:
+                toggle_var.set(True)
+                toggle_button.config(text="Hide Advanced Settings")
+                advanced_section.pack(fill=tk.X, pady=(8, 0))
+
+        toggle_button.config(command=toggle_advanced)
+
+        filters_section = tk.LabelFrame(
+            advanced_section,
+            text="Filters",
+            bg=section_bg,
+            fg=settings_fg,
+            font=section_font,
+            padx=10,
+            pady=10,
+        )
+        filters_section.pack(fill=tk.X, pady=(10, 0))
         self._add_setting_label(
             filters_section,
             "Bad words filter:",
@@ -1414,7 +1566,26 @@ class SettingsUIMixin:
         )
         bad_words_es_text.pack(anchor="w")
 
-        vocab_label_row = self._add_setting_label(
+        def update_bad_words_visibility():
+            show = bad_words_toggle_var.get()
+            bad_words_toggle_button.config(
+                text=self.HIDE_LIST_LABEL if show else self.SHOW_LIST_LABEL
+            )
+            if show:
+                bad_words_en_container.pack(fill=tk.BOTH, expand=True, pady=(6, 0))
+                bad_words_es_container.pack(fill=tk.BOTH, expand=True, pady=(6, 0))
+            else:
+                bad_words_en_container.pack_forget()
+                bad_words_es_container.pack_forget()
+
+        def toggle_bad_words_list():
+            bad_words_toggle_var.set(not bad_words_toggle_var.get())
+            update_bad_words_visibility()
+
+        bad_words_toggle_button.config(command=toggle_bad_words_list)
+        update_bad_words_visibility()
+
+        self._add_setting_label(
             filters_section,
             "Custom Vocabulary (comma-separated):",
             "Words or phrases to bias recognition and preserve capitalization.",
@@ -1458,28 +1629,6 @@ class SettingsUIMixin:
         )
         custom_vocab_es_text.pack(anchor="w")
 
-        def update_bad_words_visibility():
-            show = bad_words_toggle_var.get()
-            bad_words_toggle_button.config(
-                text=self.HIDE_LIST_LABEL if show else self.SHOW_LIST_LABEL
-            )
-            if show:
-                bad_words_en_container.pack(
-                    fill=tk.BOTH,
-                    expand=True,
-                    pady=(6, 0),
-                    before=vocab_label_row,
-                )
-                bad_words_es_container.pack(
-                    fill=tk.BOTH,
-                    expand=True,
-                    pady=(6, 0),
-                    before=vocab_label_row,
-                )
-            else:
-                bad_words_en_container.pack_forget()
-                bad_words_es_container.pack_forget()
-
         def update_custom_vocab_visibility():
             show = custom_vocab_toggle_var.get()
             custom_vocab_toggle_button.config(
@@ -1492,170 +1641,12 @@ class SettingsUIMixin:
                 custom_vocab_en_container.pack_forget()
                 custom_vocab_es_container.pack_forget()
 
-        def toggle_bad_words_list():
-            bad_words_toggle_var.set(not bad_words_toggle_var.get())
-            update_bad_words_visibility()
-
         def toggle_custom_vocab_list():
             custom_vocab_toggle_var.set(not custom_vocab_toggle_var.get())
             update_custom_vocab_visibility()
 
-        bad_words_toggle_button.config(command=toggle_bad_words_list)
         custom_vocab_toggle_button.config(command=toggle_custom_vocab_list)
-
-        update_bad_words_visibility()
         update_custom_vocab_visibility()
-
-        return {
-            "bad_words_en_text": bad_words_en_text,
-            "bad_words_es_text": bad_words_es_text,
-            "custom_vocab_en_text": custom_vocab_en_text,
-            "custom_vocab_es_text": custom_vocab_es_text,
-        }
-
-    def _build_advanced_section(
-        self,
-        content,
-        label_opts,
-        section_bg,
-        settings_fg,
-        section_font,
-    ):
-        toggle_var = tk.BooleanVar(value=False)
-        toggle_row = tk.Frame(content, bg=self._ui_palette["window_bg"])
-        toggle_row.pack(fill=tk.X, pady=(12, 0))
-        toggle_button = self._make_button(
-            toggle_row,
-            "Show Advanced Settings",
-            command=None,
-            primary=True,
-        )
-        toggle_button.pack(anchor="w")
-
-        advanced_section = tk.LabelFrame(
-            content,
-            text="Advanced",
-            bg=section_bg,
-            fg=settings_fg,
-            font=section_font,
-            padx=10,
-            pady=10,
-        )
-
-        def toggle_advanced():
-            if toggle_var.get():
-                toggle_var.set(False)
-                toggle_button.config(text="Show Advanced Settings")
-                advanced_section.pack_forget()
-            else:
-                toggle_var.set(True)
-                toggle_button.config(text="Hide Advanced Settings")
-                advanced_section.pack(fill=tk.X, pady=(8, 0))
-
-        toggle_button.config(command=toggle_advanced)
-
-        text_section = tk.LabelFrame(
-            advanced_section,
-            text="Text Manipulation",
-            bg=section_bg,
-            fg=settings_fg,
-            font=section_font,
-            padx=10,
-            pady=10,
-        )
-        text_section.pack(fill=tk.X, pady=(0, 10))
-
-        self._add_setting_label(
-            text_section,
-            "Text Chunk Size (chars):",
-            "Target character length before batching text into a line.",
-            label_opts,
-            pady=(0, 4),
-        )
-        chunk_size_var = tk.IntVar(value=self.chunk_size)
-        chunk_size_spin = tk.Spinbox(
-            text_section, from_=20, to=300, textvariable=chunk_size_var
-        )
-        self._apply_input_style(chunk_size_spin)
-        chunk_size_spin.pack(anchor="w")
-
-        self._add_setting_label(
-            text_section,
-            "Chunk Delay (ms):",
-            "Delay between displaying chunks or lines.",
-            label_opts,
-            pady=(10, 4),
-        )
-        chunk_delay_var = tk.IntVar(value=self.chunk_delay_ms)
-        chunk_delay_spin = tk.Spinbox(
-            text_section,
-            from_=50,
-            to=2000,
-            increment=50,
-            textvariable=chunk_delay_var,
-        )
-        self._apply_input_style(chunk_delay_spin)
-        chunk_delay_spin.pack(anchor="w")
-
-        self._add_setting_label(
-            text_section,
-            "Response Delay (ms):",
-            "Wait time after last speech before flushing a sentence.",
-            label_opts,
-            pady=(10, 4),
-        )
-        sentence_flush_var = tk.IntVar(value=self.sentence_flush_ms)
-        sentence_flush_spin = tk.Spinbox(
-            text_section,
-            from_=100,
-            to=3000,
-            increment=100,
-            textvariable=sentence_flush_var,
-        )
-        self._apply_input_style(sentence_flush_spin)
-        sentence_flush_spin.pack(anchor="w")
-
-        self._add_setting_label(
-            text_section,
-            "Display Speed:",
-            "Scales display timing. Higher is faster (uses your current delay settings as base).",
-            label_opts,
-            pady=(10, 4),
-        )
-        speed_row = tk.Frame(text_section, bg=section_bg)
-        speed_row.pack(fill=tk.X)
-        display_speed_var = tk.DoubleVar(value=self.display_speed_factor)
-        speed_value_label = tk.Label(
-            speed_row,
-            text=f"{self.display_speed_factor:.2f}x",
-            bg=section_bg,
-            fg=settings_fg,
-            font=(self.ui_font_family, 9),
-        )
-
-        def _on_speed_change(value):
-            try:
-                speed_value_label.config(text=f"{float(value):.2f}x")
-            except Exception:
-                pass
-
-        speed_scale = tk.Scale(
-            speed_row,
-            from_=0.5,
-            to=2.5,
-            resolution=0.05,
-            orient=tk.HORIZONTAL,
-            variable=display_speed_var,
-            command=_on_speed_change,
-            length=240,
-            bg=section_bg,
-            fg=settings_fg,
-            highlightthickness=0,
-            bd=0,
-        )
-        speed_scale.pack(side=tk.LEFT, fill=tk.X, expand=True)
-        speed_value_label.pack(side=tk.LEFT, padx=(8, 0))
-        _on_speed_change(display_speed_var.get())
 
         logging_section = tk.LabelFrame(
             advanced_section,
@@ -1774,29 +1765,52 @@ class SettingsUIMixin:
         cuda_clear_button.pack(side=tk.LEFT, padx=(8, 0))
 
         return {
-            "chunk_size_var": chunk_size_var,
-            "chunk_delay_var": chunk_delay_var,
-            "sentence_flush_var": sentence_flush_var,
-            "display_speed_var": display_speed_var,
+            "bad_words_en_text": bad_words_en_text,
+            "bad_words_es_text": bad_words_es_text,
+            "custom_vocab_en_text": custom_vocab_en_text,
+            "custom_vocab_es_text": custom_vocab_es_text,
             "logging_mode_var": logging_mode_var,
             "logging_mode_map": logging_mode_map,
             "start_with_windows_var": start_with_windows_var,
             "cuda_directory_var": cuda_directory_var,
         }
 
-    def _build_api_section(self, api_section, label_opts):
+    def _build_transcription_section(self, transcription_section, label_opts):
+        section_bg = label_opts["bg"]
+        settings_fg = label_opts["fg"]
+        tk.Label(
+            transcription_section,
+            text=(
+                "RealtimeSTT transcribes spoken audio to text locally in real "
+                "time, using faster-whisper (an optimized, offline port of "
+                "OpenAI's Whisper). Whisper's multilingual models understand "
+                "99 languages and can auto-detect which one is being spoken."
+            ),
+            bg=section_bg,
+            fg=settings_fg,
+            wraplength=560,
+            justify="left",
+            font=(self.ui_font_family, 9),
+        ).pack(anchor="w", pady=(0, 6))
+
         # ── RealtimeSTT settings panel ─────────────────────────────────
-        realtime_stt_container = tk.Frame(api_section, bg=label_opts["bg"])
+        realtime_stt_container = tk.Frame(transcription_section, bg=label_opts["bg"])
         realtime_stt_container.pack(fill=tk.X, pady=(10, 0))
         self._add_setting_label(
             realtime_stt_container,
             "Device:",
-            "Use cuda for NVIDIA GPUs, cpu for local CPU.",
+            "Auto uses CUDA when available, otherwise CPU.",
             label_opts,
             pady=(0, 4),
         )
-        stt_device_options = ["cuda", "cpu"]
-        stt_device_var = tk.StringVar(value=self.stt_device)
+        stt_device_options = ["Auto", "CUDA", "CPU"]
+        stt_device_var = tk.StringVar(
+            value={
+                "auto": "Auto",
+                "cuda": "CUDA",
+                "cpu": "CPU",
+            }.get(self.stt_device, "Auto")
+        )
         stt_device_menu = tk.OptionMenu(
             realtime_stt_container,
             stt_device_var,
@@ -1808,36 +1822,76 @@ class SettingsUIMixin:
         self._add_setting_label(
             realtime_stt_container,
             "Final model:",
-            "Accurate faster-whisper model used after each utterance ends (e.g. large-v3, medium, small).",
+            "Accurate faster-whisper model used after each utterance ends. Larger models are more "
+            "accurate but need more VRAM and take longer per utterance.",
             label_opts, pady=(10, 4),
         )
-        realtime_stt_final_model_var = tk.StringVar(value=self.realtime_stt_final_model)
-        realtime_stt_final_model_entry = tk.Entry(
-            realtime_stt_container, textvariable=realtime_stt_final_model_var, width=20
+        realtime_stt_final_model_options = [
+            ("tiny (~1 GB VRAM)", "tiny"),
+            ("base (~1 GB VRAM)", "base"),
+            ("small (~2 GB VRAM)", "small"),
+            ("medium (~5 GB VRAM)", "medium"),
+            ("distil-large-v3 (~6 GB VRAM, fast)", "distil-large-v3"),
+            ("large-v3-turbo (~6 GB VRAM, fast)", "large-v3-turbo"),
+            ("large-v2 (~10 GB VRAM)", "large-v2"),
+            ("large-v3 (~10 GB VRAM, recommended)", "large-v3"),
+        ]
+        realtime_stt_final_model_map = dict(realtime_stt_final_model_options)
+        realtime_stt_final_model_rev_map = {
+            value: name for name, value in realtime_stt_final_model_options
+        }
+        realtime_stt_final_model_display = [
+            name for name, _ in realtime_stt_final_model_options
+        ]
+        realtime_stt_final_model_var = tk.StringVar(
+            value=realtime_stt_final_model_rev_map.get(
+                self.realtime_stt_final_model, realtime_stt_final_model_display[-1]
+            )
         )
-        self._apply_input_style(realtime_stt_final_model_entry)
-        realtime_stt_final_model_entry.pack(anchor="w")
+        realtime_stt_final_model_menu = tk.OptionMenu(
+            realtime_stt_container,
+            realtime_stt_final_model_var,
+            *realtime_stt_final_model_display,
+        )
+        self._apply_option_menu_style(realtime_stt_final_model_menu)
+        realtime_stt_final_model_menu.pack(anchor="w")
 
         self._add_setting_label(
             realtime_stt_container,
             "Realtime model:",
-            "Fast model used for live interim display every 0.2 s (e.g. tiny, base). Ignored when interim display is off.",
+            "Fast model used internally every ~0.2 s to drive dynamic silence detection. Not shown "
+            "on screen — kept small so it doesn't compete with the final model for GPU time.",
             label_opts, pady=(10, 4),
         )
-        realtime_stt_realtime_model_options = ["tiny", "base", "small"]
-        realtime_stt_realtime_model_var = tk.StringVar(value=self.realtime_stt_realtime_model)
+        realtime_stt_realtime_model_options = [
+            ("tiny (~1 GB VRAM, recommended)", "tiny"),
+            ("base (~1 GB VRAM)", "base"),
+            ("small (~2 GB VRAM)", "small"),
+        ]
+        realtime_stt_realtime_model_map = dict(realtime_stt_realtime_model_options)
+        realtime_stt_realtime_model_rev_map = {
+            value: name for name, value in realtime_stt_realtime_model_options
+        }
+        realtime_stt_realtime_model_display = [
+            name for name, _ in realtime_stt_realtime_model_options
+        ]
+        realtime_stt_realtime_model_var = tk.StringVar(
+            value=realtime_stt_realtime_model_rev_map.get(
+                self.realtime_stt_realtime_model, realtime_stt_realtime_model_display[0]
+            )
+        )
         realtime_stt_realtime_model_menu = tk.OptionMenu(
             realtime_stt_container,
             realtime_stt_realtime_model_var,
-            *realtime_stt_realtime_model_options,
+            *realtime_stt_realtime_model_display,
         )
         self._apply_option_menu_style(realtime_stt_realtime_model_menu)
         realtime_stt_realtime_model_menu.pack(anchor="w")
 
         self._add_setting_label(
             realtime_stt_container,
-            "Silero sensitivity:",
-            "Voice activity detection threshold (0.1–0.9). Higher = less sensitive; lower catches softer speech.",
+            "Voice Sensitivity:",
+            "How easily speech is detected. Lower catches softer/quieter speech; higher ignores background noise better.",
             label_opts, pady=(10, 4),
         )
         realtime_stt_silero_var = tk.DoubleVar(value=self.realtime_stt_silero_sensitivity)
@@ -1848,26 +1902,15 @@ class SettingsUIMixin:
         self._apply_input_style(realtime_stt_silero_spin)
         realtime_stt_silero_spin.pack(anchor="w")
 
-        self._add_setting_label(
-            realtime_stt_container,
-            "Post-speech silence (s):",
-            "Seconds of silence after speech before the utterance is finalised and sent to the pipeline.",
-            label_opts, pady=(10, 4),
-        )
-        realtime_stt_silence_var = tk.DoubleVar(value=self.realtime_stt_post_speech_silence)
-        realtime_stt_silence_spin = tk.Spinbox(
-            realtime_stt_container, from_=0.1, to=3.0, increment=0.1,
-            textvariable=realtime_stt_silence_var, width=8,
-        )
-        self._apply_input_style(realtime_stt_silence_spin)
-        realtime_stt_silence_spin.pack(anchor="w")
-
         return {
             "stt_device_var": stt_device_var,
             "realtime_stt_final_model_var": realtime_stt_final_model_var,
+            "realtime_stt_final_model_map": realtime_stt_final_model_map,
+            "realtime_stt_final_model_rev_map": realtime_stt_final_model_rev_map,
             "realtime_stt_realtime_model_var": realtime_stt_realtime_model_var,
+            "realtime_stt_realtime_model_map": realtime_stt_realtime_model_map,
+            "realtime_stt_realtime_model_rev_map": realtime_stt_realtime_model_rev_map,
             "realtime_stt_silero_var": realtime_stt_silero_var,
-            "realtime_stt_silence_var": realtime_stt_silence_var,
         }
 
     def _build_translation_section(self, translation_section, label_opts):
@@ -1912,10 +1955,12 @@ class SettingsUIMixin:
         nllb_container = tk.Frame(translation_section, bg=section_bg)
         nllb_container.pack(fill=tk.X, pady=(0, 8))
         nllb_help = (
-            "Local NLLB uses Meta's NLLB-200 distilled 600M model for offline "
-            "text translation. The app will ask before downloading the model. "
-            "After the first download, translation can run offline from the local "
-            "cache."
+            "Local NLLB uses Meta's NLLB-200 models to translate text locally, "
+            "offline, supporting 200 languages. Choose a model size below based "
+            "on your hardware — larger models translate more accurately but need "
+            "more VRAM/disk space and run slower. The app will ask before "
+            "downloading the selected model; after the first download, "
+            "translation runs fully offline from the local cache."
         )
         tk.Label(
             nllb_container,
@@ -1973,18 +2018,44 @@ class SettingsUIMixin:
         self._add_setting_label(
             nllb_container,
             "Model name:",
-            "Hugging Face model id for local text translation.",
+            "Hugging Face model id for local text translation. Larger models translate more "
+            "accurately but need more VRAM/RAM and disk space, and run slower.",
             label_opts,
             pady=(0, 4),
         )
-        local_nllb_model_name_var = tk.StringVar(value=self.local_nllb_model_name)
-        nllb_model_entry = tk.Entry(
-            nllb_container,
-            textvariable=local_nllb_model_name_var,
-            width=58,
+        nllb_model_name_options = [
+            (
+                "nllb-200-distilled-600M (~2.5 GB disk, ~4-6 GB VRAM, recommended)",
+                "facebook/nllb-200-distilled-600M",
+            ),
+            (
+                "nllb-200-distilled-1.3B (~5.5 GB disk, ~6-8 GB VRAM)",
+                "facebook/nllb-200-distilled-1.3B",
+            ),
+            (
+                "nllb-200-1.3B (~5.5 GB disk, ~8-10 GB VRAM, dense/higher quality)",
+                "facebook/nllb-200-1.3B",
+            ),
+            (
+                "nllb-200-3.3B (~13 GB disk, ~16+ GB VRAM, highest quality)",
+                "facebook/nllb-200-3.3B",
+            ),
+        ]
+        nllb_model_name_map = dict(nllb_model_name_options)
+        nllb_model_name_rev_map = {value: name for name, value in nllb_model_name_options}
+        nllb_model_name_display = [name for name, _ in nllb_model_name_options]
+        local_nllb_model_name_var = tk.StringVar(
+            value=nllb_model_name_rev_map.get(
+                self.local_nllb_model_name, nllb_model_name_display[0]
+            )
         )
-        self._apply_input_style(nllb_model_entry)
-        nllb_model_entry.pack(anchor="w", fill=tk.X, pady=(0, 8))
+        nllb_model_name_menu = tk.OptionMenu(
+            nllb_container,
+            local_nllb_model_name_var,
+            *nllb_model_name_display,
+        )
+        self._apply_option_menu_style(nllb_model_name_menu)
+        nllb_model_name_menu.pack(anchor="w", pady=(0, 8))
 
         self._add_setting_label(
             nllb_container,
@@ -2057,7 +2128,7 @@ class SettingsUIMixin:
             *nllb_source_display,
         )
         self._apply_option_menu_style(nllb_source_menu)
-        nllb_source_menu.pack(anchor="w", fill=tk.X)
+        nllb_source_menu.pack(anchor="w")
         self._add_setting_label(
             target_col,
             "Target language:",
@@ -2079,7 +2150,7 @@ class SettingsUIMixin:
             *nllb_target_display,
         )
         self._apply_option_menu_style(nllb_target_menu)
-        nllb_target_menu.pack(anchor="w", fill=tk.X)
+        nllb_target_menu.pack(anchor="w")
 
         self._add_setting_label(
             nllb_container,
@@ -2146,6 +2217,7 @@ class SettingsUIMixin:
                 local_nllb_cache_dir_var,
                 local_nllb_max_chars_var,
                 prompt=True,
+                model_name_map=nllb_model_name_map,
             ),
             primary=True,
         )
@@ -2160,6 +2232,7 @@ class SettingsUIMixin:
                 local_nllb_cache_dir_var,
                 local_nllb_max_chars_var,
                 prompt=True,
+                model_name_map=nllb_model_name_map,
             ),
         )
         retry_button.pack(side=tk.LEFT, padx=(8, 0))
@@ -2174,6 +2247,7 @@ class SettingsUIMixin:
                 local_nllb_max_chars_var,
                 test_button,
                 self.local_nllb_message_var,
+                model_name_map=nllb_model_name_map,
             ),
             primary=True,
         )
@@ -2199,6 +2273,7 @@ class SettingsUIMixin:
                 local_nllb_device_var,
                 local_nllb_cache_dir_var,
                 local_nllb_max_chars_var,
+                model_name_map=nllb_model_name_map,
             )
             if self.nllb_ready_config == self._local_nllb_config_tuple_from_config(config):
                 return
@@ -2209,22 +2284,43 @@ class SettingsUIMixin:
                 "Local NLLB settings changed. Download or retry for the selected model/cache.",
             )
 
+        def maybe_start_nllb_prewarm(*_args):
+            # Translation is opt-in — don't check the cache or prompt for a
+            # ~2.5 GB download until the user actually turns translation on.
+            if not self._coerce_bool(enable_translation_var.get(), default=False):
+                return
+            if self.nllb_status in ("Checking", "Downloading", "Loading", "Ready"):
+                return
+            self._start_local_nllb_cache_check(
+                self._local_nllb_config_from_vars(
+                    local_nllb_model_name_var,
+                    local_nllb_device_var,
+                    local_nllb_cache_dir_var,
+                    local_nllb_max_chars_var,
+                    model_name_map=nllb_model_name_map,
+                ),
+                prompt_if_missing=True,
+            )
+
         enable_translation_var.trace_add("write", refresh_label)
         enable_translation_var.trace_add("write", sync_runtime)
+        enable_translation_var.trace_add("write", maybe_start_nllb_prewarm)
         local_nllb_model_name_var.trace_add("write", handle_nllb_config_change)
         local_nllb_device_var.trace_add("write", handle_nllb_config_change)
         local_nllb_cache_dir_var.trace_add("write", handle_nllb_config_change)
         refresh_label()
         self._refresh_local_nllb_runtime_ui()
-        self._start_local_nllb_cache_check(
-            self._local_nllb_config_from_vars(
-                local_nllb_model_name_var,
-                local_nllb_device_var,
-                local_nllb_cache_dir_var,
-                local_nllb_max_chars_var,
-            ),
-            prompt_if_missing=True,
-        )
+        if self.translation_enabled:
+            maybe_start_nllb_prewarm()
+        else:
+            self._set_local_nllb_status(
+                "Not selected",
+                "Translation is off. Enable it above to check or download the Local NLLB model.",
+            )
+            # Nothing to wait on — unblock the startup overlay's translation
+            # half immediately instead of hanging on a check that will never
+            # run (mirrors _mark_startup_stt_ready for the STT half).
+            self._mark_startup_translation_ready()
         fixed_input_label = tk.Label(
             translation_section,
             text="Default input language: English when OFF, Spanish when ON",
@@ -2237,6 +2333,8 @@ class SettingsUIMixin:
         return {
             "enable_translation_var": enable_translation_var,
             "local_nllb_model_name_var": local_nllb_model_name_var,
+            "local_nllb_model_name_map": nllb_model_name_map,
+            "local_nllb_model_name_rev_map": nllb_model_name_rev_map,
             "local_nllb_device_var": local_nllb_device_var,
             "local_nllb_source_lang_var": local_nllb_source_lang_var,
             "local_nllb_source_lang_map": local_nllb_source_lang_map,
@@ -2246,6 +2344,133 @@ class SettingsUIMixin:
             "local_nllb_cache_dir_var": local_nllb_cache_dir_var,
         }
 
+    # ------------------------------------------------------------------ #
+    # Hardware autodetect                                                   #
+    # ------------------------------------------------------------------ #
+
+    # (min_vram_gb, final_model, nllb_model) — tiers assume the final STT
+    # model and NLLB model may be resident in VRAM at the same time, so the
+    # combined footprint (see the VRAM notes on each dropdown option) is what
+    # each threshold is sized against, not either model alone.
+    _HARDWARE_VRAM_TIERS = (
+        (20.0, "large-v3", "facebook/nllb-200-3.3B"),
+        (14.0, "large-v3", "facebook/nllb-200-1.3B"),
+        (10.0, "large-v3", "facebook/nllb-200-distilled-1.3B"),
+        (8.0, "distil-large-v3", "facebook/nllb-200-distilled-600M"),
+        (6.0, "medium", "facebook/nllb-200-distilled-600M"),
+        (4.0, "small", "facebook/nllb-200-distilled-600M"),
+    )
+
+    def _build_hardware_autodetect_section(
+        self,
+        section,
+        label_opts,
+        transcription_vars,
+        translation_vars,
+    ):
+        section_bg = label_opts["bg"]
+        settings_fg = label_opts["fg"]
+        tk.Label(
+            section,
+            text=(
+                "Detects your GPU's available VRAM and sets the Final model, "
+                "Realtime model (above), and NLLB model (Translation, above) "
+                "dropdowns to a fitting recommendation. Click Apply afterward "
+                "to actually use them."
+            ),
+            bg=section_bg,
+            fg=settings_fg,
+            wraplength=560,
+            justify="left",
+            font=(self.ui_font_family, 9),
+        ).pack(anchor="w", pady=(0, 8))
+
+        result_var = tk.StringVar(value="")
+        tk.Label(
+            section,
+            textvariable=result_var,
+            bg=section_bg,
+            fg=settings_fg,
+            wraplength=560,
+            justify="left",
+            font=(self.ui_font_family, 9),
+        ).pack(anchor="w", pady=(0, 8))
+
+        detect_button = self._make_button(
+            section,
+            "Autodetect Hardware",
+            command=lambda: self._autodetect_hardware_models(
+                transcription_vars, translation_vars, result_var
+            ),
+            primary=True,
+        )
+        detect_button.pack(anchor="w")
+
+    def _detect_hardware_vram(self):
+        """Returns (cuda_available, vram_gb, gpu_name).
+
+        vram_gb/gpu_name are None when CUDA isn't available (or torch isn't
+        installed) so callers fall back to the CPU-only recommendation.
+        """
+        try:
+            import torch
+        except Exception:
+            return False, None, None
+        try:
+            if not torch.cuda.is_available():
+                return False, None, None
+            props = torch.cuda.get_device_properties(0)
+            return True, props.total_memory / (1024 ** 3), props.name
+        except Exception:
+            return False, None, None
+
+    def _recommend_models_for_vram(self, cuda_available, vram_gb):
+        if cuda_available and vram_gb:
+            for min_vram, final_model, nllb_model in self._HARDWARE_VRAM_TIERS:
+                if vram_gb >= min_vram:
+                    return {
+                        "final_model": final_model,
+                        "realtime_model": "tiny",
+                        "nllb_model": nllb_model,
+                    }
+        # No CUDA, or CUDA with less VRAM than the smallest tier: favor
+        # light models that stay usable on CPU or a low-VRAM GPU.
+        return {
+            "final_model": "small" if cuda_available else "base",
+            "realtime_model": "tiny",
+            "nllb_model": "facebook/nllb-200-distilled-600M",
+        }
+
+    def _autodetect_hardware_models(self, transcription_vars, translation_vars, result_var):
+        cuda_available, vram_gb, gpu_name = self._detect_hardware_vram()
+        recommendation = self._recommend_models_for_vram(cuda_available, vram_gb)
+
+        final_rev_map = transcription_vars.get("realtime_stt_final_model_rev_map", {})
+        realtime_rev_map = transcription_vars.get("realtime_stt_realtime_model_rev_map", {})
+        nllb_rev_map = translation_vars.get("local_nllb_model_name_rev_map", {})
+
+        final_display = final_rev_map.get(recommendation["final_model"])
+        realtime_display = realtime_rev_map.get(recommendation["realtime_model"])
+        nllb_display = nllb_rev_map.get(recommendation["nllb_model"])
+
+        if final_display:
+            transcription_vars["realtime_stt_final_model_var"].set(final_display)
+        if realtime_display:
+            transcription_vars["realtime_stt_realtime_model_var"].set(realtime_display)
+        if nllb_display:
+            translation_vars["local_nllb_model_name_var"].set(nllb_display)
+
+        if cuda_available and vram_gb:
+            hardware_desc = f"{gpu_name or 'NVIDIA GPU'} ({vram_gb:.1f} GB VRAM)"
+        else:
+            hardware_desc = "No CUDA GPU detected (CPU only)"
+        result_var.set(
+            f"Detected: {hardware_desc}. Set Final model to "
+            f"{final_display or recommendation['final_model']}, Realtime model to "
+            f"{realtime_display or recommendation['realtime_model']}, and NLLB model to "
+            f"{nllb_display or recommendation['nllb_model']}. Click Apply to use them."
+        )
+
     def _run_local_nllb_test_from_vars(
         self,
         model_name_var,
@@ -2254,12 +2479,14 @@ class SettingsUIMixin:
         max_chars_var,
         test_button,
         test_status_var,
+        model_name_map=None,
     ):
         config = self._local_nllb_config_from_vars(
             model_name_var,
             device_var,
             cache_dir_var,
             max_chars_var,
+            model_name_map=model_name_map,
         )
         try:
             test_button.config(state=tk.DISABLED)
@@ -2286,10 +2513,13 @@ class SettingsUIMixin:
         device_var,
         cache_dir_var,
         max_chars_var,
+        model_name_map=None,
     ):
+        selected_model_name = model_name_var.get().strip()
+        if model_name_map:
+            selected_model_name = model_name_map.get(selected_model_name, selected_model_name)
         return {
-            "model_name": model_name_var.get().strip()
-            or self.LOCAL_NLLB_DEFAULT_MODEL_NAME,
+            "model_name": selected_model_name or self.LOCAL_NLLB_DEFAULT_MODEL_NAME,
             "device": self._normalize_local_nllb_device(device_var.get()),
             "cache_dir": self._normalize_optional_directory(cache_dir_var.get()),
             "max_chars": self._coerce_int_range(
@@ -2304,7 +2534,17 @@ class SettingsUIMixin:
         message, status = self._execute_local_nllb_test(config)
         self._finish_local_nllb_test(test_button, test_status_var, message, status)
 
-    def _execute_local_nllb_test(self, config):
+    def _execute_local_nllb_test(self, config, announce_result=True):
+        """Load Local NLLB and run a sample translation to confirm it works.
+
+        `announce_result` controls whether the sample translation/timing is
+        surfaced as the persistent status detail. Automatic verification
+        (every time the settings panel opens and finds the model already
+        cached) passes False so it silently marks the model ready without
+        showing "Success: <sample translation>" on every startup; the
+        explicit "Test Local NLLB" button passes True so the user sees the
+        result they asked for.
+        """
         sample = "En el principio cri\u00f3 Dios los cielos y la tierra."
         try:
             translated, elapsed_ms = self._translate_with_local_nllb(
@@ -2328,7 +2568,7 @@ class SettingsUIMixin:
             self.nllb_last_error = ""
             self._set_local_nllb_status(
                 "Ready",
-                message,
+                message if announce_result else "",
             )
             return (
                 message,
@@ -2478,12 +2718,14 @@ class SettingsUIMixin:
         cache_dir_var,
         max_chars_var,
         prompt=True,
+        model_name_map=None,
     ):
         config = self._local_nllb_config_from_vars(
             model_name_var,
             device_var,
             cache_dir_var,
             max_chars_var,
+            model_name_map=model_name_map,
         )
         self._start_local_nllb_download(config, prompt=prompt)
 
@@ -2564,6 +2806,7 @@ class SettingsUIMixin:
         if result.get("error"):
             self._set_local_nllb_status("Error", result["error"])
             self.update_status(result["error"])
+            self._mark_startup_translation_ready()
             return
         if result.get("cached"):
             self._set_local_nllb_status(
@@ -2577,6 +2820,7 @@ class SettingsUIMixin:
             "Model not downloaded. Click Download Local NLLB model to enable.",
         )
         if not prompt_if_missing:
+            self._mark_startup_translation_ready()
             return
         if self._confirm_local_nllb_download(config.get("model_name", "")):
             self._start_local_nllb_download(config, prompt=False)
@@ -2586,28 +2830,26 @@ class SettingsUIMixin:
             self.LOCAL_NLLB_DOWNLOAD_CANCELED_MESSAGE,
         )
         self.update_status(self.LOCAL_NLLB_DOWNLOAD_CANCELED_MESSAGE)
+        self._mark_startup_translation_ready()
 
     def _start_local_nllb_verification(self, config):
         self._set_local_nllb_status(
             "Loading",
             "Loading Local NLLB and running a test translation.",
         )
+        self.update_status(f"Loading Local NLLB weights ({config['model_name']})...")
         Thread(
             target=lambda: self._run_local_nllb_verification_worker(config),
             daemon=True,
         ).start()
 
     def _run_local_nllb_verification_worker(self, config):
-        message, status = self._execute_local_nllb_test(config)
+        _message, status = self._execute_local_nllb_test(config, announce_result=False)
 
         def finish():
-            try:
-                if self.local_nllb_message_var is not None:
-                    self.local_nllb_message_var.set(message)
-            except Exception:
-                pass
             self._refresh_local_nllb_runtime_ui()
             self.update_status(status)
+            self._mark_startup_translation_ready()
 
         try:
             self.root.after(0, finish)
@@ -2646,6 +2888,7 @@ class SettingsUIMixin:
             "Downloading",
             f"Downloading {config['model_name']}. This only needs to happen once.",
         )
+        self.update_status(f"Downloading Local NLLB model ({config['model_name']})...")
         Thread(
             target=lambda: self._run_local_nllb_download_worker(config),
             daemon=True,
@@ -2680,6 +2923,7 @@ class SettingsUIMixin:
             self.nllb_ready_config = None
             self._set_local_nllb_status("Error", message)
             self.update_status(message)
+            self._mark_startup_translation_ready()
         finally:
             self.nllb_download_in_progress = False
             try:
@@ -2781,10 +3025,16 @@ class SettingsUIMixin:
         dependency_error = self._local_nllb_dependencies_error()
         if dependency_error:
             raise sr.RequestError(dependency_error)
-        os.environ.setdefault("HF_HUB_OFFLINE", "1")
         try:
             import torch as torch_module
             from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
+            from transformers.utils import logging as hf_logging
+            # transformers prints its own "Loading weights" tqdm bar (and
+            # huggingface_hub its own download bars) straight to the
+            # terminal. Silence both — the app already reflects the
+            # equivalent Loading/Downloading phases via update_status/
+            # _set_local_nllb_status.
+            hf_logging.disable_progress_bar()
         except Exception as exc:
             raise sr.RequestError(self.LOCAL_NLLB_MISSING_DEPENDENCIES_MESSAGE) from exc
         return torch_module, AutoModelForSeq2SeqLM, AutoTokenizer
