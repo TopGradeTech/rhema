@@ -468,6 +468,7 @@ class TranslationApp(
             pady=self.canvas_margin,
         )
         self.video_image_item = self.text_canvas.create_image(0, 0, anchor="nw", state="hidden")
+        self.caption_bar_item = self.text_canvas.create_image(0, 0, anchor="sw", state="hidden")
         self.video_status_var = None
         self.video_device_menu = None
         self.video_device_var = None

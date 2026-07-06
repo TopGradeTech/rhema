@@ -83,6 +83,12 @@ class SettingsMixin:
             )
         except Exception:
             self.video_device_index = None
+        self.video_caption_bar_alpha = self._coerce_float_range(
+            data.get("video_caption_bar_alpha", self.video_caption_bar_alpha),
+            default=self.video_caption_bar_alpha,
+            minimum=0.0,
+            maximum=1.0,
+        )
 
     def _load_bad_word_settings(self, data):
         bad_words_by_lang = data.get("bad_words_by_lang")
@@ -455,6 +461,7 @@ class SettingsMixin:
             "lock_output_focus": self.lock_output_focus,
             "video_feed_enabled": self.video_feed_enabled,
             "video_device_index": self.video_device_index,
+            "video_caption_bar_alpha": self.video_caption_bar_alpha,
             "bad_words_by_lang": {
                 lang: sorted(words) for lang, words in self.bad_words_by_lang.items()
             },
