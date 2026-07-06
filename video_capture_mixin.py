@@ -38,6 +38,23 @@ _VIDEO_CAPTION_BAR_ALPHA = 0.5  # default opacity; user-adjustable via the Capti
 _VIDEO_MIN_RENDER_INTERVAL_MS = 16  # don't bother redrawing faster than ~60fps
 
 
+def _probe_video_device_names():
+    """Best-effort {index: friendly name} map via DirectShow enumeration
+    (pygrabber), e.g. {0: "Brio 101", 1: "OBS Virtual Camera"}. DirectShow
+    and Media Foundation enumerate the same underlying device set in the
+    same order, so this lines up with the numeric indices _open_capture
+    uses even though it tries MSMF first - a device that fails to open via
+    MSMF and falls back to DSHOW is still the same index, not a different
+    one. Returns {} on any failure (pygrabber missing, no COM access,
+    etc.) so callers just fall back to bare "Camera N" labels."""
+    try:
+        from pygrabber.dshow_graph import FilterGraph
+        names = FilterGraph().get_input_devices()
+        return dict(enumerate(names))
+    except Exception:
+        return {}
+
+
 def _open_capture(index, requested_width=_VIDEO_FALLBACK_WIDTH, requested_height=_VIDEO_FALLBACK_HEIGHT):
     for backend in _VIDEO_BACKENDS:
         cap = cv2.VideoCapture(index, backend)
@@ -75,6 +92,7 @@ class VideoCaptureMixin:
         self.video_feed_enabled = False
         self.video_device_index = None
         self.video_devices = []
+        self.video_device_names = {}
         self.video_status = "Not connected"
         self._video_stop_event = Event()
         self._video_capture_thread = None
@@ -99,7 +117,9 @@ class VideoCaptureMixin:
         """Probe camera indices for availability. Blocking - callers must
         run this off the Tk thread (opening/closing a camera device that
         doesn't exist can take noticeably longer than a hit, and each index
-        is now tried against two backends)."""
+        is now tried against two backends). Also refreshes
+        self.video_device_names (friendly names) as a side effect."""
+        self.video_device_names = _probe_video_device_names()
         available = []
         for index in range(max_probe):
             cap = _open_capture(index)
@@ -107,6 +127,10 @@ class VideoCaptureMixin:
                 available.append(index)
                 cap.release()
         return available
+
+    def _video_device_label(self, index):
+        name = self.video_device_names.get(index)
+        return f"Camera {index}: {name}" if name else f"Camera {index}"
 
     # ------------------------------------------------------------------ #
     # Lifecycle                                                            #

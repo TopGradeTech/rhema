@@ -53,7 +53,8 @@ correctly, just resized to fit the window.
 3. Under **Camera Device**, click **Refresh** to (re)scan for camera
    devices — do this after starting the OBS Virtual Camera, not before,
    or it won't be listed yet.
-4. Select the entry corresponding to the OBS Virtual Camera.
+4. Select the entry named **OBS Virtual Camera** (the dropdown shows each
+   device's actual name, not just a bare index).
 5. Click **Apply**.
 
 ## Troubleshooting
@@ -71,7 +72,8 @@ correctly, just resized to fit the window.
   actually being served by OBS — if it doesn't match the output window's
   resolution, set OBS's Output (Scaled) Resolution to match (see step 5)
   for an exact passthrough instead of a resized copy.
-- **Multiple cameras with similar names**: if you have more than one
-  camera-like device, try each entry in the Camera Device dropdown and
+- **Dropdown still shows "Camera N" with no name**: the friendly-name
+  lookup (via `pygrabber`) couldn't run — reinstall dependencies with
+  `pip install -r requirements.txt`, or as a fallback try each entry and
   check the status text for a resolution match to confirm you picked the
   Virtual Camera and not a physical webcam.

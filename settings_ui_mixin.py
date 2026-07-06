@@ -422,11 +422,16 @@ class SettingsUIMixin:
 
     @staticmethod
     def _parse_camera_device_label(label):
+        # Labels are "Camera N" or "Camera N: Friendly Name" - only the
+        # leading number after the prefix matters for resolving the index.
         prefix = "Camera "
         if not label or not label.startswith(prefix):
             return None
+        match = re.match(r"(\d+)", label[len(prefix):])
+        if not match:
+            return None
         try:
-            return int(label[len(prefix):])
+            return int(match.group(1))
         except ValueError:
             return None
 
@@ -764,7 +769,7 @@ class SettingsUIMixin:
 
             def _update_ui():
                 self.video_devices = devices
-                labels = [f"Camera {i}" for i in devices] or ["(click Refresh)"]
+                labels = [self._video_device_label(i) for i in devices] or ["(click Refresh)"]
                 if self.video_device_menu is not None:
                     menu = self.video_device_menu["menu"]
                     menu.delete(0, "end")
@@ -774,7 +779,7 @@ class SettingsUIMixin:
                             command=tk._setit(self.video_device_var, label),
                         )
                 if self.video_device_var is not None:
-                    current_label = f"Camera {self.video_device_index}"
+                    current_label = self._video_device_label(self.video_device_index)
                     if devices and current_label in labels:
                         self.video_device_var.set(current_label)
                     else:
@@ -1417,7 +1422,7 @@ class SettingsUIMixin:
             label_opts,
             pady=(10, 4),
         )
-        video_device_map = {f"Camera {i}": i for i in self.video_devices}
+        video_device_map = {self._video_device_label(i): i for i in self.video_devices}
         video_device_labels = list(video_device_map.keys()) or ["(click Refresh)"]
         selected_video_label = next(
             (label for label, idx in video_device_map.items() if idx == self.video_device_index),
