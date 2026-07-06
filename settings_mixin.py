@@ -163,7 +163,6 @@ class SettingsMixin:
             data.get("logging_mode", self.logging_mode)
         )
         self._apply_logging_mode_flags()
-        self.flush_timeout_ms = data.get("flush_timeout_ms", self.flush_timeout_ms)
         self.translation_enabled = self._coerce_bool(
             data.get("translation_enabled", self.translation_enabled),
             default=self.translation_enabled,
@@ -474,7 +473,6 @@ class SettingsMixin:
             "custom_vocab_langs_enabled": sorted(
                 [lang for lang, enabled in self.custom_vocab_langs_enabled.items() if enabled]
             ),
-            "flush_timeout_ms": self.flush_timeout_ms,
             "logging_mode": self.logging_mode,
             "source_lang": self.source_lang,
             "target_lang": self.target_lang,

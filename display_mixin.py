@@ -92,113 +92,6 @@ class DisplayMixin:
             return
         self.chunk_latency_label.config(text=label_text)
 
-    def _display_should_fast_path(self, text, latency_meta=None):
-        if not self._display_fast_path_enabled():
-            return False
-        now = time.time()
-        if now < float(getattr(self, "fast_display_until", 0.0)):
-            return True
-        pressure = self._display_fast_path_pressure(text, latency_meta)
-        if not pressure["enabled"]:
-            return False
-        hold_sec = max(0.2, float(getattr(self, "fast_display_hold_sec", 2.0)))
-        self.fast_display_until = now + hold_sec
-        self._trace_pipeline(
-            "display_fast_mode_on",
-            "",
-            sentence_fill_ratio=round(pressure["sentence_fill"], 3),
-            reveal_queue=len(self.word_reveal_queue),
-            text_queue=len(self.text_queue),
-            translate_openai_ms=pressure["translate_ms"],
-        )
-        return True
-
-    def _display_fast_path_enabled(self):
-        if not self.word_by_word:
-            return False
-        return bool(getattr(self, "dynamic_fast_display_enabled", True))
-
-    def _display_fast_path_pressure(self, text, latency_meta=None):
-        _size, _maxsize, sentence_fill = self._queue_fill_ratio(self.sentence_queue)
-        pressure = sentence_fill >= float(
-            getattr(self, "fast_display_sentence_queue_ratio", 0.25)
-        )
-        pressure = pressure or len(self.word_reveal_queue) >= int(
-            getattr(self, "fast_display_reveal_queue_items", 2)
-        )
-        pressure = pressure or (self.is_revealing_words and len(self.word_reveal_queue) >= 1)
-        pressure = pressure or len(self.text_queue) >= 2
-        if self.translation_enabled and len(re.findall(r"\S+", text or "")) >= 9:
-            pressure = True
-        meta = latency_meta or {}
-        translate_ms = meta.get("translate_openai_ms")
-        if isinstance(translate_ms, (int, float)) and translate_ms >= int(
-            getattr(self, "fast_display_translate_ms", 1200)
-        ):
-            pressure = True
-        return {
-            "enabled": pressure,
-            "sentence_fill": sentence_fill,
-            "translate_ms": translate_ms,
-        }
-
-    def _drain_display_queues_immediately(self):
-        drained_items, drained = self._collect_immediate_display_drain_items()
-        self.current_reveal_words = []
-        self.current_reveal_text = ""
-        self.current_reveal_latency_meta = None
-        self.is_revealing_words = False
-        self.live_line = ""
-        drained += self._drain_display_payload_queue(self.word_reveal_queue, drained_items)
-        drained += self._drain_display_payload_queue(self.text_queue, drained_items)
-        self.is_flushing_queue = False
-        appended = self._append_drained_display_items(drained_items)
-        if appended > 0:
-            self._trim_translation_history()
-            self.render_text()
-        if drained > 0:
-            self._trace_pipeline(
-                "display_fast_mode_drain",
-                "",
-                drained_count=drained,
-                appended_count=appended,
-            )
-
-    def _collect_immediate_display_drain_items(self):
-        drained_items = []
-        drained = 0
-        if self.current_reveal_text:
-            drained_items.append(
-                (
-                    self.current_reveal_text,
-                    dict(self.current_reveal_latency_meta or {}),
-                )
-            )
-            drained = 1
-        return drained_items, drained
-
-    def _drain_display_payload_queue(self, payload_queue, drained_items):
-        drained = 0
-        while payload_queue:
-            sentence, chunk_meta = self._unpack_display_payload(payload_queue.popleft())
-            if not sentence:
-                continue
-            drained_items.append((sentence, dict(chunk_meta or {})))
-            drained += 1
-        return drained
-
-    def _append_drained_display_items(self, drained_items):
-        appended = 0
-        for sentence, meta in drained_items:
-            filtered = self.filter_bad_words(sentence)
-            if not filtered:
-                continue
-            self.translations.append(filtered)
-            self._append_to_display_page(filtered)
-            appended += 1
-            self._report_display_latency_once(meta)
-        return appended
-
     def _report_display_latency_once(self, meta):
         if not meta or meta.get("display_reported"):
             return
@@ -343,64 +236,22 @@ class DisplayMixin:
         self.root.after(0, lambda: self._update_text_on_ui_thread(text, latency_meta))
 
     def _update_text_on_ui_thread(self, text, latency_meta=None):
+        # Local NLLB (the only translation provider) is already fast/local
+        # by the time it reaches display, so finalized text always commits
+        # here immediately and is metered out via _meter_display_commit,
+        # exactly like the untranslated RealtimeSTT path.
         incoming = self._coerce_incoming_display_text(text)
         if incoming == "":
             return
-        self._trace_pipeline(
-            "display_update_input",
+        self._trace_pipeline("display_update_input", incoming)
+        self._meter_display_commit(
             incoming,
-            word_by_word=self.word_by_word,
+            latency_meta=latency_meta,
+            stage="display_commit",
         )
-        if self._is_local_nllb_output(latency_meta) or self._display_should_fast_path(
-            incoming, latency_meta
-        ):
-            self._drain_display_queues_immediately()
-            self._append_display_text_immediate(
-                incoming,
-                latency_meta=latency_meta,
-                stage="display_fast_path_render",
-            )
-            return
-        if self.word_by_word:
-            self.enqueue_text(incoming, latency_meta=latency_meta)
-            return
-        self._queue_pending_display_text(incoming, latency_meta=latency_meta)
-
-    def _is_local_nllb_output(self, latency_meta):
-        # Local NLLB translation is already fast/local by the time it reaches
-        # display, so it should commit instantly like the untranslated
-        # RealtimeSTT path instead of trickling out through the word-by-word
-        # reveal queue.
-        return bool(latency_meta) and latency_meta.get("text_translation_provider") == "local_nllb"
 
     def _coerce_incoming_display_text(self, text):
         return (text or "").strip()
-
-    def _queue_pending_display_text(self, incoming, latency_meta=None):
-        if self.pending_text:
-            self.pending_text = f"{self.pending_text} {incoming}"
-        else:
-            self.pending_text = incoming
-            self.pending_latency_meta = latency_meta
-        if len(self.pending_text) >= self.chunk_size:
-            self.enqueue_text(self.pending_text, latency_meta=self.pending_latency_meta)
-            self.pending_text = ""
-            self.pending_latency_meta = None
-        self._schedule_pending_text_flush()
-
-    def _schedule_pending_text_flush(self):
-        if self.flush_after_id is not None:
-            self.root.after_cancel(self.flush_after_id)
-        flush_delay_ms = self._scaled_display_delay_ms(
-            self.flush_timeout_ms,
-            minimum_ms=150,
-        )
-        self.flush_after_id = self.root.after(flush_delay_ms, self.flush_pending_text)
-
-    def _unpack_display_payload(self, payload):
-        if isinstance(payload, tuple) and len(payload) == 2:
-            return payload[0], payload[1] if isinstance(payload[1], dict) else None
-        return payload, None
 
     def _effective_display_speed(self):
         try:
@@ -427,139 +278,6 @@ class DisplayMixin:
         if len(self.translations) > max_entries:
             self.translations = self.translations[-max_entries:]
 
-    def enqueue_text(self, text, latency_meta=None):
-        if self.word_by_word:
-            chunks = self.chunk_text(text, self.chunk_size)
-            for idx, chunk in enumerate(chunks):
-                chunk_meta = dict(latency_meta) if latency_meta and idx == 0 else None
-                self.word_reveal_queue.append((chunk, chunk_meta))
-                self._trace_pipeline(
-                    "display_chunk_enqueued",
-                    chunk,
-                    chunk_index=idx,
-                    chunk_count=len(chunks),
-                    word_by_word=True,
-                )
-            if not self.is_revealing_words:
-                self.start_word_reveal()
-            return
-        chunks = self.chunk_text(text, self.chunk_size)
-        for idx, chunk in enumerate(chunks):
-            chunk_meta = dict(latency_meta) if latency_meta and idx == 0 else None
-            self.text_queue.append((chunk, chunk_meta))
-            self._trace_pipeline(
-                "display_chunk_enqueued",
-                chunk,
-                chunk_index=idx,
-                chunk_count=len(chunks),
-                word_by_word=False,
-            )
-        if not self.is_flushing_queue:
-            self.flush_text_queue()
-
-    def start_word_reveal(self):
-        if self.is_revealing_words:
-            return
-        self.is_revealing_words = True
-        self.current_reveal_words = []
-        self.current_reveal_text = ""
-        self.reveal_next_word()
-
-    def reveal_next_word(self):
-        if not self.is_revealing_words:
-            return
-        if not self.current_reveal_words:
-            if self.current_reveal_text:
-                self.translations.append(self.current_reveal_text)
-                self._append_to_display_page(self.current_reveal_text)
-                self._trace_pipeline("display_word_reveal_complete", self.current_reveal_text)
-                self._trim_translation_history()
-                self.current_reveal_text = ""
-                self.current_reveal_latency_meta = None
-            if not self.word_reveal_queue:
-                self.is_revealing_words = False
-                self.live_line = ""
-                self.render_text()
-                return
-            sentence, self.current_reveal_latency_meta = self._unpack_display_payload(
-                self.word_reveal_queue.popleft()
-            )
-            self.current_reveal_words = re.findall(r"\S+", sentence)
-
-        next_word = self.current_reveal_words.pop(0)
-        if self.current_reveal_text:
-            self.current_reveal_text = f"{self.current_reveal_text} {next_word}"
-        else:
-            self.current_reveal_text = next_word
-        self.live_line = self.current_reveal_text
-        self.render_text()
-        if self.current_reveal_latency_meta and not self.current_reveal_latency_meta.get("display_reported"):
-            self.current_reveal_latency_meta["display_reported"] = True
-            self._record_chunk_latency(
-                self.current_reveal_latency_meta.get("queued_at"),
-                latency_meta=self.current_reveal_latency_meta,
-                rendered_at=time.time(),
-            )
-        self.root.after(
-            self._scaled_display_delay_ms(self.chunk_delay_ms, minimum_ms=20),
-            self.reveal_next_word,
-        )
-
-    def flush_pending_text(self):
-        self.flush_after_id = None
-        if not self.pending_text:
-            return
-        self._trace_pipeline("display_pending_flush", self.pending_text)
-        self.enqueue_text(self.pending_text, latency_meta=self.pending_latency_meta)
-        self.pending_text = ""
-        self.pending_latency_meta = None
-
-    def flush_text_queue(self):
-        if not self.text_queue:
-            self.is_flushing_queue = False
-            return
-
-        self.is_flushing_queue = True
-        chunk, chunk_meta = self._unpack_display_payload(self.text_queue.popleft())
-        filtered_text = self.filter_bad_words(chunk)
-        self._trace_pipeline(
-            "display_chunk_rendered",
-            filtered_text,
-            filtered_changed=(filtered_text != chunk),
-        )
-        self.translations.append(filtered_text)
-        self._append_to_display_page(filtered_text)
-        self._trim_translation_history()
-        self.render_text()
-        if chunk_meta and not chunk_meta.get("display_reported"):
-            chunk_meta["display_reported"] = True
-            self._record_chunk_latency(
-                chunk_meta.get("queued_at"),
-                latency_meta=chunk_meta,
-                rendered_at=time.time(),
-            )
-        self.root.after(
-            self._scaled_display_delay_ms(self.chunk_delay_ms, minimum_ms=20),
-            self.flush_text_queue,
-        )
-
-    def chunk_text(self, text, max_len):
-        if len(text) <= max_len:
-            return [text]
-
-        chunks = []
-        remaining = text.strip()
-        while remaining:
-            if len(remaining) <= max_len:
-                chunks.append(remaining)
-                break
-            split_at = remaining.rfind(" ", 0, max_len + 1)
-            if split_at == -1 or split_at < max_len // 2:
-                split_at = max_len
-            chunks.append(remaining[:split_at].rstrip())
-            remaining = remaining[split_at:].lstrip()
-        return chunks
-    
     def update_display(self):
         def update():
             self.render_text()
