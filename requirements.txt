@@ -15,3 +15,6 @@ RealtimeSTT
 # Video Feed mode — decodes the OBS Virtual Camera to show behind captions
 opencv-python
 pillow
+# Real camera friendly names ("OBS Virtual Camera") for the Camera Device
+# dropdown instead of bare index numbers — Windows-only, DirectShow-based
+pygrabber; sys_platform == "win32"
