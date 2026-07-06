@@ -531,6 +531,7 @@ class TranslationApp(
         self.current_reveal_latency_meta = None
         self.display_drip_queue = deque()
         self.display_drip_after_id = None
+        self.display_drip_deadline = 0.0
         self.chunk_size = 120
         self.chunk_delay_ms = 90
         self.flush_timeout_ms = 1400

@@ -26,23 +26,20 @@ import importlib.util
 import ttkbootstrap as ttkb
 from ttkbootstrap.constants import PRIMARY
 
-# Metering for large finalized blocks: a long uninterrupted stretch of
-# speech can finalize as one multi-sentence block, which used to dump onto
-# the display all at once as a wall of text. Committed finals are split at
-# sentence boundaries; the first sentence still commits instantly (so the
-# normal one-sentence final keeps RealtimeSTT's native instant feel), and
-# the rest drip in at roughly reading pace. Under backlog the drip speeds
-# up so the display never falls far behind the speaker.
-_DRIP_MS_PER_WORD = 220
-_DRIP_MIN_MS = 350
-_DRIP_MAX_MS = 1500
-_DRIP_BACKLOG_MODERATE = 4
-_DRIP_MODERATE_CAP_MS = 700
-_DRIP_BACKLOG_HEAVY = 8
-_DRIP_HEAVY_CAP_MS = 300
-# Sentences shorter than this merge into their neighbor so bursts of tiny
-# exclamations don't each spend a full drip tick.
-_DRIP_MIN_PIECE_CHARS = 12
+# Finalized text is revealed onto the display in small word groups (the
+# broadcast-caption "roll-up" style) instead of dumping whole blocks at
+# once, so readers can follow along word by word. Pacing is elastic via a
+# time budget: with little queued, words paint at a comfortable reading
+# cadence (a bit faster than people speak, so the reveal can never fall
+# structurally behind); as the queue grows the per-word delay shrinks
+# proportionally so everything queued always drains within the budget.
+# Past the point where even the floor rate would exceed the budget, the
+# overflow is batched into one tick (revealing that fast reads as instant
+# anyway). The first group of an idle commit still lands instantly.
+_DRIP_WORDS_PER_TICK = 2
+_DRIP_BASE_MS_PER_WORD = 300  # ~200 wpm reveal; speech runs ~130-160 wpm
+_DRIP_FLOOR_MS_PER_WORD = 70
+_DRIP_LAG_BUDGET_MS = 3500  # max time for the whole queue to drain
 
 
 class DisplayMixin:
@@ -214,47 +211,42 @@ class DisplayMixin:
     def _append_display_text_immediate(self, text, latency_meta=None, stage="display_fast_path"):
         self._meter_display_commit(text, latency_meta=latency_meta, stage=stage)
 
-    def _split_display_sentences(self, text):
-        """Split a finalized block at sentence boundaries for drip commits.
-        A wrong split is harmless - the rolling display re-merges everything
-        into one paragraph, so splitting only affects drip timing, never the
-        final text."""
-        pieces = re.findall(r"[^.!?]+(?:[.!?]+[\"')\]]*)?", text or "")
-        pieces = [piece.strip() for piece in pieces if piece and piece.strip()]
-        if not pieces:
-            return []
-        merged = []
-        for piece in pieces:
-            if merged and len(piece) < _DRIP_MIN_PIECE_CHARS:
-                merged[-1] = f"{merged[-1]} {piece}"
-            else:
-                merged.append(piece)
-        chunked = []
-        for piece in merged:
-            # A very long run-on with no punctuation would still dump at
-            # once - reuse the existing chunker to keep pieces bounded.
-            chunked.extend(self.chunk_text(piece, max(60, int(self.chunk_size))))
-        return chunked
+    def _split_display_word_groups(self, text):
+        """Split a finalized block into small word groups for the drip
+        reveal. Grouping only affects reveal timing - the rolling display
+        re-merges everything into one paragraph, so the final text is
+        unchanged."""
+        words = re.findall(r"\S+", text or "")
+        return [
+            " ".join(words[i:i + _DRIP_WORDS_PER_TICK])
+            for i in range(0, len(words), _DRIP_WORDS_PER_TICK)
+        ]
 
     def _meter_display_commit(self, text, latency_meta=None, stage="display_commit"):
-        pieces = self._split_display_sentences(text)
-        if not pieces:
+        groups = self._split_display_word_groups(text)
+        if not groups:
             return
         drip_idle = not self.display_drip_queue and self.display_drip_after_id is None
         if drip_idle:
-            # Nothing pending: the first sentence commits instantly, exactly
-            # like the pre-metering behavior for a normal short final.
-            self._commit_display_piece(pieces[0], latency_meta, stage)
-            pieces = pieces[1:]
+            # Nothing pending: the first words land instantly so a new
+            # utterance is never held back by the reveal cadence.
+            self._commit_display_piece(groups[0], stage)
+            self._report_display_latency_once(latency_meta)
+            groups = groups[1:]
             latency_meta = None
-        for piece in pieces:
-            # Latency is reported once, on whichever piece renders first.
-            self.display_drip_queue.append((piece, latency_meta, stage))
+        for group in groups:
+            # Latency is reported once, on whichever group renders first.
+            self.display_drip_queue.append((group, latency_meta, stage))
             latency_meta = None
-        if self.display_drip_queue and self.display_drip_after_id is None:
-            self._schedule_display_drip()
+        if self.display_drip_queue:
+            # Everything queued (including what was already pending, which
+            # displays first) must finish painting within the lag budget of
+            # this newest arrival.
+            self.display_drip_deadline = time.monotonic() + (_DRIP_LAG_BUDGET_MS / 1000.0)
+            if self.display_drip_after_id is None:
+                self._schedule_display_drip()
 
-    def _commit_display_piece(self, piece, latency_meta, stage):
+    def _commit_display_piece(self, piece, stage):
         filtered_text = self.filter_bad_words(piece)
         if not filtered_text:
             return
@@ -262,18 +254,28 @@ class DisplayMixin:
         self._trim_translation_history()
         self.render_text()
         self._trace_pipeline(stage, filtered_text)
-        self._report_display_latency_once(latency_meta)
+
+    def _drip_pending_words(self):
+        return sum(
+            len(re.findall(r"\S+", piece))
+            for piece, _meta, _stage in self.display_drip_queue
+        )
+
+    def _drip_remaining_budget_ms(self):
+        return max(0.0, (self.display_drip_deadline - time.monotonic()) * 1000.0)
 
     def _display_drip_delay_ms(self):
-        piece = self.display_drip_queue[0][0] if self.display_drip_queue else ""
-        words = len(re.findall(r"\S+", piece))
-        base = max(_DRIP_MIN_MS, min(_DRIP_MAX_MS, words * _DRIP_MS_PER_WORD))
-        backlog = len(self.display_drip_queue)
-        if backlog >= _DRIP_BACKLOG_HEAVY:
-            base = min(base, _DRIP_HEAVY_CAP_MS)
-        elif backlog >= _DRIP_BACKLOG_MODERATE:
-            base = min(base, _DRIP_MODERATE_CAP_MS)
-        return self._scaled_display_delay_ms(base, minimum_ms=100)
+        pending = self._drip_pending_words()
+        per_word = max(
+            _DRIP_FLOOR_MS_PER_WORD,
+            min(
+                _DRIP_BASE_MS_PER_WORD,
+                self._drip_remaining_budget_ms() / max(1, pending),
+            ),
+        )
+        next_piece = self.display_drip_queue[0][0] if self.display_drip_queue else ""
+        next_words = max(1, len(re.findall(r"\S+", next_piece)))
+        return self._scaled_display_delay_ms(per_word * next_words, minimum_ms=40)
 
     def _schedule_display_drip(self):
         self.display_drip_after_id = self.root.after(
@@ -284,8 +286,23 @@ class DisplayMixin:
         self.display_drip_after_id = None
         if not self.display_drip_queue:
             return
-        piece, latency_meta, stage = self.display_drip_queue.popleft()
-        self._commit_display_piece(piece, latency_meta, stage)
+        popped = [self.display_drip_queue.popleft()]
+        # Past the point where even floor-rate drainage would blow the lag
+        # budget, a word-by-word reveal reads as a fast crawl that still
+        # lags the speaker - batch the overflow into this tick instead so
+        # the display snaps back inside the budget.
+        pending = self._drip_pending_words()
+        remaining_budget_ms = self._drip_remaining_budget_ms()
+        while (
+            self.display_drip_queue
+            and pending * _DRIP_FLOOR_MS_PER_WORD > remaining_budget_ms
+        ):
+            piece, meta, stage = self.display_drip_queue.popleft()
+            popped.append((piece, meta, stage))
+            pending -= len(re.findall(r"\S+", piece))
+        self._commit_display_piece(" ".join(item[0] for item in popped), popped[0][2])
+        for _piece, meta, _stage in popped:
+            self._report_display_latency_once(meta)
         if self.display_drip_queue:
             self._schedule_display_drip()
     
