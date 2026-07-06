@@ -1173,9 +1173,12 @@ class SettingsUIMixin:
         else:
             step = 0
 
+        # Top-fill: line 1 paints first and stays put as later lines fill
+        # in below it (paint-on paging), rather than the old bottom-fill
+        # that shifted every line upward as new ones arrived.
         slots = [""] * lines
-        for i, line in enumerate(display_lines[-lines:]):
-            slots[lines - len(display_lines[-lines:]) + i] = line
+        for i, line in enumerate(display_lines[:lines]):
+            slots[i] = line
 
         for idx, line in enumerate(slots):
             y = top + (idx * step)

@@ -100,6 +100,17 @@ class RealtimeSttMixin:
     _SILENCE_MID_SENTENCE = 2.0   # text ends with ... — speaker still going
     _SILENCE_SENTENCE_END = 0.45  # clear sentence end punctuation — commit fast
     _SILENCE_UNKNOWN = 0.7        # everything else — middle ground
+    # Continuous speech never satisfies the silence thresholds above, so
+    # without a cap an uninterrupted stretch accumulates into one giant
+    # utterance that only finalizes (and floods the display) when the
+    # speaker finally pauses. As the current utterance grows, first relax
+    # the silence requirement so natural micro-pauses start committing
+    # finals, then force a split outright via recorder.stop(), which
+    # finalizes what's recorded so far through the normal pipeline while
+    # listening resumes immediately (min_gap_between_recordings is 0).
+    _SPLIT_SOFT_SEC = 6.0    # halve silence thresholds beyond this
+    _SPLIT_HARD_SEC = 12.0   # force a split at the next sentence-end partial
+    _SPLIT_MAX_SEC = 18.0    # force a split even mid-sentence
 
     def _resolve_stt_device(self, device):
         """Resolve auto/cuda/cpu to an actually-usable device.
@@ -259,6 +270,12 @@ class RealtimeSttMixin:
           - ends with '...'  → 2.0 s  (mid-sentence, keep waiting)
           - double sentence-end punctuation → 0.45 s  (commit fast)
           - everything else  → 0.7 s  (middle ground)
+
+        On top of that, long-running utterances are split so continuous
+        speech doesn't buffer indefinitely (see the _SPLIT_* constants):
+        past the soft cap all three tiers are halved, and past the hard
+        cap the recording is stopped outright — preferring a partial that
+        ends at a sentence boundary, but unconditionally at the max cap.
         """
         rec = self._realtime_stt_recorder
         if not rec or not self.realtime_stt_active:
@@ -268,12 +285,53 @@ class RealtimeSttMixin:
             text = text[0].upper() + text[1:]
         prev = self._realtime_stt_prev_update_text
         self._realtime_stt_prev_update_text = text
+        elapsed = self._realtime_stt_recording_elapsed(rec)
+        if self._realtime_stt_force_split_if_due(rec, text, elapsed):
+            return
+        scale = 0.5 if elapsed >= self._SPLIT_SOFT_SEC else 1.0
         if text.endswith("..."):
-            rec.post_speech_silence_duration = self._SILENCE_MID_SENTENCE
+            rec.post_speech_silence_duration = self._SILENCE_MID_SENTENCE * scale
         elif text and text[-1] in self._SENTENCE_END_MARKS and prev and prev[-1] in self._SENTENCE_END_MARKS:
-            rec.post_speech_silence_duration = self._SILENCE_SENTENCE_END
+            rec.post_speech_silence_duration = self._SILENCE_SENTENCE_END * scale
         else:
-            rec.post_speech_silence_duration = self._SILENCE_UNKNOWN
+            rec.post_speech_silence_duration = self._SILENCE_UNKNOWN * scale
+
+    def _realtime_stt_recording_elapsed(self, rec):
+        """Seconds the current utterance has been recording, 0 if idle."""
+        try:
+            if not getattr(rec, "is_recording", False):
+                return 0.0
+            start = float(getattr(rec, "recording_start_time", 0.0) or 0.0)
+            if start <= 0.0:
+                return 0.0
+            return max(0.0, time.time() - start)
+        except Exception:
+            return 0.0
+
+    def _realtime_stt_force_split_if_due(self, rec, text, elapsed):
+        """Force-finalize an over-long utterance mid-speech.
+
+        recorder.stop() snapshots the recorded frames and queues them for
+        final transcription through the normal recorder.text() path, then
+        listening resumes immediately, so the split is invisible except
+        that the text arrives as two finals instead of one giant one.
+        """
+        if elapsed < self._SPLIT_HARD_SEC:
+            return False
+        at_sentence_end = bool(text) and text[-1] in self._SENTENCE_END_MARKS
+        if not at_sentence_end and elapsed < self._SPLIT_MAX_SEC:
+            return False
+        try:
+            rec.stop()
+        except Exception:
+            return False
+        self._trace_pipeline(
+            "realtime_stt_forced_split",
+            text,
+            elapsed_sec=round(elapsed, 2),
+            at_sentence_end=at_sentence_end,
+        )
+        return True
 
     def _realtime_stt_set_live_line(self, text):
         """Direct live-line update — used for clears only."""

@@ -194,6 +194,7 @@ class DisplayMixin:
             if not filtered:
                 continue
             self.translations.append(filtered)
+            self._append_to_display_page(filtered)
             appended += 1
             self._report_display_latency_once(meta)
         return appended
@@ -251,9 +252,41 @@ class DisplayMixin:
         if not filtered_text:
             return
         self.translations.append(filtered_text)
+        self._append_to_display_page(filtered_text)
         self._trim_translation_history()
         self.render_text()
         self._trace_pipeline(stage, filtered_text)
+
+    def _append_to_display_page(self, text):
+        """Roll-up paging: committed text wraps into frozen lines, so
+        appending can only extend the bottom line or add new lines below
+        it - painted lines never re-wrap while being read. Once the
+        display is full, each completed new line clears the top line and
+        shifts the frozen lines up one slot (broadcast roll-up), instead
+        of continuously re-flowing the whole transcript."""
+        text = (text or "").strip()
+        if not text:
+            return
+        width = self._display_wrap_width()
+        lines = self.display_page_lines
+        tail = lines.pop() if lines else ""
+        candidate = self.clean_text_spacing(f"{tail} {text}".strip())
+        lines.extend(self._wrap_lines_to_width([candidate], width))
+        max_lines = self._effective_max_lines()
+        if len(lines) > max_lines:
+            del lines[: len(lines) - max_lines]
+
+    def _display_wrap_width(self):
+        return max(10, self.text_canvas.winfo_width() - (self.text_padding * 2))
+
+    def _reflow_display_page(self):
+        """Re-wrap the frozen page lines after the window or font changed;
+        outside of that, lines are never re-wrapped once painted."""
+        merged = self.clean_text_spacing(" ".join(self.display_page_lines).strip())
+        if not merged:
+            return
+        wrapped = self._wrap_lines_to_width([merged], self._display_wrap_width())
+        self.display_page_lines = wrapped[-self._effective_max_lines():]
 
     def _drip_pending_words(self):
         return sum(
@@ -438,6 +471,7 @@ class DisplayMixin:
         if not self.current_reveal_words:
             if self.current_reveal_text:
                 self.translations.append(self.current_reveal_text)
+                self._append_to_display_page(self.current_reveal_text)
                 self._trace_pipeline("display_word_reveal_complete", self.current_reveal_text)
                 self._trim_translation_history()
                 self.current_reveal_text = ""
@@ -494,6 +528,7 @@ class DisplayMixin:
             filtered_changed=(filtered_text != chunk),
         )
         self.translations.append(filtered_text)
+        self._append_to_display_page(filtered_text)
         self._trim_translation_history()
         self.render_text()
         if chunk_meta and not chunk_meta.get("display_reported"):
@@ -799,18 +834,12 @@ class DisplayMixin:
 
     def _finish_resize(self):
         self._resize_after_id = None
+        self._reflow_display_page()
         self.render_text()
 
     def render_text(self):
         self._fit_font_to_lines()
-        base_parts = self._collect_render_parts()
-        merged_text = self._merge_render_parts(base_parts)
-        width = max(10, self.text_canvas.winfo_width() - (self.text_padding * 2))
-        wrapped_lines = self._wrap_lines_to_width(
-            [merged_text],
-            width,
-        )
-        display_lines = wrapped_lines[-self._effective_max_lines():]
+        display_lines = self._compose_display_lines()
         self.last_display_line_count = len(display_lines)
         display_text = "\n".join(display_lines)
         self.text_canvas.itemconfigure(self.text_item, text="", state="hidden")
@@ -820,26 +849,21 @@ class DisplayMixin:
         self.update_preview(display_text)
         self.update_text_metrics()
 
-    def _collect_render_parts(self):
-        parts = []
-        for segment in self.translations:
-            cleaned = self._coerce_render_segment(segment)
-            if cleaned:
-                parts.append(cleaned)
+    def _compose_display_lines(self):
+        """The frozen page lines, plus the (legacy) live line wrapped onto
+        the bottom without touching the frozen lines themselves."""
+        lines = list(self.display_page_lines)
         if self.live_line:
-            live_cleaned = self._coerce_render_segment(self.live_line)
-            if live_cleaned:
-                parts.append(live_cleaned)
-        return parts
+            tail = lines.pop() if lines else ""
+            candidate = self.clean_text_spacing(f"{tail} {self.live_line}".strip())
+            lines.extend(self._wrap_lines_to_width([candidate], self._display_wrap_width()))
+            max_lines = self._effective_max_lines()
+            if len(lines) > max_lines:
+                lines = lines[-max_lines:]
+        return [self._coerce_render_segment(line) for line in lines]
 
     def _coerce_render_segment(self, segment):
         return self.filter_bad_words(segment).strip()
-
-    def _merge_render_parts(self, base_parts):
-        if not base_parts:
-            return ""
-        joined = " ".join(base_parts)
-        return self.clean_text_spacing(joined)
 
     def update_preview(self, text):
         if not self.preview_widget:
