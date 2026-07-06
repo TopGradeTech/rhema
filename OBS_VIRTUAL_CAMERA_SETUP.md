@@ -36,7 +36,17 @@ whatever OBS is actually streaming, not a Preview or a single fixed
 Scene/Source. If it's set to anything else, the video feed shown behind
 captions won't match what's live.
 
-## 5. Enable Video Feed mode in this app
+## 5. Match OBS's output resolution to the output window
+
+In OBS, go to **Settings > Video** and set **Output (Scaled) Resolution**
+to exactly the resolution of the monitor the output window will be shown
+on (e.g. 1920x1080). This app draws the Virtual Camera frame at native
+size with no rescaling whenever it already matches the output window's
+size, so matching it here gives you an exact, unscaled passthrough of
+OBS's stream. If they don't match, the app still displays the feed
+correctly, just resized to fit the window.
+
+## 6. Enable Video Feed mode in this app
 
 1. Open the app's Settings window.
 2. In the Display section, check **Show video feed behind captions**.
@@ -57,6 +67,10 @@ captions won't match what's live.
 - **Video behind captions doesn't match the live stream**: check the
   Output Type via the cogwheel next to **Start Virtual Camera** and make
   sure it's set to **Program** (see step 4).
+- **Video looks soft/rescaled**: the status line shows the resolution
+  actually being served by OBS — if it doesn't match the output window's
+  resolution, set OBS's Output (Scaled) Resolution to match (see step 5)
+  for an exact passthrough instead of a resized copy.
 - **Multiple cameras with similar names**: if you have more than one
   camera-like device, try each entry in the Camera Device dropdown and
   check the status text for a resolution match to confirm you picked the
