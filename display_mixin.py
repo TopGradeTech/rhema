@@ -288,8 +288,6 @@ class DisplayMixin:
         return max(int(minimum_ms), int(round(max(0.0, base) / speed)))
 
     def _effective_max_lines(self):
-        if self.display_mode == "overlay":
-            return max(1, int(self.overlay_max_lines))
         return max(1, int(self.max_lines))
 
     def _trim_translation_history(self):
