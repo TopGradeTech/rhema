@@ -12,3 +12,6 @@ torch
 # RealtimeSTT — local real-time transcription with dual VAD + two-pass models
 # GPU build: pip install RealtimeSTT[gpu]
 RealtimeSTT
+# Video Feed mode — decodes the OBS Virtual Camera to show behind captions
+opencv-python
+pillow
