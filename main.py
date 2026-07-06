@@ -388,8 +388,6 @@ class TranslationApp(
         self.app_startup_ready = False
         self._startup_loading_overlay = None
         self._startup_loading_progress = None
-        self._startup_overlay_stt_var = None
-        self._startup_overlay_translation_var = None
         self.speech_engine = "realtime-stt"
         self.stt_device = "auto"
         self.cuda_directory = ""

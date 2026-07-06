@@ -203,6 +203,13 @@ class SettingsUIMixin:
         a load already in progress. Shown once per app run; see
         _check_startup_ready/_mark_startup_stt_ready/
         _mark_startup_translation_ready.
+
+        Deliberately just a plain message and spinner - both readiness
+        flags are marked "ready" on failure as well as success (a
+        terminal-state gate, not a success gate), so a real error hides
+        this overlay almost immediately rather than sitting behind it, and
+        surfaces via the ordinary status_label underneath (update_status)
+        instead of needing its own error text here.
         """
         overlay = tk.Frame(settings_window, bg=settings_bg)
         overlay.place(relx=0, rely=0, relwidth=1, relheight=1)
@@ -213,48 +220,14 @@ class SettingsUIMixin:
         center.place(relx=0.5, rely=0.45, anchor="center")
         tk.Label(
             center,
-            text="Starting up...",
+            text="Loading...",
             bg=settings_bg,
             fg=settings_fg,
             font=(self.ui_font_family, 14, "bold"),
-        ).pack(pady=(0, 8))
-        tk.Label(
-            center,
-            text="Loading speech recognition and translation models.",
-            bg=settings_bg,
-            fg=settings_fg,
-            font=(self.ui_font_family, 10),
-            wraplength=420,
-            justify="center",
         ).pack(pady=(0, 14))
         progress = ttkb.Progressbar(center, mode="indeterminate", length=320)
-        progress.pack(pady=(0, 10))
+        progress.pack()
         progress.start(15)
-        # Two dedicated lines instead of mirroring the shared status bar:
-        # once RealtimeSTT is ready it fires a "Listening..." update on every
-        # idle cycle, which drowned out Local NLLB's (much rarer, often much
-        # slower) download/loading messages and made a still-working NLLB
-        # load look identical to a hang.
-        self._startup_overlay_stt_var = tk.StringVar(value="Speech recognition: Loading...")
-        tk.Label(
-            center,
-            textvariable=self._startup_overlay_stt_var,
-            bg=settings_bg,
-            fg=settings_fg,
-            font=(self.ui_font_family, 9),
-            wraplength=420,
-            justify="center",
-        ).pack()
-        self._startup_overlay_translation_var = tk.StringVar(value="Translation: Loading...")
-        tk.Label(
-            center,
-            textvariable=self._startup_overlay_translation_var,
-            bg=settings_bg,
-            fg=settings_fg,
-            font=(self.ui_font_family, 9),
-            wraplength=420,
-            justify="center",
-        ).pack()
 
         self._startup_loading_overlay = overlay
         self._startup_loading_progress = progress
@@ -263,16 +236,6 @@ class SettingsUIMixin:
     def _poll_startup_overlay_status(self):
         if self._startup_loading_overlay is None:
             return
-        try:
-            self._startup_overlay_stt_var.set(
-                "Speech recognition: "
-                + ("Ready" if self.startup_stt_ready else "Loading...")
-            )
-            self._startup_overlay_translation_var.set(
-                f"Translation: {self._local_nllb_status_message() or self.nllb_status}"
-            )
-        except Exception:
-            pass
         self._check_startup_ready()
         if self._startup_loading_overlay is not None:
             self.root.after(500, self._poll_startup_overlay_status)
@@ -292,8 +255,6 @@ class SettingsUIMixin:
                 pass
         self._startup_loading_overlay = None
         self._startup_loading_progress = None
-        self._startup_overlay_stt_var = None
-        self._startup_overlay_translation_var = None
 
     def _check_startup_ready(self):
         if self.app_startup_ready:
