@@ -288,6 +288,8 @@ class DisplayMixin:
         return max(int(minimum_ms), int(round(max(0.0, base) / speed)))
 
     def _effective_max_lines(self):
+        if getattr(self, "video_feed_enabled", False):
+            return 2
         return max(1, int(self.max_lines))
 
     def _trim_translation_history(self):
@@ -718,7 +720,6 @@ class DisplayMixin:
         for item in self.text_line_items:
             self.text_canvas.itemconfigure(item, state="normal")
         self._update_line_items(display_lines)
-        self.text_canvas.update_idletasks()
         self.update_preview(display_text)
         self.update_text_metrics()
 

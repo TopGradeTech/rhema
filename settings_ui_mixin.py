@@ -481,6 +481,8 @@ class SettingsUIMixin:
             self.video_device_index = self._parse_camera_device_label(
                 display_vars["video_device_var"].get()
             )
+        if "video_caption_alpha_var" in display_vars:
+            self.video_caption_bar_alpha = display_vars["video_caption_alpha_var"].get() / 100.0
         self.stop_video_feed()
         self.start_video_feed()
         self._apply_scaled_fonts()
@@ -1152,10 +1154,20 @@ class SettingsUIMixin:
 
     def _update_line_items(self, display_lines):
         height = self.text_canvas.winfo_height()
-        available = max(1, height - (self.text_padding * 2))
         lines = self._effective_max_lines()
         self._ensure_line_items(lines)
         line_height = self.text_font.metrics("linespace") or 1
+
+        if getattr(self, "video_feed_enabled", False):
+            # Captions live inside the fixed gray bar docked to the bottom
+            # of the video, not spread across the whole canvas.
+            bar_height = self._video_caption_bar_height(height, line_height, lines)
+            top = height - bar_height + self.text_padding
+            available = max(1, bar_height - (self.text_padding * 2))
+        else:
+            top = self.text_padding
+            available = max(1, height - (self.text_padding * 2))
+
         if lines > 1 and available > line_height:
             step = (available - line_height) / (lines - 1)
         else:
@@ -1166,7 +1178,7 @@ class SettingsUIMixin:
             slots[lines - len(display_lines[-lines:]) + i] = line
 
         for idx, line in enumerate(slots):
-            y = self.text_padding + (idx * step)
+            y = top + (idx * step)
             self.text_canvas.coords(self.text_line_items[idx], self.text_padding, y)
             self.text_canvas.itemconfigure(
                 self.text_line_items[idx],
@@ -1442,14 +1454,55 @@ class SettingsUIMixin:
         )
         video_status_label.pack(anchor="w", pady=(6, 0))
 
+        self._add_setting_label(
+            video_feed_options_frame,
+            "Caption Bar Opacity:",
+            "How solid the gray bar behind the 2 caption lines looks. "
+            "0% is fully see-through, 100% is a solid gray bar.",
+            label_opts,
+            pady=(10, 0),
+        )
+        video_caption_alpha_var = tk.IntVar(
+            value=int(round(self.video_caption_bar_alpha * 100))
+        )
+        palette = getattr(self, "_ui_palette", self._settings_palette())
+        video_caption_alpha_scale = tk.Scale(
+            video_feed_options_frame,
+            from_=0,
+            to=100,
+            orient=tk.HORIZONTAL,
+            variable=video_caption_alpha_var,
+            bg=section_bg,
+            fg=settings_fg,
+            troughcolor=palette["input_bg"],
+            highlightthickness=0,
+            activebackground=palette["accent"],
+            showvalue=True,
+        )
+        video_caption_alpha_scale.pack(anchor="w", fill=tk.X)
+
         def on_video_feed_toggle(*_args):
             if video_feed_enabled_var.get():
-                video_feed_options_frame.pack(fill=tk.X, pady=(4, 0))
+                # pack_forget() below drops the frame out of display_section's
+                # packing order entirely, so a later plain pack() call would
+                # re-add it at the end (after every other Display setting)
+                # instead of back next to its checkbox. Pin it explicitly with
+                # after= so its position is stable no matter how many times
+                # it's toggled or when in the build order that happens.
+                video_feed_options_frame.pack(fill=tk.X, pady=(4, 0), after=video_feed_row)
             else:
                 video_feed_options_frame.pack_forget()
 
         video_feed_enabled_var.trace_add("write", lambda *_args: on_video_feed_toggle())
         on_video_feed_toggle()
+        if video_feed_enabled_var.get():
+            # The options frame (device dropdown + Refresh button) is being
+            # packed before the settings window's first geometry pass, which
+            # can leave it laid out with a stale/zero size on relaunch when
+            # the feature was already enabled at startup. Re-running the
+            # same pack call shortly after the window is realized fixes it
+            # (this mirrors the manual uncheck/recheck workaround).
+            settings_window.after(150, on_video_feed_toggle)
 
         self._add_setting_label(
             display_section,
@@ -1599,6 +1652,7 @@ class SettingsUIMixin:
             "monitor_labels": monitor_labels,
             "video_feed_enabled_var": video_feed_enabled_var,
             "video_device_var": video_device_var,
+            "video_caption_alpha_var": video_caption_alpha_var,
         }
 
     def _build_audio_section(self, audio_section, label_opts):
