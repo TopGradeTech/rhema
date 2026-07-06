@@ -420,8 +420,8 @@ class TranslationApp(
         self.last_stt_source_lang = ""
         self.last_stt_source_lang_confidence = None
         self.preview_widget = None
-        self.preview_font = None
-        self.preview_placeholder = "Preview will appear here."
+        self._output_snapshot_photo = None
+        self._output_snapshot_after_id = None
         self.settings_geometry = None
         self.settings_monitor_index = 0
         self.settings_monitor_device = ""

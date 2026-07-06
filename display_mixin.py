@@ -559,12 +559,10 @@ class DisplayMixin:
         self._fit_font_to_lines()
         display_lines = self._compose_display_lines()
         self.last_display_line_count = len(display_lines)
-        display_text = "\n".join(display_lines)
         self.text_canvas.itemconfigure(self.text_item, text="", state="hidden")
         for item in self.text_line_items:
             self.text_canvas.itemconfigure(item, state="normal")
         self._update_line_items(display_lines)
-        self.update_preview(display_text)
         self.update_text_metrics()
 
     def _compose_display_lines(self):
@@ -582,19 +580,6 @@ class DisplayMixin:
 
     def _coerce_render_segment(self, segment):
         return self.filter_bad_words(segment).strip()
-
-    def update_preview(self, text):
-        if not self.preview_widget:
-            return
-
-        def update():
-            widget = self.preview_widget
-            if not widget or not widget.winfo_exists():
-                return
-            widget.config(text=text if text else self.preview_placeholder)
-            self._sync_preview_colors()
-
-        self.root.after(0, update)
 
     def update_text_metrics(self):
         line_height = self.text_font.metrics("linespace") or 1

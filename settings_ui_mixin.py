@@ -4,7 +4,6 @@ from tkinter import ttk
 from tkinter import messagebox
 from tkinter import colorchooser
 from tkinter import filedialog
-from tkinter import font as tkfont
 from threading import Thread, Lock, Event
 import queue
 import time
@@ -26,9 +25,17 @@ import wave
 import importlib.util
 import ttkbootstrap as ttkb
 from ttkbootstrap.constants import PRIMARY
+from PIL import Image, ImageGrab, ImageTk
 
 from languages import whisper_language_options, nllb_language_options
 from tooltip import Tooltip
+
+# Output window snapshot (replaces the old live text preview): a periodic
+# screenshot thumbnail instead of a per-render text mirror, so the
+# Controller window doesn't need to reformat/rewrap text on every single
+# render tick just to keep a duplicate preview in sync.
+_OUTPUT_SNAPSHOT_INTERVAL_MS = 120_000  # 2 minutes between snapshots
+_OUTPUT_SNAPSHOT_WIDTH = 320  # thumbnail width in px; height follows the output window's aspect ratio
 
 
 class SettingsUIMixin:
@@ -1112,9 +1119,6 @@ class SettingsUIMixin:
             best = min(best, target_size)
 
         self.text_font.configure(size=best)
-        if self.preview_font is not None:
-            preview_size = max(12, int(best * 0.5))
-            self.preview_font.configure(size=preview_size)
 
     def _font_size_bounds_for_canvas(self, available_height, lines, max_size=None):
         approx = max(12, int(available_height / max(1, lines)))
@@ -1275,7 +1279,7 @@ class SettingsUIMixin:
     def _build_preview_section(self, content, label_opts, section_bg, settings_fg, section_font):
         preview_section = tk.LabelFrame(
             content,
-            text="Output Preview",
+            text="Output Snapshot",
             bg=section_bg,
             fg=settings_fg,
             font=section_font,
@@ -1284,34 +1288,63 @@ class SettingsUIMixin:
         )
         preview_section.pack(fill=tk.X, pady=(0, 10))
 
-        tk.Label(preview_section, text="Current output:", **label_opts).pack(anchor="w", pady=(0, 4))
-        preview_size = max(12, int(self._compute_scaled_font_size() * 0.5))
-        self.preview_font = tkfont.Font(family=self.font_family, size=preview_size)
+        interval_min = _OUTPUT_SNAPSHOT_INTERVAL_MS // 60_000
+        tk.Label(
+            preview_section,
+            text=f"Periodic screenshot of the output window (refreshes every {interval_min} min).",
+            **label_opts,
+        ).pack(anchor="w", pady=(0, 4))
         self.preview_widget = tk.Label(
             preview_section,
-            text=self.preview_placeholder,
-            bg=self.bg_color,
-            fg=self.text_color,
-            font=self.preview_font,
-            justify="left",
-            anchor="nw",
-            height=4,
+            text="Capturing snapshot...",
+            bg=section_bg,
+            fg=settings_fg,
+            anchor="center",
             relief="solid",
             borderwidth=1,
         )
-        self.preview_widget.pack(fill=tk.X)
+        self.preview_widget.pack()
 
-        def update_preview_wrap(event):
-            widget = self.preview_widget
-            if widget and widget.winfo_exists():
-                widget.config(wraplength=max(1, event.width - 10))
+        # Give the output window a moment to finish its own initial
+        # layout/paint before grabbing the first screenshot.
+        self.root.after(300, self._capture_output_snapshot)
+        self._schedule_output_snapshot()
 
-        self.preview_widget.bind(self.CONFIGURE_EVENT, update_preview_wrap)
-        self._sync_preview_colors()
+    def _capture_output_snapshot(self):
+        widget = self.preview_widget
+        if widget is None or not widget.winfo_exists():
+            return
         try:
-            self.render_text()
+            x = self.root.winfo_rootx()
+            y = self.root.winfo_rooty()
+            width = self.root.winfo_width()
+            height = self.root.winfo_height()
+            if width <= 1 or height <= 1:
+                return
+            shot = ImageGrab.grab(bbox=(x, y, x + width, y + height))
+            scale = min(1.0, _OUTPUT_SNAPSHOT_WIDTH / width)
+            thumb_size = (max(1, int(width * scale)), max(1, int(height * scale)))
+            shot = shot.resize(thumb_size, Image.Resampling.LANCZOS)
+            photo = ImageTk.PhotoImage(shot)
+        except Exception:
+            return
+        # Keep a reference - Tk drops the image if the last Python reference
+        # to a PhotoImage is garbage collected.
+        self._output_snapshot_photo = photo
+        try:
+            widget.config(image=photo, text="")
         except Exception:
             pass
+
+    def _schedule_output_snapshot(self):
+        self._output_snapshot_after_id = self.root.after(
+            _OUTPUT_SNAPSHOT_INTERVAL_MS, self._run_output_snapshot_tick
+        )
+
+    def _run_output_snapshot_tick(self):
+        self._output_snapshot_after_id = None
+        self._capture_output_snapshot()
+        self._schedule_output_snapshot()
 
     def _build_settings_sections(
         self,
@@ -3513,29 +3546,6 @@ class SettingsUIMixin:
         self.text_canvas.itemconfigure(self.text_item, fill=self.text_color)
         for item in self.text_line_items:
             self.text_canvas.itemconfigure(item, fill=self.text_color)
-        self._sync_preview_colors()
-
-    def _get_output_colors(self):
-        bg = self.bg_color
-        fg = self.text_color
-        try:
-            bg = self.text_canvas.cget("bg")
-        except Exception:
-            pass
-        try:
-            fg = self.text_canvas.itemcget(self.text_item, "fill")
-        except Exception:
-            pass
-        return bg, fg
-
-    def _sync_preview_colors(self):
-        if self.preview_widget is None or not self.preview_widget.winfo_exists():
-            return
-        bg, fg = self._get_output_colors()
-        try:
-            self.preview_widget.config(bg=bg, fg=fg)
-        except Exception:
-            pass
 
     def _apply_canvas_padding(self):
         pad = 0 if self.is_fullscreen else self.canvas_margin
