@@ -308,8 +308,8 @@ class RealtimeSttMixin:
                 pass
 
     def _realtime_stt_show(self, text):
-        """Direct commit to display — used when translation is off."""
+        """Direct commit to display — used when translation is off. Large
+        multi-sentence finals are metered out sentence-by-sentence instead
+        of dumping at once (see _meter_display_commit)."""
         self.live_line = ""
-        self.translations.append(text)
-        self._trim_translation_history()
-        self.render_text()
+        self._meter_display_commit(text, stage="realtime_stt_commit")
