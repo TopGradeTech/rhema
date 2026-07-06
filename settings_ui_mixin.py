@@ -675,16 +675,9 @@ class SettingsUIMixin:
             self.local_nllb_device,
             self.local_nllb_cache_dir,
         )
-        if next_nllb_config != previous_nllb_config:
-            with self.local_nllb_lock:
-                self.local_nllb_tokenizer = None
-                self.local_nllb_model = None
-                self.local_nllb_model_config = None
-                self.local_nllb_resolved_device = ""
-            self.nllb_model_loaded = False
-            self.nllb_ready_config = None
-            self.nllb_last_error = ""
-            gc.collect()
+        just_disabled = was_translation_enabled and not self.translation_enabled
+        if next_nllb_config != previous_nllb_config or just_disabled:
+            self._unload_local_nllb_model()
         self._trace_pipeline(
             "translation_toggle_applied",
             "",
@@ -697,12 +690,49 @@ class SettingsUIMixin:
             local_nllb_source_lang=self.local_nllb_source_lang,
             local_nllb_target_lang=self.local_nllb_target_lang,
         )
-        if was_translation_enabled and not self.translation_enabled:
+        if just_disabled:
             self._clear_translation_backlog_after_disable()
-        self._start_local_nllb_cache_check(
-            self._local_nllb_runtime_config(),
-            prompt_if_missing=True,
-        )
+            self._set_local_nllb_status(
+                "Not selected",
+                "Translation is off. Enable it above to check or download the Local NLLB model.",
+            )
+        # Translation is opt-in: don't check the cache, prompt for a
+        # ~2.5 GB download, or load the model into memory unless
+        # translation is actually enabled (mirrors maybe_start_nllb_prewarm
+        # in _build_translation_section).
+        if self.translation_enabled:
+            self._start_local_nllb_cache_check(
+                self._local_nllb_runtime_config(),
+                prompt_if_missing=True,
+            )
+
+    def _unload_local_nllb_model(self):
+        """Release the loaded NLLB tokenizer/model (and its GPU/CPU memory)
+        so it isn't held onto once it's no longer needed - either because
+        the model/device/cache config changed, or translation was turned
+        off entirely."""
+        was_cuda = self.local_nllb_resolved_device == "cuda"
+        with self.local_nllb_lock:
+            self.local_nllb_tokenizer = None
+            self.local_nllb_model = None
+            self.local_nllb_model_config = None
+            self.local_nllb_resolved_device = ""
+        self.nllb_model_loaded = False
+        self.nllb_ready_config = None
+        self.nllb_last_error = ""
+        gc.collect()
+        if was_cuda:
+            # Dropping the last reference frees the Python objects, but
+            # PyTorch's CUDA caching allocator holds onto that VRAM for
+            # reuse rather than returning it to the driver - empty_cache()
+            # actually gives it back, which matters since RealtimeSTT's
+            # own models may be competing for the same GPU.
+            try:
+                import torch
+                if torch.cuda.is_available():
+                    torch.cuda.empty_cache()
+            except Exception:
+                pass
 
     def _apply_audio_vars(self, audio_vars):
         # Audio device changes are applied immediately by the device-menu callback.
