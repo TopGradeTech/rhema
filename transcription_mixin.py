@@ -615,9 +615,14 @@ class TranscriptionMixin:
                 break
             except Exception:
                 break
-        dropped_display = len(self.word_reveal_queue) + len(self.text_queue)
-        self.word_reveal_queue.clear()
-        self.text_queue.clear()
+        dropped_display = len(self.display_drip_queue)
+        self.display_drip_queue.clear()
+        if self.display_drip_after_id is not None:
+            try:
+                self.root.after_cancel(self.display_drip_after_id)
+            except Exception:
+                pass
+            self.display_drip_after_id = None
         dropped_finalized = 0
         while True:
             try:
@@ -627,13 +632,6 @@ class TranscriptionMixin:
                 break
             except Exception:
                 break
-        self.pending_text = ""
-        self.pending_latency_meta = None
-        self.is_flushing_queue = False
-        self.is_revealing_words = False
-        self.current_reveal_words = []
-        self.current_reveal_text = ""
-        self.current_reveal_latency_meta = None
         self.live_line = ""
         self.last_stt_pretranslated = False
         self.last_openai_translate_ms = None

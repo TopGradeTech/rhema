@@ -67,7 +67,12 @@ class TextFilterMixin:
             return text
         filtered = text
         for word in sorted(active_bad_words, key=len, reverse=True):
-            pattern = r"\b" + re.escape(word) + r"\b"
+            # A bare \bword\b only matches the word in exact isolation, so a
+            # spoken inflection like "fucking"/"fuckers" (no boundary right
+            # after the stem) slipped straight through. Allow a handful of
+            # common, regular English suffixes after the stem - deliberately
+            # not a bare "y" (would also catch innocuous words like "cocky").
+            pattern = r"\b" + re.escape(word) + r"(?:s|es|ing|ed|er|ers)?\b"
             filtered = re.sub(pattern, "", filtered, flags=re.IGNORECASE)
         filtered = re.sub(self.PUNCTUATION_SPACING_PATTERN, r"\1", filtered)
         filtered = re.sub(r"\(\s+", "(", filtered)
