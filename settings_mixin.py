@@ -26,6 +26,8 @@ import importlib.util
 import ttkbootstrap as ttkb
 from ttkbootstrap.constants import PRIMARY
 
+from languages import FLORES_TO_WHISPER
+
 
 class SettingsMixin:
     def load_settings(self):
@@ -400,12 +402,12 @@ class SettingsMixin:
         return mapped
 
     def _nllb_code_to_two_letter(self, code):
-        code = (code or "").strip().lower()
-        if code.startswith("eng"):
-            return "en"
-        if code.startswith("spa"):
-            return "es"
-        return ""
+        # FLORES-200 code -> whisper/RealtimeSTT code, so an explicit NLLB
+        # source-language selection can hint the STT engine correctly even
+        # for languages beyond the original English/Spanish pair. Returns ""
+        # for FLORES codes with no RealtimeSTT/Whisper equivalent.
+        code = (code or "").strip()
+        return FLORES_TO_WHISPER.get(code, "")
 
     def _normalize_translation_settings(self):
         self.auto_switch_translation = self._coerce_bool(
@@ -425,11 +427,16 @@ class SettingsMixin:
         )
 
     def _apply_translation_mode_defaults(self):
-        self.source_lang = "en"
-        self.target_lang = "en"
+        # Only fall back to the original Spanish->English default when the
+        # user hasn't already made an explicit language choice (source_lang
+        # still at its out-of-the-box "en"/"auto"/empty state) - otherwise
+        # toggling translation off and back on would silently discard a
+        # deliberately-picked language pair (e.g. French) every time.
         if self.translation_enabled:
-            self.source_lang = "es"
-            self.target_lang = "en"
+            if (self.source_lang or "").strip().lower() in ("", "en", "auto"):
+                self.source_lang = "es"
+            if not (self.target_lang or "").strip():
+                self.target_lang = "en"
         self.auto_switch_translation = False
 
     def save_settings(self):

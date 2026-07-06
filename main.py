@@ -24,6 +24,7 @@ import importlib.util
 import ttkbootstrap as ttkb
 from ttkbootstrap.constants import PRIMARY
 
+from languages import WHISPER_LANGUAGES
 from tooltip import Tooltip
 from logging_mixin import LoggingMixin
 from settings_mixin import SettingsMixin
@@ -145,53 +146,47 @@ class TranslationApp(
     LOCAL_NLLB_FAILED_MESSAGE = (
         "Local NLLB translation failed. The source transcript is still available."
     )
+    # Auto-derived from languages.WHISPER_LANGUAGES: every 2-letter
+    # RealtimeSTT/Whisper code that has a FLORES-200 equivalent (97 of the
+    # 100 supported STT languages) maps to its NLLB code, so "NLLB source =
+    # follow the selected STT source language" works for any of them, not
+    # just the original English/Spanish pair. The dict below adds aliases
+    # for full language names and alternate (3-letter/legacy) codes that
+    # aren't derivable from the 2-letter code table.
     LOCAL_NLLB_LANG_ALIASES = {
-        "ar": "arb_Arab",
+        **{code: flores for code, (_name, flores) in WHISPER_LANGUAGES.items() if flores},
         "ara": "arb_Arab",
         "arabic": "arb_Arab",
         "arb": "arb_Arab",
         "chinese": "zho_Hans",
         "chinese simplified": "zho_Hans",
         "chinese traditional": "zho_Hant",
-        "de": "deu_Latn",
         "deu": "deu_Latn",
         "dutch": "nld_Latn",
-        "en": "eng_Latn",
         "eng": "eng_Latn",
         "english": "eng_Latn",
-        "es": "spa_Latn",
         "fra": "fra_Latn",
         "fre": "fra_Latn",
         "french": "fra_Latn",
-        "fr": "fra_Latn",
         "ger": "deu_Latn",
         "german": "deu_Latn",
-        "hi": "hin_Deva",
         "hin": "hin_Deva",
         "hindi": "hin_Deva",
-        "it": "ita_Latn",
         "ita": "ita_Latn",
         "italian": "ita_Latn",
-        "ja": "jpn_Jpan",
         "japanese": "jpn_Jpan",
         "jpn": "jpn_Jpan",
-        "ko": "kor_Hang",
         "kor": "kor_Hang",
         "korean": "kor_Hang",
-        "nl": "nld_Latn",
         "nld": "nld_Latn",
         "por": "por_Latn",
         "portuguese": "por_Latn",
-        "pt": "por_Latn",
-        "ru": "rus_Cyrl",
         "rus": "rus_Cyrl",
         "russian": "rus_Cyrl",
         "spa": "spa_Latn",
         "spanish": "spa_Latn",
-        "uk": "ukr_Cyrl",
         "ukr": "ukr_Cyrl",
         "ukrainian": "ukr_Cyrl",
-        "zh": "zho_Hans",
         "zh-cn": "zho_Hans",
         "zh-hans": "zho_Hans",
         "zh-hant": "zho_Hant",

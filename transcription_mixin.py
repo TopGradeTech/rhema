@@ -2,6 +2,8 @@ import queue
 import time
 import re
 
+from languages import WHISPER_LANGUAGE_NAMES
+
 
 class TranscriptionMixin:
     def _enqueue_flushed_sentences_from_buffer(self, text, capture_meta=None, overlap_words=0):
@@ -688,13 +690,9 @@ class TranscriptionMixin:
 
     def _language_label(self, code):
         code = (code or "").strip().lower()
-        if code == "en":
-            return "English"
-        if code == "es":
-            return "Spanish"
         if not code:
             return ""
-        return code
+        return WHISPER_LANGUAGE_NAMES.get(code, code)
 
     def _listening_status_message(self):
         source = (self.source_lang or "").strip().lower()
