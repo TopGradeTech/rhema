@@ -1,5 +1,6 @@
 import speech_recognition as sr
 import tkinter as tk
+from tkinter import ttk
 from tkinter import messagebox
 from tkinter import colorchooser
 from tkinter import filedialog
@@ -26,6 +27,7 @@ import importlib.util
 import ttkbootstrap as ttkb
 from ttkbootstrap.constants import PRIMARY
 
+from languages import whisper_language_options, nllb_language_options
 from tooltip import Tooltip
 
 
@@ -519,6 +521,14 @@ class SettingsUIMixin:
         previous_final_model = self.realtime_stt_final_model
         previous_realtime_model = self.realtime_stt_realtime_model
         previous_silero_sensitivity = self.realtime_stt_silero_sensitivity
+        previous_source_lang = self.source_lang
+        self.source_lang = self._optional_mapped_api_setting(
+            transcription_vars,
+            "stt_source_lang_var",
+            "stt_source_lang_map",
+            current_value=self.source_lang,
+            mapped_default="auto",
+        )
         if "stt_device_var" in transcription_vars:
             self.stt_device = self._normalize_stt_device(
                 transcription_vars["stt_device_var"].get()
@@ -543,13 +553,15 @@ class SettingsUIMixin:
             else self.realtime_stt_silero_sensitivity,
             self.realtime_stt_silero_sensitivity, 0.1, 0.9,
         )
-        # device/model/sensitivity are only read when RealtimeSTT constructs
-        # its recorder, so a live rebuild is needed for the change to apply.
+        # device/model/sensitivity/language are only read when RealtimeSTT
+        # constructs its recorder, so a live rebuild is needed for the
+        # change to apply.
         if (
             self.stt_device != previous_device
             or self.realtime_stt_final_model != previous_final_model
             or self.realtime_stt_realtime_model != previous_realtime_model
             or self.realtime_stt_silero_sensitivity != previous_silero_sensitivity
+            or self.source_lang != previous_source_lang
         ):
             self._request_capture_restart()
 
@@ -958,7 +970,72 @@ class SettingsUIMixin:
             )
         except Exception:
             pass
-    
+
+    def _apply_combobox_style(self, combobox):
+        palette = getattr(self, "_ui_palette", self._settings_palette())
+        style_name = f"Lang{id(combobox)}.TCombobox"
+        try:
+            style = ttk.Style(combobox)
+            style.configure(
+                style_name,
+                fieldbackground=palette["input_bg"],
+                background=palette["input_bg"],
+                foreground=palette["text"],
+            )
+            combobox.configure(style=style_name)
+        except Exception:
+            pass
+
+    def _build_searchable_language_combobox(
+        self, parent, options, current_code, default_display=None, width=42
+    ):
+        """A ttk.Combobox that filters its dropdown as the user types, for
+        language pickers with 100-200 options where a plain OptionMenu
+        would be unusable. `options` is a list of (display_name, code)
+        pairs. Returns (combobox, string_var, name_to_code_map) - the var
+        and map are exactly what _optional_mapped_api_setting expects for
+        its "var_key"/"map_key" pair, so callers just add both to the
+        returned settings-vars dict under those two keys.
+
+        Typing anything not matching an option is harmless: Apply falls
+        back to that field's existing mapped_default via
+        _optional_mapped_api_setting, it doesn't raise or crash.
+        """
+        all_display = [name for name, _code in options]
+        name_to_code = dict(options)
+        code_to_name = {code: name for name, code in options}
+        initial = code_to_name.get(
+            current_code, default_display or (all_display[0] if all_display else "")
+        )
+        var = tk.StringVar(value=initial)
+        combobox = ttk.Combobox(parent, textvariable=var, values=all_display, width=width)
+        self._apply_combobox_style(combobox)
+
+        def filter_options(_event=None):
+            typed = var.get().strip().lower()
+            if not typed:
+                combobox["values"] = all_display
+                return
+            filtered = [name for name in all_display if typed in name.lower()]
+            combobox["values"] = filtered or all_display
+            try:
+                combobox.tk.call("ttk::combobox::Post", combobox)
+            except Exception:
+                pass
+
+        def restore_full_list(_event=None):
+            combobox["values"] = all_display
+
+        combobox.bind(
+            "<KeyRelease>",
+            lambda e: None
+            if e.keysym in ("Up", "Down", "Return", "Escape", "Tab")
+            else filter_options(),
+        )
+        combobox.bind("<<ComboboxSelected>>", restore_full_list)
+        combobox.bind("<FocusOut>", restore_full_list)
+        return combobox, var, name_to_code
+
     def _compute_scaled_font_size(self):
         base_size = max(12, int(self.font_size))
         lines = self._effective_max_lines()
@@ -2025,6 +2102,35 @@ class SettingsUIMixin:
         # ── RealtimeSTT settings panel ─────────────────────────────────
         realtime_stt_container = tk.Frame(transcription_section, bg=label_opts["bg"])
         realtime_stt_container.pack(fill=tk.X, pady=(10, 0))
+        source_lang_row = tk.Frame(realtime_stt_container, bg=section_bg)
+        source_lang_row.pack(anchor="w", fill=tk.X, pady=(0, 4))
+        tk.Label(
+            source_lang_row,
+            text="Source language:",
+            bg=section_bg,
+            fg=settings_fg,
+            font=(self.ui_font_family, 9, "bold"),
+        ).pack(side=tk.LEFT)
+        self._create_help_icon(
+            source_lang_row,
+            "Type to search all " + str(len(whisper_language_options())) + " languages "
+            "RealtimeSTT/Whisper supports: "
+            + ", ".join(name for name, _code in whisper_language_options())
+            + ".",
+            section_bg,
+            settings_fg,
+        )
+        stt_language_options = [("Auto-detect", "auto")] + whisper_language_options()
+        stt_source_lang_combobox, stt_source_lang_var, stt_source_lang_map = (
+            self._build_searchable_language_combobox(
+                realtime_stt_container,
+                stt_language_options,
+                current_code=(self.source_lang or "auto"),
+                default_display="Auto-detect",
+            )
+        )
+        stt_source_lang_combobox.pack(anchor="w", pady=(0, 8))
+
         self._add_setting_label(
             realtime_stt_container,
             "Device:",
@@ -2132,6 +2238,8 @@ class SettingsUIMixin:
         realtime_stt_silero_spin.pack(anchor="w")
 
         return {
+            "stt_source_lang_var": stt_source_lang_var,
+            "stt_source_lang_map": stt_source_lang_map,
             "stt_device_var": stt_device_var,
             "realtime_stt_final_model_var": realtime_stt_final_model_var,
             "realtime_stt_final_model_map": realtime_stt_final_model_map,
@@ -2309,23 +2417,7 @@ class SettingsUIMixin:
         self._apply_option_menu_style(nllb_device_menu)
         nllb_device_menu.pack(anchor="w", pady=(0, 8))
 
-        nllb_language_options = [
-            ("English", "eng_Latn"),
-            ("Spanish", "spa_Latn"),
-            ("French", "fra_Latn"),
-            ("German", "deu_Latn"),
-            ("Italian", "ita_Latn"),
-            ("Portuguese", "por_Latn"),
-            ("Dutch", "nld_Latn"),
-            ("Russian", "rus_Cyrl"),
-            ("Ukrainian", "ukr_Cyrl"),
-            ("Arabic", "arb_Arab"),
-            ("Hindi", "hin_Deva"),
-            ("Chinese (Simplified)", "zho_Hans"),
-            ("Chinese (Traditional)", "zho_Hant"),
-            ("Japanese", "jpn_Jpan"),
-            ("Korean", "kor_Hang"),
-        ]
+        nllb_all_language_options = nllb_language_options()
 
         lang_row = tk.Frame(nllb_container, bg=section_bg)
         lang_row.pack(fill=tk.X, pady=(0, 8))
@@ -2336,50 +2428,43 @@ class SettingsUIMixin:
         self._add_setting_label(
             source_col,
             "Source language:",
-            "Auto uses the app's selected source language.",
+            "Type to search all 200 languages Local NLLB supports. Auto uses "
+            "the app's selected source language (Transcription section).",
             label_opts,
             pady=(0, 4),
         )
         nllb_source_options = [
             ("Auto (use selected source language)", self.LOCAL_NLLB_DEFAULT_SOURCE_LANG)
-        ] + nllb_language_options
-        nllb_source_display = [name for name, _ in nllb_source_options]
-        local_nllb_source_lang_map = dict(nllb_source_options)
-        nllb_source_rev_map = {code: name for name, code in nllb_source_options}
-        local_nllb_source_lang_var = tk.StringVar(
-            value=nllb_source_rev_map.get(
-                self.local_nllb_source_lang, nllb_source_display[0]
-            )
-        )
-        nllb_source_menu = tk.OptionMenu(
-            source_col,
+        ] + nllb_all_language_options
+        (
+            nllb_source_combobox,
             local_nllb_source_lang_var,
-            *nllb_source_display,
+            local_nllb_source_lang_map,
+        ) = self._build_searchable_language_combobox(
+            source_col,
+            nllb_source_options,
+            current_code=self.local_nllb_source_lang,
+            default_display="Auto (use selected source language)",
         )
-        self._apply_option_menu_style(nllb_source_menu)
-        nllb_source_menu.pack(anchor="w")
+        nllb_source_combobox.pack(anchor="w")
         self._add_setting_label(
             target_col,
             "Target language:",
-            "Language the translated transcript is produced in.",
+            "Language the translated transcript is produced in. Type to search all 200 languages.",
             label_opts,
             pady=(0, 4),
         )
-        nllb_target_display = [name for name, _ in nllb_language_options]
-        local_nllb_target_lang_map = dict(nllb_language_options)
-        nllb_target_rev_map = {code: name for name, code in nllb_language_options}
-        local_nllb_target_lang_var = tk.StringVar(
-            value=nllb_target_rev_map.get(
-                self.local_nllb_target_lang, nllb_target_display[0]
-            )
-        )
-        nllb_target_menu = tk.OptionMenu(
-            target_col,
+        (
+            nllb_target_combobox,
             local_nllb_target_lang_var,
-            *nllb_target_display,
+            local_nllb_target_lang_map,
+        ) = self._build_searchable_language_combobox(
+            target_col,
+            nllb_all_language_options,
+            current_code=self.local_nllb_target_lang,
+            default_display="English",
         )
-        self._apply_option_menu_style(nllb_target_menu)
-        nllb_target_menu.pack(anchor="w")
+        nllb_target_combobox.pack(anchor="w")
 
         self._add_setting_label(
             nllb_container,
