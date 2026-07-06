@@ -35,6 +35,7 @@ from translation_mixin import TranslationMixin
 from text_filter_mixin import TextFilterMixin
 from display_mixin import DisplayMixin
 from realtime_stt_mixin import RealtimeSttMixin
+from video_capture_mixin import VideoCaptureMixin
 
 class TranslationApp(
     LoggingMixin,
@@ -47,6 +48,7 @@ class TranslationApp(
     TextFilterMixin,
     DisplayMixin,
     RealtimeSttMixin,
+    VideoCaptureMixin,
 ):
     SCROLL_EVENTS = ("<MouseWheel>", "<Button-4>", "<Button-5>")
     CONFIGURE_EVENT = "<Configure>"
@@ -197,11 +199,6 @@ class TranslationApp(
         "zho": "zho_Hans",
     }
     LOGGING_MODE_OPTIONS = ("normal", "debug", "evaluation", "full")
-    DISPLAY_MODE_OPTIONS = ("fullscreen", "overlay")
-    OVERLAY_POSITION_OPTIONS = ("top", "bottom")
-    OVERLAY_LINE_HEIGHT_RATIO = 0.11
-    OVERLAY_MIN_HEIGHT_PX = 90
-    OVERLAY_MAX_HEIGHT_RATIO = 0.5
     WINDOWS_RUN_KEY_PATH = r"Software\Microsoft\Windows\CurrentVersion\Run"
     WINDOWS_STARTUP_VALUE_NAME = "TopGradePythonTranslation"
     GRATITUDE_SHORT_PHRASES = frozenset(
@@ -355,6 +352,7 @@ class TranslationApp(
         self.recommended_host_api = ""
         self.available_host_apis = []
         self._realtime_stt_defaults()
+        self._video_capture_defaults()
         self.text_translation_provider = "local_nllb"
         self.local_nllb_model_name = self.LOCAL_NLLB_DEFAULT_MODEL_NAME
         self.local_nllb_device = "auto"
@@ -457,11 +455,6 @@ class TranslationApp(
         self.text_color = "#ffffff"  # Text color
         self.font_size = 50  # Font size
 
-        self.display_mode = "fullscreen"
-        self.overlay_position = "bottom"
-        self.overlay_max_lines = 2
-        self.overlay_chroma_color = "#00FF00"
-        self.caption_overlay_active = False
         self.toggle_fullscreen_button = None
 
         self.text_font = tkfont.Font(family=self.font_family, size=self.font_size)
@@ -474,6 +467,10 @@ class TranslationApp(
             padx=self.canvas_margin,
             pady=self.canvas_margin,
         )
+        self.video_image_item = self.text_canvas.create_image(0, 0, anchor="nw", state="hidden")
+        self.video_status_var = None
+        self.video_device_menu = None
+        self.video_device_var = None
         self.text_padding = 12
         self.min_chars_per_line = 40
         self.text_item = self.text_canvas.create_text(
@@ -502,7 +499,7 @@ class TranslationApp(
         self.prev_geometry = None
         self.prev_overrideredirect = None
         self.prev_topmost = None
-        self.root.after(0, self._enter_configured_display_mode)
+        self.root.after(0, self.enter_fullscreen)
         self.root.after(50, self.show_status_temporarily)
         self.root.bind_all("<F11>", self.toggle_fullscreen_event)
         self.root.bind_all("<Control-Alt-f>", self.toggle_fullscreen_event)
@@ -606,12 +603,20 @@ class TranslationApp(
         self.thread.daemon = True
         self.thread.start()
         self._start_audio_level_stream_thread()
-        
-        self.root.mainloop()
+        self.start_video_feed()
+
+        try:
+            self.root.mainloop()
+        except KeyboardInterrupt:
+            pass
+        # Ctrl+C in the console raises KeyboardInterrupt here instead of
+        # going through WM_DELETE_WINDOW, so route it through the same
+        # shutdown path (stops RealtimeSTT's recorder before its
+        # multiprocessing child gets torn down by the interrupt itself,
+        # which otherwise races into a BrokenPipeError on the pipe).
+        self.on_closing()
     
     def toggle_fullscreen(self):
-        if self.display_mode == "overlay":
-            return
         self.is_fullscreen = not self.is_fullscreen
         if self.is_fullscreen:
             self.enter_fullscreen()
@@ -692,9 +697,25 @@ class TranslationApp(
                 f.write("".join(traceback.format_stack(limit=10)))
         except Exception:
             pass
+
+        # RealtimeSTT's own shutdown_recorder() joins its recording/realtime
+        # threads with no timeout, so if a subprocess died uncleanly (e.g.
+        # from the same Ctrl+C break event this process received) that join
+        # can block forever. Arm a watchdog that force-exits regardless, so
+        # closing the app is never held hostage by that internal hang.
+        import os as _os
+        import threading as _threading
+        watchdog = _threading.Timer(3.0, _os._exit, args=(0,))
+        watchdog.daemon = True
+        watchdog.start()
+
         self.listening = False
         try:
             self._stop_realtime_stt()
+        except Exception:
+            pass
+        try:
+            self.stop_video_feed()
         except Exception:
             pass
         try:
@@ -704,7 +725,6 @@ class TranslationApp(
         # Hard-exit so RealtimeSTT's multiprocessing child processes are also
         # killed. root.quit() alone only exits the Tkinter loop; os._exit()
         # terminates the entire process tree immediately.
-        import os as _os
         _os._exit(0)
 
 

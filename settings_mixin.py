@@ -72,16 +72,17 @@ class SettingsMixin:
             data.get("lock_output_focus", self.lock_output_focus),
             default=self.lock_output_focus,
         )
-        self.display_mode = self._normalize_display_mode(
-            data.get("display_mode", self.display_mode)
+        self.video_feed_enabled = self._coerce_bool(
+            data.get("video_feed_enabled", self.video_feed_enabled),
+            default=self.video_feed_enabled,
         )
-        self.overlay_position = self._normalize_overlay_position(
-            data.get("overlay_position", self.overlay_position)
-        )
-        self.overlay_max_lines = self._coerce_int_range(
-            data.get("overlay_max_lines", self.overlay_max_lines), 2, 1, 4
-        )
-        self.overlay_chroma_color = data.get("overlay_chroma_color", self.overlay_chroma_color)
+        video_device_index = data.get("video_device_index", self.video_device_index)
+        try:
+            self.video_device_index = (
+                int(video_device_index) if video_device_index is not None else None
+            )
+        except Exception:
+            self.video_device_index = None
 
     def _load_bad_word_settings(self, data):
         bad_words_by_lang = data.get("bad_words_by_lang")
@@ -330,16 +331,6 @@ class SettingsMixin:
             return device
         return "auto"
 
-    def _normalize_display_mode(self, value):
-        mode = str(value or "").strip().lower().replace("-", "_").replace(" ", "_")
-        aliases = {"full_screen": "fullscreen", "video_overlay": "overlay"}
-        mode = aliases.get(mode, mode)
-        return mode if mode in ("fullscreen", "overlay") else "fullscreen"
-
-    def _normalize_overlay_position(self, value):
-        position = str(value or "").strip().lower()
-        return position if position in ("top", "bottom") else "bottom"
-
     def _normalize_local_nllb_lang_setting(self, value, default="", allow_auto=False):
         lang = str(value or "").strip()
         if not lang:
@@ -462,10 +453,8 @@ class SettingsMixin:
             "text_color": self.text_color,
             "max_lines": self.max_lines,
             "lock_output_focus": self.lock_output_focus,
-            "display_mode": self.display_mode,
-            "overlay_position": self.overlay_position,
-            "overlay_max_lines": self.overlay_max_lines,
-            "overlay_chroma_color": self.overlay_chroma_color,
+            "video_feed_enabled": self.video_feed_enabled,
+            "video_device_index": self.video_device_index,
             "bad_words_by_lang": {
                 lang: sorted(words) for lang, words in self.bad_words_by_lang.items()
             },

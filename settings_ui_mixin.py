@@ -140,23 +140,6 @@ class SettingsUIMixin:
             primary=True,
         )
         self.toggle_fullscreen_button.pack(side=tk.RIGHT, padx=(0, 10), pady=10)
-        self._sync_toggle_fullscreen_button_state()
-
-        def _on_toggle_output_mode():
-            self.toggle_output_mode()
-            rev_map = {code: name for name, code in display_vars["display_mode_map"].items()}
-            display_mode_var = display_vars["display_mode_var"]
-            display_mode_var.set(rev_map.get(self.display_mode, display_mode_var.get()))
-            dirty_ctx["applied_snapshot"] = self._capture_settings_snapshot(dirty_ctx)
-            self._update_settings_dirty_state(dirty_ctx, force=True)
-
-        toggle_output_mode_button = self._make_button(
-            button_frame,
-            "Toggle Output Mode",
-            command=_on_toggle_output_mode,
-            primary=True,
-        )
-        toggle_output_mode_button.pack(side=tk.RIGHT, padx=(0, 10), pady=10)
 
         save_button = self._make_button(
             button_frame,
@@ -451,7 +434,6 @@ class SettingsUIMixin:
         translation_vars,
         advanced_vars,
     ):
-        previous_mode = self.display_mode
         self._apply_display_vars(display_vars)
         self._apply_transcription_vars(transcription_vars)
         self._apply_translation_vars(translation_vars)
@@ -460,7 +442,8 @@ class SettingsUIMixin:
         self._refresh_audio_devices()
         self.apply_colors()
         self.update_display()
-        self._apply_display_mode(previous_mode=previous_mode)
+        self.is_fullscreen = True
+        self.enter_fullscreen()
         self.save_settings()
 
     def _show_apply_success(self):
@@ -476,30 +459,30 @@ class SettingsUIMixin:
         else:
             self.update_status(self.STATUS_LISTENING)
 
+    @staticmethod
+    def _parse_camera_device_label(label):
+        prefix = "Camera "
+        if not label or not label.startswith(prefix):
+            return None
+        try:
+            return int(label[len(prefix):])
+        except ValueError:
+            return None
+
     def _apply_display_vars(self, display_vars):
         self.max_lines = display_vars["lines_var"].get()
         self.bg_color = display_vars["bg_color_var"].get()
         self.text_color = display_vars["text_color_var"].get()
         if "lock_output_focus_var" in display_vars:
             self.lock_output_focus = bool(display_vars["lock_output_focus_var"].get())
-        if "display_mode_var" in display_vars and "display_mode_map" in display_vars:
-            self.display_mode = self._normalize_display_mode(
-                display_vars["display_mode_map"].get(
-                    display_vars["display_mode_var"].get(), self.display_mode
-                )
+        if "video_feed_enabled_var" in display_vars:
+            self.video_feed_enabled = bool(display_vars["video_feed_enabled_var"].get())
+        if "video_device_var" in display_vars:
+            self.video_device_index = self._parse_camera_device_label(
+                display_vars["video_device_var"].get()
             )
-        if "overlay_position_var" in display_vars and "overlay_position_map" in display_vars:
-            self.overlay_position = self._normalize_overlay_position(
-                display_vars["overlay_position_map"].get(
-                    display_vars["overlay_position_var"].get(), self.overlay_position
-                )
-            )
-        if "overlay_lines_var" in display_vars:
-            self.overlay_max_lines = self._coerce_int_range(
-                display_vars["overlay_lines_var"].get(), 2, 1, 4
-            )
-        if "overlay_chroma_color_var" in display_vars:
-            self.overlay_chroma_color = display_vars["overlay_chroma_color_var"].get()
+        self.stop_video_feed()
+        self.start_video_feed()
         self._apply_scaled_fonts()
         self._fit_font_to_lines()
         monitor_labels = display_vars["monitor_labels"]
@@ -765,6 +748,58 @@ class SettingsUIMixin:
 
         Thread(target=_worker, daemon=True).start()
 
+    def _refresh_video_devices(self):
+        # cv2's DirectShow backend is not safe to probe from two threads at
+        # once (concurrent enumerate_video_devices calls have crashed the
+        # process with a native heap-corruption fault), so ignore Refresh
+        # clicks while a scan is already running.
+        if getattr(self, "_video_scan_in_progress", False):
+            return
+        self._video_scan_in_progress = True
+        refresh_button = getattr(self, "video_refresh_button", None)
+        if refresh_button is not None:
+            try:
+                refresh_button.config(state="disabled")
+            except Exception:
+                pass
+
+        def _worker():
+            try:
+                devices = self.enumerate_video_devices()
+            except Exception:
+                devices = self.video_devices
+
+            def _update_ui():
+                self.video_devices = devices
+                labels = [f"Camera {i}" for i in devices] or ["(click Refresh)"]
+                if self.video_device_menu is not None:
+                    menu = self.video_device_menu["menu"]
+                    menu.delete(0, "end")
+                    for label in labels:
+                        menu.add_command(
+                            label=label,
+                            command=tk._setit(self.video_device_var, label),
+                        )
+                if self.video_device_var is not None:
+                    current_label = f"Camera {self.video_device_index}"
+                    if devices and current_label in labels:
+                        self.video_device_var.set(current_label)
+                    else:
+                        self.video_device_var.set(labels[0])
+                self._video_scan_in_progress = False
+                if refresh_button is not None:
+                    try:
+                        refresh_button.config(state="normal")
+                    except Exception:
+                        pass
+
+            try:
+                self.root.after(0, _update_ui)
+            except Exception:
+                self._video_scan_in_progress = False
+
+        Thread(target=_worker, daemon=True).start()
+
     def _apply_settings_geometry(self, settings_window):
         settings_window.geometry("960x1280")
         settings_window.minsize(960, 1280)
@@ -842,6 +877,30 @@ class SettingsUIMixin:
         icon.pack(side=tk.LEFT, padx=(6, 0))
         Tooltip(icon, help_text)
         return icon
+
+    def _create_doc_link(self, parent, text, doc_filename, bg):
+        link = tk.Label(
+            parent,
+            text=text,
+            bg=bg,
+            fg="#5B8FF7",
+            font=(self.ui_font_family, 9, "underline"),
+            cursor="hand2",
+        )
+        link.pack(side=tk.LEFT, padx=(6, 0))
+        link.bind("<Button-1>", lambda _event: self._open_doc(doc_filename))
+        return link
+
+    def _open_doc(self, doc_filename):
+        base_dir = os.path.dirname(sys.executable) if getattr(sys, "frozen", False) else os.path.dirname(os.path.abspath(__file__))
+        doc_path = os.path.join(base_dir, doc_filename)
+        try:
+            os.startfile(doc_path)
+        except Exception:
+            messagebox.showerror(
+                "Can't open guide",
+                f"Couldn't open the setup guide:\n{doc_path}",
+            )
 
     def _settings_palette(self):
         return {
@@ -1312,101 +1371,85 @@ class SettingsUIMixin:
         self._apply_input_style(lines_spinbox)
         lines_spinbox.pack(anchor="w")
 
-        self._add_setting_label(
-            display_section,
-            "Display Mode:",
-            "Full Screen takes over a monitor. Video Overlay shows a small "
-            "chroma-key caption bar for OBS/streaming capture.",
-            label_opts,
-            pady=(10, 4),
+        video_feed_row = tk.Frame(display_section, bg=section_bg)
+        video_feed_row.pack(anchor="w", fill=tk.X, pady=(10, 0))
+        video_feed_enabled_var = tk.BooleanVar(value=self.video_feed_enabled)
+        video_feed_check = tk.Checkbutton(
+            video_feed_row,
+            text="Show video feed behind captions",
+            variable=video_feed_enabled_var,
+            bg=section_bg,
+            fg=settings_fg,
+            selectcolor=section_bg,
+            activebackground=section_bg,
         )
-        display_mode_options = [("Full Screen", "fullscreen"), ("Video Overlay", "overlay")]
-        display_mode_display = [name for name, _code in display_mode_options]
-        display_mode_map = dict(display_mode_options)
-        rev_display_mode_map = {code: name for name, code in display_mode_options}
-        display_mode_var = tk.StringVar(
-            value=rev_display_mode_map.get(self.display_mode, display_mode_display[0])
-        )
-        display_mode_menu = tk.OptionMenu(
-            display_section,
-            display_mode_var,
-            *display_mode_display,
-            command=lambda _value: on_display_mode_change(),
-        )
-        self._apply_option_menu_style(display_mode_menu)
-        display_mode_menu.pack(anchor="w")
-
-        overlay_options_frame = tk.Frame(display_section, bg=section_bg)
-
-        self._add_setting_label(
-            overlay_options_frame,
-            "Overlay Position:",
-            "Which edge of the output monitor the caption bar is docked to.",
-            label_opts,
-            pady=(10, 4),
-        )
-        overlay_position_options = [("Top", "top"), ("Bottom", "bottom")]
-        overlay_position_display = [name for name, _code in overlay_position_options]
-        overlay_position_map = dict(overlay_position_options)
-        rev_overlay_position_map = {code: name for name, code in overlay_position_options}
-        overlay_position_var = tk.StringVar(
-            value=rev_overlay_position_map.get(self.overlay_position, overlay_position_display[0])
-        )
-        overlay_position_menu = tk.OptionMenu(
-            overlay_options_frame,
-            overlay_position_var,
-            *overlay_position_display,
-        )
-        self._apply_option_menu_style(overlay_position_menu)
-        overlay_position_menu.pack(anchor="w")
-
-        self._add_setting_label(
-            overlay_options_frame,
-            "Overlay Line Count:",
-            "Number of caption lines shown in the overlay bar (kept small for streaming captions).",
-            label_opts,
-            pady=(10, 4),
-        )
-        overlay_lines_var = tk.IntVar(value=self.overlay_max_lines)
-        overlay_lines_spinbox = tk.Spinbox(
-            overlay_options_frame, from_=1, to=4, textvariable=overlay_lines_var
-        )
-        self._apply_input_style(overlay_lines_spinbox)
-        overlay_lines_spinbox.pack(anchor="w")
-
-        chroma_label_row = tk.Frame(overlay_options_frame, bg=section_bg)
-        chroma_label_row.pack(fill=tk.X, pady=(10, 4))
-        tk.Label(chroma_label_row, text="Chroma Key Color:", **label_opts).pack(side=tk.LEFT)
+        video_feed_check.pack(side=tk.LEFT)
         self._create_help_icon(
-            chroma_label_row,
-            "Solid background color for the overlay bar. Add OBS's built-in "
-            "Chroma Key filter on this color to remove the background.",
+            video_feed_row,
+            "Shows the OBS Virtual Camera behind captions. Start OBS's Virtual "
+            "Camera first. To guarantee this matches what's live on "
+            "YouTube/Facebook, make sure OBS's Virtual Camera Output Type is "
+            "set to \"Program\" (its default), not Preview or a specific "
+            "Scene/Source.",
             section_bg,
             settings_fg,
         )
-        chroma_frame = tk.Frame(overlay_options_frame, bg=section_bg)
-        chroma_frame.pack(fill=tk.X)
-        overlay_chroma_color_var = tk.StringVar(value=self.overlay_chroma_color)
-        chroma_entry = tk.Entry(chroma_frame, textvariable=overlay_chroma_color_var, width=20)
-        self._apply_input_style(chroma_entry)
-        chroma_entry.pack(side=tk.LEFT)
-        chroma_button = self._make_button(
-            chroma_frame,
-            "Choose",
-            command=lambda: self.choose_color(overlay_chroma_color_var, "chroma key", settings_window),
+        self._create_doc_link(
+            video_feed_row,
+            "Setup guide",
+            "OBS_VIRTUAL_CAMERA_SETUP.md",
+            section_bg,
+        )
+
+        video_feed_options_frame = tk.Frame(display_section, bg=section_bg)
+
+        self._add_setting_label(
+            video_feed_options_frame,
+            "Camera Device:",
+            "Camera index for the OBS Virtual Camera. Click Refresh after "
+            "starting OBS's Virtual Camera if it isn't listed yet.",
+            label_opts,
+            pady=(10, 4),
+        )
+        video_device_map = {f"Camera {i}": i for i in self.video_devices}
+        video_device_labels = list(video_device_map.keys()) or ["(click Refresh)"]
+        selected_video_label = next(
+            (label for label, idx in video_device_map.items() if idx == self.video_device_index),
+            video_device_labels[0],
+        )
+        video_device_var = tk.StringVar(value=selected_video_label)
+        self.video_device_var = video_device_var
+        video_device_row = tk.Frame(video_feed_options_frame, bg=section_bg)
+        video_device_row.pack(anchor="w", fill=tk.X)
+        self.video_device_menu = tk.OptionMenu(video_device_row, video_device_var, *video_device_labels)
+        self._apply_option_menu_style(self.video_device_menu)
+        self.video_device_menu.pack(side=tk.LEFT)
+        video_refresh_button = self._make_button(
+            video_device_row,
+            "Refresh",
+            command=self._refresh_video_devices,
             primary=True,
         )
-        chroma_button.pack(side=tk.LEFT, padx=(8, 0))
+        video_refresh_button.pack(side=tk.LEFT, padx=(8, 0))
+        self.video_refresh_button = video_refresh_button
 
-        def on_display_mode_change(*_args):
-            if display_mode_var.get() == "Video Overlay":
-                overlay_options_frame.pack(fill=tk.X, pady=(0, 0))
+        self.video_status_var = tk.StringVar(value=self.video_status)
+        video_status_label = tk.Label(
+            video_feed_options_frame,
+            textvariable=self.video_status_var,
+            bg=section_bg,
+            fg=settings_fg,
+        )
+        video_status_label.pack(anchor="w", pady=(6, 0))
+
+        def on_video_feed_toggle(*_args):
+            if video_feed_enabled_var.get():
+                video_feed_options_frame.pack(fill=tk.X, pady=(4, 0))
             else:
-                overlay_options_frame.pack_forget()
+                video_feed_options_frame.pack_forget()
 
-        # Also handle programmatic changes (e.g. the "Toggle Output Mode" button).
-        display_mode_var.trace_add("write", lambda *_args: on_display_mode_change())
-        on_display_mode_change()
+        video_feed_enabled_var.trace_add("write", lambda *_args: on_video_feed_toggle())
+        on_video_feed_toggle()
 
         self._add_setting_label(
             display_section,
@@ -1453,7 +1496,7 @@ class SettingsUIMixin:
         self._add_setting_label(
             display_section,
             "Output Monitor:",
-            "Monitor where the translation output appears (Full Screen or Video Overlay).",
+            "Monitor where the translation output appears.",
             label_opts,
             pady=(10, 4),
         )
@@ -1528,9 +1571,7 @@ class SettingsUIMixin:
                 )
                 self.monitor_device = monitor_device
                 self.monitor_origin = monitor_origin
-                if self.display_mode == "overlay" and self.caption_overlay_active:
-                    self._apply_overlay_geometry()
-                elif self.is_fullscreen:
+                if self.is_fullscreen:
                     self.enter_fullscreen()
                 else:
                     self.move_window_to_monitor(self.root, self.monitor_index, keep_size=False)
@@ -1556,12 +1597,8 @@ class SettingsUIMixin:
             "monitor_var": monitor_var,
             "settings_monitor_var": settings_monitor_var,
             "monitor_labels": monitor_labels,
-            "display_mode_var": display_mode_var,
-            "display_mode_map": display_mode_map,
-            "overlay_position_var": overlay_position_var,
-            "overlay_position_map": overlay_position_map,
-            "overlay_lines_var": overlay_lines_var,
-            "overlay_chroma_color_var": overlay_chroma_color_var,
+            "video_feed_enabled_var": video_feed_enabled_var,
+            "video_device_var": video_device_var,
         }
 
     def _build_audio_section(self, audio_section, label_opts):
@@ -3332,7 +3369,7 @@ class SettingsUIMixin:
             path_var.set(self._normalize_optional_directory(selected))
 
     def apply_colors(self):
-        bg = self.overlay_chroma_color if self.display_mode == "overlay" else self.bg_color
+        bg = self.bg_color
         self.root.config(bg=bg)
         self.text_canvas.config(bg=bg)
         self.text_canvas.itemconfigure(self.text_item, fill=self.text_color)
@@ -3363,17 +3400,6 @@ class SettingsUIMixin:
             pass
 
     def _apply_canvas_padding(self):
-        docked = self.is_fullscreen or self.display_mode == "overlay"
-        pad = 0 if docked else self.canvas_margin
+        pad = 0 if self.is_fullscreen else self.canvas_margin
         self.text_canvas.grid_configure(padx=pad, pady=pad)
 
-    def _sync_toggle_fullscreen_button_state(self):
-        if self.toggle_fullscreen_button is None:
-            return
-        try:
-            self.toggle_fullscreen_button.config(
-                state=tk.DISABLED if self.display_mode == "overlay" else tk.NORMAL
-            )
-        except Exception:
-            pass
-    
