@@ -15,22 +15,22 @@ _VIDEO_BACKENDS = (cv2.CAP_MSMF, cv2.CAP_DSHOW)
 
 # DirectShow/Media Foundation otherwise often negotiate a low default capture
 # mode (e.g. 640x480) even though OBS's Virtual Camera is actually serving
-# frames at OBS's configured canvas resolution. Requesting a size comfortably
-# bigger than any realistic OBS canvas makes the backend clamp UP to the
-# highest native mode the device actually offers, which is a one-time,
-# zero-cost negotiation.
+# frames at OBS's configured canvas resolution, so an explicit size must be
+# requested.
 #
-# Deliberately NOT tied to the output monitor's resolution: if that happened
-# to be smaller than OBS's real canvas (e.g. output on a 1080p screen while
-# OBS renders at a higher canvas for stream quality), requesting the smaller
-# monitor size asks some virtual-camera drivers to scale every frame down to
-# fit in real time instead of doing a one-time clamp, which caused visible
-# flicker when frame delivery couldn't keep up. The actual "fit to the
-# output screen" behavior already happens downstream in _render_video_frame,
-# which letterboxes whatever the camera's real decoded frame size is into
-# the actual canvas size every frame - independent of what we request here.
-_VIDEO_FALLBACK_WIDTH = 7680
-_VIDEO_FALLBACK_HEIGHT = 4320
+# Do NOT request a huge "bigger than any canvas" size hoping the backend
+# clamps down to the device's highest native mode: MSMF instead SCALES
+# frames up to whatever is requested. A 7680x4320 request made it deliver
+# genuine 8K frames (~95MB each) from OBS's 60fps output, which capped
+# delivery at ~15fps from the copy cost alone (confirmed via the decoded
+# frame size in the Video Feed status label, 2026-07-10). 1920x1080
+# matches the common OBS canvas, so it's normally a zero-cost passthrough;
+# if OBS's canvas differs the driver scales to 1080p, which is still cheap
+# and gets letterboxed to the real output size downstream
+# (_letterbox_fit_frame on the capture thread, with a main-thread fallback
+# in _render_video_frame) like any other decoded size.
+_VIDEO_FALLBACK_WIDTH = 1920
+_VIDEO_FALLBACK_HEIGHT = 1080
 
 _VIDEO_CAPTION_BAR_COLOR = (60, 60, 60)  # RGB gray
 _VIDEO_CAPTION_BAR_ALPHA = 0.5  # default opacity; user-adjustable via the Caption Bar Opacity slider
@@ -98,6 +98,18 @@ class VideoCaptureMixin:
         self._video_capture_thread = None
         self._video_frame_lock = Lock()
         self._video_latest_frame = None
+        # Sequence number bumped by the capture worker on every new frame;
+        # the render tick compares it against the last-drawn sequence and
+        # skips the whole PIL/PhotoImage/canvas pipeline when nothing new
+        # arrived. OBS's Virtual Camera reports CAP_PROP_FPS=-1 (measured
+        # delivery is ~15fps on this machine), so the tick can't be paced to
+        # the real rate up front - instead it polls at ~30Hz cheaply and only
+        # pays for a draw when there's actually a fresh frame.
+        self._video_frame_seq = 0
+        self._video_drawn_seq = 0
+        # Last known canvas size, published by the Tk thread for the capture
+        # worker so it can letterbox-resize frames off the main thread.
+        self._video_canvas_size = (0, 0)
         self._video_photo_image = None
         self._caption_bar_photo_image = None
         self._caption_bar_cache_key = None
@@ -144,6 +156,9 @@ class VideoCaptureMixin:
         if self.video_device_index is None:
             return
         self._video_stop_event.clear()
+        with self._video_frame_lock:
+            self._video_frame_seq = 0
+            self._video_drawn_seq = 0
         self._video_capture_thread = Thread(
             target=self._video_capture_worker, args=(self.video_device_index,), daemon=True
         )
@@ -176,6 +191,11 @@ class VideoCaptureMixin:
             self._video_render_after_id = None
         with self._video_frame_lock:
             self._video_latest_frame = None
+        # Drop the cached Tk photo: _apply_video_feed_visibility detaches it
+        # from the canvas item (image=""), so the paste-reuse path in
+        # _render_video_frame must not keep writing into it after a restart
+        # - it would be updating pixels nothing displays.
+        self._video_photo_image = None
         self._caption_bar_cache_key = None
         self._apply_video_feed_visibility()
 
@@ -206,9 +226,11 @@ class VideoCaptureMixin:
             return
         self.video_status = "Connected - waiting for first frame"
         self.root.after(0, self._update_video_status_ui)
-        # Match the render tick to OBS's actual output rate instead of the
-        # arbitrary fallback, so frames aren't held back or redrawn more
-        # often than new ones actually arrive.
+        # Match the render tick to the device's reported rate when it gives
+        # a usable one. OBS's Virtual Camera reports -1 here (confirmed
+        # 2026-07-10), so for it the tick stays at the 33ms fallback and
+        # the frame-sequence check in _video_render_tick does the real
+        # pacing by skipping ticks that have no new frame.
         reported_fps = cap.get(cv2.CAP_PROP_FPS)
         if reported_fps and reported_fps > 1:
             self.video_render_interval_ms = max(
@@ -222,6 +244,16 @@ class VideoCaptureMixin:
         # decoded frame size is ground truth for what OBS is really
         # serving, so report that instead, and whenever it changes.
         last_reported_size = None
+        # OBS serves 60fps but the render tick draws at most ~30fps, so at
+        # least every other decoded frame can never reach the screen.
+        # Keep cap.read()ing at the full device rate (letting frames expire
+        # naturally keeps the buffer fresh), but skip the resize/cvtColor
+        # processing for frames that fall between render intervals - they'd
+        # be thrown away anyway, and processing them just burns CPU/GIL the
+        # draws need. This also makes the frames that ARE published evenly
+        # spaced instead of "whichever ones the loop got to", which is what
+        # steady pacing on screen requires.
+        last_processed = 0.0
         try:
             while not self._video_stop_event.is_set():
                 ret, frame = cap.read()
@@ -235,16 +267,55 @@ class VideoCaptureMixin:
                     continue
                 consecutive_failures = 0
                 frame_height, frame_width = frame.shape[:2]
-                actual_size = (frame_width, frame_height)
-                if actual_size != last_reported_size:
-                    last_reported_size = actual_size
-                    self.video_status = f"Connected ({frame_width}x{frame_height})"
-                    self.root.after(0, self._update_video_status_ui)
-                rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                last_reported_size = self._report_video_frame_size(
+                    (frame_width, frame_height), last_reported_size
+                )
+                now = time.monotonic()
+                if (now - last_processed) * 1000.0 < self.video_render_interval_ms:
+                    continue
+                last_processed = now
+                # Letterbox-resize the raw BGR frame first, THEN color
+                # convert - cvtColor on the already-shrunk frame instead of
+                # the full 60fps-source resolution.
+                rgb_frame = cv2.cvtColor(
+                    self._letterbox_fit_frame(frame), cv2.COLOR_BGR2RGB
+                )
                 with self._video_frame_lock:
                     self._video_latest_frame = rgb_frame
+                    self._video_frame_seq += 1
         finally:
             cap.release()
+
+    def _report_video_frame_size(self, actual_size, last_reported_size):
+        """Update the status label when the decoded frame size changes.
+        The decoded size is ground truth for what OBS is really serving
+        (driver-reported CAP_PROP dimensions can be stale or wrong for
+        virtual cameras). Returns the size to compare the next frame to."""
+        if actual_size != last_reported_size:
+            frame_width, frame_height = actual_size
+            self.video_status = f"Connected ({frame_width}x{frame_height})"
+            self.root.after(0, self._update_video_status_ui)
+        return actual_size
+
+    def _letterbox_fit_frame(self, frame):
+        """Letterbox-resize a frame (any channel order) to the last known
+        canvas size, on the capture thread (cv2.resize releases the GIL).
+        The main thread was spending 75-110ms per draw doing
+        resize+PIL+PhotoImage inline, which capped actual draws at ~9-12fps
+        with visibly uneven pacing. If the cached canvas size is stale
+        (window just resized) or not yet known, the frame is returned as-is
+        and _render_video_frame re-fits it on the main thread as a fallback
+        until the next frame comes through."""
+        canvas_width, canvas_height = self._video_canvas_size
+        if canvas_width <= 1 or canvas_height <= 1:
+            return frame
+        frame_height, frame_width = frame.shape[:2]
+        scale = min(canvas_width / frame_width, canvas_height / frame_height)
+        target_width = max(1, int(round(frame_width * scale)))
+        target_height = max(1, int(round(frame_height * scale)))
+        if (target_width, target_height) == (frame_width, frame_height):
+            return frame
+        return cv2.resize(frame, (target_width, target_height), interpolation=cv2.INTER_AREA)
 
     def _update_video_status_ui(self):
         if hasattr(self, "video_status_var") and self.video_status_var is not None:
@@ -252,6 +323,7 @@ class VideoCaptureMixin:
                 self.video_status_var.set(self.video_status)
             except Exception:
                 pass
+
 
     # ------------------------------------------------------------------ #
     # Render                                                                #
@@ -268,8 +340,14 @@ class VideoCaptureMixin:
             return
         with self._video_frame_lock:
             frame = self._video_latest_frame
-        if frame is not None:
+            frame_seq = self._video_frame_seq
+        # Only pay for the PIL/PhotoImage/canvas pipeline when the worker
+        # actually published a new frame since the last draw - OBS delivers
+        # ~15fps while this tick polls at ~30Hz, so about half the ticks
+        # would otherwise redraw an identical frame.
+        if frame is not None and frame_seq != self._video_drawn_seq:
             self._render_video_frame(frame)
+            self._video_drawn_seq = frame_seq
         self._schedule_video_render_tick()
 
     def _render_video_frame(self, frame):
@@ -277,31 +355,47 @@ class VideoCaptureMixin:
         canvas_height = self.text_canvas.winfo_height()
         if canvas_width <= 1 or canvas_height <= 1:
             return
+        # Publish the real canvas size so the capture worker letterboxes
+        # future frames off the main thread (_letterbox_fit_frame).
+        self._video_canvas_size = (canvas_width, canvas_height)
         frame_height, frame_width = frame.shape[:2]
         if frame_width <= 0 or frame_height <= 0:
             return
-        if frame_width == canvas_width and frame_height == canvas_height:
-            # OBS's output resolution already matches the window exactly -
-            # pass the frame through untouched rather than resampling it.
-            target_width, target_height = frame_width, frame_height
+        # Fit inside the canvas (letterbox/pillarbox as needed) rather than
+        # cropping to cover it - the whole OBS composition must always stay
+        # visible, never zoomed/cropped past the window's borders. The
+        # worker normally delivers frames already fitted, in which case the
+        # computed target equals the frame size and this is a no-op; the
+        # resize here only runs for the first frames (canvas size not yet
+        # published) or right after a window resize.
+        scale = min(canvas_width / frame_width, canvas_height / frame_height)
+        target_width = max(1, int(round(frame_width * scale)))
+        target_height = max(1, int(round(frame_height * scale)))
+        if (target_width, target_height) == (frame_width, frame_height):
             resized = frame
         else:
-            # Fit inside the canvas (letterbox/pillarbox as needed) rather
-            # than cropping to cover it - the whole OBS composition must
-            # always stay visible, never zoomed/cropped past the window's
-            # borders.
-            scale = min(canvas_width / frame_width, canvas_height / frame_height)
-            target_width = max(1, int(round(frame_width * scale)))
-            target_height = max(1, int(round(frame_height * scale)))
             resized = cv2.resize(frame, (target_width, target_height), interpolation=cv2.INTER_AREA)
         image = Image.fromarray(resized)
-        photo = ImageTk.PhotoImage(image)
         x = (canvas_width - target_width) // 2
         y = (canvas_height - target_height) // 2
-        self._video_photo_image = photo
+        photo = self._video_photo_image
         try:
             self.text_canvas.coords(self.video_image_item, x, y)
-            self.text_canvas.itemconfigure(self.video_image_item, image=photo)
+            if (
+                photo is not None
+                and (photo.width(), photo.height()) == (target_width, target_height)
+            ):
+                # Reuse the existing Tk photo and overwrite its pixels in
+                # place - allocating a fresh PhotoImage every draw made Tk
+                # create/destroy a full-canvas image object 15-30x/sec,
+                # a large share of the per-draw main-thread cost. The canvas
+                # notices the pixel change on its own; no itemconfigure
+                # needed when the object identity is unchanged.
+                photo.paste(image)
+            else:
+                photo = ImageTk.PhotoImage(image)
+                self._video_photo_image = photo
+                self.text_canvas.itemconfigure(self.video_image_item, image=photo)
         except Exception:
             pass
         self._update_caption_bar(canvas_width, canvas_height)
