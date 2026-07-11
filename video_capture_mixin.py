@@ -125,19 +125,46 @@ class VideoCaptureMixin:
     # Device enumeration                                                    #
     # ------------------------------------------------------------------ #
 
-    def enumerate_video_devices(self, max_probe=5):
+    def enumerate_video_devices(self, max_probe=5, on_progress=None):
         """Probe camera indices for availability. Blocking - callers must
         run this off the Tk thread (opening/closing a camera device that
         doesn't exist can take noticeably longer than a hit, and each index
         is now tried against two backends). Also refreshes
-        self.video_device_names (friendly names) as a side effect."""
+        self.video_device_names (friendly names) as a side effect.
+
+        max_probe is a ceiling, not a target: a failed open is not cheap
+        (the backend still walks the OS device topology), so the no-camera
+        case used to be the *slowest* one - probing all max_probe indices
+        against both backends for nothing. pygrabber's friendly-name list
+        (_probe_video_device_names) already tells us how many real DirectShow
+        devices exist, and its index order is confirmed to match DSHOW's own
+        (see _video_device_label's caller), so when it returns anything, the
+        probe is bounded to one past that count instead of the full ceiling.
+        Falls back to max_probe unbounded if pygrabber returned nothing
+        (unavailable, or genuinely no devices - can't tell which, so don't
+        narrow the search).
+
+        on_progress, if given, is called after each index is probed as
+        on_progress(completed, total), where total reflects this bounded
+        count, not the original max_probe argument - this method runs off
+        the Tk thread, so callers that touch Tk widgets from the callback
+        must marshal onto the main thread themselves (e.g. root.after)."""
         self.video_device_names = _probe_video_device_names()
+        if self.video_device_names:
+            probe_count = min(max_probe, len(self.video_device_names) + 1)
+        else:
+            probe_count = max_probe
         available = []
-        for index in range(max_probe):
+        for index in range(probe_count):
             cap = _open_capture(index)
             if cap is not None:
                 available.append(index)
                 cap.release()
+            if on_progress is not None:
+                try:
+                    on_progress(index + 1, probe_count)
+                except Exception:
+                    pass
         return available
 
     def _video_device_label(self, index):
