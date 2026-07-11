@@ -859,7 +859,7 @@ class SettingsUIMixin:
         # first progress callback (enumerate_video_devices bounds it by the
         # pygrabber device count, which is itself the first thing the scan
         # resolves), so an upfront number would just be max_probe and wrong.
-        status_var = tk.StringVar(value="Detecting devices...")
+        status_var = tk.StringVar(value="Please wait...")
         tk.Label(
             frame,
             textvariable=status_var,
