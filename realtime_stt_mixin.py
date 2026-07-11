@@ -278,6 +278,11 @@ class RealtimeSttMixin:
 
         def on_update(text):
             self._realtime_stt_adjust_silence(text)
+            # Fires ~10x/sec on RealtimeSTT's thread regardless of the
+            # setting (silence adjustment above always needs it);
+            # _queue_interim_display no-ops unless interim display is
+            # enabled, and marshals onto the Tk thread itself.
+            self._queue_interim_display(text)
 
         try:
             recorder = AudioToTextRecorder(
