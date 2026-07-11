@@ -566,7 +566,7 @@ class TranslationApp(
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
 
         self._install_exception_hook()
-        
+
         self.open_settings()
         if self.settings_window is not None and self.settings_window.winfo_exists():
             try:
@@ -681,16 +681,37 @@ class TranslationApp(
         # threads with no timeout, so if a subprocess died uncleanly (e.g.
         # from the same Ctrl+C break event this process received) that join
         # can block forever. Arm a watchdog that force-exits regardless, so
-        # closing the app is never held hostage by that internal hang.
+        # closing the app is never held hostage by that internal hang. It
+        # also force-kills RealtimeSTT's child processes by PID first
+        # (_force_kill_realtime_stt_processes) rather than relying solely on
+        # os._exit(0) plus Windows' Job Object cleanup to take them down -
+        # that cleanup isn't reliable enough in practice: if the graceful
+        # shutdown below is still stuck when this fires, shutdown_event was
+        # never set, so the transcription subprocess's poll_connection loop
+        # has no way to notice and just spins on BrokenPipeError forever
+        # once its parent pipe breaks, showing up as an orphaned process the
+        # user has to end from Task Manager.
         import os as _os
         import threading as _threading
-        watchdog = _threading.Timer(3.0, _os._exit, args=(0,))
+
+        def _watchdog_force_exit():
+            try:
+                self._force_kill_realtime_stt_processes()
+            except Exception:
+                pass
+            _os._exit(0)
+
+        watchdog = _threading.Timer(3.0, _watchdog_force_exit)
         watchdog.daemon = True
         watchdog.start()
 
         self.listening = False
         try:
             self._stop_realtime_stt()
+        except Exception:
+            pass
+        try:
+            self._force_kill_realtime_stt_processes()
         except Exception:
             pass
         try:

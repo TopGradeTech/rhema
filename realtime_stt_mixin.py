@@ -21,6 +21,19 @@ class RealtimeSttMixin:
         self._realtime_stt_stop_event = Event()
         self._realtime_stt_thread = None
         self._realtime_stt_recorder = None
+        # Kept separately from _realtime_stt_recorder, which _stop_realtime_stt
+        # nulls out before it even attempts the graceful shutdown - this one
+        # is never cleared, so _force_kill_realtime_stt_processes can still
+        # find the child process handles on app close even if the graceful
+        # path (recorder.abort()/shutdown()) is stuck hanging on RealtimeSTT's
+        # own un-timed thread joins (see shutdown.py: recording_thread.join()
+        # and realtime_thread.join() have no timeout, unlike the subprocess
+        # joins). Without this, a hung graceful shutdown leaves the
+        # transcription subprocess orphaned once our watchdog kills this
+        # process - its parent pipe breaks, and its poll_connection() loop
+        # spins on BrokenPipeError forever since nothing is left to ever set
+        # shutdown_event, requiring the user to kill it via Task Manager.
+        self._realtime_stt_last_recorder = None
         self._realtime_stt_last_start = 0.0        # for retry cooldown
         self._realtime_stt_prev_update_text = ""   # tracks previous partial for silence logic
         self._realtime_stt_restart_requested = False  # serviced by _run_listen_iteration
@@ -90,6 +103,30 @@ class RealtimeSttMixin:
             self.root.after(0, lambda: self._realtime_stt_set_live_line(""))
         except Exception:
             pass
+
+    def _force_kill_realtime_stt_processes(self):
+        """Directly terminate RealtimeSTT's multiprocessing workers by PID.
+
+        Used from on_closing()'s watchdog as a last-resort fallback that
+        doesn't depend on recorder.shutdown() ever completing (it can hang
+        forever - see _realtime_stt_last_recorder's comment) or on Windows'
+        Job Object cleanup catching orphaned children on its own. Safe to
+        call redundantly (e.g. once right after a successful graceful
+        shutdown, and again from the watchdog if that hung) since
+        Process.terminate() on an already-dead process is a no-op.
+        """
+        recorder = self._realtime_stt_last_recorder
+        if recorder is None:
+            return
+        for attr in ("reader_process", "transcript_process"):
+            process = getattr(recorder, attr, None)
+            if process is None:
+                continue
+            try:
+                if process.is_alive():
+                    process.terminate()
+            except Exception:
+                pass
 
     # ------------------------------------------------------------------ #
     # Worker                                                                #
@@ -247,6 +284,7 @@ class RealtimeSttMixin:
                 **self._realtime_stt_recorder_kwargs(on_update)
             )
             self._realtime_stt_recorder = recorder
+            self._realtime_stt_last_recorder = recorder
             self._realtime_stt_run_loop(recorder)
         except Exception as exc:
             self._trace_pipeline("realtime_stt_error", "", error=str(exc))
