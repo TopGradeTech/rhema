@@ -560,6 +560,17 @@ class SettingsUIMixin:
             else self.realtime_stt_silero_sensitivity,
             self.realtime_stt_silero_sensitivity, 0.1, 0.9,
         )
+        if "show_interim_text_var" in transcription_vars:
+            previously_shown = self.show_interim_text
+            self.show_interim_text = bool(
+                transcription_vars["show_interim_text_var"].get()
+            )
+            # No recorder rebuild needed - partials always flow (silence
+            # adjustment consumes them) and the display hook checks this
+            # flag live. Just clear a leftover interim row when turning off.
+            if previously_shown and not self.show_interim_text:
+                self.live_line = ""
+                self.render_text()
         # device/model/sensitivity/language are only read when RealtimeSTT
         # constructs its recorder, so a live rebuild is needed for the
         # change to apply.
@@ -2371,6 +2382,32 @@ class SettingsUIMixin:
         self._apply_input_style(realtime_stt_silero_spin)
         realtime_stt_silero_spin.pack(anchor="w")
 
+        interim_row = tk.Frame(realtime_stt_container, bg=section_bg)
+        interim_row.pack(anchor="w", fill=tk.X, pady=(10, 0))
+        show_interim_text_var = tk.BooleanVar(value=self.show_interim_text)
+        show_interim_check = tk.Checkbutton(
+            interim_row,
+            text="Show live interim text (near-realtime)",
+            variable=show_interim_text_var,
+            bg=section_bg,
+            fg=settings_fg,
+            selectcolor=section_bg,
+            activebackground=section_bg,
+        )
+        show_interim_check.pack(side=tk.LEFT)
+        self._create_help_icon(
+            interim_row,
+            "Shows words on the bottom line of the output as they are being "
+            "spoken, so captions keep up with the live video feed instead of "
+            "trailing it by a sentence. Interim text is the raw, untranslated "
+            "transcription and may correct itself as speech continues; the "
+            "finalized (and translated, if enabled) sentence replaces it. "
+            "With this on, finalized text appears all at once instead of the "
+            "word-by-word roll-up.",
+            section_bg,
+            settings_fg,
+        )
+
         return {
             "stt_source_lang_var": stt_source_lang_var,
             "stt_source_lang_map": stt_source_lang_map,
@@ -2382,6 +2419,7 @@ class SettingsUIMixin:
             "realtime_stt_realtime_model_map": realtime_stt_realtime_model_map,
             "realtime_stt_realtime_model_rev_map": realtime_stt_realtime_model_rev_map,
             "realtime_stt_silero_var": realtime_stt_silero_var,
+            "show_interim_text_var": show_interim_text_var,
         }
 
     def _build_translation_section(self, translation_section, label_opts):

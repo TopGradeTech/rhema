@@ -486,6 +486,9 @@ class TranslationApp(
         self.settings_window = None
         self.is_applying_settings = False
         self.live_line = ""
+        self.show_interim_text = False
+        self._interim_latest_text = ""
+        self._interim_render_scheduled = False
         self.display_drip_queue = deque()
         self.display_drip_after_id = None
         self.display_drip_deadline = 0.0

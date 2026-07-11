@@ -65,6 +65,10 @@ class SettingsMixin:
             data.get("realtime_stt_silero_sensitivity", self.realtime_stt_silero_sensitivity),
             0.4, 0.1, 0.9,
         )
+        self.show_interim_text = self._coerce_bool(
+            data.get("show_interim_text", self.show_interim_text),
+            default=self.show_interim_text,
+        )
 
     def _load_display_settings(self, data):
         self.bg_color = data.get("bg_color", self.bg_color)
@@ -461,6 +465,7 @@ class SettingsMixin:
             "realtime_stt_final_model": self.realtime_stt_final_model,
             "realtime_stt_realtime_model": self.realtime_stt_realtime_model,
             "realtime_stt_silero_sensitivity": self.realtime_stt_silero_sensitivity,
+            "show_interim_text": self.show_interim_text,
             "bg_color": self.bg_color,
             "text_color": self.text_color,
             "max_lines": self.max_lines,
