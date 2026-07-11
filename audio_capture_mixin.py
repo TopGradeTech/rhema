@@ -133,10 +133,6 @@ class AudioCaptureMixin:
     def _request_audio_level_stream_restart(self):
         self.audio_level_restart_requested = True
 
-    def _reset_speech_counters(self):
-        self.no_speech_timeout_count = 0
-        self.unknown_speech_count = 0
-
     def _sanitize_faster_whisper_output(self, text):
         stripped, stripped_noise = self._strip_known_stt_edge_noise(text)
         sanitized = self._sanitize_model_text(stripped)

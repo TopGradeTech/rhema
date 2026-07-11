@@ -393,7 +393,6 @@ class RealtimeSttMixin:
             selected=True,
             selected_output_pretranslated=False,
         )
-        self._reset_speech_counters()
         self._trace_pipeline("realtime_stt_final", cleaned)
         if self.translation_enabled:
             self._enqueue_flushed_sentences_from_buffer(cleaned, overlap_words=0)
