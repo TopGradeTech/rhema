@@ -779,10 +779,18 @@ class SettingsUIMixin:
                 refresh_button.config(state="disabled")
             except Exception:
                 pass
+        max_probe = 5
+        self._show_video_scan_progress_popup(max_probe)
+
+        def _on_progress(completed, total):
+            try:
+                self.root.after(0, lambda: self._update_video_scan_progress_popup(completed, total))
+            except Exception:
+                pass
 
         def _worker():
             try:
-                devices = self.enumerate_video_devices()
+                devices = self.enumerate_video_devices(max_probe=max_probe, on_progress=_on_progress)
             except Exception:
                 devices = self.video_devices
 
@@ -809,13 +817,106 @@ class SettingsUIMixin:
                         refresh_button.config(state="normal")
                     except Exception:
                         pass
+                self._close_video_scan_progress_popup()
 
             try:
                 self.root.after(0, _update_ui)
             except Exception:
                 self._video_scan_in_progress = False
+                self._close_video_scan_progress_popup()
 
         Thread(target=_worker, daemon=True).start()
+
+    def _show_video_scan_progress_popup(self, max_probe):
+        parent = (
+            self.settings_window
+            if self.settings_window is not None and self.settings_window.winfo_exists()
+            else self.root
+        )
+        palette = self._settings_palette()
+        popup = tk.Toplevel(parent)
+        popup.title("Scanning Cameras")
+        popup.configure(bg=palette["section_bg"])
+        popup.resizable(False, False)
+        popup.transient(parent)
+        # The underlying cv2 probe can't be interrupted mid-call, so there's
+        # nothing a Cancel/close action could actually do - block it instead
+        # of leaving a close button that appears to hang.
+        popup.protocol("WM_DELETE_WINDOW", lambda: None)
+
+        frame = tk.Frame(popup, bg=palette["section_bg"], padx=24, pady=18)
+        frame.pack()
+        tk.Label(
+            frame,
+            text="Scanning camera devices...",
+            bg=palette["section_bg"],
+            fg=palette["text"],
+            font=(self.ui_font_family, 11, "bold"),
+        ).pack(pady=(0, 10))
+        progress = ttkb.Progressbar(frame, mode="determinate", maximum=max_probe, length=280)
+        progress.pack()
+        # No "0 of N" here: the real probe count isn't known until the scan's
+        # first progress callback (enumerate_video_devices bounds it by the
+        # pygrabber device count, which is itself the first thing the scan
+        # resolves), so an upfront number would just be max_probe and wrong.
+        status_var = tk.StringVar(value="Detecting devices...")
+        tk.Label(
+            frame,
+            textvariable=status_var,
+            bg=palette["section_bg"],
+            fg=palette["muted_text"],
+            font=(self.ui_font_family, 9),
+        ).pack(pady=(8, 0))
+
+        popup.update_idletasks()
+        try:
+            px = parent.winfo_rootx() + (parent.winfo_width() - popup.winfo_width()) // 2
+            py = parent.winfo_rooty() + (parent.winfo_height() - popup.winfo_height()) // 2
+            popup.geometry(f"+{max(0, px)}+{max(0, py)}")
+        except Exception:
+            pass
+        try:
+            popup.grab_set()
+        except Exception:
+            pass
+
+        self._video_scan_popup = popup
+        self._video_scan_popup_progress = progress
+        self._video_scan_popup_status_var = status_var
+
+    def _update_video_scan_progress_popup(self, completed, total):
+        # total reflects enumerate_video_devices' actual bounded probe count,
+        # which can be lower than the popup's initial max_probe-based guess
+        # (see its docstring) - keep the bar's maximum in sync so it always
+        # reaches 100% instead of visually stalling partway.
+        progress = getattr(self, "_video_scan_popup_progress", None)
+        status_var = getattr(self, "_video_scan_popup_status_var", None)
+        if progress is not None:
+            try:
+                progress["maximum"] = total
+                progress["value"] = completed
+            except Exception:
+                pass
+        if status_var is not None:
+            try:
+                status_var.set(f"Device {completed} of {total}")
+            except Exception:
+                pass
+
+    def _close_video_scan_progress_popup(self):
+        popup = getattr(self, "_video_scan_popup", None)
+        if popup is not None:
+            try:
+                popup.grab_release()
+            except Exception:
+                pass
+            try:
+                popup.destroy()
+            except Exception:
+                pass
+        self._video_scan_popup = None
+        self._video_scan_popup_progress = None
+        self._video_scan_popup_status_var = None
 
     def _apply_settings_geometry(self, settings_window):
         settings_window.geometry("960x1280")
