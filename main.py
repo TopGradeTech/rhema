@@ -93,17 +93,6 @@ class TranslationApp(
             "us",
         }
     )
-    BOOK_1_SAMUEL = "1 Samuel"
-    BOOK_2_SAMUEL = "2 Samuel"
-    BOOK_1_KINGS = "1 Kings"
-    BOOK_2_KINGS = "2 Kings"
-    BOOK_1_CHRONICLES = "1 Chronicles"
-    BOOK_2_CHRONICLES = "2 Chronicles"
-    BOOK_SONG_OF_SOLOMON = "Song of Solomon"
-    BOOK_1_CORINTHIANS = "1 Corinthians"
-    BOOK_2_CORINTHIANS = "2 Corinthians"
-    BOOK_1_THESSALONIANS = "1 Thessalonians"
-    BOOK_2_THESSALONIANS = "2 Thessalonians"
     LOCAL_NLLB_DEFAULT_MODEL_NAME = "facebook/nllb-200-distilled-600M"
     LOCAL_NLLB_DEFAULT_SOURCE_LANG = "auto_from_selected_source_language"
     LOCAL_NLLB_DEFAULT_TARGET_LANG = "eng_Latn"
@@ -196,21 +185,6 @@ class TranslationApp(
     LOGGING_MODE_OPTIONS = ("normal", "debug", "evaluation", "full")
     WINDOWS_RUN_KEY_PATH = r"Software\Microsoft\Windows\CurrentVersion\Run"
     WINDOWS_STARTUP_VALUE_NAME = "TopGradePythonTranslation"
-    GRATITUDE_SHORT_PHRASES = frozenset(
-        {
-            "thank you",
-            "thanks",
-            "thanks you",
-            "thank you very much",
-            "thank you so much",
-            "thanks very much",
-            "thanks so much",
-            "thank you for watching",
-            "thanks for watching",
-            "thank you for listening",
-            "thanks for listening",
-        }
-    )
     STT_EDGE_NOISE_PREFIX_PATTERNS = (
         r"^\s*(?:thanks?|thank\s+you)(?:\s+(?:very|so)\s+much)?\s+for\s+(?:watching|listening)\b[\s.!?,:;\"']*",
         r"^\s*thank\s+you\s+very\s+much\b[\s.!?,:;\"']*",
@@ -319,8 +293,6 @@ class TranslationApp(
         self.audio_level_thread = None
         self.audio_level_restart_requested = False
         self._audio_level_last_error_log = 0.0
-        self.no_speech_timeout_count = 0
-        self.unknown_speech_count = 0
         self.root = tk.Tk()
         self.root.title("Translation Output")
         self.font_family = self.pick_font_family(
