@@ -117,6 +117,15 @@ class DisplayMixin:
         ]
 
     def _meter_display_commit(self, text, latency_meta=None, stage="display_commit"):
+        if getattr(self, "show_interim_text", False):
+            # Interim mode: the viewer already watched this utterance type
+            # out live, so metering the final back out word-by-word would
+            # just re-add the latency interim mode exists to remove. Commit
+            # the whole final at once, replacing the live interim row.
+            self.live_line = ""
+            self._commit_display_piece(text, stage)
+            self._report_display_latency_once(latency_meta)
+            return
         groups = self._split_display_word_groups(text)
         if not groups:
             return
@@ -566,17 +575,63 @@ class DisplayMixin:
         self.update_text_metrics()
 
     def _compose_display_lines(self):
-        """The frozen page lines, plus the (legacy) live line wrapped onto
-        the bottom without touching the frozen lines themselves."""
+        """The frozen page lines, plus the live interim line on its own
+        reserved bottom row. The live row is never merged into the frozen
+        tail line and never wrapped - it shows the tail end of the
+        utterance, truncated from the left to fit one row - so interim
+        updates can never re-wrap/reflow text that's already painted (the
+        exact jerkiness that got the original interim preview removed).
+        When the frozen page is already full, making room for the live row
+        is one discrete top-line roll-up, the same visual event the display
+        already does when a completed line arrives."""
         lines = list(self.display_page_lines)
         if self.live_line:
-            tail = lines.pop() if lines else ""
-            candidate = self.clean_text_spacing(f"{tail} {self.live_line}".strip())
-            lines.extend(self._wrap_lines_to_width([candidate], self._display_wrap_width()))
             max_lines = self._effective_max_lines()
-            if len(lines) > max_lines:
-                lines = lines[-max_lines:]
+            if len(lines) >= max_lines:
+                lines = lines[-(max_lines - 1):] if max_lines > 1 else []
+            lines.append(
+                self._interim_tail_for_width(self.live_line, self._display_wrap_width())
+            )
         return [self._coerce_render_segment(line) for line in lines]
+
+    def _interim_tail_for_width(self, text, max_width):
+        """Last words of `text` that fit within max_width on one row."""
+        words = (text or "").split()
+        if not words:
+            return ""
+        tail = ""
+        for word in reversed(words):
+            candidate = f"{word} {tail}".strip()
+            if self.text_font.measure(candidate) > max_width:
+                break
+            tail = candidate
+        return tail or words[-1]
+
+    def _queue_interim_display(self, text):
+        """Accept a raw RealtimeSTT partial for display. Called from
+        RealtimeSTT's worker thread ~10x/sec; coalesces into at most one
+        Tk-thread render per 120ms window, applying only the newest text."""
+        if not getattr(self, "show_interim_text", False):
+            return
+        self._interim_latest_text = text or ""
+        if self._interim_render_scheduled:
+            return
+        self._interim_render_scheduled = True
+        try:
+            self.root.after(120, self._apply_interim_display)
+        except Exception:
+            self._interim_render_scheduled = False
+
+    def _apply_interim_display(self):
+        self._interim_render_scheduled = False
+        if not getattr(self, "show_interim_text", False):
+            return
+        self.live_line = (self._interim_latest_text or "").strip()
+        # Light render path: content-only. Font size depends on canvas size
+        # and _effective_max_lines(), not on what text is showing, so
+        # skipping _fit_font_to_lines here is safe and keeps the ~8Hz
+        # interim tick cheap.
+        self._update_line_items(self._compose_display_lines())
 
     def _coerce_render_segment(self, segment):
         return self.filter_bad_words(segment).strip()
