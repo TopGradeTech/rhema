@@ -294,6 +294,18 @@ class MonitorMixin:
         except Exception:
             pass
 
+    # The output window intermittently ends up on the wrong monitor at
+    # startup even though monitor_index/device resolve correctly from
+    # settings and enter_fullscreen runs with the right values (confirmed
+    # via instrumentation 2026-07-10) - i.e. Windows/Tk sometimes ignores
+    # or later reverts the geometry for the overrideredirect window,
+    # the same failure class the "apply twice" workaround in
+    # _apply_custom_fullscreen already papers over. Verify the result at
+    # staged delays and reassert when wrong; the mismatch log records
+    # whether it was wrong immediately (geometry call ignored) or only at
+    # a later check (reverted afterward).
+    _FULLSCREEN_VERIFY_DELAYS_MS = (300, 1500, 4000)
+
     def enter_fullscreen(self):
         if not self.is_fullscreen:
             return
@@ -306,6 +318,51 @@ class MonitorMixin:
             self._prepare_borderless_fullscreen_state()
             self._apply_standard_fullscreen()
         self._apply_canvas_padding()
+        self._schedule_fullscreen_position_checks()
+
+    def _schedule_fullscreen_position_checks(self):
+        # Cancel any checks still pending from a previous enter_fullscreen
+        # (e.g. Apply clicked twice) so reasserts can't stack or fire against
+        # a monitor selection that just changed.
+        for after_id in getattr(self, "_fullscreen_verify_after_ids", ()):
+            try:
+                self.root.after_cancel(after_id)
+            except Exception:
+                pass
+        self._fullscreen_verify_after_ids = [
+            self.root.after(delay, lambda d=delay: self._verify_fullscreen_position(d))
+            for delay in self._FULLSCREEN_VERIFY_DELAYS_MS
+        ]
+
+    def _verify_fullscreen_position(self, delay_ms):
+        if not self.is_fullscreen or not self.monitors:
+            return
+        idx = max(0, min(self.monitor_index, len(self.monitors) - 1))
+        monitor = self.monitors[idx]
+        try:
+            self.root.update_idletasks()
+            actual = (
+                self.root.winfo_x(),
+                self.root.winfo_y(),
+                self.root.winfo_width(),
+                self.root.winfo_height(),
+            )
+        except Exception:
+            return
+        expected = (
+            monitor["left"],
+            monitor["top"],
+            monitor["right"] - monitor["left"],
+            monitor["bottom"] - monitor["top"],
+        )
+        if actual == expected:
+            return
+        self._log_status(
+            "fullscreen position wrong at +%sms: actual=%s expected=%s "
+            "(monitor_index=%s device=%r) - reasserting"
+            % (delay_ms, actual, expected, idx, monitor.get("device", ""))
+        )
+        self.move_window_to_monitor(self.root, self.monitor_index, keep_size=False)
 
     def _prepare_borderless_fullscreen_state(self):
         if self.prev_overrideredirect is None:
