@@ -4,8 +4,6 @@ from threading import Thread, Lock, Event
 import cv2
 from PIL import Image, ImageTk
 
-_VIDEO_RETRY_DELAY = 5.0  # seconds to wait after a failed open before retrying
-
 # OBS Virtual Camera (and some other virtual/software cameras) register with
 # Windows only through Media Foundation, not the legacy DirectShow API, so a
 # CAP_DSHOW-only open silently fails to see them ("backend is generally

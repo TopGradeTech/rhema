@@ -1,30 +1,4 @@
-import speech_recognition as sr
 import tkinter as tk
-from tkinter import messagebox
-from tkinter import colorchooser
-from tkinter import filedialog
-from tkinter import font as tkfont
-from threading import Thread, Lock, Event
-import queue
-import time
-import re
-import requests
-import struct
-import json
-import pyaudio
-from collections import deque, Counter
-import os
-import sys
-import traceback
-import io
-import math
-import statistics
-import tempfile
-import gc
-import wave
-import importlib.util
-import ttkbootstrap as ttkb
-from ttkbootstrap.constants import PRIMARY
 
 
 class Tooltip:
