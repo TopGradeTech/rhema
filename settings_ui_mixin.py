@@ -4,24 +4,14 @@ from tkinter import ttk
 from tkinter import messagebox
 from tkinter import colorchooser
 from tkinter import filedialog
-from threading import Thread, Lock, Event
-import queue
+from threading import Thread
 import time
 import re
-import requests
-import struct
-import json
-import pyaudio
-from collections import deque, Counter
 import os
 import sys
 import traceback
-import io
 import math
-import statistics
-import tempfile
 import gc
-import wave
 import importlib.util
 import ttkbootstrap as ttkb
 from ttkbootstrap.constants import PRIMARY
@@ -529,7 +519,7 @@ class SettingsUIMixin:
         previous_realtime_model = self.realtime_stt_realtime_model
         previous_silero_sensitivity = self.realtime_stt_silero_sensitivity
         previous_source_lang = self.source_lang
-        self.source_lang = self._optional_mapped_api_setting(
+        self.source_lang = self._optional_mapped_setting(
             transcription_vars,
             "stt_source_lang_var",
             "stt_source_lang_map",
@@ -540,14 +530,14 @@ class SettingsUIMixin:
             self.stt_device = self._normalize_stt_device(
                 transcription_vars["stt_device_var"].get()
             )
-        self.realtime_stt_final_model = self._optional_mapped_api_setting(
+        self.realtime_stt_final_model = self._optional_mapped_setting(
             transcription_vars,
             "realtime_stt_final_model_var",
             "realtime_stt_final_model_map",
             current_value=self.realtime_stt_final_model,
             mapped_default="large-v3",
         )
-        self.realtime_stt_realtime_model = self._optional_mapped_api_setting(
+        self.realtime_stt_realtime_model = self._optional_mapped_setting(
             transcription_vars,
             "realtime_stt_realtime_model_var",
             "realtime_stt_realtime_model_map",
@@ -583,33 +573,19 @@ class SettingsUIMixin:
         ):
             self._request_capture_restart()
 
-    def _optional_mapped_api_setting(
+    def _optional_mapped_setting(
         self,
-        api_vars,
+        settings_vars,
         var_key,
         map_key,
         current_value,
         mapped_default,
     ):
-        if var_key not in api_vars or map_key not in api_vars:
+        if var_key not in settings_vars or map_key not in settings_vars:
             return current_value
-        selected = api_vars[var_key].get()
-        mapping = api_vars[map_key]
+        selected = settings_vars[var_key].get()
+        mapping = settings_vars[map_key]
         return mapping.get(selected, mapped_default)
-
-    def _optional_string_api_setting(
-        self,
-        api_vars,
-        var_key,
-        current_value,
-        empty_default=None,
-    ):
-        if var_key not in api_vars:
-            return current_value
-        value = api_vars[var_key].get().strip()
-        if empty_default is None:
-            return value
-        return value or empty_default
 
     def _apply_translation_vars(self, translation_vars):
         previous_nllb_config = (
@@ -629,7 +605,7 @@ class SettingsUIMixin:
             self._apply_translation_mode_defaults()
         else:
             self._normalize_translation_settings()
-        self.local_nllb_model_name = self._optional_mapped_api_setting(
+        self.local_nllb_model_name = self._optional_mapped_setting(
             translation_vars,
             "local_nllb_model_name_var",
             "local_nllb_model_name_map",
@@ -640,14 +616,14 @@ class SettingsUIMixin:
             self.local_nllb_device = self._normalize_local_nllb_device(
                 translation_vars["local_nllb_device_var"].get()
             )
-        self.local_nllb_source_lang = self._optional_mapped_api_setting(
+        self.local_nllb_source_lang = self._optional_mapped_setting(
             translation_vars,
             "local_nllb_source_lang_var",
             "local_nllb_source_lang_map",
             current_value=self.local_nllb_source_lang,
             mapped_default=self.LOCAL_NLLB_DEFAULT_SOURCE_LANG,
         )
-        self.local_nllb_target_lang = self._optional_mapped_api_setting(
+        self.local_nllb_target_lang = self._optional_mapped_setting(
             translation_vars,
             "local_nllb_target_lang_var",
             "local_nllb_target_lang_map",
@@ -1112,13 +1088,13 @@ class SettingsUIMixin:
         language pickers with 100-200 options where a plain OptionMenu
         would be unusable. `options` is a list of (display_name, code)
         pairs. Returns (combobox, string_var, name_to_code_map) - the var
-        and map are exactly what _optional_mapped_api_setting expects for
+        and map are exactly what _optional_mapped_setting expects for
         its "var_key"/"map_key" pair, so callers just add both to the
         returned settings-vars dict under those two keys.
 
         Typing anything not matching an option is harmless: Apply falls
         back to that field's existing mapped_default via
-        _optional_mapped_api_setting, it doesn't raise or crash.
+        _optional_mapped_setting, it doesn't raise or crash.
         """
         all_display = [name for name, _code in options]
         name_to_code = dict(options)
@@ -1154,12 +1130,6 @@ class SettingsUIMixin:
         combobox.bind("<<ComboboxSelected>>", restore_full_list)
         combobox.bind("<FocusOut>", restore_full_list)
         return combobox, var, name_to_code
-
-    def _compute_scaled_font_size(self):
-        base_size = max(12, int(self.font_size))
-        lines = self._effective_max_lines()
-        scaled = int(round(base_size * (8.0 / lines)))
-        return max(12, min(scaled, 120))
 
     def _apply_scaled_fonts(self):
         self._fit_font_to_lines()
@@ -1449,6 +1419,13 @@ class SettingsUIMixin:
             pass
 
     def _schedule_output_snapshot(self):
+        # Cancel any pending tick so rebuilding the preview section can never
+        # stack a second permanent snapshot loop.
+        if self._output_snapshot_after_id is not None:
+            try:
+                self.root.after_cancel(self._output_snapshot_after_id)
+            except Exception:
+                pass
         self._output_snapshot_after_id = self.root.after(
             _OUTPUT_SNAPSHOT_INTERVAL_MS, self._run_output_snapshot_tick
         )

@@ -1,30 +1,6 @@
-import speech_recognition as sr
-import tkinter as tk
-from tkinter import messagebox
-from tkinter import colorchooser
-from tkinter import filedialog
-from tkinter import font as tkfont
-from threading import Thread, Lock, Event
-import queue
-import time
 import re
-import requests
-import struct
 import json
-import pyaudio
-from collections import deque, Counter
 import os
-import sys
-import traceback
-import io
-import math
-import statistics
-import tempfile
-import gc
-import wave
-import importlib.util
-import ttkbootstrap as ttkb
-from ttkbootstrap.constants import PRIMARY
 
 from languages import FLORES_TO_WHISPER
 
@@ -460,7 +436,6 @@ class SettingsMixin:
         self.settings_monitor_device = settings_device
         self.settings_monitor_origin = settings_origin
         data = {
-            "speech_engine": self.speech_engine,
             "stt_device": self.stt_device,
             "realtime_stt_final_model": self.realtime_stt_final_model,
             "realtime_stt_realtime_model": self.realtime_stt_realtime_model,
