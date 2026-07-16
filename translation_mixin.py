@@ -429,8 +429,6 @@ class TranslationMixin:
     def _apply_translation_cleanup_steps(self, translated_text):
         translated = (translated_text or "").strip()
         translated = self.apply_custom_vocabulary(translated)
-        if self.translation_enabled and self._effective_target_lang().startswith("en"):
-            translated = self.apply_spanish_bible_name_map(translated)
         translated = self.format_scripture_refs(translated)
         if self._is_spanish_output_mode():
             translated = self._normalize_spanish_text(translated)

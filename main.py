@@ -1,31 +1,14 @@
 import tkinter as tk
-from tkinter import messagebox
-from tkinter import colorchooser
-from tkinter import filedialog
 from tkinter import font as tkfont
 from threading import Thread, Lock
 import queue
 import time
-import re
-import requests
-import json
-import pyaudio
-from collections import deque, Counter
+from collections import deque
 import os
-import sys
 import traceback
-import io
-import math
-import statistics
-import tempfile
-import gc
-import wave
-import importlib.util
 import ttkbootstrap as ttkb
-from ttkbootstrap.constants import PRIMARY
 
 from languages import WHISPER_LANGUAGES
-from tooltip import Tooltip
 from logging_mixin import LoggingMixin
 from settings_mixin import SettingsMixin
 from monitor_mixin import MonitorMixin
@@ -302,7 +285,6 @@ class TranslationApp(
             ["Segoe UI", "SF Pro Text", "Inter", "Noto Sans", self.font_family]
         )
         self.style = ttkb.Style(theme="flatly")
-        self.rounded_buttons_supported = False
         self.style.configure(
             "primary.TButton",
             background="#5B8FF7",
@@ -364,7 +346,6 @@ class TranslationApp(
         self.device_sample_rates_by_index = {}
         self.preferred_device_label = ""
         self.device_refresh_in_progress = False
-        self.last_display_line_count = 0
         self.start_with_windows = False
         self.lock_output_focus = False
         self.sentence_buffer = ""
@@ -523,12 +504,9 @@ class TranslationApp(
             "es": self.default_biblical_terms_es(),
         }
         self.biblical_books = self.default_biblical_books()
-        self.spanish_bible_name_map = {}
-        self.spanish_bible_pattern = self._build_spanish_bible_pattern()
         self.translation_enabled = False
         self.auto_switch_translation = False
         self.is_paused = False
-        self.text_bbox_height = 0
         self.load_settings()
         self._sync_windows_startup_entry()
         self._refresh_bad_words()

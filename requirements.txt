@@ -1,6 +1,5 @@
 speechrecognition
 pyaudio
-requests
 ttkbootstrap
 faster-whisper
 transformers

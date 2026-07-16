@@ -1,30 +1,5 @@
-import speech_recognition as sr
-import tkinter as tk
-from tkinter import messagebox
-from tkinter import colorchooser
-from tkinter import filedialog
-from tkinter import font as tkfont
-from threading import Thread, Lock, Event
-import queue
-import time
 import re
-import requests
-import struct
-import json
-import pyaudio
-from collections import deque, Counter
-import os
-import sys
-import traceback
-import io
-import math
-import statistics
-import tempfile
-import gc
-import wave
-import importlib.util
-import ttkbootstrap as ttkb
-from ttkbootstrap.constants import PRIMARY
+from collections import Counter
 
 
 class TextFilterMixin:
@@ -113,17 +88,6 @@ class TextFilterMixin:
         if "en" in vocab_by_lang:
             return vocab_by_lang["en"]
         return next(iter(vocab_by_lang.values()), [])
-
-    def apply_spanish_bible_name_map(self, text):
-        if not text or not self.spanish_bible_pattern:
-            return text
-        def repl(match):
-            raw = match.group(0)
-            replacement = self.spanish_bible_name_map.get(raw.lower(), raw)
-            if raw.isupper():
-                return replacement.upper()
-            return replacement
-        return self.spanish_bible_pattern.sub(repl, text)
 
     def clean_text_spacing(self, text):
         text = re.sub(r'([.!?])(?=[^\W\d_])', r'\1 ', text, flags=re.UNICODE)
@@ -239,15 +203,6 @@ class TextFilterMixin:
             return f"{book} {chapter}:{verse}"
         return re.sub(pattern, repl, text, flags=re.IGNORECASE)
 
-    def _build_spanish_bible_pattern(self):
-        if not self.spanish_bible_name_map:
-            return None
-        keys = sorted(self.spanish_bible_name_map.keys(), key=len, reverse=True)
-        try:
-            return re.compile(r"\b(" + "|".join(re.escape(k) for k in keys) + r")\b", flags=re.IGNORECASE)
-        except re.error:
-            return None
-
     def default_bad_words_en(self):
         return [
             "ass",
@@ -322,126 +277,6 @@ class TextFilterMixin:
         "Egypt", "Rome", "Antioch", "Corinth", "Ephesus", "Philippi",
         "Thessalonica", "Tarsus", "Patmos",
     )
-    SPANISH_BIBLE_NAME_ALIASES = (
-        ("Genesis", ("g\u00e9nesis", "genesis")),
-        ("Exodus", ("\u00e9xodo", "exodo")),
-        ("Leviticus", ("lev\u00edtico", "levitico")),
-        ("Numbers", ("n\u00fameros", "numeros")),
-        ("Deuteronomy", ("deuteronomio",)),
-        ("Joshua", ("josu\u00e9", "josue")),
-        ("Judges", ("jueces",)),
-        ("Ruth", ("rut",)),
-        ("1 Samuel", ("1 samuel",)),
-        ("2 Samuel", ("2 samuel",)),
-        ("1 Kings", ("1 reyes",)),
-        ("2 Kings", ("2 reyes",)),
-        ("1 Chronicles", ("1 cr\u00f3nicas", "1 cronicas")),
-        ("2 Chronicles", ("2 cr\u00f3nicas", "2 cronicas")),
-        ("Ezra", ("esdras",)),
-        ("Nehemiah", ("nehem\u00edas", "nehemias")),
-        ("Esther", ("ester",)),
-        ("Job", ("job",)),
-        ("Psalms", ("salmos",)),
-        ("Psalm", ("salmo",)),
-        ("Proverbs", ("proverbios",)),
-        ("Ecclesiastes", ("eclesiast\u00e9s", "eclesiastes")),
-        (
-            "Song of Solomon",
-            ("cantar de los cantares", "cantar de salom\u00f3n", "cantar de salomon", "cantares"),
-        ),
-        ("Isaiah", ("isa\u00edas", "isaias")),
-        ("Jeremiah", ("jerem\u00edas", "jeremias")),
-        ("Lamentations", ("lamentaciones",)),
-        ("Ezekiel", ("ezequiel",)),
-        ("Daniel", ("daniel",)),
-        ("Hosea", ("oseas",)),
-        ("Joel", ("joel",)),
-        ("Amos", ("am\u00f3s", "amos")),
-        ("Obadiah", ("abd\u00edas", "abdias")),
-        ("Jonah", ("jon\u00e1s", "jonas")),
-        ("Micah", ("miqueas",)),
-        ("Nahum", ("nah\u00fam", "nahum")),
-        ("Habakkuk", ("habacuc",)),
-        ("Zephaniah", ("sofon\u00edas", "sofonias")),
-        ("Haggai", ("hageo",)),
-        ("Zechariah", ("zacar\u00edas", "zacarias")),
-        ("Malachi", ("malaqu\u00edas", "malaquias")),
-        ("Matthew", ("mateo",)),
-        ("Mark", ("marcos",)),
-        ("Luke", ("lucas",)),
-        ("John", ("juan",)),
-        ("Acts", ("hechos",)),
-        ("Romans", ("romanos",)),
-        ("1 Corinthians", ("1 corintios",)),
-        ("2 Corinthians", ("2 corintios",)),
-        ("Galatians", ("g\u00e1latas", "galatas")),
-        ("Ephesians", ("efesios",)),
-        ("Philippians", ("filipenses",)),
-        ("Colossians", ("colosenses",)),
-        ("1 Thessalonians", ("1 tesalonicenses",)),
-        ("2 Thessalonians", ("2 tesalonicenses",)),
-        ("1 Timothy", ("1 timoteo",)),
-        ("2 Timothy", ("2 timoteo",)),
-        ("Titus", ("tito",)),
-        ("Philemon", ("filem\u00f3n", "filemon")),
-        ("Hebrews", ("hebreos",)),
-        ("James", ("santiago",)),
-        ("1 Peter", ("1 pedro",)),
-        ("2 Peter", ("2 pedro",)),
-        ("1 John", ("1 juan",)),
-        ("2 John", ("2 juan",)),
-        ("3 John", ("3 juan",)),
-        ("Jude", ("judas",)),
-        ("Revelation", ("apocalipsis",)),
-        ("Jesus", ("jes\u00fas", "jesus")),
-        ("Moses", ("mois\u00e9s", "moises")),
-        ("Abraham", ("abraham",)),
-        ("Isaac", ("isaac",)),
-        ("Jacob", ("jacob",)),
-        ("Joseph", ("jos\u00e9", "jose")),
-        ("David", ("david",)),
-        ("Solomon", ("salom\u00f3n", "salomon")),
-        ("Samuel", ("samuel",)),
-        ("Paul", ("pablo",)),
-        ("Peter", ("pedro",)),
-        ("Mary", ("mar\u00eda", "maria")),
-        ("Jerusalem", ("jerusal\u00e9n", "jerusalen")),
-        ("Bethlehem", ("bel\u00e9n", "belen")),
-        ("Nazareth", ("nazaret",)),
-        ("Galilee", ("galilea",)),
-        ("Jericho", ("jeric\u00f3", "jerico")),
-        ("Capernaum", ("capernaum",)),
-        ("Judea", ("judea",)),
-        ("Samaria", ("samaria",)),
-        ("Bethany", ("betania",)),
-        ("Golgotha", ("g\u00f3lgota", "golgota")),
-        ("Calvary", ("calvario",)),
-        ("Mount Sinai", ("monte sinai", "monte sina\u00ed")),
-        ("Mount Zion", ("monte sion", "monte si\u00f3n")),
-        ("Jordan", ("jord\u00e1n", "jordan")),
-        ("Sea of Galilee", ("mar de galilea",)),
-        ("Dead Sea", ("mar muerto",)),
-        ("Damascus", ("damasco",)),
-        ("Assyria", ("asiria",)),
-        ("Babylon", ("babilonia",)),
-        ("Egypt", ("egipto",)),
-        ("Rome", ("roma",)),
-        ("Antioch", ("antioqu\u00eda", "antioquia")),
-        ("Corinth", ("corinto",)),
-        ("Ephesus", ("\u00e9feso", "efeso")),
-        ("Philippi", ("filipos",)),
-        ("Thessalonica", ("tesal\u00f3nica", "tesalonica")),
-        ("Tarsus", ("tarso",)),
-        ("Patmos", ("patmos",)),
-    )
-
-    def default_spanish_bible_map(self):
-        return {
-            alias.lower(): english
-            for english, aliases in self.SPANISH_BIBLE_NAME_ALIASES
-            for alias in aliases
-        }
-
     def default_biblical_books(self):
         return list(self.BIBLICAL_BOOK_NAMES)
 

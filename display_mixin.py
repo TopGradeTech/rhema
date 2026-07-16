@@ -1,30 +1,8 @@
-import speech_recognition as sr
-import tkinter as tk
-from tkinter import messagebox
-from tkinter import colorchooser
-from tkinter import filedialog
-from tkinter import font as tkfont
-from threading import Thread, Lock, Event
-import queue
+from threading import Thread
 import time
 import re
-import requests
-import struct
-import json
 import pyaudio
-from collections import deque, Counter
-import os
-import sys
-import traceback
-import io
 import math
-import statistics
-import tempfile
-import gc
-import wave
-import importlib.util
-import ttkbootstrap as ttkb
-from ttkbootstrap.constants import PRIMARY
 
 # Finalized text is revealed onto the display in small word groups (the
 # broadcast-caption "roll-up" style) instead of dumping whole blocks at
@@ -101,9 +79,6 @@ class DisplayMixin:
             latency_meta=meta,
             rendered_at=time.time(),
         )
-
-    def _append_display_text_immediate(self, text, latency_meta=None, stage="display_fast_path"):
-        self._meter_display_commit(text, latency_meta=latency_meta, stage=stage)
 
     def _split_display_word_groups(self, text):
         """Split a finalized block into small word groups for the drip
@@ -299,17 +274,6 @@ class DisplayMixin:
         def update():
             self.status_label.config(text=f"Status: {msg}")
         self.root.after(0, update)
-
-    def _capture_audio_level(self, audio):
-        try:
-            raw = audio.get_raw_data()
-            if not raw:
-                return
-            sample_width = int(getattr(audio, "sample_width", 2) or 2)
-            sample_width = max(1, sample_width)
-            self._capture_audio_level_from_raw(raw, sample_width)
-        except Exception:
-            pass
 
     def _capture_audio_level_from_raw(self, raw, sample_width):
         if not raw:
@@ -567,12 +531,10 @@ class DisplayMixin:
     def render_text(self):
         self._fit_font_to_lines()
         display_lines = self._compose_display_lines()
-        self.last_display_line_count = len(display_lines)
         self.text_canvas.itemconfigure(self.text_item, text="", state="hidden")
         for item in self.text_line_items:
             self.text_canvas.itemconfigure(item, state="normal")
         self._update_line_items(display_lines)
-        self.update_text_metrics()
 
     def _compose_display_lines(self):
         """The frozen page lines, plus the live interim line on its own
@@ -636,10 +598,3 @@ class DisplayMixin:
     def _coerce_render_segment(self, segment):
         return self.filter_bad_words(segment).strip()
 
-    def update_text_metrics(self):
-        line_height = self.text_font.metrics("linespace") or 1
-        self.text_bbox_height = line_height * max(1, self.last_display_line_count)
-
-
-if __name__ == "__main__":
-    app = TranslationApp()

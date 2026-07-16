@@ -1,30 +1,8 @@
-import speech_recognition as sr
 import tkinter as tk
-from tkinter import messagebox
-from tkinter import colorchooser
-from tkinter import filedialog
-from tkinter import font as tkfont
-from threading import Thread, Lock, Event
-import queue
-import time
 import re
-import requests
-import struct
-import json
 import pyaudio
-from collections import deque, Counter
 import os
 import sys
-import traceback
-import io
-import math
-import statistics
-import tempfile
-import gc
-import wave
-import importlib.util
-import ttkbootstrap as ttkb
-from ttkbootstrap.constants import PRIMARY
 
 
 class MonitorMixin:
@@ -464,18 +442,6 @@ class MonitorMixin:
         with self.portaudio_admin_lock:
             pa_instance.terminate()
 
-    def _open_microphone_source(self, device_index, sample_rate):
-        with self.portaudio_admin_lock:
-            mic = sr.Microphone(device_index=device_index, sample_rate=sample_rate)
-            source = mic.__enter__()
-        return mic, source
-
-    def _close_microphone_source(self, mic):
-        if mic is None:
-            return
-        with self.portaudio_admin_lock:
-            mic.__exit__(None, None, None)
-
     def _get_device_infos(self):
         p = self._create_pyaudio()
         input_devices = []
@@ -557,13 +523,6 @@ class MonitorMixin:
 
     def _is_loopback_name(self, name):
         lowered = name.lower()
-        keywords = ["loopback", "stereo mix", "what u hear", "what you hear"]
-        return any(k in lowered for k in keywords)
-
-    def _is_loopback_label(self, label):
-        if not label:
-            return False
-        lowered = label.lower()
         keywords = ["loopback", "stereo mix", "what u hear", "what you hear"]
         return any(k in lowered for k in keywords)
 
