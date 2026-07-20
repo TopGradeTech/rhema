@@ -167,7 +167,7 @@ class RealtimeSttMixin:
             cuda_available = False
         return "cuda" if cuda_available else "cpu"
 
-    def _realtime_stt_recorder_kwargs(self, on_update):
+    def _realtime_stt_recorder_kwargs(self, on_update, on_stabilized):
         """Build the AudioToTextRecorder constructor kwargs from current settings."""
         # Must agree with _source_language_filter_expected(), which gates the
         # final text this recorder produces. If Whisper is told a different
@@ -181,12 +181,13 @@ class RealtimeSttMixin:
         # int8 compute type: RealtimeSTT loads the realtime model on CPU even
         # when device=cuda; float16 is unsupported on CPU ctranslate2 backends.
         # enable_realtime_transcription is always True so on_update fires for
-        # dynamic silence adjustment even though its text is never displayed.
+        # dynamic silence adjustment even when no interim mode displays it.
         kwargs = {
             "model": self.realtime_stt_final_model,
             "realtime_model_type": self.realtime_stt_realtime_model,
             "enable_realtime_transcription": True,
             "on_realtime_transcription_update": on_update,
+            "on_realtime_transcription_stabilized": on_stabilized,
             "device": self._resolve_stt_device(self.stt_device),
             "compute_type": "int8",
             "silero_sensitivity": float(self.realtime_stt_silero_sensitivity),
@@ -284,9 +285,15 @@ class RealtimeSttMixin:
             # enabled, and marshals onto the Tk thread itself.
             self._queue_interim_display(text)
 
+        def on_stabilized(text):
+            # Text that has stopped changing — much lower churn than raw
+            # partials, so it's what feeds the live *translated* interim row
+            # when translation is on. No-ops unless that mode is active.
+            self._queue_interim_translation(text)
+
         try:
             recorder = AudioToTextRecorder(
-                **self._realtime_stt_recorder_kwargs(on_update)
+                **self._realtime_stt_recorder_kwargs(on_update, on_stabilized)
             )
             self._realtime_stt_recorder = recorder
             self._realtime_stt_last_recorder = recorder

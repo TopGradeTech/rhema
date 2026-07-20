@@ -55,7 +55,7 @@ The app is split into `main.py` plus a set of mixin modules, all mixed into `Tra
 
 ### Speech-to-Text
 - RealtimeSTT (`realtime_stt_mixin.py`) is the only speech engine. It runs a small "realtime" faster-whisper model for live preview text and a larger "final" model for accurate finalized output, both locally.
-- Only finalized RealtimeSTT output is displayed — the live word-by-word interim preview was removed because it caused jerky re-wrap/reflow on every ~100ms partial update.
+- By default only finalized RealtimeSTT output is displayed — the original always-on interim preview was removed because it caused jerky re-wrap/reflow on every ~100ms partial update. An opt-in "Show live interim text" checkbox re-adds live text on a reserved bottom row that never re-wraps frozen lines: raw partials when translation is off, throttled NLLB translations of stabilized text when translation is on.
 - Device (CPU/GPU) and model sizes are configurable in settings.
 - Post-speech silence duration is not a user-facing setting: RealtimeSTT overwrites it dynamically (`_realtime_stt_adjust_silence`) within ~200ms of any speech, so it was cosmetic as a slider.
 
