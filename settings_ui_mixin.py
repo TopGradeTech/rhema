@@ -1436,13 +1436,18 @@ class SettingsUIMixin:
         if widget is None or not widget.winfo_exists():
             return
         try:
-            x = self.root.winfo_rootx()
-            y = self.root.winfo_rooty()
-            width = self.root.winfo_width()
-            height = self.root.winfo_height()
+            # Capture by window handle (PrintWindow under the hood on
+            # Windows) instead of a screen-coordinate bbox (plain BitBlt).
+            # The video overlay draws into the canvas via fast, frequent
+            # PhotoImage updates, which DWM can end up presenting through a
+            # hardware-accelerated path that BitBlt reads back as solid
+            # black - PrintWindow asks the window to render itself and
+            # sees that content correctly. Also immune to whatever screen
+            # coordinates the window happens to be at.
+            shot = ImageGrab.grab(window=self.root.winfo_id())
+            width, height = shot.size
             if width <= 1 or height <= 1:
                 return
-            shot = ImageGrab.grab(bbox=(x, y, x + width, y + height))
             scale = min(1.0, _OUTPUT_SNAPSHOT_WIDTH / width)
             thumb_size = (max(1, int(width * scale)), max(1, int(height * scale)))
             shot = shot.resize(thumb_size, Image.Resampling.LANCZOS)
