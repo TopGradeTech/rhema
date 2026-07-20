@@ -77,7 +77,6 @@ class TranslationMixin:
         source_lang=None,
         target_lang=None,
         max_chars=None,
-        cache_dir=None,
     ):
         source_text = (text or "").strip()
         if not source_text:
@@ -88,9 +87,6 @@ class TranslationMixin:
         )
         device_setting = self._normalize_local_nllb_device(
             device if device is not None else self.local_nllb_device
-        )
-        cache_dir = self._normalize_optional_directory(
-            self.local_nllb_cache_dir if cache_dir is None else cache_dir
         )
         max_chars = self._coerce_int_range(
             self.local_nllb_max_chars if max_chars is None else max_chars,
@@ -109,7 +105,6 @@ class TranslationMixin:
                 self._get_local_nllb_components(
                     model_name=model_name,
                     device=device_setting,
-                    cache_dir=cache_dir,
                     src_lang=src_lang,
                 )
             )
@@ -182,7 +177,7 @@ class TranslationMixin:
         )
         return translated, elapsed_ms
 
-    def _get_local_nllb_components(self, model_name, device, cache_dir, src_lang):
+    def _get_local_nllb_components(self, model_name, device, src_lang):
         resolved_device = None
         try:
             torch_module, AutoModelForSeq2SeqLM, AutoTokenizer = (
@@ -193,7 +188,7 @@ class TranslationMixin:
         except Exception as exc:
             raise sr.RequestError(self.LOCAL_NLLB_MISSING_DEPENDENCIES_MESSAGE) from exc
         resolved_device = self._resolve_local_nllb_device(torch_module, device)
-        config = (model_name, resolved_device, cache_dir)
+        config = (model_name, resolved_device)
         with self.local_nllb_lock:
             if (
                 self.local_nllb_tokenizer is not None
@@ -211,10 +206,7 @@ class TranslationMixin:
                     torch_module,
                     resolved_device,
                 )
-            kwargs = self._local_nllb_model_kwargs(
-                cache_dir,
-                local_files_only=True,
-            )
+            kwargs = self._local_nllb_model_kwargs(local_files_only=True)
             if resolved_device != "cpu":
                 kwargs["dtype"] = torch_module.float16
             try:
