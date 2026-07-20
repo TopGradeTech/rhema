@@ -221,9 +221,6 @@ class SettingsMixin:
             250,
             20000,
         )
-        self.local_nllb_cache_dir = self._normalize_optional_directory(
-            data.get("local_nllb_cache_dir", self.local_nllb_cache_dir)
-        )
 
     def _resolve_loaded_monitor_settings(self):
         if not self.monitors:
@@ -481,7 +478,6 @@ class SettingsMixin:
             "local_nllb_source_lang": self.local_nllb_source_lang,
             "local_nllb_target_lang": self.local_nllb_target_lang,
             "local_nllb_max_chars": self.local_nllb_max_chars,
-            "local_nllb_cache_dir": self.local_nllb_cache_dir,
             "auto_switch_translation": self.auto_switch_translation,
             "biblical_books": self.biblical_books,
             "preferred_device_label": self.preferred_device_label,

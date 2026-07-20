@@ -39,7 +39,6 @@ class TranslationApp(
     STATUS_LISTENING = "Listening..."
     SHOW_LIST_LABEL = "Show list"
     HIDE_LIST_LABEL = "Hide list"
-    OUTPUT_LANGUAGE_ENGLISH_LABEL = "Output language: English"
     NON_WORD_PATTERN = r"[^\w]+"
     UNICODE_WORD_PATTERN = r"[^\W_]+"
     UNICODE_WORD_CHAR_PATTERN = r"[^\W_]"
@@ -322,7 +321,6 @@ class TranslationApp(
         self.local_nllb_source_lang = self.LOCAL_NLLB_DEFAULT_SOURCE_LANG
         self.local_nllb_target_lang = self.LOCAL_NLLB_DEFAULT_TARGET_LANG
         self.local_nllb_max_chars = self.LOCAL_NLLB_DEFAULT_MAX_CHARS
-        self.local_nllb_cache_dir = ""
         self.local_nllb_tokenizer = None
         self.local_nllb_model = None
         self.local_nllb_model_config = None
