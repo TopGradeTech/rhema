@@ -196,14 +196,17 @@ class SettingsUIMixin:
             self._show_startup_loading_overlay(settings_window, settings_bg, settings_fg)
 
     def _show_startup_loading_overlay(self, settings_window, settings_bg, settings_fg):
-        """Block settings interaction behind a full-window overlay until both
-        RealtimeSTT and Local NLLB have finished their initial load/verify
-        pass, so the user can't change device/model settings out from under
-        a load already in progress. Shown once per app run; see
-        _check_startup_ready/_mark_startup_stt_ready/
-        _mark_startup_translation_ready.
+        """Block settings interaction behind a full-window overlay until
+        RealtimeSTT, Local NLLB, and (if the video overlay was left on) the
+        camera scan have all finished their initial load/verify pass, so
+        the user can't change device/model settings out from under a load
+        already in progress. Also uses the wait to silently rescan camera
+        devices so the video device dropdown reflects last run's saved
+        selection instead of the "(click Refresh)" placeholder. Shown once
+        per app run; see _check_startup_ready/_mark_startup_stt_ready/
+        _mark_startup_translation_ready/_mark_startup_video_scan_ready.
 
-        Deliberately just a plain message and spinner - both readiness
+        Deliberately just a plain message and spinner - all readiness
         flags are marked "ready" on failure as well as success (a
         terminal-state gate, not a success gate), so a real error hides
         this overlay almost immediately rather than sitting behind it, and
@@ -230,6 +233,15 @@ class SettingsUIMixin:
 
         self._startup_loading_overlay = overlay
         self._startup_loading_progress = progress
+        # Rescan camera devices behind the overlay so the video device
+        # dropdown reflects the previously saved selection (video_device_index)
+        # instead of sitting on the "(click Refresh)" placeholder until the
+        # user manually clicks Refresh - only relevant if the video overlay
+        # was actually in use last run.
+        if self.video_feed_enabled:
+            self._refresh_video_devices(show_popup=False)
+        else:
+            self._mark_startup_video_scan_ready()
         self._poll_startup_overlay_status()
 
     def _poll_startup_overlay_status(self):
@@ -258,10 +270,23 @@ class SettingsUIMixin:
     def _check_startup_ready(self):
         if self.app_startup_ready:
             return
-        if not (self.startup_stt_ready and self.startup_translation_ready):
+        if not (
+            self.startup_stt_ready
+            and self.startup_translation_ready
+            and self.startup_video_scan_ready
+        ):
             return
         self.app_startup_ready = True
         self._hide_startup_loading_overlay()
+
+    def _mark_startup_video_scan_ready(self):
+        if self.startup_video_scan_ready:
+            return
+        self.startup_video_scan_ready = True
+        try:
+            self.root.after(0, self._check_startup_ready)
+        except Exception:
+            pass
 
     def _mark_startup_translation_ready(self):
         if self.startup_translation_ready:
@@ -758,7 +783,7 @@ class SettingsUIMixin:
 
         Thread(target=_worker, daemon=True).start()
 
-    def _refresh_video_devices(self):
+    def _refresh_video_devices(self, show_popup=True):
         # cv2's DirectShow backend is not safe to probe from two threads at
         # once (concurrent enumerate_video_devices calls have crashed the
         # process with a native heap-corruption fault), so ignore Refresh
@@ -773,7 +798,12 @@ class SettingsUIMixin:
             except Exception:
                 pass
         max_probe = 5
-        self._show_video_scan_progress_popup(max_probe)
+        # show_popup=False for the automatic startup scan (see
+        # _show_startup_loading_overlay) - it already runs behind the
+        # startup loading overlay, so a second modal popup on top of it
+        # would be redundant.
+        if show_popup:
+            self._show_video_scan_progress_popup(max_probe)
 
         def _on_progress(completed, total):
             try:
@@ -811,12 +841,14 @@ class SettingsUIMixin:
                     except Exception:
                         pass
                 self._close_video_scan_progress_popup()
+                self._mark_startup_video_scan_ready()
 
             try:
                 self.root.after(0, _update_ui)
             except Exception:
                 self._video_scan_in_progress = False
                 self._close_video_scan_progress_popup()
+                self._mark_startup_video_scan_ready()
 
         Thread(target=_worker, daemon=True).start()
 
