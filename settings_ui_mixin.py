@@ -460,7 +460,18 @@ class SettingsUIMixin:
             return None
 
     def _apply_display_vars(self, display_vars):
-        self.max_lines = display_vars["lines_var"].get()
+        self.max_lines = self._coerce_int_range(
+            display_vars["lines_var"].get(),
+            self.LINES_NO_VIDEO_DEFAULT,
+            self.LINES_NO_VIDEO_MIN,
+            self.LINES_NO_VIDEO_MAX,
+        )
+        self.video_max_lines = self._coerce_int_range(
+            display_vars["video_lines_var"].get(),
+            self.LINES_VIDEO_DEFAULT,
+            self.LINES_VIDEO_MIN,
+            self.LINES_VIDEO_MAX,
+        )
         self.bg_color = display_vars["bg_color_var"].get()
         self.text_color = display_vars["text_color_var"].get()
         if "lock_output_focus_var" in display_vars:
@@ -1613,15 +1624,27 @@ class SettingsUIMixin:
         settings_fg,
         settings_window,
     ):
+        # Shown/hidden opposite the video overlay's own line-count control
+        # below (see on_video_feed_toggle) - the two have disjoint ranges
+        # (fewer lines make sense over video, where they compete with the
+        # feed for screen space), so they're two separate settings rather
+        # than one field with a moving cap.
+        lines_no_video_frame = tk.Frame(display_section, bg=section_bg)
+        lines_no_video_frame.pack(fill=tk.X)
         self._add_setting_label(
-            display_section,
+            lines_no_video_frame,
             "Number of lines to show:",
             "Maximum number of translated lines kept on screen.",
             label_opts,
             pady=(0, 4),
         )
         lines_var = tk.IntVar(value=self.max_lines)
-        lines_spinbox = tk.Spinbox(display_section, from_=1, to=10, textvariable=lines_var)
+        lines_spinbox = tk.Spinbox(
+            lines_no_video_frame,
+            from_=self.LINES_NO_VIDEO_MIN,
+            to=self.LINES_NO_VIDEO_MAX,
+            textvariable=lines_var,
+        )
         self._apply_input_style(lines_spinbox)
         lines_spinbox.pack(anchor="w")
 
@@ -1698,9 +1721,28 @@ class SettingsUIMixin:
 
         self._add_setting_label(
             video_feed_options_frame,
+            "Number of lines to show:",
+            "Maximum number of translated lines kept on screen. Kept lower "
+            "than the non-video default to leave more of the video visible.",
+            label_opts,
+            pady=(10, 4),
+        )
+        video_lines_var = tk.IntVar(value=self.video_max_lines)
+        video_lines_spinbox = tk.Spinbox(
+            video_feed_options_frame,
+            from_=self.LINES_VIDEO_MIN,
+            to=self.LINES_VIDEO_MAX,
+            textvariable=video_lines_var,
+        )
+        self._apply_input_style(video_lines_spinbox)
+        video_lines_spinbox.pack(anchor="w")
+
+        self._add_setting_label(
+            video_feed_options_frame,
             "Caption Bar Opacity:",
-            "How solid the gray bar behind the 2 caption lines looks. "
-            "0% is fully see-through, 100% is a solid gray bar.",
+            "How solid the bar behind the caption lines looks, using the "
+            "Background Color below. 0% is fully see-through, 100% is a "
+            "solid bar.",
             label_opts,
             pady=(10, 0),
         )
@@ -1731,9 +1773,11 @@ class SettingsUIMixin:
                 # instead of back next to its checkbox. Pin it explicitly with
                 # after= so its position is stable no matter how many times
                 # it's toggled or when in the build order that happens.
+                lines_no_video_frame.pack_forget()
                 video_feed_options_frame.pack(fill=tk.X, pady=(4, 0), after=video_feed_row)
             else:
                 video_feed_options_frame.pack_forget()
+                lines_no_video_frame.pack(fill=tk.X, before=video_feed_row)
 
         video_feed_enabled_var.trace_add("write", lambda *_args: on_video_feed_toggle())
         on_video_feed_toggle()
@@ -1749,7 +1793,8 @@ class SettingsUIMixin:
         self._add_setting_label(
             display_section,
             "Background Color:",
-            "Background color for the output overlay and preview.",
+            "Background color for the output overlay and preview. Also tints "
+            "the caption bar behind the video overlay, if enabled.",
             label_opts,
             pady=(10, 4),
         )
@@ -1886,6 +1931,7 @@ class SettingsUIMixin:
 
         return {
             "lines_var": lines_var,
+            "video_lines_var": video_lines_var,
             "bg_color_var": bg_color_var,
             "text_color_var": text_color_var,
             "lock_output_focus_var": lock_output_focus_var,

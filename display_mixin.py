@@ -282,8 +282,18 @@ class DisplayMixin:
 
     def _effective_max_lines(self):
         if getattr(self, "video_feed_enabled", False):
-            return 2
-        return max(1, int(self.max_lines))
+            return self._coerce_int_range(
+                self.video_max_lines,
+                self.LINES_VIDEO_DEFAULT,
+                self.LINES_VIDEO_MIN,
+                self.LINES_VIDEO_MAX,
+            )
+        return self._coerce_int_range(
+            self.max_lines,
+            self.LINES_NO_VIDEO_DEFAULT,
+            self.LINES_NO_VIDEO_MIN,
+            self.LINES_NO_VIDEO_MAX,
+        )
 
     def _trim_translation_history(self):
         max_entries = max(50, self._effective_max_lines() * 12)
