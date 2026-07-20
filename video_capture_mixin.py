@@ -112,6 +112,12 @@ class VideoCaptureMixin:
         self._caption_bar_photo_image = None
         self._caption_bar_cache_key = None
         self._video_render_after_id = None
+        # Set on every start_video_feed() and consumed by the render tick
+        # once the first real frame actually draws, so the Output Snapshot
+        # preview (settings_ui_mixin.py) doesn't sit on a stale/blank
+        # thumbnail for up to its full 2-minute refresh interval after the
+        # feed (re)starts.
+        self._video_snapshot_pending_after_start = False
         # Fallback until the actual capture fps is detected (see
         # _video_capture_worker) - overwritten as soon as the device
         # reports a usable CAP_PROP_FPS, so the render tick can track
@@ -184,6 +190,7 @@ class VideoCaptureMixin:
         with self._video_frame_lock:
             self._video_frame_seq = 0
             self._video_drawn_seq = 0
+        self._video_snapshot_pending_after_start = True
         self._video_capture_thread = Thread(
             target=self._video_capture_worker, args=(self.video_device_index,), daemon=True
         )
@@ -373,6 +380,14 @@ class VideoCaptureMixin:
         if frame is not None and frame_seq != self._video_drawn_seq:
             self._render_video_frame(frame)
             self._video_drawn_seq = frame_seq
+            if self._video_snapshot_pending_after_start:
+                self._video_snapshot_pending_after_start = False
+                # Small delay so Tk actually flushes this draw before the
+                # window is captured, rather than grabbing mid-render.
+                try:
+                    self.root.after(50, self._capture_output_snapshot)
+                except Exception:
+                    pass
         self._schedule_video_render_tick()
 
     def _render_video_frame(self, frame):
