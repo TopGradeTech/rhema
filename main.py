@@ -76,6 +76,15 @@ class TranslationApp(
             "us",
         }
     )
+    # "Number of lines to show" is two separate ranges depending on whether
+    # the video overlay is on: fewer lines leave more of the video visible,
+    # so its default/range are both lower than the plain-text default.
+    LINES_NO_VIDEO_MIN = 4
+    LINES_NO_VIDEO_MAX = 10
+    LINES_NO_VIDEO_DEFAULT = 8
+    LINES_VIDEO_MIN = 1
+    LINES_VIDEO_MAX = 3
+    LINES_VIDEO_DEFAULT = 2
     LOCAL_NLLB_DEFAULT_MODEL_NAME = "facebook/nllb-200-distilled-600M"
     LOCAL_NLLB_DEFAULT_SOURCE_LANG = "auto_from_selected_source_language"
     LOCAL_NLLB_DEFAULT_TARGET_LANG = "eng_Latn"
@@ -462,7 +471,8 @@ class TranslationApp(
         self.root.focus_set()
         self.listening = True
         self.translations = []
-        self.max_lines = 8  # Default number of lines
+        self.max_lines = self.LINES_NO_VIDEO_DEFAULT  # Number of lines when video overlay is off
+        self.video_max_lines = self.LINES_VIDEO_DEFAULT  # Number of lines when video overlay is on
         self.bad_words_by_lang = {
             "en": set(self.default_bad_words_en()),
             "es": set(self.default_bad_words_es()),

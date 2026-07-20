@@ -2,7 +2,7 @@ import time
 from threading import Thread, Lock, Event
 
 import cv2
-from PIL import Image, ImageTk
+from PIL import Image, ImageColor, ImageTk
 
 # OBS Virtual Camera (and some other virtual/software cameras) register with
 # Windows only through Media Foundation, not the legacy DirectShow API, so a
@@ -30,7 +30,7 @@ _VIDEO_BACKENDS = (cv2.CAP_MSMF, cv2.CAP_DSHOW)
 _VIDEO_FALLBACK_WIDTH = 1920
 _VIDEO_FALLBACK_HEIGHT = 1080
 
-_VIDEO_CAPTION_BAR_COLOR = (60, 60, 60)  # RGB gray
+_VIDEO_CAPTION_BAR_COLOR = (60, 60, 60)  # RGB gray fallback if bg_color fails to parse
 _VIDEO_CAPTION_BAR_ALPHA = 0.5  # default opacity; user-adjustable via the Caption Bar Opacity slider
 
 _VIDEO_MIN_RENDER_INTERVAL_MS = 16  # don't bother redrawing faster than ~60fps
@@ -430,28 +430,33 @@ class VideoCaptureMixin:
         return max(1, min(canvas_height, bar_height))
 
     def _update_caption_bar(self, canvas_width, canvas_height):
-        """Docks a translucent gray bar to the bottom of the window itself
-        (not the letterboxed video rect), sized for the caption lines. Drawn
-        as its own true-alpha image on top of the video and below the
-        caption text, so it reads consistently regardless of the camera's
-        aspect ratio or any letterbox bars around it."""
+        """Docks a translucent bar (tinted with the Background Color
+        setting) to the bottom of the window itself (not the letterboxed
+        video rect), sized for the caption lines. Drawn as its own
+        true-alpha image on top of the video and below the caption text,
+        so it reads consistently regardless of the camera's aspect ratio
+        or any letterbox bars around it."""
         line_height = self.text_font.metrics("linespace") or 1
         lines = self._effective_max_lines()
         bar_height = self._video_caption_bar_height(canvas_height, line_height, lines)
         alpha = max(0.0, min(1.0, float(self.video_caption_bar_alpha)))
-        cache_key = (canvas_width, bar_height, alpha)
+        try:
+            r, g, b = ImageColor.getrgb(self.bg_color)[:3]
+        except Exception:
+            r, g, b = _VIDEO_CAPTION_BAR_COLOR
+        cache_key = (canvas_width, bar_height, alpha, (r, g, b))
         try:
             self.text_canvas.coords(self.caption_bar_item, 0, canvas_height)
         except Exception:
             pass
         if getattr(self, "_caption_bar_cache_key", None) == cache_key:
             return
-        # This bar's appearance only changes with window size or the opacity
-        # setting, not per-frame - rebuilding the PIL image and PhotoImage
-        # from scratch on every single video render tick (30-60x/sec) was
-        # pure waste that ate into the same per-tick time budget the video
-        # frame itself needs, making it more likely to fall behind under load.
-        r, g, b = _VIDEO_CAPTION_BAR_COLOR
+        # This bar's appearance only changes with window size, color, or the
+        # opacity setting, not per-frame - rebuilding the PIL image and
+        # PhotoImage from scratch on every single video render tick (30-60x/sec)
+        # was pure waste that ate into the same per-tick time budget the
+        # video frame itself needs, making it more likely to fall behind
+        # under load.
         bar_image = Image.new("RGBA", (canvas_width, bar_height), (r, g, b, int(round(alpha * 255))))
         photo = ImageTk.PhotoImage(bar_image)
         self._caption_bar_photo_image = photo

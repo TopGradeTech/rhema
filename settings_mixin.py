@@ -49,7 +49,18 @@ class SettingsMixin:
     def _load_display_settings(self, data):
         self.bg_color = data.get("bg_color", self.bg_color)
         self.text_color = data.get("text_color", self.text_color)
-        self.max_lines = data.get("max_lines", self.max_lines)
+        self.max_lines = self._coerce_int_range(
+            data.get("max_lines", self.max_lines),
+            self.LINES_NO_VIDEO_DEFAULT,
+            self.LINES_NO_VIDEO_MIN,
+            self.LINES_NO_VIDEO_MAX,
+        )
+        self.video_max_lines = self._coerce_int_range(
+            data.get("video_max_lines", self.video_max_lines),
+            self.LINES_VIDEO_DEFAULT,
+            self.LINES_VIDEO_MIN,
+            self.LINES_VIDEO_MAX,
+        )
         self.lock_output_focus = self._coerce_bool(
             data.get("lock_output_focus", self.lock_output_focus),
             default=self.lock_output_focus,
@@ -444,6 +455,7 @@ class SettingsMixin:
             "bg_color": self.bg_color,
             "text_color": self.text_color,
             "max_lines": self.max_lines,
+            "video_max_lines": self.video_max_lines,
             "lock_output_focus": self.lock_output_focus,
             "video_feed_enabled": self.video_feed_enabled,
             "video_device_index": self.video_device_index,
