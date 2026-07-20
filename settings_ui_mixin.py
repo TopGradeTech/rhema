@@ -603,6 +603,12 @@ class SettingsUIMixin:
         self.translation_enabled = new_translation_enabled
         if self.translation_enabled != was_translation_enabled:
             self._apply_translation_mode_defaults()
+            # Toggling translation changes what feeds the live row (raw
+            # partials vs translated stabilized text), so drop any stale
+            # source-language text left over from before the toggle.
+            if self.translation_enabled and self.live_line:
+                self.live_line = ""
+                self.render_text()
         else:
             self._normalize_translation_settings()
         self.local_nllb_model_name = self._optional_mapped_setting(
@@ -2376,11 +2382,13 @@ class SettingsUIMixin:
             interim_row,
             "Shows words on the bottom line of the output as they are being "
             "spoken, so captions keep up with the live video feed instead of "
-            "trailing it by a sentence. Interim text is the raw, untranslated "
-            "transcription and may correct itself as speech continues; the "
-            "finalized (and translated, if enabled) sentence replaces it. "
-            "With this on, finalized text appears all at once instead of the "
-            "word-by-word roll-up.",
+            "trailing it by a sentence. Interim text may correct itself as "
+            "speech continues; the finalized sentence replaces it, appearing "
+            "all at once instead of the word-by-word roll-up. With "
+            "translation off this shows the raw transcription live; with "
+            "translation on it shows a rough live translation that updates "
+            "about once a second and may be reworded when the final "
+            "translation lands.",
             section_bg,
             settings_fg,
         )
@@ -3629,6 +3637,9 @@ class SettingsUIMixin:
             return
         self.translation_enabled = enabled
         self._apply_translation_mode_defaults()
+        if enabled and self.live_line:
+            self.live_line = ""
+            self.render_text()
         if previous and not enabled:
             self._clear_translation_backlog_after_disable()
         self._trace_pipeline(

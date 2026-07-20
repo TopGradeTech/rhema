@@ -91,8 +91,36 @@ class DisplayMixin:
             for i in range(0, len(words), _DRIP_WORDS_PER_TICK)
         ]
 
+    def _interim_display_active(self):
+        """Raw interim partials are source-language text, so they are shown
+        only when translation is off; with translation on the live row is
+        fed by throttled NLLB translations of stabilized text instead (see
+        _translated_interim_active)."""
+        return (
+            bool(getattr(self, "show_interim_text", False))
+            and not self.translation_enabled
+        )
+
+    def _translated_interim_active(self):
+        """With translation on, the live row shows throttled NLLB
+        translations of RealtimeSTT's stabilized text — target-language
+        preview text that the translated final then replaces."""
+        return (
+            bool(getattr(self, "show_interim_text", False))
+            and self.translation_enabled
+        )
+
+    def _show_translated_interim(self, text):
+        """Tk thread: render a translated interim into the live row on the
+        same light path as _apply_interim_display (content-only, no font
+        refit)."""
+        if not self._translated_interim_active():
+            return
+        self.live_line = (text or "").strip()
+        self._update_line_items(self._compose_display_lines())
+
     def _meter_display_commit(self, text, latency_meta=None, stage="display_commit"):
-        if getattr(self, "show_interim_text", False):
+        if self._interim_display_active() or self._translated_interim_active():
             # Interim mode: the viewer already watched this utterance type
             # out live, so metering the final back out word-by-word would
             # just re-add the latency interim mode exists to remove. Commit
@@ -573,7 +601,7 @@ class DisplayMixin:
         """Accept a raw RealtimeSTT partial for display. Called from
         RealtimeSTT's worker thread ~10x/sec; coalesces into at most one
         Tk-thread render per 120ms window, applying only the newest text."""
-        if not getattr(self, "show_interim_text", False):
+        if not self._interim_display_active():
             return
         self._interim_latest_text = text or ""
         if self._interim_render_scheduled:
@@ -586,7 +614,7 @@ class DisplayMixin:
 
     def _apply_interim_display(self):
         self._interim_render_scheduled = False
-        if not getattr(self, "show_interim_text", False):
+        if not self._interim_display_active():
             return
         self.live_line = (self._interim_latest_text or "").strip()
         # Light render path: content-only. Font size depends on canvas size
