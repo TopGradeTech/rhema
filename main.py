@@ -85,7 +85,6 @@ class TranslationApp(
     LINES_VIDEO_MAX = 3
     LINES_VIDEO_DEFAULT = 2
     LOCAL_NLLB_DEFAULT_MODEL_NAME = "facebook/nllb-200-distilled-600M"
-    LOCAL_NLLB_DEFAULT_SOURCE_LANG = "auto_from_selected_source_language"
     LOCAL_NLLB_DEFAULT_TARGET_LANG = "eng_Latn"
     LOCAL_NLLB_DEFAULT_MAX_CHARS = 4000
     # Minimum seconds between live interim NLLB translations. NLLB's own
@@ -318,7 +317,6 @@ class TranslationApp(
         self.text_translation_provider = "local_nllb"
         self.local_nllb_model_name = self.LOCAL_NLLB_DEFAULT_MODEL_NAME
         self.local_nllb_device = "auto"
-        self.local_nllb_source_lang = self.LOCAL_NLLB_DEFAULT_SOURCE_LANG
         self.local_nllb_target_lang = self.LOCAL_NLLB_DEFAULT_TARGET_LANG
         self.local_nllb_max_chars = self.LOCAL_NLLB_DEFAULT_MAX_CHARS
         self.local_nllb_tokenizer = None

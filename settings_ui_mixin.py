@@ -666,13 +666,6 @@ class SettingsUIMixin:
             self.local_nllb_device = self._normalize_local_nllb_device(
                 translation_vars["local_nllb_device_var"].get()
             )
-        self.local_nllb_source_lang = self._optional_mapped_setting(
-            translation_vars,
-            "local_nllb_source_lang_var",
-            "local_nllb_source_lang_map",
-            current_value=self.local_nllb_source_lang,
-            mapped_default=self.LOCAL_NLLB_DEFAULT_SOURCE_LANG,
-        )
         self.local_nllb_target_lang = self._optional_mapped_setting(
             translation_vars,
             "local_nllb_target_lang_var",
@@ -704,7 +697,6 @@ class SettingsUIMixin:
             target_lang=self.target_lang,
             local_nllb_model=self.local_nllb_model_name,
             local_nllb_device=self.local_nllb_device,
-            local_nllb_source_lang=self.local_nllb_source_lang,
             local_nllb_target_lang=self.local_nllb_target_lang,
         )
         if just_disabled:
@@ -2578,9 +2570,12 @@ class SettingsUIMixin:
                 "faster-whisper) — it does not perform speech recognition or "
                 "punctuation restoration. faster-whisper only transcribes; its "
                 "own built-in translate mode can only output English, so this "
-                "app never uses it. Translation into any of the 200 languages "
-                "below is entirely Local NLLB's job and is independent of the "
-                "Source language selected in the Transcription section."
+                "app never uses it. Local NLLB translates from the Source "
+                "language selected in the Transcription section (there's no "
+                "separate source-language setting here, since translation "
+                "quality depends on NLLB being told the language the "
+                "transcript is actually in) into any of the 200 languages "
+                "below."
             ),
             bg=section_bg,
             fg=settings_fg,
@@ -2687,36 +2682,15 @@ class SettingsUIMixin:
 
         nllb_all_language_options = nllb_language_options()
 
-        lang_row = tk.Frame(nllb_container, bg=section_bg)
-        lang_row.pack(fill=tk.X, pady=(0, 8))
-        source_col = tk.Frame(lang_row, bg=section_bg)
-        source_col.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(0, 8))
-        target_col = tk.Frame(lang_row, bg=section_bg)
-        target_col.pack(side=tk.LEFT, fill=tk.X, expand=True)
+        # No separate NLLB source-language picker: the source is always the
+        # Transcription section's Source language (see _resolve_local_nllb_source_lang),
+        # since NLLB translation quality depends on being told the language
+        # the transcript is actually in, which is exactly what governs what
+        # Whisper transcribes - letting them diverge only ever produced a
+        # broken configuration (mismatched Whisper language hint -> garbled
+        # transcription -> garbage translation), never a useful one.
         self._add_setting_label(
-            source_col,
-            "Source language:",
-            "Type to search all 200 languages Local NLLB supports. Auto uses "
-            "the app's selected source language (Transcription section).",
-            label_opts,
-            pady=(0, 4),
-        )
-        nllb_source_options = [
-            ("Auto (use selected source language)", self.LOCAL_NLLB_DEFAULT_SOURCE_LANG)
-        ] + nllb_all_language_options
-        (
-            nllb_source_combobox,
-            local_nllb_source_lang_var,
-            local_nllb_source_lang_map,
-        ) = self._build_searchable_language_combobox(
-            source_col,
-            nllb_source_options,
-            current_code=self.local_nllb_source_lang,
-            default_display="Auto (use selected source language)",
-        )
-        nllb_source_combobox.pack(anchor="w")
-        self._add_setting_label(
-            target_col,
+            nllb_container,
             "Target language:",
             "Language the translated transcript is produced in. Type to search all 200 languages.",
             label_opts,
@@ -2727,12 +2701,12 @@ class SettingsUIMixin:
             local_nllb_target_lang_var,
             local_nllb_target_lang_map,
         ) = self._build_searchable_language_combobox(
-            target_col,
+            nllb_container,
             nllb_all_language_options,
             current_code=self.local_nllb_target_lang,
             default_display="English",
         )
-        nllb_target_combobox.pack(anchor="w")
+        nllb_target_combobox.pack(anchor="w", pady=(0, 8))
 
         self._add_setting_label(
             nllb_container,
@@ -2874,8 +2848,6 @@ class SettingsUIMixin:
             "local_nllb_model_name_map": nllb_model_name_map,
             "local_nllb_model_name_rev_map": nllb_model_name_rev_map,
             "local_nllb_device_var": local_nllb_device_var,
-            "local_nllb_source_lang_var": local_nllb_source_lang_var,
-            "local_nllb_source_lang_map": local_nllb_source_lang_map,
             "local_nllb_target_lang_var": local_nllb_target_lang_var,
             "local_nllb_target_lang_map": local_nllb_target_lang_map,
             "local_nllb_max_chars_var": local_nllb_max_chars_var,
@@ -3757,6 +3729,10 @@ class SettingsUIMixin:
             toggle_state_label.config(text="Current mode: Translation OFF")
             output_lang_label.config(text="Output language: same as input (translation is off)")
         source = (stt_source_lang_var.get() or "").strip() or "Auto-detect"
+        if source.lower() == "auto-detect":
+            detected = (self.auto_detect_lang or "").strip().lower()
+            if detected:
+                source = f"Auto-detect (currently: {self._language_label(detected)})"
         input_lang_label.config(
             text=f"Input language: {source} (set in Transcription section above)"
         )

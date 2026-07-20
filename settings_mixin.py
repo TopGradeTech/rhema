@@ -2,8 +2,6 @@ import re
 import json
 import os
 
-from languages import FLORES_TO_WHISPER
-
 
 class SettingsMixin:
     def load_settings(self):
@@ -205,15 +203,9 @@ class SettingsMixin:
         self.local_nllb_device = self._normalize_local_nllb_device(
             data.get("local_nllb_device", self.local_nllb_device)
         )
-        self.local_nllb_source_lang = self._normalize_local_nllb_lang_setting(
-            data.get("local_nllb_source_lang", self.local_nllb_source_lang),
-            default=self.LOCAL_NLLB_DEFAULT_SOURCE_LANG,
-            allow_auto=True,
-        )
         self.local_nllb_target_lang = self._normalize_local_nllb_lang_setting(
             data.get("local_nllb_target_lang", self.local_nllb_target_lang),
             default=self.LOCAL_NLLB_DEFAULT_TARGET_LANG,
-            allow_auto=False,
         )
         self.local_nllb_max_chars = self._coerce_int_range(
             data.get("local_nllb_max_chars", self.local_nllb_max_chars),
@@ -326,19 +318,10 @@ class SettingsMixin:
             return device
         return "auto"
 
-    def _normalize_local_nllb_lang_setting(self, value, default="", allow_auto=False):
+    def _normalize_local_nllb_lang_setting(self, value, default=""):
         lang = str(value or "").strip()
         if not lang:
             return default
-        normalized = lang.lower().replace("-", "_").replace(" ", "_")
-        auto_values = {
-            "auto",
-            "selected",
-            "selected_source",
-            "auto_from_selected_source_language",
-        }
-        if allow_auto and normalized in auto_values:
-            return self.LOCAL_NLLB_DEFAULT_SOURCE_LANG
         mapped = self._nllb_language_code_for_app_language(lang)
         return mapped or lang
 
@@ -356,27 +339,24 @@ class SettingsMixin:
         return self.LOCAL_NLLB_LANG_ALIASES.get(simple, "")
 
     def _resolve_local_nllb_source_lang(self, override=None):
-        configured = (
-            str(self.local_nllb_source_lang if override is None else override)
-            .strip()
+        # Always the Transcription section's source language - NLLB
+        # translation quality depends on being told the language the
+        # transcript is actually in, which is exactly what governs what
+        # Whisper transcribes, so there's no independent NLLB source setting
+        # to diverge from it. `override` exists for direct callers that pass
+        # a specific FLORES code outside the app's own settings (e.g. the
+        # fixed Spanish sample text in _execute_local_nllb_test).
+        if override is not None:
+            mapped = self._nllb_language_code_for_app_language(str(override).strip())
+            if not mapped:
+                raise ValueError(self.LOCAL_NLLB_UNSUPPORTED_LANGUAGE_MESSAGE)
+            return mapped
+        mapped = self._nllb_language_code_for_app_language(
+            self._effective_source_lang() or self.source_lang
         )
-        normalized = configured.lower().replace("-", "_").replace(" ", "_")
-        if not configured or normalized in (
-            "auto",
-            "selected",
-            "selected_source",
-            "auto_from_selected_source_language",
-        ):
-            mapped = self._nllb_language_code_for_app_language(
-                self._effective_source_lang() or self.source_lang
-            )
-            if mapped:
-                return mapped
-            raise ValueError(self.LOCAL_NLLB_UNSUPPORTED_LANGUAGE_MESSAGE)
-        mapped = self._nllb_language_code_for_app_language(configured)
-        if not mapped:
-            raise ValueError(self.LOCAL_NLLB_UNSUPPORTED_LANGUAGE_MESSAGE)
-        return mapped
+        if mapped:
+            return mapped
+        raise ValueError(self.LOCAL_NLLB_UNSUPPORTED_LANGUAGE_MESSAGE)
 
     def _resolve_local_nllb_target_lang(self, override=None):
         configured = str(
@@ -388,14 +368,6 @@ class SettingsMixin:
         if not mapped:
             raise ValueError(self.LOCAL_NLLB_UNSUPPORTED_LANGUAGE_MESSAGE)
         return mapped
-
-    def _nllb_code_to_two_letter(self, code):
-        # FLORES-200 code -> whisper/RealtimeSTT code, so an explicit NLLB
-        # source-language selection can hint the STT engine correctly even
-        # for languages beyond the original English/Spanish pair. Returns ""
-        # for FLORES codes with no RealtimeSTT/Whisper equivalent.
-        code = (code or "").strip()
-        return FLORES_TO_WHISPER.get(code, "")
 
     def _normalize_translation_settings(self):
         self.auto_switch_translation = self._coerce_bool(
@@ -475,7 +447,6 @@ class SettingsMixin:
             "translation_enabled": self.translation_enabled,
             "local_nllb_model_name": self.local_nllb_model_name,
             "local_nllb_device": self.local_nllb_device,
-            "local_nllb_source_lang": self.local_nllb_source_lang,
             "local_nllb_target_lang": self.local_nllb_target_lang,
             "local_nllb_max_chars": self.local_nllb_max_chars,
             "auto_switch_translation": self.auto_switch_translation,

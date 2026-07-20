@@ -233,13 +233,6 @@ NLLB_LANGUAGE_NAMES = {
 }
 NLLB_LANGUAGE_NAMES.update(NLLB_ONLY_LANGUAGES)
 
-# FLORES-200 code -> whisper/RealtimeSTT code, for the languages both
-# support. Used to derive an STT language hint from an NLLB language
-# selection (see settings_mixin.py _nllb_code_to_two_letter).
-FLORES_TO_WHISPER = {
-    flores: code for code, (_name, flores) in WHISPER_LANGUAGES.items() if flores
-}
-
 
 def whisper_language_options():
     """(display name, code) pairs for all RealtimeSTT/Whisper languages,
