@@ -1635,30 +1635,6 @@ class SettingsUIMixin:
         settings_fg,
         settings_window,
     ):
-        # Shown/hidden opposite the video overlay's own line-count control
-        # below (see on_video_feed_toggle) - the two have disjoint ranges
-        # (fewer lines make sense over video, where they compete with the
-        # feed for screen space), so they're two separate settings rather
-        # than one field with a moving cap.
-        lines_no_video_frame = tk.Frame(display_section, bg=section_bg)
-        lines_no_video_frame.pack(fill=tk.X)
-        self._add_setting_label(
-            lines_no_video_frame,
-            "Number of lines to show:",
-            "Maximum number of translated lines kept on screen.",
-            label_opts,
-            pady=(0, 4),
-        )
-        lines_var = tk.IntVar(value=self.max_lines)
-        lines_spinbox = tk.Spinbox(
-            lines_no_video_frame,
-            from_=self.LINES_NO_VIDEO_MIN,
-            to=self.LINES_NO_VIDEO_MAX,
-            textvariable=lines_var,
-        )
-        self._apply_input_style(lines_spinbox)
-        lines_spinbox.pack(anchor="w")
-
         video_feed_row = tk.Frame(display_section, bg=section_bg)
         video_feed_row.pack(anchor="w", fill=tk.X, pady=(10, 0))
         video_feed_enabled_var = tk.BooleanVar(value=self.video_feed_enabled)
@@ -1776,32 +1752,7 @@ class SettingsUIMixin:
         )
         video_caption_alpha_scale.pack(anchor="w", fill=tk.X)
 
-        def on_video_feed_toggle(*_args):
-            if video_feed_enabled_var.get():
-                # pack_forget() below drops the frame out of display_section's
-                # packing order entirely, so a later plain pack() call would
-                # re-add it at the end (after every other Display setting)
-                # instead of back next to its checkbox. Pin it explicitly with
-                # after= so its position is stable no matter how many times
-                # it's toggled or when in the build order that happens.
-                lines_no_video_frame.pack_forget()
-                video_feed_options_frame.pack(fill=tk.X, pady=(4, 0), after=video_feed_row)
-            else:
-                video_feed_options_frame.pack_forget()
-                lines_no_video_frame.pack(fill=tk.X, before=video_feed_row)
-
-        video_feed_enabled_var.trace_add("write", lambda *_args: on_video_feed_toggle())
-        on_video_feed_toggle()
-        if video_feed_enabled_var.get():
-            # The options frame (device dropdown + Refresh button) is being
-            # packed before the settings window's first geometry pass, which
-            # can leave it laid out with a stale/zero size on relaunch when
-            # the feature was already enabled at startup. Re-running the
-            # same pack call shortly after the window is realized fixes it
-            # (this mirrors the manual uncheck/recheck workaround).
-            settings_window.after(150, on_video_feed_toggle)
-
-        self._add_setting_label(
+        bg_color_label_row = self._add_setting_label(
             display_section,
             "Background Color:",
             "Background color for the output overlay and preview. Also tints "
@@ -1822,6 +1773,53 @@ class SettingsUIMixin:
             primary=True,
         )
         bg_button.pack(side=tk.LEFT, padx=(8, 0))
+
+        # Positioned just above Background Color (not next to the checkbox)
+        # so toggling "Show video feed" only ever swaps the block between the
+        # checkbox and Background Color - this row and Background Color
+        # itself stay put instead of the whole area reshuffling.
+        lines_no_video_frame = tk.Frame(display_section, bg=section_bg)
+        self._add_setting_label(
+            lines_no_video_frame,
+            "Number of lines to show:",
+            "Maximum number of translated lines kept on screen.",
+            label_opts,
+            pady=(0, 4),
+        )
+        lines_var = tk.IntVar(value=self.max_lines)
+        lines_spinbox = tk.Spinbox(
+            lines_no_video_frame,
+            from_=self.LINES_NO_VIDEO_MIN,
+            to=self.LINES_NO_VIDEO_MAX,
+            textvariable=lines_var,
+        )
+        self._apply_input_style(lines_spinbox)
+        lines_spinbox.pack(anchor="w")
+
+        def on_video_feed_toggle(*_args):
+            if video_feed_enabled_var.get():
+                # pack_forget() below drops the frame out of display_section's
+                # packing order entirely, so a later plain pack() call would
+                # re-add it at the end (after every other Display setting)
+                # instead of back in place. Pin it explicitly with after=/
+                # before= so its position is stable no matter how many times
+                # it's toggled or when in the build order that happens.
+                lines_no_video_frame.pack_forget()
+                video_feed_options_frame.pack(fill=tk.X, pady=(4, 0), after=video_feed_row)
+            else:
+                video_feed_options_frame.pack_forget()
+                lines_no_video_frame.pack(fill=tk.X, pady=(10, 4), before=bg_color_label_row)
+
+        video_feed_enabled_var.trace_add("write", lambda *_args: on_video_feed_toggle())
+        on_video_feed_toggle()
+        if video_feed_enabled_var.get():
+            # The options frame (device dropdown + Refresh button) is being
+            # packed before the settings window's first geometry pass, which
+            # can leave it laid out with a stale/zero size on relaunch when
+            # the feature was already enabled at startup. Re-running the
+            # same pack call shortly after the window is realized fixes it
+            # (this mirrors the manual uncheck/recheck workaround).
+            settings_window.after(150, on_video_feed_toggle)
 
         self._add_setting_label(
             display_section,
