@@ -636,7 +636,6 @@ class SettingsUIMixin:
         previous_nllb_config = (
             self.local_nllb_model_name,
             self.local_nllb_device,
-            self.local_nllb_cache_dir,
         )
         was_translation_enabled = bool(self.translation_enabled)
         new_translation_enabled = was_translation_enabled
@@ -689,14 +688,9 @@ class SettingsUIMixin:
             250,
             20000,
         )
-        if "local_nllb_cache_dir_var" in translation_vars:
-            self.local_nllb_cache_dir = self._normalize_optional_directory(
-                translation_vars["local_nllb_cache_dir_var"].get()
-            )
         next_nllb_config = (
             self.local_nllb_model_name,
             self.local_nllb_device,
-            self.local_nllb_cache_dir,
         )
         just_disabled = was_translation_enabled and not self.translation_enabled
         if next_nllb_config != previous_nllb_config or just_disabled:
@@ -1420,7 +1414,7 @@ class SettingsUIMixin:
     def _build_preview_section(self, content, label_opts, section_bg, settings_fg, section_font):
         preview_section = tk.LabelFrame(
             content,
-            text="Output Snapshot",
+            text="Preview",
             bg=section_bg,
             fg=settings_fg,
             font=section_font,
@@ -1510,6 +1504,22 @@ class SettingsUIMixin:
     ):
         self._build_preview_section(content, label_opts, section_bg, settings_fg, section_font)
 
+        # Frame created (and packed, fixing its position right below Preview)
+        # here, but its contents aren't built until transcription_vars and
+        # translation_vars exist further down - packing order is independent
+        # of when a widget's children are added, so this doesn't need to
+        # wait for those.
+        hardware_section = tk.LabelFrame(
+            content,
+            text="Hardware Autodetect",
+            bg=section_bg,
+            fg=settings_fg,
+            font=section_font,
+            padx=10,
+            pady=10,
+        )
+        hardware_section.pack(fill=tk.X, pady=(0, 10))
+
         display_section = tk.LabelFrame(
             content,
             text="Display",
@@ -1563,18 +1573,10 @@ class SettingsUIMixin:
             pady=10,
         )
         translation_section.pack(fill=tk.X, pady=(10, 0))
-        translation_vars = self._build_translation_section(translation_section, label_opts)
-
-        hardware_section = tk.LabelFrame(
-            content,
-            text="Hardware Autodetect",
-            bg=section_bg,
-            fg=settings_fg,
-            font=section_font,
-            padx=10,
-            pady=10,
+        translation_vars = self._build_translation_section(
+            translation_section, label_opts, transcription_vars["stt_source_lang_var"]
         )
-        hardware_section.pack(fill=tk.X, pady=(10, 0))
+
         self._build_hardware_autodetect_section(
             hardware_section, label_opts, transcription_vars, translation_vars
         )
@@ -2334,10 +2336,15 @@ class SettingsUIMixin:
         ).pack(side=tk.LEFT)
         self._create_help_icon(
             source_lang_row,
-            "Type to search all " + str(len(whisper_language_options())) + " languages "
+            "The language your speech is transcribed as. Type to search all "
+            + str(len(whisper_language_options())) + " languages "
             "RealtimeSTT/Whisper supports: "
             + ", ".join(name for name, _code in whisper_language_options())
-            + ".",
+            + ". Whisper only transcribes here - it never translates. (Its own "
+            "built-in translate mode can only output English, which is why "
+            "this app doesn't use it.) To translate the transcript into "
+            "another language, turn on Local NLLB in the Translation section "
+            "below, which supports 200 languages independent of this setting.",
             section_bg,
             settings_fg,
         )
@@ -2500,7 +2507,7 @@ class SettingsUIMixin:
             "show_interim_text_var": show_interim_text_var,
         }
 
-    def _build_translation_section(self, translation_section, label_opts):
+    def _build_translation_section(self, translation_section, label_opts, stt_source_lang_var):
         section_bg = label_opts["bg"]
         settings_fg = label_opts["fg"]
         enable_translation_var = tk.BooleanVar(value=self.translation_enabled)
@@ -2532,12 +2539,20 @@ class SettingsUIMixin:
         toggle_state_label.pack(anchor="w", pady=(0, 8))
         output_lang_label = tk.Label(
             translation_section,
-            text=self.OUTPUT_LANGUAGE_ENGLISH_LABEL,
+            text="",
             bg=label_opts["bg"],
             fg=label_opts["fg"],
             font=(self.ui_font_family, 9),
         )
         output_lang_label.pack(anchor="w", pady=(0, 8))
+        input_lang_label = tk.Label(
+            translation_section,
+            text="",
+            bg=label_opts["bg"],
+            fg=label_opts["fg"],
+            font=(self.ui_font_family, 9),
+        )
+        input_lang_label.pack(anchor="w", pady=(0, 8))
 
         nllb_container = tk.Frame(translation_section, bg=section_bg)
         nllb_container.pack(fill=tk.X, pady=(0, 8))
@@ -2561,8 +2576,13 @@ class SettingsUIMixin:
         tk.Label(
             nllb_container,
             text=(
-                "Local NLLB translates transcripts after ASR. It does not perform "
-                "speech recognition or punctuation restoration."
+                "Local NLLB translates transcripts after ASR (RealtimeSTT/"
+                "faster-whisper) — it does not perform speech recognition or "
+                "punctuation restoration. faster-whisper only transcribes; its "
+                "own built-in translate mode can only output English, so this "
+                "app never uses it. Translation into any of the 200 languages "
+                "below is entirely Local NLLB's job and is independent of the "
+                "Source language selected in the Transcription section."
             ),
             bg=section_bg,
             fg=settings_fg,
@@ -2735,40 +2755,6 @@ class SettingsUIMixin:
         self._apply_input_style(nllb_max_spin)
         nllb_max_spin.pack(anchor="w", pady=(0, 8))
 
-        self._add_setting_label(
-            nllb_container,
-            "Cache directory:",
-            "Optional. Blank uses the standard Hugging Face cache.",
-            label_opts,
-            pady=(0, 4),
-        )
-        local_nllb_cache_dir_var = tk.StringVar(value=self.local_nllb_cache_dir)
-        cache_row = tk.Frame(nllb_container, bg=section_bg)
-        cache_row.pack(fill=tk.X, pady=(0, 8))
-        nllb_cache_entry = tk.Entry(
-            cache_row,
-            textvariable=local_nllb_cache_dir_var,
-            width=48,
-        )
-        self._apply_input_style(nllb_cache_entry)
-        nllb_cache_entry.pack(side=tk.LEFT, fill=tk.X, expand=True)
-        cache_browse_button = self._make_button(
-            cache_row,
-            "Browse",
-            command=lambda: self.choose_directory(
-                local_nllb_cache_dir_var,
-                "Select Local NLLB cache directory",
-            ),
-            primary=True,
-        )
-        cache_browse_button.pack(side=tk.LEFT, padx=(8, 0))
-        cache_clear_button = self._make_button(
-            cache_row,
-            "Clear",
-            command=lambda: local_nllb_cache_dir_var.set(""),
-        )
-        cache_clear_button.pack(side=tk.LEFT, padx=(8, 0))
-
         action_row = tk.Frame(nllb_container, bg=section_bg)
         action_row.pack(fill=tk.X)
 
@@ -2778,7 +2764,6 @@ class SettingsUIMixin:
             command=lambda: self._download_or_check_local_nllb_from_vars(
                 local_nllb_model_name_var,
                 local_nllb_device_var,
-                local_nllb_cache_dir_var,
                 local_nllb_max_chars_var,
                 model_name_map=nllb_model_name_map,
             ),
@@ -2792,7 +2777,6 @@ class SettingsUIMixin:
             command=lambda: self._download_local_nllb_from_vars(
                 local_nllb_model_name_var,
                 local_nllb_device_var,
-                local_nllb_cache_dir_var,
                 local_nllb_max_chars_var,
                 prompt=True,
                 model_name_map=nllb_model_name_map,
@@ -2806,7 +2790,6 @@ class SettingsUIMixin:
             command=lambda: self._run_local_nllb_test_from_vars(
                 local_nllb_model_name_var,
                 local_nllb_device_var,
-                local_nllb_cache_dir_var,
                 local_nllb_max_chars_var,
                 test_button,
                 self.local_nllb_message_var,
@@ -2823,6 +2806,9 @@ class SettingsUIMixin:
             enable_translation_var,
             toggle_state_label,
             output_lang_label,
+            input_lang_label,
+            local_nllb_target_lang_var,
+            stt_source_lang_var,
         )
         sync_runtime = lambda *_args: self._sync_translation_toggle_runtime(
             enable_translation_var
@@ -2834,7 +2820,6 @@ class SettingsUIMixin:
             config = self._local_nllb_config_from_vars(
                 local_nllb_model_name_var,
                 local_nllb_device_var,
-                local_nllb_cache_dir_var,
                 local_nllb_max_chars_var,
                 model_name_map=nllb_model_name_map,
             )
@@ -2858,7 +2843,6 @@ class SettingsUIMixin:
                 self._local_nllb_config_from_vars(
                     local_nllb_model_name_var,
                     local_nllb_device_var,
-                    local_nllb_cache_dir_var,
                     local_nllb_max_chars_var,
                     model_name_map=nllb_model_name_map,
                 ),
@@ -2868,9 +2852,10 @@ class SettingsUIMixin:
         enable_translation_var.trace_add("write", refresh_label)
         enable_translation_var.trace_add("write", sync_runtime)
         enable_translation_var.trace_add("write", maybe_start_nllb_prewarm)
+        local_nllb_target_lang_var.trace_add("write", refresh_label)
+        stt_source_lang_var.trace_add("write", refresh_label)
         local_nllb_model_name_var.trace_add("write", handle_nllb_config_change)
         local_nllb_device_var.trace_add("write", handle_nllb_config_change)
-        local_nllb_cache_dir_var.trace_add("write", handle_nllb_config_change)
         refresh_label()
         self._refresh_local_nllb_runtime_ui()
         if self.translation_enabled:
@@ -2884,14 +2869,6 @@ class SettingsUIMixin:
             # half immediately instead of hanging on a check that will never
             # run (mirrors _mark_startup_stt_ready for the STT half).
             self._mark_startup_translation_ready()
-        fixed_input_label = tk.Label(
-            translation_section,
-            text="Default input language: English when OFF, Spanish when ON",
-            bg=label_opts["bg"],
-            fg=label_opts["fg"],
-            font=(self.ui_font_family, 9),
-        )
-        fixed_input_label.pack(anchor="w")
 
         return {
             "enable_translation_var": enable_translation_var,
@@ -2904,7 +2881,6 @@ class SettingsUIMixin:
             "local_nllb_target_lang_var": local_nllb_target_lang_var,
             "local_nllb_target_lang_map": local_nllb_target_lang_map,
             "local_nllb_max_chars_var": local_nllb_max_chars_var,
-            "local_nllb_cache_dir_var": local_nllb_cache_dir_var,
         }
 
     # ------------------------------------------------------------------ #
@@ -3038,7 +3014,6 @@ class SettingsUIMixin:
         self,
         model_name_var,
         device_var,
-        cache_dir_var,
         max_chars_var,
         test_button,
         test_status_var,
@@ -3047,7 +3022,6 @@ class SettingsUIMixin:
         config = self._local_nllb_config_from_vars(
             model_name_var,
             device_var,
-            cache_dir_var,
             max_chars_var,
             model_name_map=model_name_map,
         )
@@ -3074,7 +3048,6 @@ class SettingsUIMixin:
         self,
         model_name_var,
         device_var,
-        cache_dir_var,
         max_chars_var,
         model_name_map=None,
     ):
@@ -3084,7 +3057,6 @@ class SettingsUIMixin:
         return {
             "model_name": selected_model_name or self.LOCAL_NLLB_DEFAULT_MODEL_NAME,
             "device": self._normalize_local_nllb_device(device_var.get()),
-            "cache_dir": self._normalize_optional_directory(cache_dir_var.get()),
             "max_chars": self._coerce_int_range(
                 max_chars_var.get(),
                 self.LOCAL_NLLB_DEFAULT_MAX_CHARS,
@@ -3117,7 +3089,6 @@ class SettingsUIMixin:
                 source_lang="spa_Latn",
                 target_lang="eng_Latn",
                 max_chars=config["max_chars"],
-                cache_dir=config["cache_dir"],
             )
             if not (translated or "").strip():
                 raise sr.RequestError(self.LOCAL_NLLB_FAILED_MESSAGE)
@@ -3171,7 +3142,6 @@ class SettingsUIMixin:
             "model_name": (self.local_nllb_model_name or "").strip()
             or self.LOCAL_NLLB_DEFAULT_MODEL_NAME,
             "device": self._normalize_local_nllb_device(self.local_nllb_device),
-            "cache_dir": self._normalize_optional_directory(self.local_nllb_cache_dir),
             "max_chars": self._coerce_int_range(
                 self.local_nllb_max_chars,
                 self.LOCAL_NLLB_DEFAULT_MAX_CHARS,
@@ -3186,7 +3156,6 @@ class SettingsUIMixin:
             str(config.get("model_name") or self.LOCAL_NLLB_DEFAULT_MODEL_NAME).strip()
             or self.LOCAL_NLLB_DEFAULT_MODEL_NAME,
             self._normalize_local_nllb_device(config.get("device", "auto")),
-            self._normalize_optional_directory(config.get("cache_dir", "")),
         )
 
     def _local_nllb_status_message(self):
@@ -3279,7 +3248,6 @@ class SettingsUIMixin:
         self,
         model_name_var,
         device_var,
-        cache_dir_var,
         max_chars_var,
         prompt=True,
         model_name_map=None,
@@ -3287,7 +3255,6 @@ class SettingsUIMixin:
         config = self._local_nllb_config_from_vars(
             model_name_var,
             device_var,
-            cache_dir_var,
             max_chars_var,
             model_name_map=model_name_map,
         )
@@ -3297,7 +3264,6 @@ class SettingsUIMixin:
         self,
         model_name_var,
         device_var,
-        cache_dir_var,
         max_chars_var,
         model_name_map=None,
     ):
@@ -3308,7 +3274,6 @@ class SettingsUIMixin:
         config = self._local_nllb_config_from_vars(
             model_name_var,
             device_var,
-            cache_dir_var,
             max_chars_var,
             model_name_map=model_name_map,
         )
@@ -3685,24 +3650,12 @@ class SettingsUIMixin:
             raise sr.RequestError(self.LOCAL_NLLB_MISSING_DEPENDENCIES_MESSAGE) from exc
         return torch_module, AutoModelForSeq2SeqLM, AutoTokenizer
 
-    def _local_nllb_model_kwargs(self, cache_dir, local_files_only=True, create_cache=False):
-        kwargs = {"local_files_only": bool(local_files_only)}
-        cache_dir = self._normalize_optional_directory(cache_dir)
-        if cache_dir:
-            if create_cache:
-                try:
-                    os.makedirs(cache_dir, exist_ok=True)
-                except Exception as exc:
-                    raise sr.RequestError(self.LOCAL_NLLB_CACHE_ERROR_MESSAGE) from exc
-            kwargs["cache_dir"] = cache_dir
-        return kwargs
+    def _local_nllb_model_kwargs(self, local_files_only=True):
+        return {"local_files_only": bool(local_files_only)}
 
     def _is_local_nllb_model_cached(self, config):
         _torch_module, AutoModelForSeq2SeqLM, AutoTokenizer = self._import_local_nllb_dependencies()
-        kwargs = self._local_nllb_model_kwargs(
-            config.get("cache_dir", ""),
-            local_files_only=True,
-        )
+        kwargs = self._local_nllb_model_kwargs(local_files_only=True)
         model_name = config.get("model_name") or self.LOCAL_NLLB_DEFAULT_MODEL_NAME
         try:
             tokenizer = AutoTokenizer.from_pretrained(
@@ -3720,11 +3673,7 @@ class SettingsUIMixin:
 
     def _download_local_nllb_model_files(self, config):
         _torch_module, AutoModelForSeq2SeqLM, AutoTokenizer = self._import_local_nllb_dependencies()
-        kwargs = self._local_nllb_model_kwargs(
-            config.get("cache_dir", ""),
-            local_files_only=False,
-            create_cache=True,
-        )
+        kwargs = self._local_nllb_model_kwargs(local_files_only=False)
         model_name = config.get("model_name") or self.LOCAL_NLLB_DEFAULT_MODEL_NAME
         tokenizer = AutoTokenizer.from_pretrained(
             model_name,
@@ -3797,13 +3746,22 @@ class SettingsUIMixin:
         enable_translation_var,
         toggle_state_label,
         output_lang_label,
+        input_lang_label,
+        local_nllb_target_lang_var,
+        stt_source_lang_var,
     ):
         enabled = self._coerce_bool(enable_translation_var.get(), default=False)
         if enabled:
             toggle_state_label.config(text="Current mode: Translation ON (Local NLLB)")
+            target = (local_nllb_target_lang_var.get() or "").strip() or "English"
+            output_lang_label.config(text=f"Output language: {target}")
         else:
             toggle_state_label.config(text="Current mode: Translation OFF")
-        output_lang_label.config(text=self.OUTPUT_LANGUAGE_ENGLISH_LABEL)
+            output_lang_label.config(text="Output language: same as input (translation is off)")
+        source = (stt_source_lang_var.get() or "").strip() or "Auto-detect"
+        input_lang_label.config(
+            text=f"Input language: {source} (set in Transcription section above)"
+        )
 
     def _sync_translation_toggle_runtime(self, enable_translation_var):
         enabled = self._coerce_bool(enable_translation_var.get(), default=False)
