@@ -178,36 +178,12 @@ class AudioCaptureMixin:
     def _source_language_filter_expected(self, engine=""):
         if self.last_stt_pretranslated and not (self.last_stt_source_text or "").strip():
             return ""
-        if self.translation_enabled and self._active_text_translation_provider() == "local_nllb":
-            nllb_expected = self._nllb_source_language_filter_expected()
-            if nllb_expected:
-                return nllb_expected
         source = (self.source_lang or "").strip().lower()
         if source == "auto":
             return ""
         if self.auto_switch_translation:
             return ""
         return self._normalized_source_lang_code()
-
-    def _nllb_source_language_filter_expected(self):
-        # An explicit (non-auto) Local NLLB source language reflects what the
-        # user is actually speaking, which can differ from the legacy
-        # es->en-only self.source_lang default and would otherwise cause
-        # legitimate speech to be filtered out as a hallucination.
-        configured = (self.local_nllb_source_lang or "").strip().lower()
-        if configured in (
-            "",
-            "auto",
-            "selected",
-            "selected_source",
-            self.LOCAL_NLLB_DEFAULT_SOURCE_LANG.lower(),
-        ):
-            return ""
-        try:
-            resolved = self._resolve_local_nllb_source_lang()
-        except ValueError:
-            return ""
-        return self._nllb_code_to_two_letter(resolved)
 
     def _source_filter_candidate_text(self, text):
         if self.last_stt_pretranslated:
