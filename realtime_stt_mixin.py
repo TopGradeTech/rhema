@@ -190,6 +190,14 @@ class RealtimeSttMixin:
             "on_realtime_transcription_stabilized": on_stabilized,
             "device": self._resolve_stt_device(self.stt_device),
             "compute_type": "int8",
+            # By the time this runs, _ensure_realtime_stt_models_cached has
+            # already guaranteed both model's files are on disk - forcing
+            # local_files_only here means faster-whisper never makes its own
+            # unauthenticated HF Hub revalidation request on every startup,
+            # only the explicit preflight check does (and only touches the
+            # network there if a model is actually missing).
+            "transcription_engine_options": {"model": {"local_files_only": True}},
+            "realtime_transcription_engine_options": {"model": {"local_files_only": True}},
             "silero_sensitivity": float(self.realtime_stt_silero_sensitivity),
             "post_speech_silence_duration": self._SILENCE_INITIAL,
             "min_length_of_recording": float(self.realtime_stt_min_recording_length),
@@ -266,6 +274,42 @@ class RealtimeSttMixin:
             if text and not self._realtime_stt_stop_event.is_set():
                 self._on_realtime_stt_final(text)
 
+    def _ensure_realtime_stt_models_cached(self):
+        """Preflight the faster-whisper model files this run needs (final
+        + realtime models, which may be the same), downloading only if a
+        model is actually missing from the local cache.
+
+        Runs as a plain function call *before* AudioToTextRecorder is
+        constructed, rather than letting that construction hit the network
+        itself: AudioToTextRecorder spawns a transcription subprocess as
+        part of construction, and a network hiccup partway through has
+        historically left that subprocess orphaned (see
+        _force_kill_realtime_stt_processes) - a failed download_model()
+        call here is just a plain exception, cheap to retry via the normal
+        _realtime_stt_worker retry-cooldown path.
+
+        With this done upfront, _realtime_stt_recorder_kwargs can force
+        local_files_only=True on the recorder's own model construction, so
+        an ordinary startup with everything already cached never makes an
+        HF Hub request at all (that was the source of the "unauthenticated
+        requests" warning on every launch, even with nothing to download).
+        """
+        try:
+            from faster_whisper.utils import download_model
+        except ImportError:
+            return  # faster_whisper missing entirely; let the recorder report it
+        for name in {self.realtime_stt_final_model, self.realtime_stt_realtime_model}:
+            try:
+                download_model(name, local_files_only=True)
+                continue
+            except Exception:
+                pass
+            try:
+                self.update_status(f"Downloading speech-to-text model files ({name})...")
+            except Exception:
+                pass
+            download_model(name, local_files_only=False)
+
     def _realtime_stt_worker(self):
         try:
             from RealtimeSTT import AudioToTextRecorder
@@ -292,6 +336,7 @@ class RealtimeSttMixin:
             self._queue_interim_translation(text)
 
         try:
+            self._ensure_realtime_stt_models_cached()
             recorder = AudioToTextRecorder(
                 **self._realtime_stt_recorder_kwargs(on_update, on_stabilized)
             )
