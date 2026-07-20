@@ -339,6 +339,7 @@ class TranslationApp(
         # out from under an in-progress load.
         self.startup_stt_ready = False
         self.startup_translation_ready = False
+        self.startup_video_scan_ready = False
         self.app_startup_ready = False
         self._startup_loading_overlay = None
         self._startup_loading_progress = None
