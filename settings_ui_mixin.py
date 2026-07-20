@@ -846,8 +846,12 @@ class SettingsUIMixin:
             fg=palette["text"],
             font=(self.ui_font_family, 11, "bold"),
         ).pack(pady=(0, 10))
-        progress = ttkb.Progressbar(frame, mode="determinate", maximum=max_probe, length=280)
+        # Indeterminate (bouncing) bar, matching the startup loading overlay -
+        # a determinate fill bar here visibly stalls between per-device probe
+        # callbacks (each cv2 probe can take a while), which reads as frozen.
+        progress = ttkb.Progressbar(frame, mode="indeterminate", length=280)
         progress.pack()
+        progress.start(15)
         # No "0 of N" here: the real probe count isn't known until the scan's
         # first progress callback (enumerate_video_devices bounds it by the
         # pygrabber device count, which is itself the first thing the scan
@@ -878,18 +882,9 @@ class SettingsUIMixin:
         self._video_scan_popup_status_var = status_var
 
     def _update_video_scan_progress_popup(self, completed, total):
-        # total reflects enumerate_video_devices' actual bounded probe count,
-        # which can be lower than the popup's initial max_probe-based guess
-        # (see its docstring) - keep the bar's maximum in sync so it always
-        # reaches 100% instead of visually stalling partway.
-        progress = getattr(self, "_video_scan_popup_progress", None)
+        # Bar itself is indeterminate now (see _show_video_scan_progress_popup),
+        # so only the status text tracks real progress.
         status_var = getattr(self, "_video_scan_popup_status_var", None)
-        if progress is not None:
-            try:
-                progress["maximum"] = total
-                progress["value"] = completed
-            except Exception:
-                pass
         if status_var is not None:
             try:
                 status_var.set(f"Device {completed} of {total}")
@@ -898,6 +893,12 @@ class SettingsUIMixin:
 
     def _close_video_scan_progress_popup(self):
         popup = getattr(self, "_video_scan_popup", None)
+        progress = getattr(self, "_video_scan_popup_progress", None)
+        if progress is not None:
+            try:
+                progress.stop()
+            except Exception:
+                pass
         if popup is not None:
             try:
                 popup.grab_release()
