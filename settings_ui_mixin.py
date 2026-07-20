@@ -2715,12 +2715,11 @@ class SettingsUIMixin:
         download_button = self._make_button(
             action_row,
             "Download Local NLLB model",
-            command=lambda: self._download_local_nllb_from_vars(
+            command=lambda: self._download_or_check_local_nllb_from_vars(
                 local_nllb_model_name_var,
                 local_nllb_device_var,
                 local_nllb_cache_dir_var,
                 local_nllb_max_chars_var,
-                prompt=True,
                 model_name_map=nllb_model_name_map,
             ),
             primary=True,
@@ -3198,8 +3197,9 @@ class SettingsUIMixin:
             pass
         try:
             if self.local_nllb_download_button is not None:
-                download_state = tk.DISABLED if in_progress or ready else tk.NORMAL
-                self.local_nllb_download_button.config(state=download_state)
+                download_state = tk.DISABLED if in_progress else tk.NORMAL
+                download_label = "Check for Updates" if ready else "Download Local NLLB model"
+                self.local_nllb_download_button.config(state=download_state, text=download_label)
         except Exception:
             pass
         try:
@@ -3232,6 +3232,30 @@ class SettingsUIMixin:
             model_name_map=model_name_map,
         )
         self._start_local_nllb_download(config, prompt=prompt)
+
+    def _download_or_check_local_nllb_from_vars(
+        self,
+        model_name_var,
+        device_var,
+        cache_dir_var,
+        max_chars_var,
+        model_name_map=None,
+    ):
+        """Single button's action: download when the model isn't on disk
+        yet, or re-check the Hub for updates once it's already Ready (see
+        _refresh_local_nllb_runtime_ui, which relabels the same button
+        between the two)."""
+        config = self._local_nllb_config_from_vars(
+            model_name_var,
+            device_var,
+            cache_dir_var,
+            max_chars_var,
+            model_name_map=model_name_map,
+        )
+        if self.nllb_status == "Ready":
+            self._start_local_nllb_update_check(config)
+        else:
+            self._start_local_nllb_download(config, prompt=True)
 
     def _start_local_nllb_cache_check(
         self,
@@ -3428,6 +3452,64 @@ class SettingsUIMixin:
             self._set_local_nllb_status("Error", message)
             self.update_status(message)
             self._mark_startup_translation_ready()
+        finally:
+            self.nllb_download_in_progress = False
+            try:
+                self.root.after(0, self._refresh_local_nllb_runtime_ui)
+            except Exception:
+                self._refresh_local_nllb_runtime_ui()
+
+    def _start_local_nllb_update_check(self, config):
+        """"Check for Updates": unlike _start_local_nllb_download, this
+        always re-fetches from the Hub (skipping the already-cached
+        early-exit in _run_local_nllb_download_worker) so a newer revision
+        actually gets pulled. Only reachable once nllb_status is already
+        "Ready" (see _download_or_check_local_nllb_from_vars), so no
+        confirmation prompt - the model is already on disk either way."""
+        config = dict(config or self._local_nllb_runtime_config())
+        if self.nllb_download_in_progress:
+            return
+        dependency_error = self._local_nllb_dependencies_error()
+        if dependency_error:
+            self._set_local_nllb_status("Error", dependency_error)
+            self.update_status(dependency_error)
+            return
+        self.nllb_download_in_progress = True
+        self.nllb_model_loaded = False
+        self.nllb_ready_config = None
+        with self.local_nllb_lock:
+            self.local_nllb_tokenizer = None
+            self.local_nllb_model = None
+            self.local_nllb_model_config = None
+            self.local_nllb_resolved_device = ""
+        self._set_local_nllb_status(
+            "Downloading",
+            f"Checking Hugging Face for updates to {config['model_name']}.",
+        )
+        self.update_status(f"Checking for Local NLLB updates ({config['model_name']})...")
+        Thread(
+            target=lambda: self._run_local_nllb_update_check_worker(config),
+            daemon=True,
+        ).start()
+
+    def _run_local_nllb_update_check_worker(self, config):
+        try:
+            self._download_local_nllb_model_files(config)
+            self._set_local_nllb_status(
+                "Downloaded",
+                "Local NLLB is up to date. Verifying the local cache.",
+            )
+            self._set_local_nllb_status(
+                "Loading",
+                "Loading Local NLLB and running a test translation.",
+            )
+            self._run_local_nllb_verification_worker(config)
+        except Exception as exc:
+            message = self._local_nllb_exception_message(exc, phase="download")
+            self.nllb_model_loaded = False
+            self.nllb_ready_config = None
+            self._set_local_nllb_status("Error", message)
+            self.update_status(message)
         finally:
             self.nllb_download_in_progress = False
             try:
