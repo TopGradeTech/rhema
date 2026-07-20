@@ -283,6 +283,15 @@ class SettingsUIMixin:
         if self.startup_video_scan_ready:
             return
         self.startup_video_scan_ready = True
+        if getattr(self, "_start_video_feed_after_startup_scan", False):
+            # The scan that just finished is exactly what start_video_feed()
+            # was held back for at startup (see main.py) - safe to open the
+            # real feed now that it's no longer contending for the camera.
+            self._start_video_feed_after_startup_scan = False
+            try:
+                self.start_video_feed()
+            except Exception:
+                pass
         try:
             self.root.after(0, self._check_startup_ready)
         except Exception:

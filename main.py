@@ -350,6 +350,14 @@ class TranslationApp(
         self.startup_translation_ready = False
         self.startup_video_scan_ready = False
         self.app_startup_ready = False
+        # Set when the startup camera scan (open_settings ->
+        # _show_startup_loading_overlay -> _refresh_video_devices) is still
+        # probing devices at the point start_video_feed() would normally be
+        # called - opening the real feed concurrently with that scan can
+        # lose the race for the camera handle and fail. See
+        # _mark_startup_video_scan_ready, which starts the feed once the
+        # scan is out of the way instead.
+        self._start_video_feed_after_startup_scan = False
         self._startup_loading_overlay = None
         self._startup_loading_progress = None
         self.speech_engine = "realtime-stt"
@@ -554,7 +562,15 @@ class TranslationApp(
         self.thread.daemon = True
         self.thread.start()
         self._start_audio_level_stream_thread()
-        self.start_video_feed()
+        if getattr(self, "_video_scan_in_progress", False):
+            # open_settings() above just kicked off the startup camera scan
+            # (see _show_startup_loading_overlay); it probes every camera
+            # index via the same native APIs start_video_feed() needs, so
+            # starting the real feed right now can lose that race. Deferred
+            # to _mark_startup_video_scan_ready instead.
+            self._start_video_feed_after_startup_scan = True
+        else:
+            self.start_video_feed()
 
         try:
             self.root.mainloop()
