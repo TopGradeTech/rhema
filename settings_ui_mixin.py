@@ -2974,10 +2974,13 @@ class SettingsUIMixin:
         else:
             hardware_desc = "No CUDA GPU detected (CPU only)"
         result_var.set(
-            f"Detected: {hardware_desc}. Set Final model to "
-            f"{final_display or recommendation['final_model']}, Realtime model to "
-            f"{realtime_display or recommendation['realtime_model']}, and NLLB model to "
-            f"{nllb_display or recommendation['nllb_model']}. Click Apply to use them."
+            f"Detected: {hardware_desc}\n"
+            "\n"
+            f"Final model: {final_display or recommendation['final_model']}\n"
+            f"Realtime model: {realtime_display or recommendation['realtime_model']}\n"
+            f"NLLB model: {nllb_display or recommendation['nllb_model']}\n"
+            "\n"
+            "Click Apply to use these settings."
         )
 
     def _run_local_nllb_test_from_vars(
