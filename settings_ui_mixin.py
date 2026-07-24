@@ -2769,19 +2769,6 @@ class SettingsUIMixin:
         )
         download_button.pack(side=tk.LEFT)
 
-        retry_button = self._make_button(
-            action_row,
-            "Retry download",
-            command=lambda: self._download_local_nllb_from_vars(
-                local_nllb_model_name_var,
-                local_nllb_device_var,
-                local_nllb_max_chars_var,
-                prompt=True,
-                model_name_map=nllb_model_name_map,
-            ),
-        )
-        retry_button.pack(side=tk.LEFT, padx=(8, 0))
-
         test_button = self._make_button(
             action_row,
             "Test Local NLLB",
@@ -2797,7 +2784,6 @@ class SettingsUIMixin:
         )
         test_button.pack(side=tk.LEFT, padx=(8, 0))
         self.local_nllb_download_button = download_button
-        self.local_nllb_retry_button = retry_button
         self.local_nllb_test_button = test_button
 
         refresh_label = lambda *_args: self._refresh_translation_toggle_label(
@@ -3227,8 +3213,6 @@ class SettingsUIMixin:
         in_progress = bool(self.nllb_download_in_progress or self.nllb_check_in_progress)
         in_progress = in_progress or self.nllb_status in ("Checking", "Downloading", "Loading")
         ready = self.nllb_status == "Ready"
-        not_downloaded = self.nllb_status == "Not downloaded"
-        error = self.nllb_status == "Error"
         try:
             if self.local_nllb_status_var is not None:
                 self.local_nllb_status_var.set(self.nllb_status)
@@ -3244,33 +3228,11 @@ class SettingsUIMixin:
         except Exception:
             pass
         try:
-            if self.local_nllb_retry_button is not None:
-                retry_state = tk.NORMAL if (not in_progress and (error or not_downloaded)) else tk.DISABLED
-                self.local_nllb_retry_button.config(state=retry_state)
-        except Exception:
-            pass
-        try:
             if self.local_nllb_test_button is not None:
                 test_state = tk.NORMAL if (not in_progress and ready) else tk.DISABLED
                 self.local_nllb_test_button.config(state=test_state)
         except Exception:
             pass
-
-    def _download_local_nllb_from_vars(
-        self,
-        model_name_var,
-        device_var,
-        max_chars_var,
-        prompt=True,
-        model_name_map=None,
-    ):
-        config = self._local_nllb_config_from_vars(
-            model_name_var,
-            device_var,
-            max_chars_var,
-            model_name_map=model_name_map,
-        )
-        self._start_local_nllb_download(config, prompt=prompt)
 
     def _download_or_check_local_nllb_from_vars(
         self,
