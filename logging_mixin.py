@@ -91,7 +91,7 @@ class LoggingMixin:
             if os.path.isdir(exe_dir) and os.access(exe_dir, os.W_OK):
                 return exe_dir
             appdata_root = os.getenv("APPDATA") or os.path.expanduser("~")
-            fallback_dir = os.path.join(appdata_root, "python-translation")
+            fallback_dir = os.path.join(appdata_root, "Rhema")
             try:
                 os.makedirs(fallback_dir, exist_ok=True)
                 return fallback_dir

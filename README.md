@@ -1,4 +1,4 @@
-# Python Translation App
+# Rhema
 
 A Windows desktop application for real-time speech transcription and translation, with adjustable text size and a fullscreen output window. Built for practical use translating live speech (e.g. sermons, meetings) from Spanish to English, with Bible-specific vocabulary mapping and scripture reference formatting.
 
