@@ -79,23 +79,36 @@ a = Analysis(
 )
 pyz = PYZ(a.pure)
 
+# Onedir build: the exe holds only the bootloader + bytecode archive, with
+# binaries/datas in the surrounding folder (COLLECT below). Chosen over
+# onefile because onefile re-extracted the ~2.5 GB archive to %TEMP% on
+# every launch, delaying the window by ~40 s; onedir launches in seconds.
+# The folder is delivered to users via the Inno Setup installer
+# (installer.iss), so onefile's single-file portability is no longer needed.
 exe = EXE(
     pyz,
     a.scripts,
-    a.binaries,
-    a.datas,
     [],
-    name='main',
+    exclude_binaries=True,
+    name='TranslationApp',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
     upx=True,
-    upx_exclude=[],
-    runtime_tmpdir=None,
     console=False,
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
+)
+
+coll = COLLECT(
+    exe,
+    a.binaries,
+    a.datas,
+    strip=False,
+    upx=True,
+    upx_exclude=[],
+    name='TranslationApp',
 )
