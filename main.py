@@ -4,6 +4,7 @@ from threading import Thread, Lock, Event
 import queue
 import time
 from collections import deque
+import multiprocessing
 import os
 import traceback
 import ttkbootstrap as ttkb
@@ -713,4 +714,15 @@ class TranslationApp(
 
 
 if __name__ == "__main__":
+    # Must be the very first thing here, before anything else runs. RealtimeSTT
+    # spawns its transcription worker via multiprocessing.Process; in a frozen
+    # (PyInstaller) build, a child spawned that way re-invokes this same exe
+    # with special multiprocessing bootstrap arguments instead of a normal
+    # python.exe + script invocation. Without freeze_support() to recognize
+    # those arguments and run only the child worker, the "child" falls through
+    # to this same block and launches a whole second TranslationApp instead -
+    # which spawns its own child the same way, recursively, spawning dozens of
+    # windows and processes within seconds (confirmed 2026-07-23: froze the
+    # dev machine, required a hard reboot).
+    multiprocessing.freeze_support()
     app = TranslationApp()
