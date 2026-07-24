@@ -3,7 +3,7 @@
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Project Summary
-Windows desktop app that captures live audio, transcribes speech locally with RealtimeSTT, translates it locally with NLLB-200, and renders large text in a fullscreen output window. The UI is a Tkinter (+ttkbootstrap) controller window with settings and a preview, plus a separate fullscreen output window. Built for practical use translating live speech (e.g. sermons, meetings) from Spanish to English, with Bible-specific vocabulary mapping and scripture reference formatting.
+**Rhema** (named after ῥῆμα, Greek for "spoken word") is a Windows desktop app that captures live audio, transcribes speech locally with RealtimeSTT, translates it locally with NLLB-200, and renders large text in a fullscreen output window ("Rhema"), controlled from a separate settings window ("Rhema Controller"). The UI is Tkinter (+ttkbootstrap). Built for practical use translating live speech (e.g. sermons, meetings) from Spanish to English, with Bible-specific vocabulary mapping and scripture reference formatting.
 
 All speech recognition and translation runs on-device — no cloud STT/translation calls.
 

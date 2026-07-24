@@ -180,7 +180,7 @@ class TranslationApp(
     }
     LOGGING_MODE_OPTIONS = ("normal", "debug", "evaluation", "full")
     WINDOWS_RUN_KEY_PATH = r"Software\Microsoft\Windows\CurrentVersion\Run"
-    WINDOWS_STARTUP_VALUE_NAME = "TopGradePythonTranslation"
+    WINDOWS_STARTUP_VALUE_NAME = "Rhema"
     STT_EDGE_NOISE_PREFIX_PATTERNS = (
         r"^\s*(?:thanks?|thank\s+you)(?:\s+(?:very|so)\s+much)?\s+for\s+(?:watching|listening)\b[\s.!?,:;\"']*",
         r"^\s*thank\s+you\s+very\s+much\b[\s.!?,:;\"']*",
@@ -290,7 +290,7 @@ class TranslationApp(
         self.audio_level_restart_requested = False
         self._audio_level_last_error_log = 0.0
         self.root = tk.Tk()
-        self.root.title("Translation Output")
+        self.root.title("Rhema")
         self.font_family = self.pick_font_family(
             ["DejaVu Sans", "Liberation Sans", "Arial", "Helvetica"]
         )
