@@ -1606,6 +1606,32 @@ class SettingsUIMixin:
         content.bind(self.CONFIGURE_EVENT, on_content_configure)
 
         def on_mousewheel(event):
+            # bind_all below is the only way to get wheel events without a
+            # dedicated binding on every single settings widget, but it also
+            # fires for a searchable-language combobox's open dropdown (an
+            # internal Listbox) - that widget already has its own default
+            # Tk scroll binding, so without this guard the wheel scrolled
+            # both the dropdown *and* the settings page underneath it at
+            # once. Letting the Listbox's own binding be the only one that
+            # runs keeps the wheel scoped to whichever one the pointer is
+            # actually over.
+            #
+            # event.widget is a plain Tk pathname string, not a bound Python
+            # widget object, when the event comes from a widget Tcl created
+            # without a Python-side wrapper - true of a combobox popdown's
+            # internal listbox (built by ttk::combobox::PopdownWindow at the
+            # Tcl level). winfo_class() only exists on the wrapper, so it
+            # has to be queried directly via Tcl for the string case.
+            widget = event.widget
+            if isinstance(widget, str):
+                try:
+                    widget_class = canvas.tk.call("winfo", "class", widget)
+                except tk.TclError:
+                    widget_class = ""
+            else:
+                widget_class = widget.winfo_class()
+            if widget_class == "Listbox":
+                return
             if event.delta:
                 canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
             elif event.num == 4:
@@ -2969,16 +2995,29 @@ class SettingsUIMixin:
         if nllb_display:
             translation_vars["local_nllb_model_name_var"].set(nllb_display)
 
+        # "Auto" already resolves to CUDA at runtime when it's available
+        # (_resolve_stt_device/_resolve_local_nllb_device), but setting it
+        # explicitly here makes the recommendation self-documenting - the
+        # Device dropdowns visibly show what autodetect found, rather than
+        # leaving the user to wonder whether "Auto" actually means CUDA.
+        if cuda_available:
+            if "stt_device_var" in transcription_vars:
+                transcription_vars["stt_device_var"].set("CUDA")
+            if "local_nllb_device_var" in translation_vars:
+                translation_vars["local_nllb_device_var"].set("CUDA")
+
         if cuda_available and vram_gb:
             hardware_desc = f"{gpu_name or 'NVIDIA GPU'} ({vram_gb:.1f} GB VRAM)"
         else:
             hardware_desc = "No CUDA GPU detected (CPU only)"
+        device_line = "Device: CUDA\n" if cuda_available else ""
         result_var.set(
             f"Detected: {hardware_desc}\n"
             "\n"
             f"Final model: {final_display or recommendation['final_model']}\n"
             f"Realtime model: {realtime_display or recommendation['realtime_model']}\n"
             f"NLLB model: {nllb_display or recommendation['nllb_model']}\n"
+            f"{device_line}"
             "\n"
             "Click Apply to use these settings."
         )
