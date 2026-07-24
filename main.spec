@@ -3,7 +3,24 @@
 import sys
 from pathlib import Path
 
-from PyInstaller.utils.hooks import collect_data_files
+from PyInstaller.utils.hooks import collect_data_files, collect_submodules
+
+
+def _editable_package_root(package_name):
+    """Resolve the real source directory for a package that may be pip
+    installed in editable mode (as RealtimeSTT is here, from the local
+    TopGradeTelecom fork). Editable installs are wired in via a PEP 660
+    custom import finder (a .pth file that installs a MetaPathFinder), which
+    PyInstaller's static modulegraph analysis can't see through - without
+    this, RealtimeSTT is silently missing from the build entirely (no
+    warning, no error at build time; it just isn't there at runtime).
+    Importing it here runs in this same venv, so the editable finder
+    resolves it normally; the returned parent directory can then be added to
+    pathex so PyInstaller's own analysis can find and trace it like any
+    other on-disk package.
+    """
+    module = __import__(package_name)
+    return str(Path(module.__file__).resolve().parent.parent)
 
 
 def collect_tcl_tk_datas():
@@ -26,13 +43,33 @@ faster_whisper_datas = collect_data_files(
     includes=["assets/*.onnx"],
 )
 tcl_tk_datas = collect_tcl_tk_datas()
+realtimestt_pathex = [_editable_package_root("RealtimeSTT")]
+# Belt-and-suspenders alongside pathex above: RealtimeSTT's transcription
+# engine backends (transcription_engines/factory.py) are selected via
+# importlib.import_module() from a string lookup table, which static
+# analysis can't follow even once the package itself is discoverable.
+realtimestt_hiddenimports = collect_submodules("RealtimeSTT")
+# warmup_audio.wav is opened at recorder construction, resolved relative to
+# the RealtimeSTT package dir (core/transcription.py, core/initialization.py:
+# dirname(dirname(__file__)) + assets/...). Missing it doesn't fail the
+# build - it fails at runtime, and viciously: recorder construction has
+# already spawned its two worker processes by the time the open() raises, so
+# every 5s retry (realtime_stt_mixin.py cooldown) leaked two more orphaned
+# processes. Built manually instead of via collect_data_files, which can't
+# see through this package's PEP 660 editable install.
+realtimestt_datas = [
+    (
+        str(Path(_editable_package_root("RealtimeSTT")) / "RealtimeSTT" / "assets"),
+        "RealtimeSTT/assets",
+    )
+]
 
 a = Analysis(
     ['main.py'],
-    pathex=[],
+    pathex=realtimestt_pathex,
     binaries=[],
-    datas=faster_whisper_datas + tcl_tk_datas,
-    hiddenimports=['tkinter', 'tkinter.ttk', '_tkinter'],
+    datas=faster_whisper_datas + tcl_tk_datas + realtimestt_datas,
+    hiddenimports=['tkinter', 'tkinter.ttk', '_tkinter'] + realtimestt_hiddenimports,
     hookspath=['pyinstaller_hooks'],
     hooksconfig={},
     runtime_hooks=[],
