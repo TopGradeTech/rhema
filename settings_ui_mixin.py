@@ -36,7 +36,7 @@ class SettingsUIMixin:
 
         settings_window = tk.Toplevel(self.root)
         self.settings_window = settings_window
-        settings_window.title("Translation Controller")
+        settings_window.title("Rhema Controller")
         self._apply_settings_geometry(settings_window)
         palette = self._settings_palette()
         self._ui_palette = palette
