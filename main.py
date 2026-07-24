@@ -114,7 +114,7 @@ class TranslationApp(
     )
     LOCAL_NLLB_DOWNLOAD_FAILED_MESSAGE = (
         "Could not download Local NLLB model. Check your internet connection "
-        "and click Retry download."
+        "and click Download Local NLLB model to try again."
     )
     LOCAL_NLLB_CACHE_ERROR_MESSAGE = (
         "Could not write Local NLLB model cache. Check disk space and permissions."
@@ -336,7 +336,6 @@ class TranslationApp(
         self.local_nllb_status_var = None
         self.local_nllb_message_var = None
         self.local_nllb_download_button = None
-        self.local_nllb_retry_button = None
         self.local_nllb_test_button = None
         # Startup readiness gate: the settings window shows a blocking
         # loading overlay (see _show_startup_loading_overlay in
