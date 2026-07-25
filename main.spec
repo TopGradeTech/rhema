@@ -63,12 +63,16 @@ realtimestt_datas = [
         "RealtimeSTT/assets",
     )
 ]
+# The in-app "Setup guide" link (video overlay settings, _open_doc) opens
+# this file via sys._MEIPASS at runtime - was never actually bundled
+# before, so that link has been broken in every packaged build to date.
+doc_datas = [("README.md", ".")]
 
 a = Analysis(
     ['main.py'],
     pathex=realtimestt_pathex,
     binaries=[],
-    datas=faster_whisper_datas + tcl_tk_datas + realtimestt_datas,
+    datas=faster_whisper_datas + tcl_tk_datas + realtimestt_datas + doc_datas,
     hiddenimports=['tkinter', 'tkinter.ttk', '_tkinter'] + realtimestt_hiddenimports,
     hookspath=['pyinstaller_hooks'],
     hooksconfig={},
