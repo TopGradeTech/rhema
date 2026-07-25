@@ -1042,7 +1042,15 @@ class SettingsUIMixin:
         return link
 
     def _open_doc(self, doc_filename):
-        base_dir = os.path.dirname(sys.executable) if getattr(sys, "frozen", False) else os.path.dirname(os.path.abspath(__file__))
+        # sys._MEIPASS (not the exe's own directory) is where PyInstaller
+        # actually places bundled datas - for onedir builds (this app,
+        # since main.spec) that's the _internal subfolder, not the top-level
+        # folder next to the exe, so this has to match main.spec's datas
+        # dest ('.') via _MEIPASS rather than assuming exe_dir/doc_filename.
+        if getattr(sys, "frozen", False):
+            base_dir = getattr(sys, "_MEIPASS", os.path.dirname(sys.executable))
+        else:
+            base_dir = os.path.dirname(os.path.abspath(__file__))
         doc_path = os.path.join(base_dir, doc_filename)
         try:
             os.startfile(doc_path)
@@ -1679,7 +1687,7 @@ class SettingsUIMixin:
         self._create_doc_link(
             video_feed_row,
             "Setup guide",
-            "OBS_VIRTUAL_CAMERA_SETUP.md",
+            "README.md",
             section_bg,
         )
 
