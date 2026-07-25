@@ -1,6 +1,19 @@
 speechrecognition
 pyaudio
-requests
 ttkbootstrap
 faster-whisper
-pydub
+transformers
+sentencepiece
+# CPU-only (default): torch
+# CUDA 12.1 (GPU): pip install torch --index-url https://download.pytorch.org/whl/cu121
+# CUDA 11.8 (GPU): pip install torch --index-url https://download.pytorch.org/whl/cu118
+torch
+# RealtimeSTT — local real-time transcription with dual VAD + two-pass models
+# GPU build: pip install RealtimeSTT[gpu]
+RealtimeSTT
+# Video Feed mode — decodes the OBS Virtual Camera to show behind captions
+opencv-python
+pillow
+# Real camera friendly names ("OBS Virtual Camera") for the Camera Device
+# dropdown instead of bare index numbers — Windows-only, DirectShow-based
+pygrabber; sys_platform == "win32"
