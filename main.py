@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import font as tkfont
-from threading import Thread, Lock, Event
+from threading import Thread, Lock
 import queue
 import time
 from collections import deque
@@ -88,11 +88,6 @@ class TranslationApp(
     LOCAL_NLLB_DEFAULT_MODEL_NAME = "facebook/nllb-200-distilled-600M"
     LOCAL_NLLB_DEFAULT_TARGET_LANG = "eng_Latn"
     LOCAL_NLLB_DEFAULT_MAX_CHARS = 4000
-    # Minimum seconds between live interim NLLB translations. NLLB's own
-    # generate latency adds on top of this, so the effective cadence is
-    # slower; this floor just keeps GPU contention with the STT models
-    # bounded when generate is fast.
-    INTERIM_TRANSLATION_MIN_INTERVAL_S = 0.7
     LOCAL_NLLB_UNSUPPORTED_LANGUAGE_MESSAGE = (
         "Local NLLB does not yet have a language-code mapping for this language."
     )
@@ -490,9 +485,6 @@ class TranslationApp(
         self.show_interim_text = False
         self._interim_latest_text = ""
         self._interim_render_scheduled = False
-        self._interim_translation_latest = ""
-        self._interim_translation_wake = Event()
-        self._interim_translation_thread = None
         self.display_drip_queue = deque()
         self.display_drip_after_id = None
         self.display_drip_deadline = 0.0

@@ -92,35 +92,18 @@ class DisplayMixin:
         ]
 
     def _interim_display_active(self):
-        """Raw interim partials are source-language text, so they are shown
-        only when translation is off; with translation on the live row is
-        fed by throttled NLLB translations of stabilized text instead (see
-        _translated_interim_active)."""
+        """Raw interim partials are source-language text, shown only when
+        translation is off - live interim text is force-disabled whenever
+        translation is on (see sync_interim_with_translation in
+        settings_ui_mixin.py), since translating a still-growing partial
+        sentence produces reordered, inconsistent output."""
         return (
             bool(getattr(self, "show_interim_text", False))
             and not self.translation_enabled
         )
 
-    def _translated_interim_active(self):
-        """With translation on, the live row shows throttled NLLB
-        translations of RealtimeSTT's stabilized text — target-language
-        preview text that the translated final then replaces."""
-        return (
-            bool(getattr(self, "show_interim_text", False))
-            and self.translation_enabled
-        )
-
-    def _show_translated_interim(self, text):
-        """Tk thread: render a translated interim into the live row on the
-        same light path as _apply_interim_display (content-only, no font
-        refit)."""
-        if not self._translated_interim_active():
-            return
-        self.live_line = (text or "").strip()
-        self._update_line_items(self._compose_display_lines())
-
     def _meter_display_commit(self, text, latency_meta=None, stage="display_commit"):
-        if self._interim_display_active() or self._translated_interim_active():
+        if self._interim_display_active():
             # Interim mode: the viewer already watched this utterance type
             # out live, so metering the final back out word-by-word would
             # just re-add the latency interim mode exists to remove. Commit
