@@ -1,5 +1,4 @@
 import speech_recognition as sr
-import threading
 import time
 import re
 
@@ -9,65 +8,6 @@ class TranslationMixin:
         return self._normalize_text_translation_provider(
             getattr(self, "text_translation_provider", "none")
         )
-
-    def _queue_interim_translation(self, text):
-        """Accept stabilized realtime STT text for live translation into the
-        display's live row. Called from RealtimeSTT's thread; keeps only the
-        newest text and wakes the worker. No-ops unless translated interim
-        display is active."""
-        if not self._translated_interim_active():
-            return
-        text = (text or "").strip()
-        if not text:
-            return
-        self._interim_translation_latest = text
-        self._ensure_interim_translation_worker()
-        self._interim_translation_wake.set()
-
-    def _ensure_interim_translation_worker(self):
-        thread = self._interim_translation_thread
-        if thread is not None and thread.is_alive():
-            return
-        thread = threading.Thread(
-            target=self._interim_translation_worker,
-            name="interim-translation",
-            daemon=True,
-        )
-        self._interim_translation_thread = thread
-        thread.start()
-
-    def _interim_translation_worker(self):
-        """Translates the newest stabilized text at a bounded cadence. The
-        finals pipeline is untouched: whatever this shows in the live row is
-        provisional and gets replaced when the translated final commits.
-        Coalesces by always translating only the latest text, so NLLB latency
-        (plus the minimum-interval floor) naturally throttles the stream."""
-        last_source = None
-        while True:
-            self._interim_translation_wake.wait()
-            self._interim_translation_wake.clear()
-            text = self._interim_translation_latest
-            if not text or text == last_source:
-                continue
-            if not self._translated_interim_active():
-                continue
-            try:
-                translated, _ = self._translate_with_local_nllb(text)
-                translated = self._apply_translation_cleanup_steps(translated)
-            except Exception:
-                # Model not downloaded/loaded yet or a transient failure:
-                # skip this tick; finals still surface real errors.
-                continue
-            last_source = text
-            if translated:
-                try:
-                    self.root.after(
-                        0,
-                        lambda t=translated: self._show_translated_interim(t),
-                    )
-                except Exception:
-                    pass
-            time.sleep(self.INTERIM_TRANSLATION_MIN_INTERVAL_S)
 
     def _translate_with_local_nllb(
         self,

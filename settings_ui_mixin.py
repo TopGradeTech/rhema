@@ -645,6 +645,12 @@ class SettingsUIMixin:
                 default=False,
             )
         self.translation_enabled = new_translation_enabled
+        if self.translation_enabled:
+            # Translation wins the conflict with live interim text (see
+            # sync_interim_with_translation in _build_settings_sections) -
+            # enforced again here so it holds even if this is ever called
+            # without going through that UI trace.
+            self.show_interim_text = False
         if self.translation_enabled != was_translation_enabled:
             self._apply_translation_mode_defaults()
             # Toggling translation changes what feeds the live row (raw
@@ -1159,13 +1165,33 @@ class SettingsUIMixin:
         combobox = ttk.Combobox(parent, textvariable=var, values=all_display, width=width)
         self._apply_combobox_style(combobox)
 
+        def popdown_path():
+            return f"{combobox}.popdown"
+
+        # ttk's popdown listbox force-focuses itself the instant it's first
+        # mapped (Tk's own combobox.tcl: `bind ComboboxListbox <Map>
+        # {focus -force %W}`). Left alone, opening the dropdown while
+        # typing steals focus away from this entry mid-keystroke - further
+        # characters go to the listbox instead of continuing to filter,
+        # and the resulting <FocusOut> on the entry looks identical to the
+        # user actually leaving the field. Clearing just this one class
+        # binding (application-wide, but this is the only combobox flavor
+        # in the app) leaves the sibling ComboboxPopdown <Map> binding
+        # (pressed-state + input grab) untouched, so the dropdown still
+        # opens and behaves normally - it just no longer steals the entry's
+        # keyboard focus.
+        try:
+            combobox.tk.call("bind", "ComboboxListbox", "<Map>", "")
+        except Exception:
+            pass
+
         def filter_options(_event=None):
             typed = var.get().strip().lower()
             if not typed:
                 combobox["values"] = all_display
-                return
-            filtered = [name for name in all_display if typed in name.lower()]
-            combobox["values"] = filtered or all_display
+            else:
+                filtered = [name for name in all_display if typed in name.lower()]
+                combobox["values"] = filtered or all_display
             try:
                 combobox.tk.call("ttk::combobox::Post", combobox)
             except Exception:
@@ -1174,14 +1200,52 @@ class SettingsUIMixin:
         def restore_full_list(_event=None):
             combobox["values"] = all_display
 
+        def commit_typed_selection(_event=None):
+            # Typing narrows the dropdown (filter_options) but doesn't by
+            # itself turn "Eng" into "English" - this snaps whatever's
+            # typed to its best (first) filtered match whenever the field
+            # is committed (Enter) or left (focus-out, including the
+            # click-outside handler in _build_settings_canvas), so keyboard
+            # users don't have to reach for the mouse to pick a match.
+            #
+            # Defensive: the popdown listbox's own <Map> binding used to
+            # force-focus itself the instant the dropdown opened (cleared
+            # above), which fired a <FocusOut> on this entry that looked
+            # identical to the user actually leaving the field. That's
+            # neutralized now, but skip committing if focus is still ever
+            # found inside this combobox's own popdown, just in case.
+            try:
+                focus_target = str(combobox.tk.call("focus"))
+            except Exception:
+                focus_target = ""
+            if focus_target.startswith(popdown_path()):
+                return
+            typed = var.get().strip()
+            if typed and typed not in name_to_code:
+                typed_lower = typed.lower()
+                matches = [name for name in all_display if typed_lower in name.lower()]
+                if matches:
+                    var.set(matches[0])
+            restore_full_list()
+            try:
+                combobox.tk.call("ttk::combobox::Unpost", combobox)
+            except Exception:
+                pass
+            # Without this, ttk's own class-level <Return> binding (posted-
+            # listbox selection) still runs after ours and can re-insert
+            # text on top of what we just set, e.g. "English" + a leftover
+            # "ng" from the original typed text -> "Englishng".
+            return "break"
+
         combobox.bind(
             "<KeyRelease>",
             lambda e: None
             if e.keysym in ("Up", "Down", "Return", "Escape", "Tab")
             else filter_options(),
         )
+        combobox.bind("<Return>", commit_typed_selection)
         combobox.bind("<<ComboboxSelected>>", restore_full_list)
-        combobox.bind("<FocusOut>", restore_full_list)
+        combobox.bind("<FocusOut>", commit_typed_selection)
         return combobox, var, name_to_code
 
     def _apply_scaled_fonts(self):
@@ -1577,6 +1641,28 @@ class SettingsUIMixin:
             translation_section, label_opts, transcription_vars["stt_source_lang_var"]
         )
 
+        # Translating a partial, still-changing sentence produces reordered,
+        # inconsistent output compared to the eventual finalized translation
+        # (NLLB reasons about whole-sentence context, so a growing fragment
+        # gets restructured turn by turn) - translation wins the conflict,
+        # so live interim text is force-unchecked and disabled whenever
+        # translation is on, not the other way around.
+        def sync_interim_with_translation(*_args):
+            enabled = self._coerce_bool(
+                translation_vars["enable_translation_var"].get(), default=False
+            )
+            interim_var = transcription_vars.get("show_interim_text_var")
+            interim_check = transcription_vars.get("show_interim_check")
+            if enabled and interim_var is not None:
+                interim_var.set(False)
+            if interim_check is not None:
+                interim_check.config(state=tk.DISABLED if enabled else tk.NORMAL)
+
+        translation_vars["enable_translation_var"].trace_add(
+            "write", sync_interim_with_translation
+        )
+        sync_interim_with_translation()
+
         self._build_hardware_autodetect_section(
             hardware_section, label_opts, transcription_vars, translation_vars
         )
@@ -1613,6 +1699,20 @@ class SettingsUIMixin:
         canvas.bind(self.CONFIGURE_EVENT, on_canvas_configure)
         content.bind(self.CONFIGURE_EVENT, on_content_configure)
 
+        def widget_class_of(widget):
+            # event.widget is a plain Tk pathname string, not a bound Python
+            # widget object, when the event comes from a widget Tcl created
+            # without a Python-side wrapper - true of a combobox popdown's
+            # internal listbox (built by ttk::combobox::PopdownWindow at the
+            # Tcl level). winfo_class() only exists on the wrapper, so it
+            # has to be queried directly via Tcl for the string case.
+            if isinstance(widget, str):
+                try:
+                    return canvas.tk.call("winfo", "class", widget)
+                except tk.TclError:
+                    return ""
+            return widget.winfo_class()
+
         def on_mousewheel(event):
             # bind_all below is the only way to get wheel events without a
             # dedicated binding on every single settings widget, but it also
@@ -1623,22 +1723,7 @@ class SettingsUIMixin:
             # once. Letting the Listbox's own binding be the only one that
             # runs keeps the wheel scoped to whichever one the pointer is
             # actually over.
-            #
-            # event.widget is a plain Tk pathname string, not a bound Python
-            # widget object, when the event comes from a widget Tcl created
-            # without a Python-side wrapper - true of a combobox popdown's
-            # internal listbox (built by ttk::combobox::PopdownWindow at the
-            # Tcl level). winfo_class() only exists on the wrapper, so it
-            # has to be queried directly via Tcl for the string case.
-            widget = event.widget
-            if isinstance(widget, str):
-                try:
-                    widget_class = canvas.tk.call("winfo", "class", widget)
-                except tk.TclError:
-                    widget_class = ""
-            else:
-                widget_class = widget.winfo_class()
-            if widget_class == "Listbox":
+            if widget_class_of(event.widget) == "Listbox":
                 return
             if event.delta:
                 canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
@@ -1649,6 +1734,23 @@ class SettingsUIMixin:
 
         for event_name in self.SCROLL_EVENTS:
             settings_window.bind_all(event_name, on_mousewheel)
+
+        # Click-to-defocus: a field left focused after a click elsewhere
+        # (e.g. blank space, which unlike other widgets doesn't claim focus
+        # on click by itself) can go on eating mouse-wheel scrolls instead
+        # of the page scrolling - on Windows, wheel events are delivered to
+        # the focused window, not whatever's under the pointer, so a
+        # still-focused language combobox changes its own selection instead
+        # of the settings page scrolling. Any click outside a text-entry
+        # widget releases focus to the canvas so the page always scrolls.
+        text_entry_classes = {"TCombobox", "Entry", "Spinbox", "Text", "Listbox"}
+
+        def on_click_outside(event):
+            if widget_class_of(event.widget) in text_entry_classes:
+                return
+            canvas.focus_set()
+
+        settings_window.bind_all("<Button-1>", on_click_outside)
 
         content.configure(padx=12, pady=12)
         return content
@@ -2508,11 +2610,11 @@ class SettingsUIMixin:
             "spoken, so captions keep up with the live video feed instead of "
             "trailing it by a sentence. Interim text may correct itself as "
             "speech continues; the finalized sentence replaces it, appearing "
-            "all at once instead of the word-by-word roll-up. With "
-            "translation off this shows the raw transcription live; with "
-            "translation on it shows a rough live translation that updates "
-            "about once a second and may be reworded when the final "
-            "translation lands.",
+            "all at once instead of the word-by-word roll-up. Only "
+            "available with translation off: translating a partial, still-"
+            "changing sentence produces reordered, inconsistent output "
+            "compared to the eventual finalized translation, so this is "
+            "disabled whenever translation is on.",
             section_bg,
             settings_fg,
         )
@@ -2529,6 +2631,7 @@ class SettingsUIMixin:
             "realtime_stt_realtime_model_rev_map": realtime_stt_realtime_model_rev_map,
             "realtime_stt_silero_var": realtime_stt_silero_var,
             "show_interim_text_var": show_interim_text_var,
+            "show_interim_check": show_interim_check,
         }
 
     def _build_translation_section(self, translation_section, label_opts, stt_source_lang_var):
