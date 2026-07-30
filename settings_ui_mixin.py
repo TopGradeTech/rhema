@@ -485,6 +485,21 @@ class SettingsUIMixin:
         self.text_color = display_vars["text_color_var"].get()
         if "lock_output_focus_var" in display_vars:
             self.lock_output_focus = bool(display_vars["lock_output_focus_var"].get())
+        if "clear_display_on_inactivity_var" in display_vars:
+            self.clear_display_on_inactivity = bool(
+                display_vars["clear_display_on_inactivity_var"].get()
+            )
+        if "clear_display_inactivity_seconds_var" in display_vars:
+            self.clear_display_inactivity_seconds = self._coerce_int_range(
+                display_vars["clear_display_inactivity_seconds_var"].get(),
+                self.CLEAR_DISPLAY_INACTIVITY_DEFAULT,
+                self.CLEAR_DISPLAY_INACTIVITY_MIN,
+                self.CLEAR_DISPLAY_INACTIVITY_MAX,
+            )
+        # Re-arms (or cancels, if just turned off) immediately rather than
+        # waiting for the next line of speech, so toggling this in Apply
+        # takes effect right away.
+        self._schedule_display_inactivity_clear()
         if "video_feed_enabled_var" in display_vars:
             self.video_feed_enabled = bool(display_vars["video_feed_enabled_var"].get())
         if "video_device_var" in display_vars:
@@ -2030,6 +2045,61 @@ class SettingsUIMixin:
             settings_fg,
         )
 
+        clear_inactivity_row = tk.Frame(display_section, bg=section_bg)
+        clear_inactivity_row.pack(anchor="w", fill=tk.X, pady=(10, 0))
+        clear_display_on_inactivity_var = tk.BooleanVar(
+            value=self.clear_display_on_inactivity
+        )
+        clear_display_on_inactivity_check = tk.Checkbutton(
+            clear_inactivity_row,
+            text="Clear display after inactivity",
+            variable=clear_display_on_inactivity_var,
+            bg=section_bg,
+            fg=settings_fg,
+            selectcolor=section_bg,
+            activebackground=section_bg,
+        )
+        clear_display_on_inactivity_check.pack(side=tk.LEFT)
+        self._create_help_icon(
+            clear_inactivity_row,
+            "Wipes the output window back to blank after this many seconds "
+            "with no new speech, instead of leaving old captions sitting on "
+            "screen during a pause. The timer resets on every new line or "
+            "live update, so it only clears once speech actually stops.",
+            section_bg,
+            settings_fg,
+        )
+
+        clear_inactivity_seconds_row = tk.Frame(display_section, bg=section_bg)
+        clear_inactivity_seconds_row.pack(anchor="w", fill=tk.X, pady=(4, 0))
+        tk.Label(
+            clear_inactivity_seconds_row,
+            text="Seconds of silence before clearing:",
+            bg=section_bg,
+            fg=settings_fg,
+        ).pack(side=tk.LEFT)
+        clear_display_inactivity_seconds_var = tk.IntVar(
+            value=self.clear_display_inactivity_seconds
+        )
+        clear_inactivity_seconds_spinbox = tk.Spinbox(
+            clear_inactivity_seconds_row,
+            from_=self.CLEAR_DISPLAY_INACTIVITY_MIN,
+            to=self.CLEAR_DISPLAY_INACTIVITY_MAX,
+            textvariable=clear_display_inactivity_seconds_var,
+            width=6,
+        )
+        self._apply_input_style(clear_inactivity_seconds_spinbox)
+        clear_inactivity_seconds_spinbox.pack(side=tk.LEFT, padx=(8, 0))
+
+        def sync_clear_inactivity_seconds_state(*_args):
+            state = tk.NORMAL if clear_display_on_inactivity_var.get() else tk.DISABLED
+            clear_inactivity_seconds_spinbox.config(state=state)
+
+        clear_display_on_inactivity_var.trace_add(
+            "write", sync_clear_inactivity_seconds_state
+        )
+        sync_clear_inactivity_seconds_state()
+
         def on_settings_monitor_change(*_args):
             if settings_monitor_var.get() in monitor_labels:
                 self.settings_monitor_index = monitor_labels.index(settings_monitor_var.get())
@@ -2072,6 +2142,8 @@ class SettingsUIMixin:
             "bg_color_var": bg_color_var,
             "text_color_var": text_color_var,
             "lock_output_focus_var": lock_output_focus_var,
+            "clear_display_on_inactivity_var": clear_display_on_inactivity_var,
+            "clear_display_inactivity_seconds_var": clear_display_inactivity_seconds_var,
             "monitor_var": monitor_var,
             "settings_monitor_var": settings_monitor_var,
             "monitor_labels": monitor_labels,
@@ -3287,6 +3359,111 @@ class SettingsUIMixin:
         }
         return messages.get(self.nllb_status, "")
 
+    def _show_local_nllb_progress_popup(self, message):
+        parent = self.settings_window if self.settings_window is not None else self.root
+        palette = self._settings_palette()
+        popup = tk.Toplevel(parent)
+        popup.title("Local NLLB")
+        popup.configure(bg=palette["section_bg"])
+        popup.resizable(False, False)
+        popup.transient(parent)
+        # A download/verification in progress can't be safely interrupted
+        # (partially-written model files, a half-initialized torch model),
+        # so block the close button the same way the camera scan popup does.
+        popup.protocol("WM_DELETE_WINDOW", lambda: None)
+
+        frame = tk.Frame(popup, bg=palette["section_bg"], padx=24, pady=18)
+        frame.pack()
+        tk.Label(
+            frame,
+            text="Preparing Local NLLB...",
+            bg=palette["section_bg"],
+            fg=palette["text"],
+            font=(self.ui_font_family, 11, "bold"),
+        ).pack(pady=(0, 10))
+        # Indeterminate (bouncing) bar, matching the camera-scan popup - a
+        # determinate fill bar here would visibly stall for long stretches
+        # (a multi-GB download or model load has no reliable byte-progress
+        # signal to drive it), which reads as frozen.
+        progress = ttkb.Progressbar(frame, mode="indeterminate", length=280)
+        progress.pack()
+        progress.start(15)
+        status_var = tk.StringVar(value=message)
+        tk.Label(
+            frame,
+            textvariable=status_var,
+            bg=palette["section_bg"],
+            fg=palette["muted_text"],
+            font=(self.ui_font_family, 9),
+            wraplength=280,
+            justify="left",
+        ).pack(pady=(8, 0))
+
+        popup.update_idletasks()
+        try:
+            px = parent.winfo_rootx() + (parent.winfo_width() - popup.winfo_width()) // 2
+            py = parent.winfo_rooty() + (parent.winfo_height() - popup.winfo_height()) // 2
+            popup.geometry(f"+{max(0, px)}+{max(0, py)}")
+        except Exception:
+            pass
+        try:
+            popup.grab_set()
+        except Exception:
+            pass
+
+        self._local_nllb_popup = popup
+        self._local_nllb_popup_progress = progress
+        self._local_nllb_popup_status_var = status_var
+
+    def _update_local_nllb_progress_popup(self, message):
+        status_var = getattr(self, "_local_nllb_popup_status_var", None)
+        if status_var is not None:
+            try:
+                status_var.set(message)
+            except Exception:
+                pass
+
+    def _close_local_nllb_progress_popup(self):
+        popup = getattr(self, "_local_nllb_popup", None)
+        progress = getattr(self, "_local_nllb_popup_progress", None)
+        if progress is not None:
+            try:
+                progress.stop()
+            except Exception:
+                pass
+        if popup is not None:
+            try:
+                popup.grab_release()
+            except Exception:
+                pass
+            try:
+                popup.destroy()
+            except Exception:
+                pass
+        self._local_nllb_popup = None
+        self._local_nllb_popup_progress = None
+        self._local_nllb_popup_status_var = None
+
+    def _sync_local_nllb_progress_popup(self):
+        # Suppressed until the startup loading overlay has cleared (see
+        # _show_startup_loading_overlay) - if translation was already on
+        # from a previous run, the cache check/download/verification that
+        # runs at startup is already covered by that overlay's own bouncing
+        # bar, so a second popup on top of it would just be redundant
+        # chrome stacked on chrome. After startup, any check/download/load
+        # (enabling translation + Apply, changing the model/device dropdown,
+        # or the manual Download/Check for Updates button) shows this one.
+        in_progress_statuses = ("Checking", "Downloading", "Downloaded", "Loading")
+        should_show = self.app_startup_ready and self.nllb_status in in_progress_statuses
+        if should_show:
+            message = self._local_nllb_status_message()
+            if getattr(self, "_local_nllb_popup", None) is not None:
+                self._update_local_nllb_progress_popup(message)
+            else:
+                self._show_local_nllb_progress_popup(message)
+        else:
+            self._close_local_nllb_progress_popup()
+
     def _set_local_nllb_status(self, status, message="", error=""):
         self.nllb_status = str(status or "").strip() or "Not selected"
         self.nllb_status_detail = str(message or "").strip()
@@ -3313,6 +3490,7 @@ class SettingsUIMixin:
                     self.local_nllb_message_var.set(self._local_nllb_status_message())
             except Exception:
                 pass
+            self._sync_local_nllb_progress_popup()
             self._refresh_local_nllb_runtime_ui()
 
         try:

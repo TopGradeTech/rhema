@@ -85,6 +85,9 @@ class TranslationApp(
     LINES_VIDEO_MIN = 1
     LINES_VIDEO_MAX = 3
     LINES_VIDEO_DEFAULT = 2
+    CLEAR_DISPLAY_INACTIVITY_MIN = 1
+    CLEAR_DISPLAY_INACTIVITY_MAX = 60
+    CLEAR_DISPLAY_INACTIVITY_DEFAULT = 3
     LOCAL_NLLB_DEFAULT_MODEL_NAME = "facebook/nllb-200-distilled-600M"
     LOCAL_NLLB_DEFAULT_TARGET_LANG = "eng_Latn"
     LOCAL_NLLB_DEFAULT_MAX_CHARS = 4000
@@ -489,6 +492,9 @@ class TranslationApp(
         self.display_drip_after_id = None
         self.display_drip_deadline = 0.0
         self.display_page_lines = []
+        self.clear_display_on_inactivity = False
+        self.clear_display_inactivity_seconds = self.CLEAR_DISPLAY_INACTIVITY_DEFAULT
+        self._display_inactivity_after_id = None
         self.chunk_size = 120
         self.display_speed_factor = 1.0
         self.last_openai_translate_ms = None
