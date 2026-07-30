@@ -143,6 +143,7 @@ class DisplayMixin:
         self._append_to_display_page(filtered_text)
         self._trim_translation_history()
         self.render_text()
+        self._schedule_display_inactivity_clear()
         self._trace_pipeline(stage, filtered_text)
 
     def _append_to_display_page(self, text):
@@ -282,6 +283,40 @@ class DisplayMixin:
         max_entries = max(50, self._effective_max_lines() * 12)
         if len(self.translations) > max_entries:
             self.translations = self.translations[-max_entries:]
+
+    def _schedule_display_inactivity_clear(self):
+        """Re-arms a single timer every time new text lands on the display
+        (a finalized commit or an interim update) - as long as speech keeps
+        coming, the timer keeps getting pushed back and nothing is ever
+        cleared. It only fires once nothing has landed for the configured
+        number of seconds, wiping the display back to blank."""
+        if self._display_inactivity_after_id is not None:
+            try:
+                self.root.after_cancel(self._display_inactivity_after_id)
+            except Exception:
+                pass
+            self._display_inactivity_after_id = None
+        if not self.clear_display_on_inactivity:
+            return
+        seconds = self._coerce_int_range(
+            self.clear_display_inactivity_seconds,
+            self.CLEAR_DISPLAY_INACTIVITY_DEFAULT,
+            self.CLEAR_DISPLAY_INACTIVITY_MIN,
+            self.CLEAR_DISPLAY_INACTIVITY_MAX,
+        )
+        self._display_inactivity_after_id = self.root.after(
+            int(seconds * 1000), self._clear_display_for_inactivity
+        )
+
+    def _clear_display_for_inactivity(self):
+        self._display_inactivity_after_id = None
+        if not self.clear_display_on_inactivity:
+            return
+        if not self.display_page_lines and not self.live_line:
+            return
+        self.display_page_lines = []
+        self.live_line = ""
+        self.render_text()
 
     def update_display(self):
         def update():
@@ -615,6 +650,7 @@ class DisplayMixin:
         # skipping _fit_font_to_lines here is safe and keeps the ~8Hz
         # interim tick cheap.
         self._update_line_items(self._compose_display_lines())
+        self._schedule_display_inactivity_clear()
 
     def _coerce_render_segment(self, segment):
         return self.filter_bad_words(segment).strip()

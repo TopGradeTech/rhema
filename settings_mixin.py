@@ -80,6 +80,19 @@ class SettingsMixin:
             minimum=0.0,
             maximum=1.0,
         )
+        self.clear_display_on_inactivity = self._coerce_bool(
+            data.get("clear_display_on_inactivity", self.clear_display_on_inactivity),
+            default=self.clear_display_on_inactivity,
+        )
+        self.clear_display_inactivity_seconds = self._coerce_int_range(
+            data.get(
+                "clear_display_inactivity_seconds",
+                self.clear_display_inactivity_seconds,
+            ),
+            self.CLEAR_DISPLAY_INACTIVITY_DEFAULT,
+            self.CLEAR_DISPLAY_INACTIVITY_MIN,
+            self.CLEAR_DISPLAY_INACTIVITY_MAX,
+        )
 
     def _load_bad_word_settings(self, data):
         bad_words_by_lang = data.get("bad_words_by_lang")
@@ -429,6 +442,8 @@ class SettingsMixin:
             "video_feed_enabled": self.video_feed_enabled,
             "video_device_index": self.video_device_index,
             "video_caption_bar_alpha": self.video_caption_bar_alpha,
+            "clear_display_on_inactivity": self.clear_display_on_inactivity,
+            "clear_display_inactivity_seconds": self.clear_display_inactivity_seconds,
             "bad_words_by_lang": {
                 lang: sorted(words) for lang, words in self.bad_words_by_lang.items()
             },
