@@ -372,6 +372,13 @@ class TranslationApp(
         self.sentence_flush_ms = 100
         self.sentence_last_update = 0.0
         self.sentence_max_chars = 200
+        # Without the live interim row, a finalized chunk is the only
+        # feedback the viewer gets - forcing a flush sooner (smaller max)
+        # when interim is off keeps run-on speech (no punctuation) from
+        # sitting silently in the buffer as long before anything appears.
+        # With interim on, the live row already shows that speech as it
+        # happens, so the larger chunk size above is fine.
+        self.sentence_max_chars_no_interim = 100
         self.sentence_fragment_grace_ms = 250
         self.sentence_timeout_min_words = 3
         self.sentence_queue = queue.Queue(maxsize=120)
