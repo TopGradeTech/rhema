@@ -198,6 +198,17 @@ class RealtimeSttMixin:
             "transcription_engine_options": {"model": {"local_files_only": True}},
             "realtime_transcription_engine_options": {"model": {"local_files_only": True}},
             "silero_sensitivity": float(self.realtime_stt_silero_sensitivity),
+            # RealtimeSTT defaults this to False, meaning end-of-speech
+            # (when a recording is considered "done") is decided by WebRTC
+            # VAD, not Silero - only speech-*start* detection uses Silero's
+            # sensitivity above. WebRTC's own aggressiveness isn't exposed
+            # here and defaults to its most aggressive/least sensitive
+            # setting, which can end a recording on a brief mid-sentence
+            # pause, leaving Whisper a broken fragment that transcribes to
+            # nothing (silent content loss, not a filter drop). Routing
+            # end-of-speech through Silero too - the same VAD already
+            # governing start-detection - is a debugging trial for that.
+            "silero_deactivity_detection": True,
             "post_speech_silence_duration": self._SILENCE_INITIAL,
             "min_length_of_recording": float(self.realtime_stt_min_recording_length),
             # spinner=False: RealtimeSTT's own "speak now"/"recording"/
