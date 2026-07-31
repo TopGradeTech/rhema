@@ -152,6 +152,15 @@ class TranscriptionMixin:
             for match in re.finditer(self.BARE_DOMAIN_PATTERN, sample)
         )
 
+    def _effective_sentence_max_chars(self):
+        # Smaller cap when the live interim row is off: without it, a
+        # finalized chunk is the only feedback the viewer gets, so run-on
+        # speech without punctuation shouldn't sit in the buffer as long
+        # before something appears (see sentence_max_chars_no_interim).
+        if getattr(self, "show_interim_text", False):
+            return self.sentence_max_chars
+        return self.sentence_max_chars_no_interim
+
     def _append_sentence_buffer(self, text):
         text = text.strip()
         if not text:
@@ -181,7 +190,7 @@ class TranscriptionMixin:
                 re.search(self.TERMINAL_PUNCTUATION_PATTERN, buffer_text)
             )
             if (
-                len(buffer_text) >= self.sentence_max_chars
+                len(buffer_text) >= self._effective_sentence_max_chars()
                 or (
                     has_terminal_punctuation
                     and not self._is_likely_sentence_fragment(buffer_text)
