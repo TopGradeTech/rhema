@@ -42,6 +42,14 @@ faster_whisper_datas = collect_data_files(
     "faster_whisper",
     includes=["assets/*.onnx"],
 )
+# Silero VAD's own ONNX models, so RealtimeSTT's auto backend
+# (RealtimeSTT/core/silero_vad.py) finds a local model file via the
+# installed silero_vad package instead of falling back to a torch.hub
+# download - which fails outright on a fresh offline install.
+silero_vad_datas = collect_data_files(
+    "silero_vad",
+    includes=["data/*.onnx"],
+)
 tcl_tk_datas = collect_tcl_tk_datas()
 realtimestt_pathex = [_editable_package_root("RealtimeSTT")]
 # Belt-and-suspenders alongside pathex above: RealtimeSTT's transcription
@@ -72,7 +80,7 @@ a = Analysis(
     ['main.py'],
     pathex=realtimestt_pathex,
     binaries=[],
-    datas=faster_whisper_datas + tcl_tk_datas + realtimestt_datas + doc_datas,
+    datas=faster_whisper_datas + silero_vad_datas + tcl_tk_datas + realtimestt_datas + doc_datas,
     hiddenimports=['tkinter', 'tkinter.ttk', '_tkinter'] + realtimestt_hiddenimports,
     hookspath=['pyinstaller_hooks'],
     hooksconfig={},
