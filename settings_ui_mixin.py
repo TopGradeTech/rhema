@@ -82,6 +82,8 @@ class SettingsUIMixin:
             status_section,
             text="Status: ",
             anchor="w",
+            justify=tk.LEFT,
+            wraplength=500,
             bg=section_bg,
             fg=settings_fg,
             font=(self.ui_font_family, 10),

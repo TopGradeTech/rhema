@@ -11,6 +11,10 @@ torch
 # RealtimeSTT — local real-time transcription with dual VAD + two-pass models
 # GPU build: pip install RealtimeSTT[gpu]
 RealtimeSTT
+# Ships the Silero VAD ONNX models locally so RealtimeSTT's auto backend
+# never needs a torch.hub download at runtime (offline-first, and avoids a
+# fresh-install failure with no local model file to fall back to)
+silero-vad
 # Video Feed mode — decodes the OBS Virtual Camera to show behind captions
 opencv-python
 pillow
