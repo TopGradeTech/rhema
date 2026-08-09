@@ -13,12 +13,16 @@ import traceback
 import math
 import gc
 import importlib.util
+import webbrowser
 import ttkbootstrap as ttkb
 from ttkbootstrap.constants import PRIMARY
 from PIL import Image, ImageGrab, ImageTk
 
 from languages import whisper_language_options, nllb_language_options
 from tooltip import Tooltip
+
+DONATE_URL = "https://www.paypal.com/donate/?hosted_button_id=N36X2WBFVU9U8"
+FEATURE_REQUEST_EMAIL = "zachary.price@topgradetech.com"
 
 # Output window snapshot (replaces the old live text preview): a periodic
 # screenshot thumbnail instead of a per-render text mirror, so the
@@ -49,6 +53,8 @@ class SettingsUIMixin:
         section_font = (self.ui_font_family, 12, "bold")
 
         settings_window.protocol("WM_DELETE_WINDOW", self.on_closing)
+
+        self._build_donate_bar(settings_window, settings_bg)
 
         content = self._build_settings_canvas(settings_window, settings_bg)
         display_vars, audio_vars, transcription_vars, translation_vars, advanced_vars = (
@@ -1083,6 +1089,96 @@ class SettingsUIMixin:
                 f"Couldn't open the setup guide:\n{doc_path}",
             )
 
+    def _build_donate_bar(self, settings_window, settings_bg):
+        palette = self._settings_palette()
+        bar = tk.Frame(settings_window, bg=settings_bg)
+        bar.pack(side=tk.TOP, fill=tk.X, padx=12, pady=(10, 0))
+        donate_label = tk.Label(
+            bar,
+            text="❤ Support Rhema / Donate",
+            bg=settings_bg,
+            fg=palette["accent"],
+            font=(self.ui_font_family, 10, "underline"),
+            cursor="hand2",
+        )
+        donate_label.pack(side=tk.RIGHT)
+        donate_label.bind("<Button-1>", lambda _event: self._show_donate_popup())
+        return bar
+
+    def _show_donate_popup(self):
+        parent = self.settings_window if self.settings_window is not None else self.root
+        palette = self._settings_palette()
+        dialog = tk.Toplevel(parent)
+        dialog.title("Support Rhema")
+        dialog.configure(bg=palette["section_bg"])
+        dialog.resizable(False, False)
+        try:
+            dialog.transient(parent)
+            dialog.grab_set()
+        except Exception:
+            pass
+        frame = tk.Frame(dialog, bg=palette["section_bg"], padx=20, pady=18)
+        frame.pack(fill=tk.BOTH, expand=True)
+        message = (
+            "Rhema is built and maintained in my free time.\n\n"
+            "If it's been useful to you, please consider supporting its "
+            "continued development with a monthly donation - it helps me "
+            "keep building projects like this in the future.\n\n"
+            f"Missing a feature you'd like to see? Email me at "
+            f"{FEATURE_REQUEST_EMAIL} and let me know."
+        )
+        tk.Label(
+            frame,
+            text=message,
+            bg=palette["section_bg"],
+            fg=palette["text"],
+            justify="left",
+            wraplength=420,
+            font=(self.ui_font_family, 10),
+        ).pack(anchor="w", fill=tk.X)
+
+        button_row = tk.Frame(frame, bg=palette["section_bg"])
+        button_row.pack(anchor="e", fill=tk.X, pady=(16, 0))
+
+        def open_donate():
+            try:
+                webbrowser.open(DONATE_URL)
+            except Exception:
+                messagebox.showerror("Can't open link", f"Couldn't open:\n{DONATE_URL}")
+
+        def open_email():
+            try:
+                webbrowser.open(f"mailto:{FEATURE_REQUEST_EMAIL}")
+            except Exception:
+                pass
+
+        close_button = self._make_button(button_row, "Close", command=dialog.destroy)
+        close_button.pack(side=tk.RIGHT)
+        email_button = self._make_button(
+            button_row, "Email Feature Request", command=open_email
+        )
+        email_button.pack(side=tk.RIGHT, padx=(0, 8))
+        donate_button = self._make_button(
+            button_row, "Donate", command=open_donate, primary=True
+        )
+        donate_button.pack(side=tk.RIGHT, padx=(0, 8))
+
+        dialog.protocol("WM_DELETE_WINDOW", dialog.destroy)
+        try:
+            dialog.update_idletasks()
+            parent_x = parent.winfo_rootx()
+            parent_y = parent.winfo_rooty()
+            parent_w = max(1, parent.winfo_width())
+            parent_h = max(1, parent.winfo_height())
+            dialog_w = dialog.winfo_width()
+            dialog_h = dialog.winfo_height()
+            x = parent_x + max(0, (parent_w - dialog_w) // 2)
+            y = parent_y + max(0, (parent_h - dialog_h) // 2)
+            dialog.geometry(f"+{x}+{y}")
+            donate_button.focus_set()
+        except Exception:
+            pass
+
     def _settings_palette(self):
         return {
             "window_bg": "#C6CAD1",
@@ -1254,6 +1350,27 @@ class SettingsUIMixin:
             # "ng" from the original typed text -> "Englishng".
             return "break"
 
+        def select_all_on_focus(_event=None):
+            # Entry's own <Button-1> binding (which places the cursor at the
+            # click position and clears any selection) runs before the
+            # resulting <FocusIn> is delivered, but scheduling this for the
+            # very next idle tick - rather than selecting immediately -
+            # guards against that ordering in case some Tk build/widget
+            # state delivers them the other way around. With the whole
+            # field selected, the first typed character replaces it
+            # (ttk::entry's own Insert procedure deletes the selection
+            # before inserting) instead of landing next to the existing
+            # text, so typing over "Auto-detect"/"English"/whatever's
+            # already there starts clean instead of appending to it.
+            def _select():
+                try:
+                    combobox.select_range(0, "end")
+                    combobox.icursor("end")
+                except Exception:
+                    pass
+
+            combobox.after(1, _select)
+
         combobox.bind(
             "<KeyRelease>",
             lambda e: None
@@ -1263,6 +1380,7 @@ class SettingsUIMixin:
         combobox.bind("<Return>", commit_typed_selection)
         combobox.bind("<<ComboboxSelected>>", restore_full_list)
         combobox.bind("<FocusOut>", commit_typed_selection)
+        combobox.bind("<FocusIn>", select_all_on_focus)
         return combobox, var, name_to_code
 
     def _apply_scaled_fonts(self):
