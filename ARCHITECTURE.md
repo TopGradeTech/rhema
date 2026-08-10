@@ -50,6 +50,8 @@ The app is split into `main.py` plus a set of mixin modules, all mixed into `Tra
 - `translation_mixin.py`: Local NLLB-200 translation.
 - `text_filter_mixin.py`: Bad words, hallucination filtering, custom vocab, scripture formatting, defaults.
 - `display_mixin.py`: Word reveal, text rendering, audio level meter.
+- `update_mixin.py`: In-app "Check for Updates" — queries the public `TopGradeTelecom/rhema-releases` repo and installs newer builds.
+- `version.py`: Single source of truth for `APP_VERSION`.
 - `tooltip.py`: Tooltip widget.
 - `settings.json`: Persisted user settings (auto-written on Apply).
 
@@ -76,6 +78,12 @@ The app is split into `main.py` plus a set of mixin modules, all mixed into `Tra
 ## Common Tasks
 - Add a new setting: define the Tk variable in `settings_ui_mixin.py`, apply it in the relevant `_apply_*_vars` method, and persist it in `settings_mixin.py` (`save_settings`/`load_settings`).
 - Update output rendering: look for `render_text`, `_update_line_items`, and font sizing helpers in `display_mixin.py`.
+
+## Releases / Versioning
+The in-app "Check for Updates" (`update_mixin.py`) compares `version.py`'s `APP_VERSION` against the latest tag on the public `TopGradeTelecom/rhema-releases` repo (binaries only, no source — see that repo's README). Bump the version **only when actually shipping a rebuilt installer**, not on every commit/push — ordinary commits (docs, in-progress code, TODO updates) should leave it alone. When you do ship:
+1. Bump both `version.py`'s `APP_VERSION` and `installer.iss`'s `MyAppVersion` to the same value — they aren't linked by tooling, so keep them in sync manually.
+2. Rebuild: `python -m PyInstaller --noconfirm --clean main.spec`, then `ISCC.exe installer.iss`.
+3. Publish a GitHub release tagged `vX.Y.Z` on `TopGradeTelecom/rhema-releases` with `dist/Rhema-Setup.exe` attached (`gh release create vX.Y.Z dist/Rhema-Setup.exe --repo TopGradeTelecom/rhema-releases`) — installed copies won't see the update until this step happens, regardless of what's bumped locally.
 
 ## Conventions
 - Prefer small, safe changes that preserve user settings.
