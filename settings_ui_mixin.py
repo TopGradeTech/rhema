@@ -54,7 +54,7 @@ class SettingsUIMixin:
 
         settings_window.protocol("WM_DELETE_WINDOW", self.on_closing)
 
-        self._build_donate_bar(settings_window, settings_bg)
+        self._build_menu_bar(settings_window)
 
         content = self._build_settings_canvas(settings_window, settings_bg)
         display_vars, audio_vars, transcription_vars, translation_vars, advanced_vars = (
@@ -1089,32 +1089,24 @@ class SettingsUIMixin:
                 f"Couldn't open the setup guide:\n{doc_path}",
             )
 
-    def _build_donate_bar(self, settings_window, settings_bg):
-        palette = self._settings_palette()
-        bar = tk.Frame(settings_window, bg=settings_bg)
-        bar.pack(side=tk.TOP, fill=tk.X, padx=12, pady=(10, 0))
-
-        about_menu = tk.Menu(bar, tearoff=0)
-        about_menu.add_command(
+    def _build_menu_bar(self, settings_window):
+        # A real native menu bar (docked top-left by Windows itself)
+        # instead of a Menubutton+Menu floating dropdown - the latter's
+        # posted menu is a native Win32 popup outside Tk's own tracking,
+        # and this window's global click-outside handler (see
+        # on_click_outside/_build_settings_canvas) was dismissing it on
+        # the very click that opened it, before it ever became visible.
+        # A menu bar is handled by the window frame itself, sidestepping
+        # that entirely.
+        menu_bar = tk.Menu(settings_window)
+        file_menu = tk.Menu(menu_bar, tearoff=0)
+        file_menu.add_command(
             label="Check for Updates",
             command=lambda: self.check_for_updates(manual=True),
         )
-        about_menu.add_command(label="Donate", command=self._show_donate_popup)
-
-        about_button = tk.Menubutton(
-            bar,
-            text="About",
-            bg=settings_bg,
-            fg=palette["accent"],
-            activebackground=settings_bg,
-            activeforeground=palette["accent_hover"],
-            font=(self.ui_font_family, 10, "underline"),
-            cursor="hand2",
-            relief="flat",
-            menu=about_menu,
-        )
-        about_button.pack(side=tk.RIGHT)
-        return bar
+        file_menu.add_command(label="Donate", command=self._show_donate_popup)
+        menu_bar.add_cascade(label="File", menu=file_menu)
+        settings_window.config(menu=menu_bar)
 
     def _show_donate_popup(self):
         parent = self.settings_window if self.settings_window is not None else self.root
