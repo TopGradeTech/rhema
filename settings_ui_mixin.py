@@ -1093,29 +1093,27 @@ class SettingsUIMixin:
         palette = self._settings_palette()
         bar = tk.Frame(settings_window, bg=settings_bg)
         bar.pack(side=tk.TOP, fill=tk.X, padx=12, pady=(10, 0))
-        donate_label = tk.Label(
-            bar,
-            text="❤ Support Rhema / Donate",
-            bg=settings_bg,
-            fg=palette["accent"],
-            font=(self.ui_font_family, 10, "underline"),
-            cursor="hand2",
-        )
-        donate_label.pack(side=tk.RIGHT)
-        donate_label.bind("<Button-1>", lambda _event: self._show_donate_popup())
 
-        update_label = tk.Label(
+        about_menu = tk.Menu(bar, tearoff=0)
+        about_menu.add_command(
+            label="Check for Updates",
+            command=lambda: self.check_for_updates(manual=True),
+        )
+        about_menu.add_command(label="Donate", command=self._show_donate_popup)
+
+        about_button = tk.Menubutton(
             bar,
-            text="Check for Updates",
+            text="About",
             bg=settings_bg,
             fg=palette["accent"],
+            activebackground=settings_bg,
+            activeforeground=palette["accent_hover"],
             font=(self.ui_font_family, 10, "underline"),
             cursor="hand2",
+            relief="flat",
+            menu=about_menu,
         )
-        update_label.pack(side=tk.LEFT)
-        update_label.bind(
-            "<Button-1>", lambda _event: self.check_for_updates(manual=True)
-        )
+        about_button.pack(side=tk.RIGHT)
         return bar
 
     def _show_donate_popup(self):
