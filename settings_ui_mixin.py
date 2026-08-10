@@ -1103,6 +1103,19 @@ class SettingsUIMixin:
         )
         donate_label.pack(side=tk.RIGHT)
         donate_label.bind("<Button-1>", lambda _event: self._show_donate_popup())
+
+        update_label = tk.Label(
+            bar,
+            text="Check for Updates",
+            bg=settings_bg,
+            fg=palette["accent"],
+            font=(self.ui_font_family, 10, "underline"),
+            cursor="hand2",
+        )
+        update_label.pack(side=tk.LEFT)
+        update_label.bind(
+            "<Button-1>", lambda _event: self.check_for_updates(manual=True)
+        )
         return bar
 
     def _show_donate_popup(self):

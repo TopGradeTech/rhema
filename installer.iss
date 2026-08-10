@@ -47,6 +47,14 @@ Compression=lzma2
 SolidCompression=no
 WizardStyle=modern
 UninstallDisplayIcon={app}\{#MyAppExeName}
+; Explicit even though both already default to yes in Inno 6: the
+; in-app "Check for Updates" flow (update_mixin.py) launches this
+; installer with /VERYSILENT while Rhema itself is still running, and
+; relies on Restart Manager to close it (its files are locked) and
+; relaunch it afterward rather than requiring the app to have fully
+; exited before the installer even starts.
+CloseApplications=yes
+RestartApplications=yes
 ; The Rhema mark - Setup.exe's own icon, before anything is installed.
 ; TranslationApp.exe/Rhema.exe already carries the same icon embedded via
 ; main.spec's icon=, which Explorer/Start Menu/taskbar/Add-Remove Programs

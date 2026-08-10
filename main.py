@@ -21,6 +21,7 @@ from text_filter_mixin import TextFilterMixin
 from display_mixin import DisplayMixin
 from realtime_stt_mixin import RealtimeSttMixin
 from video_capture_mixin import VideoCaptureMixin
+from update_mixin import UpdateMixin
 
 class TranslationApp(
     LoggingMixin,
@@ -34,6 +35,7 @@ class TranslationApp(
     DisplayMixin,
     RealtimeSttMixin,
     VideoCaptureMixin,
+    UpdateMixin,
 ):
     SCROLL_EVENTS = ("<MouseWheel>", "<Button-4>", "<Button-5>")
     CONFIGURE_EVENT = "<Configure>"
