@@ -22,7 +22,7 @@
 ; equivalents automatically under this setting.
 
 #define MyAppName "Rhema"
-#define MyAppVersion "1.0.1"
+#define MyAppVersion "1.0.2"
 #define MyAppPublisher "Top Grade Telecom"
 #define MyAppExeName "Rhema.exe"
 
@@ -47,14 +47,16 @@ Compression=lzma2
 SolidCompression=no
 WizardStyle=modern
 UninstallDisplayIcon={app}\{#MyAppExeName}
-; Explicit even though both already default to yes in Inno 6: the
-; in-app "Check for Updates" flow (update_mixin.py) launches this
-; installer with /VERYSILENT while Rhema itself is still running, and
-; relies on Restart Manager to close it (its files are locked) and
-; relaunch it afterward rather than requiring the app to have fully
-; exited before the installer even starts.
+; The in-app "Check for Updates" flow (update_mixin.py) closes Rhema
+; itself before this installer's file-copy step, then relaunches the
+; new exe itself once the install finishes - it doesn't depend on
+; Restart Manager for either. CloseApplications stays on regardless, as
+; a safety net for the brief window where the old process may not have
+; fully released its file handles yet by the time this starts.
+; RestartApplications is deliberately NOT set: relying on it in
+; addition to the app's own self-relaunch raced against that relaunch
+; and could double-launch Rhema after an update.
 CloseApplications=yes
-RestartApplications=yes
 ; The Rhema mark - Setup.exe's own icon, before anything is installed.
 ; TranslationApp.exe/Rhema.exe already carries the same icon embedded via
 ; main.spec's icon=, which Explorer/Start Menu/taskbar/Add-Remove Programs

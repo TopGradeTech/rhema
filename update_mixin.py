@@ -10,6 +10,7 @@ import json
 import os
 import re
 import subprocess
+import sys
 import tempfile
 import threading
 import urllib.error
@@ -44,6 +45,16 @@ def _version_tuple(version_string):
 
 
 class UpdateMixin:
+    def _update_dialog_parent(self):
+        # Dialogs default to the last-created root, which is self.root
+        # (the fullscreen, always-on-top Output window) if not given an
+        # explicit parent - that puts them on the Output monitor,
+        # potentially buried behind Output's own topmost flag. Attach
+        # to the Controller window (its own monitor) whenever it's open.
+        if self.settings_window is not None and self.settings_window.winfo_exists():
+            return self.settings_window
+        return self.root
+
     def check_for_updates(self, manual=True):
         """Kicks off an update check on a background thread. `manual`
         gates whether a result is surfaced when there's nothing to
@@ -106,12 +117,14 @@ class UpdateMixin:
         messagebox.showerror(
             _DIALOG_TITLE,
             f"Couldn't check for updates:\n{exc}",
+            parent=self._update_dialog_parent(),
         )
 
     def _show_up_to_date(self):
         messagebox.showinfo(
             _DIALOG_TITLE,
             f"You're up to date (v{APP_VERSION}).",
+            parent=self._update_dialog_parent(),
         )
 
     def _prompt_update_available(self, latest_version, asset_url):
@@ -121,16 +134,13 @@ class UpdateMixin:
             f"(you have v{APP_VERSION}).\n\n"
             "Download and install it now? Rhema will close during the "
             "update and reopen automatically once it's done.",
+            parent=self._update_dialog_parent(),
         )
         if proceed:
             self._download_and_install_update(asset_url)
 
     def _download_and_install_update(self, asset_url):
-        parent = (
-            self.settings_window
-            if self.settings_window is not None and self.settings_window.winfo_exists()
-            else self.root
-        )
+        parent = self._update_dialog_parent()
         palette = self._settings_palette()
         popup = tk.Toplevel(parent)
         popup.title("Downloading Update")
@@ -231,26 +241,49 @@ class UpdateMixin:
             messagebox.showerror(
                 _DIALOG_TITLE,
                 f"Couldn't download the update:\n{exc}",
+                parent=self._update_dialog_parent(),
             )
             return
         self._launch_installer_and_exit(installer_path)
 
     def _launch_installer_and_exit(self, installer_path):
+        # Relaunching is handled here rather than via Inno's
+        # RestartApplications: that depends on Windows Restart Manager
+        # having detected and closed this same process, which raced
+        # against this app's own on_closing() below - if this process
+        # exited first (the common case), Restart Manager never had
+        # anything registered to restart, and the update silently never
+        # reopened. Instead, when frozen, wrap the install in a detached
+        # cmd that waits for it to finish before starting the new exe -
+        # deterministic regardless of exactly when this process exits.
+        # CREATE_NO_WINDOW keeps that wrapper's own console invisible.
+        exe_path = sys.executable if getattr(sys, "frozen", False) else None
         try:
-            subprocess.Popen(
-                [
-                    installer_path,
-                    "/VERYSILENT",
-                    "/SUPPRESSMSGBOXES",
-                    "/CLOSEAPPLICATIONS",
-                    "/RESTARTAPPLICATIONS",
-                ],
-                close_fds=True,
-            )
+            if exe_path:
+                command = (
+                    f'"{installer_path}" /VERYSILENT /SUPPRESSMSGBOXES '
+                    f'/CLOSEAPPLICATIONS & start "" "{exe_path}"'
+                )
+                subprocess.Popen(
+                    ["cmd", "/c", command],
+                    creationflags=subprocess.CREATE_NO_WINDOW,
+                    close_fds=True,
+                )
+            else:
+                subprocess.Popen(
+                    [
+                        installer_path,
+                        "/VERYSILENT",
+                        "/SUPPRESSMSGBOXES",
+                        "/CLOSEAPPLICATIONS",
+                    ],
+                    close_fds=True,
+                )
         except Exception as exc:
             messagebox.showerror(
                 _DIALOG_TITLE,
                 f"Couldn't launch the installer:\n{exc}",
+                parent=self._update_dialog_parent(),
             )
             return
         self.on_closing()
