@@ -260,12 +260,27 @@ class UpdateMixin:
         exe_path = sys.executable if getattr(sys, "frozen", False) else None
         try:
             if exe_path:
-                command = (
-                    f'"{installer_path}" /VERYSILENT /SUPPRESSMSGBOXES '
-                    f'/CLOSEAPPLICATIONS & start "" "{exe_path}"'
-                )
+                # A batch FILE, not a one-line `cmd /c "... & ..."`
+                # string: cmd.exe's own quote/ampersand parsing after
+                # /c doesn't match how Python's subprocess quotes a
+                # single string argument, and the mismatch was mangling
+                # the exe path - surfacing as a "Windows could not
+                # find..." error after the install finished. Passing
+                # cmd /c a single plain file path sidesteps that
+                # mismatch entirely; each line runs as an ordinary
+                # batch command with normal, reliable quoting rules.
+                batch_dir = tempfile.mkdtemp(prefix="rhema_update_")
+                batch_path = os.path.join(batch_dir, "rhema_update.bat")
+                with open(batch_path, "w", encoding="utf-8") as batch_file:
+                    batch_file.write(
+                        "@echo off\r\n"
+                        f'"{installer_path}" /VERYSILENT /SUPPRESSMSGBOXES '
+                        "/CLOSEAPPLICATIONS\r\n"
+                        f'start "" "{exe_path}"\r\n'
+                        'del "%~f0"\r\n'
+                    )
                 subprocess.Popen(
-                    ["cmd", "/c", command],
+                    ["cmd", "/c", batch_path],
                     creationflags=subprocess.CREATE_NO_WINDOW,
                     close_fds=True,
                 )
