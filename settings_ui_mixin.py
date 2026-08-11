@@ -41,6 +41,7 @@ class SettingsUIMixin:
         settings_window = tk.Toplevel(self.root)
         self.settings_window = settings_window
         settings_window.title("Rhema Controller")
+        self.apply_dark_title_bar(settings_window, dark=(self.ui_theme == "dark"))
         self._apply_settings_geometry(settings_window)
         palette = self._settings_palette()
         self._ui_palette = palette
@@ -166,6 +167,7 @@ class SettingsUIMixin:
         options_window = tk.Toplevel(controller_window)
         self.options_window = options_window
         options_window.title("Rhema Options")
+        self.apply_dark_title_bar(options_window, dark=(self.ui_theme == "dark"))
         self._apply_options_geometry(options_window)
         settings_bg = palette["window_bg"]
         section_bg = palette["section_bg"]
@@ -536,6 +538,18 @@ class SettingsUIMixin:
             return None
 
     def _apply_display_vars(self, display_vars):
+        if "theme_var" in display_vars:
+            new_theme = "dark" if display_vars["theme_var"].get() == "Dark" else "light"
+            if new_theme != self.ui_theme:
+                self.ui_theme = new_theme
+                self._apply_ui_theme()
+                # Deferred rather than done inline here: the Options
+                # dialog's own Apply button click is still unwinding
+                # through _apply_settings_from_controller/_apply_settings_vars
+                # at this point, which touches dirty_ctx/vars-dicts that
+                # belong to the very windows this would destroy. Runs on
+                # the next event-loop tick once that chain has returned.
+                self.root.after(0, self._rebuild_settings_windows)
         self.max_lines = self._coerce_int_range(
             display_vars["lines_var"].get(),
             self.LINES_NO_VIDEO_DEFAULT,
@@ -1193,6 +1207,9 @@ class SettingsUIMixin:
             command=lambda: self.check_for_updates(manual=True),
         )
         about_menu.add_command(label="Donate", command=self._show_donate_popup)
+        about_menu.add_command(
+            label="Feature Request", command=self._open_feature_request_email
+        )
         menu_bar.add_cascade(label="About", menu=about_menu)
 
         # Every item here changes device/model settings or reveals a
@@ -1269,6 +1286,12 @@ class SettingsUIMixin:
         except Exception:
             pass
 
+    def _open_feature_request_email(self):
+        try:
+            webbrowser.open(f"mailto:{FEATURE_REQUEST_EMAIL}")
+        except Exception:
+            pass
+
     def _show_donate_popup(self):
         parent = self.settings_window if self.settings_window is not None else self.root
         palette = self._settings_palette()
@@ -1283,13 +1306,31 @@ class SettingsUIMixin:
             pass
         frame = tk.Frame(dialog, bg=palette["section_bg"], padx=20, pady=18)
         frame.pack(fill=tk.BOTH, expand=True)
+        verse = (
+            "“So faith comes from hearing, and hearing through the "
+            "word (rhema) of Christ.” (Romans 10:17, ESV)"
+        )
+        tk.Label(
+            frame,
+            text=verse,
+            bg=palette["section_bg"],
+            fg=palette["muted_text"],
+            justify="left",
+            wraplength=420,
+            font=(self.ui_font_family, 10, "italic"),
+        ).pack(anchor="w", fill=tk.X, pady=(0, 12))
         message = (
-            "Rhema is built and maintained in my free time.\n\n"
-            "If it's been useful to you, please consider supporting its "
-            "continued development with a monthly donation - it helps me "
-            "keep building projects like this in the future.\n\n"
-            f"Missing a feature you'd like to see? Email me at "
-            f"{FEATURE_REQUEST_EMAIL} and let me know."
+            "If Rhema has helped carry that spoken word across a language "
+            "barrier - a sermon, a Bible study, a testimony someone could "
+            "finally understand - I'd be grateful if you'd consider "
+            "supporting its continued development.\n\n"
+            "This app is built and maintained by one person in their free "
+            "time. Every contribution, whatever the amount, directly funds "
+            "the time it takes to keep improving it and to keep it "
+            "available, free of charge, to churches and ministries who "
+            "need it.\n\n"
+            "Please note that financial contributions are not tax "
+            "deductible."
         )
         tk.Label(
             frame,
@@ -1310,18 +1351,8 @@ class SettingsUIMixin:
             except Exception:
                 messagebox.showerror("Can't open link", f"Couldn't open:\n{DONATE_URL}")
 
-        def open_email():
-            try:
-                webbrowser.open(f"mailto:{FEATURE_REQUEST_EMAIL}")
-            except Exception:
-                pass
-
         close_button = self._make_button(button_row, "Close", command=dialog.destroy)
         close_button.pack(side=tk.RIGHT)
-        email_button = self._make_button(
-            button_row, "Email Feature Request", command=open_email
-        )
-        email_button.pack(side=tk.RIGHT, padx=(0, 8))
         donate_button = self._make_button(
             button_row, "Donate", command=open_donate, primary=True
         )
@@ -1344,6 +1375,18 @@ class SettingsUIMixin:
             pass
 
     def _settings_palette(self):
+        if self.ui_theme == "dark":
+            return {
+                "window_bg": "#1E2228",
+                "section_bg": "#262A33",
+                "text": "#E5E7EB",
+                "muted_text": "#9CA3AF",
+                "border": "#3A3F4B",
+                "input_bg": "#1B1E24",
+                "accent": "#5B8FF7",
+                "accent_hover": "#6EA0FF",
+                "accent_soft": "#22304A",
+            }
         return {
             "window_bg": "#C6CAD1",
             "section_bg": "#FFFFFF",
@@ -1355,6 +1398,51 @@ class SettingsUIMixin:
             "accent_hover": "#4A7FEA",
             "accent_soft": "#EEF4FF",
         }
+
+    def _apply_ui_theme(self):
+        """Applies self.ui_theme ("light"/"dark") to the ttk theme and to
+        any already-open windows' title bars. Does NOT rebuild the
+        Controller/Options windows themselves - their raw tk widgets
+        (Frame/Label/etc.) are colored once at build time from
+        _settings_palette() and don't live-recolor, so a theme change
+        made through Options is applied by _apply_display_vars tearing
+        those windows down and reopening them, not by this method.
+        """
+        dark = self.ui_theme == "dark"
+        try:
+            self.style.theme_use("darkly" if dark else "flatly")
+        except Exception:
+            pass
+        self.apply_dark_title_bar(self.root, dark=dark)
+        if self.settings_window is not None and self.settings_window.winfo_exists():
+            self.apply_dark_title_bar(self.settings_window, dark=dark)
+        if self.options_window is not None and self.options_window.winfo_exists():
+            self.apply_dark_title_bar(self.options_window, dark=dark)
+
+    def _rebuild_settings_windows(self):
+        """Tears down and reopens the Controller/Options windows so their
+        raw tk widgets pick up the new theme's _settings_palette() -
+        scheduled via _apply_display_vars after a theme change, since
+        those widgets are colored once at build time and don't
+        live-recolor. Re-running the section builders this way is safe:
+        _start_local_nllb_cache_check/maybe_start_nllb_prewarm already
+        short-circuit when the model's already loaded with a matching
+        config, and _start_audio_level_updates no-ops if its polling
+        loop is already running.
+        """
+        if self.options_window is not None:
+            try:
+                self.options_window.destroy()
+            except Exception:
+                pass
+            self.options_window = None
+        if self.settings_window is not None:
+            try:
+                self.settings_window.destroy()
+            except Exception:
+                pass
+            self.settings_window = None
+        self.open_settings()
 
     def _make_button(self, parent, text, command=None, primary=False):
         bootstyle = PRIMARY if primary else None
@@ -2046,6 +2134,22 @@ class SettingsUIMixin:
         settings_fg,
         settings_window,
     ):
+        self._add_setting_label(
+            display_section,
+            "Theme:",
+            "Switches the Controller and Options windows between light "
+            "and dark. Applying this closes and reopens both windows.",
+            label_opts,
+            pady=(0, 4),
+        )
+        theme_display_options = ["Light", "Dark"]
+        theme_var = tk.StringVar(
+            value="Dark" if self.ui_theme == "dark" else "Light"
+        )
+        theme_menu = tk.OptionMenu(display_section, theme_var, *theme_display_options)
+        self._apply_option_menu_style(theme_menu)
+        theme_menu.pack(anchor="w", pady=(0, 8))
+
         video_feed_row = tk.Frame(display_section, bg=section_bg)
         video_feed_row.pack(anchor="w", fill=tk.X, pady=(10, 0))
         video_feed_enabled_var = tk.BooleanVar(value=self.video_feed_enabled)
@@ -2405,6 +2509,7 @@ class SettingsUIMixin:
         monitor_id_button.pack(anchor="w", pady=(8, 0))
 
         return {
+            "theme_var": theme_var,
             "lines_var": lines_var,
             "video_lines_var": video_lines_var,
             "bg_color_var": bg_color_var,

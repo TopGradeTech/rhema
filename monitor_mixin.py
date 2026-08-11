@@ -96,6 +96,28 @@ class MonitorMixin:
         except Exception:
             pass
 
+    def apply_dark_title_bar(self, window, dark=True):
+        # DWMWA_USE_IMMERSIVE_DARK_MODE (20 on Windows 10 20H1+; older
+        # builds before that used 19) is the one part of window chrome
+        # with a real, documented API for following dark mode - unlike
+        # the classic Win32 menu bar, which has no supported equivalent
+        # (see the dark-mode prototype discussion this session).
+        if os.name != "nt":
+            return
+        try:
+            import ctypes
+
+            hwnd = ctypes.windll.user32.GetParent(window.winfo_id())
+            value = ctypes.c_int(1 if dark else 0)
+            for attribute in (20, 19):
+                result = ctypes.windll.dwmapi.DwmSetWindowAttribute(
+                    hwnd, attribute, ctypes.byref(value), ctypes.sizeof(value)
+                )
+                if result == 0:
+                    break
+        except Exception:
+            pass
+
     def get_monitor_labels(self):
         labels = []
         for i, monitor in enumerate(self.monitors):
