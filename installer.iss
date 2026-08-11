@@ -23,7 +23,7 @@
 
 #define MyAppName "Rhema"
 #define MyAppVersion "1.1.1"
-#define MyAppPublisher "Top Grade Telecom"
+#define MyAppPublisher "Top Grade Tech"
 #define MyAppExeName "Rhema.exe"
 
 [Setup]
