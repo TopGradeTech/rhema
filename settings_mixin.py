@@ -47,6 +47,9 @@ class SettingsMixin:
     def _load_display_settings(self, data):
         self.bg_color = data.get("bg_color", self.bg_color)
         self.text_color = data.get("text_color", self.text_color)
+        loaded_theme = data.get("ui_theme")
+        if loaded_theme in ("light", "dark"):
+            self.ui_theme = loaded_theme
         self.max_lines = self._coerce_int_range(
             data.get("max_lines", self.max_lines),
             self.LINES_NO_VIDEO_DEFAULT,
@@ -436,6 +439,7 @@ class SettingsMixin:
             "show_interim_text": self.show_interim_text,
             "bg_color": self.bg_color,
             "text_color": self.text_color,
+            "ui_theme": self.ui_theme,
             "max_lines": self.max_lines,
             "video_max_lines": self.video_max_lines,
             "lock_output_focus": self.lock_output_focus,

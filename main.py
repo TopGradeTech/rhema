@@ -427,6 +427,7 @@ class TranslationApp(
         self.bg_color = "#000000"  # Background color
         self.text_color = "#ffffff"  # Text color
         self.font_size = 50  # Font size
+        self.ui_theme = "light"  # Controller/Options theme: "light" or "dark"
 
         self.toggle_fullscreen_button = None
 
@@ -540,6 +541,7 @@ class TranslationApp(
         self.auto_switch_translation = False
         self.is_paused = False
         self.load_settings()
+        self._apply_ui_theme()
         self._sync_windows_startup_entry()
         self._refresh_bad_words()
         self.devices = self.get_audio_devices()
