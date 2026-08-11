@@ -28,8 +28,8 @@ FEATURE_REQUEST_EMAIL = "zachary.price@topgradetech.com"
 # screenshot thumbnail instead of a per-render text mirror, so the
 # Controller window doesn't need to reformat/rewrap text on every single
 # render tick just to keep a duplicate preview in sync.
-_OUTPUT_SNAPSHOT_INTERVAL_MS = 120_000  # 2 minutes between snapshots
-_OUTPUT_SNAPSHOT_WIDTH = 320  # thumbnail width in px; height follows the output window's aspect ratio
+_OUTPUT_SNAPSHOT_INTERVAL_MS = 15_000  # 15 seconds between snapshots
+_OUTPUT_SNAPSHOT_WIDTH = 640  # thumbnail width in px; height follows the output window's aspect ratio
 
 
 class SettingsUIMixin:
@@ -54,21 +54,25 @@ class SettingsUIMixin:
 
         settings_window.protocol("WM_DELETE_WINDOW", self.on_closing)
 
-        self._build_menu_bar(settings_window)
-
-        content = self._build_settings_canvas(settings_window, settings_bg)
-        display_vars, audio_vars, transcription_vars, translation_vars, advanced_vars = (
-            self._build_settings_sections(
-                content,
-                settings_window,
-                label_opts,
-                section_bg,
-                settings_fg,
-                section_font,
-            )
+        # Built eagerly but hidden (see _build_options_dialog's own
+        # docstring): Display/Audio/Transcription/Translation/Advanced
+        # all live there now, but the Translation section's build-time
+        # side effects (NLLB cache-check/prewarm kickoff, marking startup
+        # translation readiness) still need to fire unconditionally at
+        # launch, exactly as when this content lived directly in this
+        # window - only visibility is deferred to File > Options.
+        transcription_vars, translation_vars = self._build_options_dialog(
+            settings_window, palette
         )
-        # API key visibility depends on the selected speech engine.
-        dirty_ctx = self._new_settings_dirty_context()
+
+        # Needs transcription_vars/translation_vars for the Hardware
+        # Autodetect menu item, which is why this runs after the call
+        # above rather than before it.
+        self._build_menu_bar(settings_window, transcription_vars, translation_vars)
+
+        self._build_preview_section(
+            settings_window, label_opts, section_bg, settings_fg, section_font
+        )
 
         button_frame = tk.Frame(settings_window, bg=settings_bg)
         button_frame.pack(fill=tk.X, side=tk.BOTTOM, padx=12, pady=(8, 12))
@@ -148,6 +152,51 @@ class SettingsUIMixin:
         )
         self.toggle_fullscreen_button.pack(side=tk.RIGHT, padx=(0, 10), pady=10)
 
+        self._start_audio_level_updates()
+        if not self.app_startup_ready:
+            self._show_startup_loading_overlay(settings_window, settings_bg, settings_fg)
+
+    def _build_options_dialog(self, controller_window, palette):
+        """Builds the Options dialog (Display/Audio/Transcription/
+        Translation/Advanced) once, hidden, during Controller startup -
+        see open_settings for why this can't be deferred to first click.
+        Returns (transcription_vars, translation_vars), the two dicts
+        the Controller's menu bar needs for Hardware Autodetect.
+        """
+        options_window = tk.Toplevel(controller_window)
+        self.options_window = options_window
+        options_window.title("Rhema Options")
+        self._apply_options_geometry(options_window)
+        settings_bg = palette["window_bg"]
+        section_bg = palette["section_bg"]
+        settings_fg = palette["text"]
+        options_window.configure(bg=settings_bg)
+        label_opts = {"bg": section_bg, "fg": settings_fg, "font": (self.ui_font_family, 10)}
+        section_font = (self.ui_font_family, 12, "bold")
+
+        # Hidden rather than destroyed on close, so reopening via
+        # File > Options doesn't need to rebuild all this state (and
+        # doesn't re-trigger the Translation section's cache-check/
+        # prewarm side effect a second time).
+        options_window.protocol("WM_DELETE_WINDOW", options_window.withdraw)
+
+        content = self._build_settings_canvas(options_window, settings_bg)
+        display_vars, audio_vars, transcription_vars, translation_vars, advanced_vars = (
+            self._build_settings_sections(
+                content,
+                options_window,
+                label_opts,
+                section_bg,
+                settings_fg,
+                section_font,
+            )
+        )
+
+        dirty_ctx = self._new_settings_dirty_context()
+
+        button_frame = tk.Frame(options_window, bg=settings_bg)
+        button_frame.pack(fill=tk.X, side=tk.BOTTOM, padx=12, pady=(8, 12))
+
         save_button = self._make_button(
             button_frame,
             "Apply",
@@ -199,9 +248,14 @@ class SettingsUIMixin:
         dirty_ctx["applied_snapshot"] = self._capture_settings_snapshot(dirty_ctx)
         dirty_ctx["dirty_ready"] = True
         self._set_settings_dirty_state(dirty_ctx, False, force=True)
-        self._start_audio_level_updates()
-        if not self.app_startup_ready:
-            self._show_startup_loading_overlay(settings_window, settings_bg, settings_fg)
+
+        options_window.withdraw()
+        return transcription_vars, translation_vars
+
+    def _show_options_dialog(self):
+        if self.options_window is not None and self.options_window.winfo_exists():
+            self.options_window.deiconify()
+            self.options_window.focus_force()
 
     def _show_startup_loading_overlay(self, settings_window, settings_bg, settings_fg):
         """Block settings interaction behind a full-window overlay until
@@ -274,6 +328,11 @@ class SettingsUIMixin:
                 pass
         self._startup_loading_overlay = None
         self._startup_loading_progress = None
+        if self.settings_window is not None and self._settings_menu_bar is not None:
+            try:
+                self.settings_window.config(menu=self._settings_menu_bar)
+            except Exception:
+                pass
 
     def _check_startup_ready(self):
         if self.app_startup_ready:
@@ -980,16 +1039,32 @@ class SettingsUIMixin:
         self._video_scan_popup_status_var = None
 
     def _apply_settings_geometry(self, settings_window):
-        settings_window.geometry("960x1280")
-        settings_window.minsize(960, 1280)
+        # Small and non-maximized on purpose: the Controller only shows
+        # Preview + status now (everything else lives in the Options
+        # dialog - see _apply_options_geometry), so it doesn't need the
+        # tall, maximized footprint the old single-window layout did.
+        settings_window.geometry("700x820")
+        settings_window.minsize(520, 620)
         settings_window.update_idletasks()
-        self._maximize_settings_window(settings_window)
         geometry_monitor_index = self._monitor_index_from_saved_settings_geometry(
             settings_window
         )
         if self._settings_window_requires_reposition(geometry_monitor_index):
             self._position_settings_window(settings_window)
         self._move_settings_window_to_selected_monitor()
+
+    def _apply_options_geometry(self, options_window):
+        # Reuses the Controller's old tall/maximized treatment, since
+        # Options now holds the bulk of what the Controller used to show
+        # directly. Deliberately skips the monitor-index persistence
+        # chain above - _move_settings_window_to_monitor (monitor_mixin.py)
+        # is hardwired to self.settings_window, and a secondary,
+        # occasionally-opened dialog doesn't need its own remembered
+        # monitor; transient(parent) already gets it placed sensibly.
+        options_window.geometry("960x1280")
+        options_window.minsize(960, 1280)
+        options_window.update_idletasks()
+        self._maximize_settings_window(options_window)
 
     def _maximize_settings_window(self, settings_window):
         try:
@@ -1089,7 +1164,7 @@ class SettingsUIMixin:
                 f"Couldn't open the setup guide:\n{doc_path}",
             )
 
-    def _build_menu_bar(self, settings_window):
+    def _build_menu_bar(self, settings_window, transcription_vars, translation_vars):
         # A real native menu bar (docked top-left by Windows itself)
         # instead of a Menubutton+Menu floating dropdown - the latter's
         # posted menu is a native Win32 popup outside Tk's own tracking,
@@ -1099,14 +1174,100 @@ class SettingsUIMixin:
         # A menu bar is handled by the window frame itself, sidestepping
         # that entirely.
         menu_bar = tk.Menu(settings_window)
+
         file_menu = tk.Menu(menu_bar, tearoff=0)
         file_menu.add_command(
+            label="Hardware Autodetect",
+            command=lambda: self._run_hardware_autodetect_from_menu(
+                transcription_vars, translation_vars
+            ),
+        )
+        file_menu.add_command(label="Options", command=self._show_options_dialog)
+        menu_bar.add_cascade(label="File", menu=file_menu)
+
+        about_menu = tk.Menu(menu_bar, tearoff=0)
+        about_menu.add_command(label="About Rhema", command=self._show_about_popup)
+        about_menu.add_separator()
+        about_menu.add_command(
             label="Check for Updates",
             command=lambda: self.check_for_updates(manual=True),
         )
-        file_menu.add_command(label="Donate", command=self._show_donate_popup)
-        menu_bar.add_cascade(label="File", menu=file_menu)
-        settings_window.config(menu=menu_bar)
+        about_menu.add_command(label="Donate", command=self._show_donate_popup)
+        menu_bar.add_cascade(label="About", menu=about_menu)
+
+        # Every item here changes device/model settings or reveals a
+        # dialog that does, so the whole menu bar stays off the window -
+        # not just its items grayed out - until startup finishes, same
+        # intent as the loading overlay itself. _hide_startup_loading_overlay
+        # attaches this once ready.
+        self._settings_menu_bar = menu_bar
+        if self.app_startup_ready:
+            settings_window.config(menu=menu_bar)
+
+    def _show_about_popup(self):
+        parent = self.settings_window if self.settings_window is not None else self.root
+        palette = self._settings_palette()
+        dialog = tk.Toplevel(parent)
+        dialog.title("About Rhema")
+        dialog.configure(bg=palette["section_bg"])
+        dialog.resizable(False, False)
+        try:
+            dialog.transient(parent)
+            dialog.grab_set()
+        except Exception:
+            pass
+        frame = tk.Frame(dialog, bg=palette["section_bg"], padx=20, pady=18)
+        frame.pack(fill=tk.BOTH, expand=True)
+        tk.Label(
+            frame,
+            text="Rhema",
+            bg=palette["section_bg"],
+            fg=palette["text"],
+            font=(self.ui_font_family, 16, "bold"),
+        ).pack(anchor="w")
+        tk.Label(
+            frame,
+            text="ῥῆμα — pronounced REE-mah",
+            bg=palette["section_bg"],
+            fg=palette["muted_text"],
+            font=(self.ui_font_family, 11),
+        ).pack(anchor="w", pady=(2, 12))
+        message = (
+            "Greek for \"spoken word\" or \"utterance\" - distinct from "
+            "logos (λόγος), the broader word for "
+            "\"word\" or \"reason.\" Rhema is the word spoken aloud in the "
+            "moment, which is what this app carries across languages in "
+            "real time."
+        )
+        tk.Label(
+            frame,
+            text=message,
+            bg=palette["section_bg"],
+            fg=palette["text"],
+            justify="left",
+            wraplength=380,
+            font=(self.ui_font_family, 10),
+        ).pack(anchor="w", fill=tk.X)
+
+        button_row = tk.Frame(frame, bg=palette["section_bg"])
+        button_row.pack(anchor="e", fill=tk.X, pady=(16, 0))
+        close_button = self._make_button(button_row, "Close", command=dialog.destroy)
+        close_button.pack(side=tk.RIGHT)
+
+        dialog.protocol("WM_DELETE_WINDOW", dialog.destroy)
+        try:
+            dialog.update_idletasks()
+            parent_x = parent.winfo_rootx()
+            parent_y = parent.winfo_rooty()
+            parent_w = max(1, parent.winfo_width())
+            parent_h = max(1, parent.winfo_height())
+            dialog_w = dialog.winfo_width()
+            dialog_h = dialog.winfo_height()
+            x = parent_x + max(0, (parent_w - dialog_w) // 2)
+            y = parent_y + max(0, (parent_h - dialog_h) // 2)
+            dialog.geometry(f"+{x}+{y}")
+        except Exception:
+            pass
 
     def _show_donate_popup(self):
         parent = self.settings_window if self.settings_window is not None else self.root
@@ -1623,12 +1784,18 @@ class SettingsUIMixin:
             padx=10,
             pady=10,
         )
-        preview_section.pack(fill=tk.X, pady=(0, 10))
+        # Controller's only remaining section now (Display/Audio/etc.
+        # moved to the Options dialog), so it fills whatever space the
+        # window gives it instead of just wrapping its content.
+        preview_section.pack(fill=tk.BOTH, expand=True, padx=12, pady=(12, 0))
 
-        interval_min = _OUTPUT_SNAPSHOT_INTERVAL_MS // 60_000
+        if _OUTPUT_SNAPSHOT_INTERVAL_MS % 60_000 == 0:
+            interval_text = f"{_OUTPUT_SNAPSHOT_INTERVAL_MS // 60_000} min"
+        else:
+            interval_text = f"{_OUTPUT_SNAPSHOT_INTERVAL_MS // 1000} seconds"
         tk.Label(
             preview_section,
-            text=f"Periodic screenshot of the output window (refreshes every {interval_min} min).",
+            text=f"Periodic screenshot of the output window (refreshes every {interval_text}).",
             **label_opts,
         ).pack(anchor="w", pady=(0, 4))
         self.preview_widget = tk.Label(
@@ -1640,7 +1807,7 @@ class SettingsUIMixin:
             relief="solid",
             borderwidth=1,
         )
-        self.preview_widget.pack()
+        self.preview_widget.pack(expand=True)
 
         # Give the output window a moment to finish its own initial
         # layout/paint before grabbing the first screenshot.
@@ -1704,24 +1871,6 @@ class SettingsUIMixin:
         settings_fg,
         section_font,
     ):
-        self._build_preview_section(content, label_opts, section_bg, settings_fg, section_font)
-
-        # Frame created (and packed, fixing its position right below Preview)
-        # here, but its contents aren't built until transcription_vars and
-        # translation_vars exist further down - packing order is independent
-        # of when a widget's children are added, so this doesn't need to
-        # wait for those.
-        hardware_section = tk.LabelFrame(
-            content,
-            text="Hardware Autodetect",
-            bg=section_bg,
-            fg=settings_fg,
-            font=section_font,
-            padx=10,
-            pady=10,
-        )
-        hardware_section.pack(fill=tk.X, pady=(0, 10))
-
         display_section = tk.LabelFrame(
             content,
             text="Display",
@@ -1800,10 +1949,6 @@ class SettingsUIMixin:
             "write", sync_interim_with_translation
         )
         sync_interim_with_translation()
-
-        self._build_hardware_autodetect_section(
-            hardware_section, label_opts, transcription_vars, translation_vars
-        )
 
         advanced_vars = self._build_advanced_section(
             content,
@@ -3188,51 +3333,6 @@ class SettingsUIMixin:
         (4.0, "small", "facebook/nllb-200-distilled-600M"),
     )
 
-    def _build_hardware_autodetect_section(
-        self,
-        section,
-        label_opts,
-        transcription_vars,
-        translation_vars,
-    ):
-        section_bg = label_opts["bg"]
-        settings_fg = label_opts["fg"]
-        tk.Label(
-            section,
-            text=(
-                "Detects your GPU's available VRAM and sets the Final model, "
-                "Realtime model (above), and NLLB model (Translation, above) "
-                "dropdowns to a fitting recommendation. Click Apply afterward "
-                "to actually use them."
-            ),
-            bg=section_bg,
-            fg=settings_fg,
-            wraplength=560,
-            justify="left",
-            font=(self.ui_font_family, 9),
-        ).pack(anchor="w", pady=(0, 8))
-
-        result_var = tk.StringVar(value="")
-        tk.Label(
-            section,
-            textvariable=result_var,
-            bg=section_bg,
-            fg=settings_fg,
-            wraplength=560,
-            justify="left",
-            font=(self.ui_font_family, 9),
-        ).pack(anchor="w", pady=(0, 8))
-
-        detect_button = self._make_button(
-            section,
-            "Autodetect Hardware",
-            command=lambda: self._autodetect_hardware_models(
-                transcription_vars, translation_vars, result_var
-            ),
-            primary=True,
-        )
-        detect_button.pack(anchor="w")
-
     def _detect_hardware_vram(self):
         """Returns (cuda_available, vram_gb, gpu_name).
 
@@ -3267,6 +3367,16 @@ class SettingsUIMixin:
             "realtime_model": "tiny",
             "nllb_model": "facebook/nllb-200-distilled-600M",
         }
+
+    def _run_hardware_autodetect_from_menu(self, transcription_vars, translation_vars):
+        # Reuses _autodetect_hardware_models as-is (same dropdown updates,
+        # same result text) - only the display surface differs from the
+        # button version, since there's no inline label next to a menu
+        # item to show the result in.
+        result_var = tk.StringVar(value="")
+        self._autodetect_hardware_models(transcription_vars, translation_vars, result_var)
+        parent = self.settings_window if self.settings_window is not None else self.root
+        messagebox.showinfo("Hardware Autodetect", result_var.get(), parent=parent)
 
     def _autodetect_hardware_models(self, transcription_vars, translation_vars, result_var):
         cuda_available, vram_gb, gpu_name = self._detect_hardware_vram()

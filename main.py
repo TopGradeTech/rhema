@@ -356,6 +356,7 @@ class TranslationApp(
         self._start_video_feed_after_startup_scan = False
         self._startup_loading_overlay = None
         self._startup_loading_progress = None
+        self._settings_menu_bar = None
         self.speech_engine = "realtime-stt"
         self.stt_device = "auto"
         self.cuda_directory = ""
@@ -492,6 +493,7 @@ class TranslationApp(
         self.active_bad_words = set()
         self.custom_vocab_langs_enabled = {"en": True, "es": True}
         self.settings_window = None
+        self.options_window = None
         self.is_applying_settings = False
         self.live_line = ""
         self.show_interim_text = False
