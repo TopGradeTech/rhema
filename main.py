@@ -6,6 +6,7 @@ import time
 from collections import deque
 import multiprocessing
 import os
+import sys
 import traceback
 import ttkbootstrap as ttkb
 
@@ -243,6 +244,10 @@ class TranslationApp(
         self.set_dpi_awareness()
         self.app_data_dir = self._get_app_data_dir()
         self.settings_path = os.path.join(self.app_data_dir, "settings.json")
+        # Checked before load_settings() creates/overwrites anything -
+        # used to decide whether to run Hardware Autodetect unprompted
+        # on this launch (see open_settings).
+        self.is_first_run = not os.path.exists(self.settings_path)
         self.log_session_timestamp = time.strftime("%Y%m%d-%H%M%S")
         self.log_retained_sessions = 5
         self.session_log_prefixes = (
@@ -401,6 +406,7 @@ class TranslationApp(
         self.last_stt_source_lang_confidence = None
         self.preview_widget = None
         self._output_snapshot_photo = None
+        self._output_snapshot_raw_image = None
         self._output_snapshot_after_id = None
         self.settings_geometry = None
         self.options_geometry = None
@@ -739,4 +745,20 @@ if __name__ == "__main__":
     # windows and processes within seconds (confirmed 2026-07-23: froze the
     # dev machine, required a hard reboot).
     multiprocessing.freeze_support()
+    # Some launch paths (e.g. the in-app updater's silent relaunch via
+    # `start`, update_mixin.py) can hand this process a working
+    # directory of C:\Windows\System32 instead of its own install
+    # folder. RealtimeSTT opens its own debug log via a relative path
+    # ('realtimesst.log', not something this app controls), which then
+    # fails with a permission error writing into System32 as a
+    # non-elevated user. Pinning CWD to the app's own directory up
+    # front fixes that regardless of how the process was launched.
+    try:
+        os.chdir(
+            os.path.dirname(sys.executable)
+            if getattr(sys, "frozen", False)
+            else os.path.dirname(os.path.abspath(__file__))
+        )
+    except Exception:
+        pass
     app = TranslationApp()

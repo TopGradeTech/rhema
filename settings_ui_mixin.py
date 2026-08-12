@@ -78,6 +78,22 @@ class SettingsUIMixin:
         button_frame = tk.Frame(settings_window, bg=settings_bg)
         button_frame.pack(fill=tk.X, side=tk.BOTTOM, padx=12, pady=(8, 12))
 
+        # Packed before status_section (below) even though it's drawn on
+        # the opposite side: pack carves cavity space in packing order, so
+        # a fixed-size side=RIGHT widget packed *after* an expand=True
+        # side=LEFT one can get squeezed down to a sliver if that first
+        # widget's own request leaves little cavity left over. Packing
+        # this fixed-size button first guarantees it always gets its full
+        # natural size before status_section claims (and grows into) the
+        # remainder.
+        self.toggle_fullscreen_button = self._make_button(
+            button_frame,
+            "Toggle Fullscreen",
+            command=self.toggle_fullscreen,
+            primary=True,
+        )
+        self.toggle_fullscreen_button.pack(side=tk.RIGHT, padx=(0, 10), pady=10)
+
         status_section = tk.LabelFrame(
             button_frame,
             text="Status",
@@ -94,7 +110,6 @@ class SettingsUIMixin:
             text="Status: ",
             anchor="w",
             justify=tk.LEFT,
-            wraplength=500,
             bg=section_bg,
             fg=settings_fg,
             font=(self.ui_font_family, 10),
@@ -102,6 +117,7 @@ class SettingsUIMixin:
             highlightthickness=0,
         )
         self.status_label.pack(fill=tk.X)
+        self._bind_responsive_wraplength(self.status_label)
 
         self.chunk_latency_label = tk.Label(
             status_section,
@@ -144,14 +160,6 @@ class SettingsUIMixin:
             primary=True,
         )
         self.pause_button.pack(anchor="w", pady=(8, 0))
-
-        self.toggle_fullscreen_button = self._make_button(
-            button_frame,
-            "Toggle Fullscreen",
-            command=self.toggle_fullscreen,
-            primary=True,
-        )
-        self.toggle_fullscreen_button.pack(side=tk.RIGHT, padx=(0, 10), pady=10)
 
         self._start_audio_level_updates()
         if not self.app_startup_ready:
@@ -337,16 +345,16 @@ class SettingsUIMixin:
             except Exception:
                 pass
         # Runs the same Hardware Autodetect as File > Hardware Autodetect,
-        # so every launch ends up on hardware-appropriate models without
-        # the user needing to remember to trigger it manually. A short
+        # but only on the very first run (nothing configured yet) or
+        # when the recommendation would actually change something -
+        # otherwise this would show its result popup on every single
+        # launch even once already sitting on the right models. A short
         # delay avoids popping the result dialog in the same instant the
-        # loading overlay disappears. No-ops harmlessly if the detected
-        # models already match what's configured (see
-        # _apply_transcription_vars/_apply_translation_vars's own
-        # "only restart if something actually changed" checks).
+        # loading overlay disappears.
         if (
             self._autodetect_transcription_vars is not None
             and self._autodetect_translation_vars is not None
+            and (self.is_first_run or self._hardware_recommendation_differs())
         ):
             self.root.after(
                 300,
@@ -1934,6 +1942,24 @@ class SettingsUIMixin:
             self._create_help_icon(row, help_text, label_opts["bg"], label_opts["fg"])
         return row
 
+    def _bind_responsive_wraplength(self, label, padding=24, min_width=160):
+        # Ties wraplength to the label's own container width instead of a
+        # fixed pixel constant, so paragraph text reflows as the
+        # Controller/Options windows are resized rather than wrapping at
+        # one width regardless of how much room is actually available.
+        def update_wrap(_event=None):
+            width = label.master.winfo_width()
+            if width <= 1:
+                return
+            try:
+                label.configure(wraplength=max(min_width, width - padding))
+            except Exception:
+                pass
+
+        label.master.bind(self.CONFIGURE_EVENT, update_wrap, add="+")
+        label.after(0, update_wrap)
+        return update_wrap
+
     def _build_preview_section(self, content, label_opts, section_bg, settings_fg, section_font):
         preview_section = tk.LabelFrame(
             content,
@@ -1948,16 +1974,28 @@ class SettingsUIMixin:
         # moved to the Options dialog), so it fills whatever space the
         # window gives it instead of just wrapping its content.
         preview_section.pack(fill=tk.BOTH, expand=True, padx=12, pady=(12, 0))
+        # Without this, the thumbnail image's own size feeds back into a
+        # layout loop: a bigger image grows preview_section's requested
+        # size, which shrinks status_section/toggle_fullscreen_button to
+        # compensate, which changes preview_section's allotted size again,
+        # re-triggering _render_output_snapshot_thumbnail - each pass
+        # nudging everything smaller. Disabling propagation makes this
+        # section's size strictly top-down (from settings_window's pack
+        # allocation only), so the image inside it can never influence it.
+        preview_section.pack_propagate(False)
 
         if _OUTPUT_SNAPSHOT_INTERVAL_MS % 60_000 == 0:
             interval_text = f"{_OUTPUT_SNAPSHOT_INTERVAL_MS // 60_000} min"
         else:
             interval_text = f"{_OUTPUT_SNAPSHOT_INTERVAL_MS // 1000} seconds"
-        tk.Label(
+        preview_caption_label = tk.Label(
             preview_section,
             text=f"Periodic screenshot of the output window (refreshes every {interval_text}).",
+            justify="left",
             **label_opts,
-        ).pack(anchor="w", pady=(0, 4))
+        )
+        preview_caption_label.pack(anchor="w", fill=tk.X, pady=(0, 4))
+        self._bind_responsive_wraplength(preview_caption_label)
         self.preview_widget = tk.Label(
             preview_section,
             text="Capturing snapshot...",
@@ -1967,7 +2005,15 @@ class SettingsUIMixin:
             relief="solid",
             borderwidth=1,
         )
-        self.preview_widget.pack(expand=True)
+        self.preview_widget.pack(expand=True, fill=tk.BOTH)
+
+        # Re-render (not re-capture) the thumbnail from the last raw
+        # screenshot whenever the section resizes, so dragging the
+        # Controller window's edge rescales the preview live instead of
+        # waiting for the next periodic snapshot tick.
+        preview_section.bind(
+            self.CONFIGURE_EVENT, lambda _event: self._render_output_snapshot_thumbnail()
+        )
 
         # Give the output window a moment to finish its own initial
         # layout/paint before grabbing the first screenshot.
@@ -1991,10 +2037,41 @@ class SettingsUIMixin:
             width, height = shot.size
             if width <= 1 or height <= 1:
                 return
-            scale = min(1.0, _OUTPUT_SNAPSHOT_WIDTH / width)
-            thumb_size = (max(1, int(width * scale)), max(1, int(height * scale)))
-            shot = shot.resize(thumb_size, Image.Resampling.LANCZOS)
-            photo = ImageTk.PhotoImage(shot)
+        except Exception:
+            return
+        # Kept at full resolution (not downscaled here) so the section can
+        # be resized afterward and re-rendered at whatever size fits then,
+        # without re-grabbing the screen just to change the thumbnail size.
+        self._output_snapshot_raw_image = shot
+        self._render_output_snapshot_thumbnail()
+
+    def _render_output_snapshot_thumbnail(self):
+        widget = self.preview_widget
+        shot = self._output_snapshot_raw_image
+        if widget is None or shot is None or not widget.winfo_exists():
+            return
+        width, height = shot.size
+        if width <= 1 or height <= 1:
+            return
+        # Percentage of the Preview section's own current size, not a
+        # fixed pixel constant - the thumbnail grows and shrinks with the
+        # Controller window instead of sitting at one size regardless of
+        # how much room is actually available. Never scales past 1.0x
+        # native resolution (only down), so enlarging the window past the
+        # output window's own resolution stops growing the thumbnail
+        # further rather than blurring it out upscaling.
+        container = widget.master
+        available_w = container.winfo_width()
+        available_h = container.winfo_height()
+        if available_w <= 1 or available_h <= 1:
+            available_w, available_h = _OUTPUT_SNAPSHOT_WIDTH, _OUTPUT_SNAPSHOT_WIDTH
+        target_w = max(1, int(available_w * 0.92))
+        target_h = max(1, int(available_h * 0.92))
+        scale = min(1.0, target_w / width, target_h / height)
+        thumb_size = (max(1, int(width * scale)), max(1, int(height * scale)))
+        try:
+            thumb = shot.resize(thumb_size, Image.Resampling.LANCZOS)
+            photo = ImageTk.PhotoImage(thumb)
         except Exception:
             return
         # Keep a reference - Tk drops the image if the last Python reference
@@ -2950,7 +3027,7 @@ class SettingsUIMixin:
     def _build_transcription_section(self, transcription_section, label_opts):
         section_bg = label_opts["bg"]
         settings_fg = label_opts["fg"]
-        tk.Label(
+        transcription_intro_label = tk.Label(
             transcription_section,
             text=(
                 "RealtimeSTT transcribes spoken audio to text locally in real "
@@ -2960,10 +3037,11 @@ class SettingsUIMixin:
             ),
             bg=section_bg,
             fg=settings_fg,
-            wraplength=560,
             justify="left",
             font=(self.ui_font_family, 9),
-        ).pack(anchor="w", pady=(0, 6))
+        )
+        transcription_intro_label.pack(anchor="w", fill=tk.X, pady=(0, 6))
+        self._bind_responsive_wraplength(transcription_intro_label)
 
         # ── RealtimeSTT settings panel ─────────────────────────────────
         realtime_stt_container = tk.Frame(transcription_section, bg=label_opts["bg"])
@@ -3210,16 +3288,17 @@ class SettingsUIMixin:
             "downloading the selected model; after the first download, "
             "translation runs fully offline from the local cache."
         )
-        tk.Label(
+        nllb_help_label = tk.Label(
             nllb_container,
             text=nllb_help,
             bg=section_bg,
             fg=settings_fg,
-            wraplength=560,
             justify="left",
             font=(self.ui_font_family, 9),
-        ).pack(anchor="w", pady=(0, 6))
-        tk.Label(
+        )
+        nllb_help_label.pack(anchor="w", fill=tk.X, pady=(0, 6))
+        self._bind_responsive_wraplength(nllb_help_label)
+        nllb_scope_label = tk.Label(
             nllb_container,
             text=(
                 "Local NLLB translates transcripts after ASR (RealtimeSTT/"
@@ -3235,10 +3314,11 @@ class SettingsUIMixin:
             ),
             bg=section_bg,
             fg=settings_fg,
-            wraplength=560,
             justify="left",
             font=(self.ui_font_family, 9),
-        ).pack(anchor="w", pady=(0, 8))
+        )
+        nllb_scope_label.pack(anchor="w", fill=tk.X, pady=(0, 8))
+        self._bind_responsive_wraplength(nllb_scope_label)
 
         status_row = tk.Frame(nllb_container, bg=section_bg)
         status_row.pack(fill=tk.X, pady=(0, 4))
@@ -3265,11 +3345,11 @@ class SettingsUIMixin:
             textvariable=self.local_nllb_message_var,
             bg=section_bg,
             fg=settings_fg,
-            wraplength=560,
             justify="left",
             font=(self.ui_font_family, 9),
         )
         nllb_message_label.pack(anchor="w", fill=tk.X, pady=(0, 8))
+        self._bind_responsive_wraplength(nllb_message_label)
 
         self._add_setting_label(
             nllb_container,
@@ -3546,6 +3626,31 @@ class SettingsUIMixin:
             "realtime_model": "tiny",
             "nllb_model": "facebook/nllb-200-distilled-600M",
         }
+
+    def _hardware_recommendation_differs(self):
+        """Compares the current autodetect recommendation directly
+        against self.* (not any UI var), so this can be checked before
+        touching anything - used to gate the launch-time auto-trigger so
+        it only actually runs when something would change (or on the
+        very first run). Mirrors _autodetect_hardware_models's own
+        "only touch device if CUDA is available" behavior, since a
+        recommendation that doesn't touch device at all can't "differ"
+        on that front either.
+        """
+        cuda_available, vram_gb, _gpu_name = self._detect_hardware_vram()
+        recommendation = self._recommend_models_for_vram(cuda_available, vram_gb)
+        if recommendation["final_model"] != self.realtime_stt_final_model:
+            return True
+        if recommendation["realtime_model"] != self.realtime_stt_realtime_model:
+            return True
+        if recommendation["nllb_model"] != self.local_nllb_model_name:
+            return True
+        if cuda_available:
+            if self._normalize_stt_device(self.stt_device) != "cuda":
+                return True
+            if self._normalize_local_nllb_device(self.local_nllb_device) != "cuda":
+                return True
+        return False
 
     def _run_hardware_autodetect_from_menu(self, transcription_vars, translation_vars):
         # Reuses _autodetect_hardware_models as-is (same dropdown updates,

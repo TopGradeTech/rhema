@@ -271,9 +271,17 @@ class UpdateMixin:
                 # batch command with normal, reliable quoting rules.
                 batch_dir = tempfile.mkdtemp(prefix="rhema_update_")
                 batch_path = os.path.join(batch_dir, "rhema_update.bat")
+                app_dir = os.path.dirname(exe_path)
                 with open(batch_path, "w", encoding="utf-8") as batch_file:
                     batch_file.write(
                         "@echo off\r\n"
+                        # Explicit rather than relying on whatever CWD
+                        # this batch inherits - main.py now pins its own
+                        # CWD at startup too as a second line of
+                        # defense, but there's no reason for `start`
+                        # below to depend on inheritance at all when the
+                        # right directory is already known here.
+                        f'cd /d "{app_dir}"\r\n'
                         f'"{installer_path}" /VERYSILENT /SUPPRESSMSGBOXES '
                         "/CLOSEAPPLICATIONS\r\n"
                         f'start "" "{exe_path}"\r\n'
