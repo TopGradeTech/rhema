@@ -199,6 +199,11 @@ class SettingsMixin:
             data.get("cuda_directory", self.cuda_directory)
         )
         self.settings_geometry = data.get("settings_geometry", self.settings_geometry)
+        self.options_geometry = data.get("options_geometry", self.options_geometry)
+        self.options_maximized = self._coerce_bool(
+            data.get("options_maximized", self.options_maximized),
+            default=self.options_maximized,
+        )
         self.settings_monitor_index = int(
             data.get("settings_monitor_index", self.settings_monitor_index)
         )
@@ -421,6 +426,22 @@ class SettingsMixin:
                 self.settings_geometry = self.settings_window.geometry()
             except Exception:
                 pass
+        if self.options_window is not None and self.options_window.winfo_exists():
+            try:
+                state = self.options_window.state()
+                if state == "zoomed":
+                    self.options_maximized = True
+                elif state == "normal":
+                    # Only capture geometry while normal - while zoomed,
+                    # .geometry() reports the full-monitor bounding box,
+                    # not a meaningful "restore to this size" value.
+                    self.options_maximized = False
+                    self.options_geometry = self.options_window.geometry()
+                # "iconic"/"withdrawn" (its usual state - see
+                # _build_options_dialog): not a meaningful captured state,
+                # leave the last known real values alone.
+            except Exception:
+                pass
         if not self.monitors:
             self.monitors = self.get_monitors()
         monitor_device, monitor_origin = self._monitor_identity_for_index(self.monitor_index)
@@ -477,6 +498,8 @@ class SettingsMixin:
             "monitor_device": monitor_device,
             "monitor_origin": monitor_origin,
             "settings_geometry": self.settings_geometry,
+            "options_geometry": self.options_geometry,
+            "options_maximized": self.options_maximized,
             "settings_monitor_index": self.settings_monitor_index,
             "settings_monitor_device": settings_device,
             "settings_monitor_origin": settings_origin,
