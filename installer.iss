@@ -22,7 +22,7 @@
 ; equivalents automatically under this setting.
 
 #define MyAppName "Rhema"
-#define MyAppVersion "1.1.3"
+#define MyAppVersion "1.1.4"
 #define MyAppPublisher "Top Grade Tech"
 #define MyAppExeName "Rhema.exe"
 
