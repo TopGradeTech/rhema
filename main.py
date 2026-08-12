@@ -403,6 +403,8 @@ class TranslationApp(
         self._output_snapshot_photo = None
         self._output_snapshot_after_id = None
         self.settings_geometry = None
+        self.options_geometry = None
+        self.options_maximized = True
         self.settings_monitor_index = 0
         self.settings_monitor_device = ""
         self.settings_monitor_origin = ""
@@ -495,6 +497,8 @@ class TranslationApp(
         self.custom_vocab_langs_enabled = {"en": True, "es": True}
         self.settings_window = None
         self.options_window = None
+        self._autodetect_transcription_vars = None
+        self._autodetect_translation_vars = None
         self.is_applying_settings = False
         self.live_line = ""
         self.show_interim_text = False

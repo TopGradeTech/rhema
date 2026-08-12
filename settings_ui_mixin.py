@@ -212,10 +212,6 @@ class SettingsUIMixin:
             ),
             primary=True,
         )
-        try:
-            save_button.configure(takefocus=0)
-        except Exception:
-            pass
         save_button.pack(side=tk.RIGHT, padx=10, pady=10)
 
         apply_style = "apply.primary.TButton"
@@ -252,6 +248,11 @@ class SettingsUIMixin:
         self._set_settings_dirty_state(dirty_ctx, False, force=True)
 
         options_window.withdraw()
+        # Stashed so _hide_startup_loading_overlay can trigger Hardware
+        # Autodetect automatically once startup finishes, without
+        # threading these two dicts through more function signatures.
+        self._autodetect_transcription_vars = transcription_vars
+        self._autodetect_translation_vars = translation_vars
         return transcription_vars, translation_vars
 
     def _show_options_dialog(self):
@@ -335,6 +336,25 @@ class SettingsUIMixin:
                 self.settings_window.config(menu=self._settings_menu_bar)
             except Exception:
                 pass
+        # Runs the same Hardware Autodetect as File > Hardware Autodetect,
+        # so every launch ends up on hardware-appropriate models without
+        # the user needing to remember to trigger it manually. A short
+        # delay avoids popping the result dialog in the same instant the
+        # loading overlay disappears. No-ops harmlessly if the detected
+        # models already match what's configured (see
+        # _apply_transcription_vars/_apply_translation_vars's own
+        # "only restart if something actually changed" checks).
+        if (
+            self._autodetect_transcription_vars is not None
+            and self._autodetect_translation_vars is not None
+        ):
+            self.root.after(
+                300,
+                lambda: self._run_hardware_autodetect_from_menu(
+                    self._autodetect_transcription_vars,
+                    self._autodetect_translation_vars,
+                ),
+            )
 
     def _check_startup_ready(self):
         if self.app_startup_ready:
@@ -1068,17 +1088,26 @@ class SettingsUIMixin:
         self._move_settings_window_to_selected_monitor()
 
     def _apply_options_geometry(self, options_window):
-        # Reuses the Controller's old tall/maximized treatment, since
-        # Options now holds the bulk of what the Controller used to show
-        # directly. Deliberately skips the monitor-index persistence
-        # chain above - _move_settings_window_to_monitor (monitor_mixin.py)
-        # is hardwired to self.settings_window, and a secondary,
+        # Restores the last real (non-maximized) size/position saved
+        # from save_settings() if there is one, falling back to the
+        # original tall default for a first-ever launch. Deliberately
+        # skips the monitor-index persistence chain above -
+        # _move_settings_window_to_monitor (monitor_mixin.py) is
+        # hardwired to self.settings_window, and a secondary,
         # occasionally-opened dialog doesn't need its own remembered
-        # monitor; transient(parent) already gets it placed sensibly.
-        options_window.geometry("960x1280")
-        options_window.minsize(960, 1280)
+        # monitor; transient(parent) already gets it placed sensibly,
+        # and a plain geometry string restores the right monitor anyway
+        # as long as that monitor is still connected.
+        options_window.geometry(self.options_geometry or "960x1280")
+        # Relaxed from the old fixed 960x1280 (which forced this exact
+        # size at minimum, fighting any attempt to restore or manually
+        # resize smaller) now that shrinking just means the existing
+        # scrollable canvas shows a scrollbar - the intended behavior of
+        # that scrolling in the first place, not something to prevent.
+        options_window.minsize(640, 480)
         options_window.update_idletasks()
-        self._maximize_settings_window(options_window)
+        if self.options_maximized:
+            self._maximize_settings_window(options_window)
 
     def _maximize_settings_window(self, settings_window):
         try:
@@ -1447,10 +1476,6 @@ class SettingsUIMixin:
     def _make_button(self, parent, text, command=None, primary=False):
         bootstyle = PRIMARY if primary else None
         button = ttkb.Button(parent, text=text, command=command, bootstyle=bootstyle)
-        try:
-            button.configure(takefocus=0)
-        except Exception:
-            pass
         return button
 
     def _apply_input_style(self, widget):
@@ -1466,7 +1491,7 @@ class SettingsUIMixin:
             highlightcolor=palette["accent"],
         )
 
-    def _apply_option_menu_style(self, menu):
+    def _apply_option_menu_style(self, menu, var=None):
         palette = getattr(self, "_ui_palette", self._settings_palette())
         menu.configure(
             bg=palette["input_bg"],
@@ -1478,6 +1503,11 @@ class SettingsUIMixin:
             highlightthickness=1,
             highlightbackground=palette["border"],
             highlightcolor=palette["accent"],
+            # tk.OptionMenu's own Tk-level default is takefocus=0 (unlike
+            # a Button's ""), which silently excludes it from Tab
+            # traversal - not something this app set, just Tk's built-in
+            # default for Menubutton-class widgets.
+            takefocus=1,
         )
         try:
             menu["menu"].configure(
@@ -1489,6 +1519,48 @@ class SettingsUIMixin:
             )
         except Exception:
             pass
+        if var is not None:
+            self._bind_option_menu_arrow_keys(menu, var)
+
+    def _bind_option_menu_arrow_keys(self, option_menu, var):
+        # Confirmed by direct testing that a focused OptionMenu doesn't
+        # reliably cycle its value on bare Up/Down/Return the way a real
+        # combobox does - Menubutton's native keyboard handling is
+        # posting-the-menu-only, not value-cycling. Reads the option
+        # list straight from the attached Menu widget's own entries
+        # (rather than needing it passed in separately), so this works
+        # generically for every OptionMenu without extra plumbing.
+        def get_options():
+            sub_menu = option_menu["menu"]
+            try:
+                end_index = sub_menu.index("end")
+            except Exception:
+                return []
+            if end_index is None:
+                return []
+            options = []
+            for i in range(end_index + 1):
+                try:
+                    options.append(sub_menu.entrycget(i, "label"))
+                except Exception:
+                    pass
+            return options
+
+        def cycle(delta):
+            options = get_options()
+            if not options:
+                return "break"
+            try:
+                idx = options.index(var.get())
+            except ValueError:
+                idx = 0
+            var.set(options[(idx + delta) % len(options)])
+            return "break"
+
+        option_menu.bind("<Down>", lambda _e: cycle(1))
+        option_menu.bind("<Right>", lambda _e: cycle(1))
+        option_menu.bind("<Up>", lambda _e: cycle(-1))
+        option_menu.bind("<Left>", lambda _e: cycle(-1))
 
     def _apply_combobox_style(self, combobox):
         palette = getattr(self, "_ui_palette", self._settings_palette())
@@ -2147,7 +2219,7 @@ class SettingsUIMixin:
             value="Dark" if self.ui_theme == "dark" else "Light"
         )
         theme_menu = tk.OptionMenu(display_section, theme_var, *theme_display_options)
-        self._apply_option_menu_style(theme_menu)
+        self._apply_option_menu_style(theme_menu, theme_var)
         theme_menu.pack(anchor="w", pady=(0, 8))
 
         video_feed_row = tk.Frame(display_section, bg=section_bg)
@@ -2201,7 +2273,7 @@ class SettingsUIMixin:
         video_device_row = tk.Frame(video_feed_options_frame, bg=section_bg)
         video_device_row.pack(anchor="w", fill=tk.X)
         self.video_device_menu = tk.OptionMenu(video_device_row, video_device_var, *video_device_labels)
-        self._apply_option_menu_style(self.video_device_menu)
+        self._apply_option_menu_style(self.video_device_menu, video_device_var)
         self.video_device_menu.pack(side=tk.LEFT)
         video_refresh_button = self._make_button(
             video_device_row,
@@ -2375,7 +2447,7 @@ class SettingsUIMixin:
             *monitor_labels,
             command=lambda _value: on_output_monitor_change(),
         )
-        self._apply_option_menu_style(monitor_menu)
+        self._apply_option_menu_style(monitor_menu, monitor_var)
         monitor_menu.pack(anchor="w")
 
         self._add_setting_label(
@@ -2394,7 +2466,7 @@ class SettingsUIMixin:
             *monitor_labels,
             command=lambda _value: on_settings_monitor_change(),
         )
-        self._apply_option_menu_style(settings_monitor_menu)
+        self._apply_option_menu_style(settings_monitor_menu, settings_monitor_var)
         settings_monitor_menu.pack(anchor="w")
 
         focus_lock_row = tk.Frame(display_section, bg=section_bg)
@@ -2549,7 +2621,7 @@ class SettingsUIMixin:
             if not self.preferred_device_label:
                 self.preferred_device_label = selected_device
         self.device_menu = tk.OptionMenu(audio_section, self.device_var, *self.devices)
-        self._apply_option_menu_style(self.device_menu)
+        self._apply_option_menu_style(self.device_menu, self.device_var)
         self.device_menu.pack(anchor="w")
         self.device_var.trace_add("write", lambda *_args: self._handle_audio_device_change())
 
@@ -2785,7 +2857,7 @@ class SettingsUIMixin:
             logging_mode_var,
             *logging_mode_display,
         )
-        self._apply_option_menu_style(logging_mode_menu)
+        self._apply_option_menu_style(logging_mode_menu, logging_mode_var)
         logging_mode_menu.pack(anchor="w")
 
         startup_section = tk.LabelFrame(
@@ -2950,7 +3022,7 @@ class SettingsUIMixin:
             stt_device_var,
             *stt_device_options,
         )
-        self._apply_option_menu_style(stt_device_menu)
+        self._apply_option_menu_style(stt_device_menu, stt_device_var)
         stt_device_menu.pack(anchor="w")
 
         self._add_setting_label(
@@ -2987,7 +3059,7 @@ class SettingsUIMixin:
             realtime_stt_final_model_var,
             *realtime_stt_final_model_display,
         )
-        self._apply_option_menu_style(realtime_stt_final_model_menu)
+        self._apply_option_menu_style(realtime_stt_final_model_menu, realtime_stt_final_model_var)
         realtime_stt_final_model_menu.pack(anchor="w")
 
         self._add_setting_label(
@@ -3019,7 +3091,9 @@ class SettingsUIMixin:
             realtime_stt_realtime_model_var,
             *realtime_stt_realtime_model_display,
         )
-        self._apply_option_menu_style(realtime_stt_realtime_model_menu)
+        self._apply_option_menu_style(
+            realtime_stt_realtime_model_menu, realtime_stt_realtime_model_var
+        )
         realtime_stt_realtime_model_menu.pack(anchor="w")
 
         self._add_setting_label(
@@ -3236,7 +3310,7 @@ class SettingsUIMixin:
             local_nllb_model_name_var,
             *nllb_model_name_display,
         )
-        self._apply_option_menu_style(nllb_model_name_menu)
+        self._apply_option_menu_style(nllb_model_name_menu, local_nllb_model_name_var)
         nllb_model_name_menu.pack(anchor="w", pady=(0, 8))
 
         self._add_setting_label(
@@ -3259,7 +3333,7 @@ class SettingsUIMixin:
             local_nllb_device_var,
             *nllb_device_options,
         )
-        self._apply_option_menu_style(nllb_device_menu)
+        self._apply_option_menu_style(nllb_device_menu, local_nllb_device_var)
         nllb_device_menu.pack(anchor="w", pady=(0, 8))
 
         nllb_all_language_options = nllb_language_options()
@@ -3476,10 +3550,25 @@ class SettingsUIMixin:
     def _run_hardware_autodetect_from_menu(self, transcription_vars, translation_vars):
         # Reuses _autodetect_hardware_models as-is (same dropdown updates,
         # same result text) - only the display surface differs from the
-        # button version, since there's no inline label next to a menu
-        # item to show the result in.
+        # old inline-button version, since there's no inline label next
+        # to a menu item to show the result in. Unlike a normal Options
+        # Apply, this applies immediately rather than waiting for the
+        # user to also click Apply in Options - it's a menu action, not
+        # a settings-page edit, and only ever touches the transcription/
+        # translation model vars autodetect itself just set, not
+        # whatever else may be sitting edited-but-unapplied elsewhere in
+        # the still-open Options dialog. Deliberately doesn't touch
+        # Options' own dirty_ctx/Apply button afterward: its dirty check
+        # is one combined snapshot across all five vars-dicts, so
+        # resetting it here would also silently mark any *unrelated*
+        # pending edit elsewhere in Options as "already applied" - a
+        # real risk of losing that edit, worse than the cosmetic
+        # side effect of Apply staying enabled when it doesn't need to.
         result_var = tk.StringVar(value="")
         self._autodetect_hardware_models(transcription_vars, translation_vars, result_var)
+        self._apply_transcription_vars(transcription_vars)
+        self._apply_translation_vars(translation_vars)
+        self.save_settings()
         parent = self.settings_window if self.settings_window is not None else self.root
         messagebox.showinfo("Hardware Autodetect", result_var.get(), parent=parent)
 
@@ -3526,7 +3615,7 @@ class SettingsUIMixin:
             f"NLLB model: {nllb_display or recommendation['nllb_model']}\n"
             f"{device_line}"
             "\n"
-            "Click Apply to use these settings."
+            "These settings have been applied automatically."
         )
 
     def _run_local_nllb_test_from_vars(
