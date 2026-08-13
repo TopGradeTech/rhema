@@ -8,8 +8,11 @@ from PyInstaller.utils.hooks import collect_data_files, collect_submodules
 
 def _editable_package_root(package_name):
     """Resolve the real source directory for a package that may be pip
-    installed in editable mode (as RealtimeSTT is here, from the local
-    TopGradeTelecom fork). Editable installs are wired in via a PEP 660
+    installed in editable mode (as RealtimeSTT often is here, from a local
+    clone of the TopGradeTech fork - though requirements.txt installs that
+    same fork non-editably from git, which this also handles, since the
+    import below resolves either layout). Editable installs are wired in
+    via a PEP 660
     custom import finder (a .pth file that installs a MetaPathFinder), which
     PyInstaller's static modulegraph analysis can't see through - without
     this, RealtimeSTT is silently missing from the build entirely (no
