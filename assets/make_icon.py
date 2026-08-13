@@ -5,7 +5,6 @@ so each cubic segment is sampled finely and drawn as a chain of round
 circles (radius = stroke_width/2) to fake a round-capped, round-joined
 stroke.
 """
-import math
 from PIL import Image, ImageDraw
 
 INK = (16, 19, 26, 255)      # #10131A

@@ -519,7 +519,6 @@ class TranslationApp(
         self._display_inactivity_after_id = None
         self.chunk_size = 120
         self.display_speed_factor = 1.0
-        self.last_openai_translate_ms = None
         self.source_lang = "auto"
         self.target_lang = "en"
         self.auto_detect_langs = ["en", "es"]

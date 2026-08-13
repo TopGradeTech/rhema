@@ -50,7 +50,7 @@ class DisplayMixin:
 
     def _chunk_latency_detail_parts(self, elapsed_ms, avg_ms, latency_meta=None):
         meta = latency_meta or {}
-        translate_ms = meta.get("translate_openai_ms")
+        translate_ms = meta.get("translate_nllb_ms")
         stt_confidence = meta.get("stt_confidence")
         chunk_seconds = meta.get("chunk_seconds")
         overlap_words = meta.get("overlap_words")

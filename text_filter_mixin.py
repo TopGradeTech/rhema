@@ -134,7 +134,7 @@ class TextFilterMixin:
         return not re.search(self.UNICODE_WORD_CHAR_PATTERN, text, flags=re.UNICODE)
 
     def _is_known_non_speech_placeholder(self, text, normalized):
-        # OpenAI occasionally returns these exact non-speech placeholders.
+        # Whisper occasionally returns these exact non-speech placeholders.
         if re.fullmatch(r"(?i)no[.!?]+", text):
             return True
         # Keep STT filtering strict to avoid dropping legitimate user speech.

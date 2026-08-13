@@ -369,7 +369,6 @@ class TranscriptionMixin:
             "text": text,
             "queued_at": time.time(),
             "pretranslated": bool(pretranslated),
-            "translate_openai_ms": self.last_openai_translate_ms,
             "stt_confidence": self.last_faster_whisper_confidence,
             "overlap_words": max(0, int(overlap_words or 0)),
         }
@@ -399,7 +398,6 @@ class TranscriptionMixin:
         trace_meta = {
             "queue_size": self.sentence_queue.qsize(),
             "pretranslated": bool(pretranslated),
-            "translate_openai_ms": self.last_openai_translate_ms,
             "stt_confidence": self.last_faster_whisper_confidence,
             "chunk_seconds": payload.get("chunk_seconds"),
             "overlap_words": payload.get("overlap_words"),
@@ -489,10 +487,10 @@ class TranscriptionMixin:
         item_meta = [meta for _text, _started, meta in merged_items]
         pretranslated_values = [bool(meta.get("pretranslated")) for meta in item_meta]
         translate_values = [
-            int(meta.get("translate_openai_ms"))
+            int(meta.get("translate_nllb_ms"))
             for meta in item_meta
-            if isinstance(meta.get("translate_openai_ms"), (int, float))
-            and meta.get("translate_openai_ms") >= 0
+            if isinstance(meta.get("translate_nllb_ms"), (int, float))
+            and meta.get("translate_nllb_ms") >= 0
         ]
         confidence_values = [
             float(meta.get("stt_confidence"))
@@ -512,7 +510,7 @@ class TranscriptionMixin:
         if pretranslated_values:
             merged_meta["pretranslated"] = all(pretranslated_values)
         if translate_values:
-            merged_meta["translate_openai_ms"] = max(translate_values)
+            merged_meta["translate_nllb_ms"] = max(translate_values)
         if confidence_values:
             merged_meta["stt_confidence"] = sum(confidence_values) / len(confidence_values)
         source_text_values = [
@@ -541,7 +539,7 @@ class TranscriptionMixin:
         self._log_finalized_sentence(
             output_text,
             translation_enabled=bool(self.translation_enabled),
-            translate_openai_ms=output_meta.get("translate_openai_ms"),
+            translate_nllb_ms=output_meta.get("translate_nllb_ms"),
             stt_confidence=output_meta.get("stt_confidence"),
             pretranslated=bool(output_meta.get("pretranslated")),
         )
@@ -645,7 +643,6 @@ class TranscriptionMixin:
                 break
         self.live_line = ""
         self.last_stt_pretranslated = False
-        self.last_openai_translate_ms = None
         self._trace_pipeline(
             "translation_disabled_backlog_cleared",
             "",
