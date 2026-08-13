@@ -50,7 +50,9 @@ The app is split into `main.py` plus a set of mixin modules, all mixed into `Tra
 - `translation_mixin.py`: Local NLLB-200 translation.
 - `text_filter_mixin.py`: Bad words, hallucination filtering, custom vocab, scripture formatting, defaults.
 - `display_mixin.py`: Word reveal, text rendering, audio level meter.
+- `video_capture_mixin.py`: OBS Virtual Camera capture thread and the canvas render tick that draws it behind the captions.
 - `update_mixin.py`: In-app "Check for Updates" — queries the public `TopGradeTech/rhema-releases` repo and installs newer builds.
+- `languages.py`: Display-name tables for all RealtimeSTT/Whisper language codes and all NLLB FLORES-200 codes, plus the reverse map between them. No logic — data only.
 - `version.py`: Single source of truth for `APP_VERSION`.
 - `tooltip.py`: Tooltip widget.
 - `settings.json`: Persisted user settings (auto-written on Apply).
