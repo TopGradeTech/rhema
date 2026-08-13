@@ -1,6 +1,18 @@
 # Rhema
 
-A Windows desktop application for real-time speech transcription and translation, with adjustable text size and a fullscreen output window. Built for practical use translating live speech (e.g. sermons, meetings) from Spanish to English, with Bible-specific vocabulary mapping and scripture reference formatting.
+A Windows desktop application for real-time speech transcription and translation, with adjustable text size and a fullscreen output window. Built for practical use translating live speech (e.g. sermons, meetings), with Bible-specific vocabulary mapping and scripture reference formatting.
+
+Speech recognition and translation both run **entirely on your machine** — no audio or transcript text is sent to any external service. Whisper supports 99 source languages and NLLB-200 supports 200 target languages, so any of those pairs can be configured; the defaults and the Bible-vocabulary features are tuned for Spanish/English use.
+
+## Download
+
+Most people want the installer, not the source:
+
+**[Download the latest release](https://github.com/TopGradeTech/rhema/releases/latest)** — run `Rhema-Setup.exe`.
+
+It installs per-user, so no administrator rights or UAC prompt are needed (useful on managed church or event AV laptops). Python is not required. Once installed, the app updates itself via **About > Check for Updates**.
+
+The rest of this README is for running from source or contributing.
 
 ## Architecture
 
@@ -39,7 +51,9 @@ RealtimeSTT runs two faster-whisper models locally:
 - A small, fast model for live preview text as you speak.
 - A larger, accurate model that finalizes each utterance once you pause.
 
-Settings include the final/realtime model size, device (CPU/GPU), Silero VAD sensitivity, and silence/recording-length thresholds.
+Settings (**File > Options > Transcription**) include the source language, the final and realtime model sizes, device (CPU/GPU), and Silero VAD sensitivity. Post-speech silence timing is deliberately not exposed: RealtimeSTT recalculates it dynamically within ~200ms of speech starting, so a user-facing slider had no lasting effect.
+
+**Hardware Autodetect** (File > Hardware Autodetect) picks model sizes to match your available VRAM. It also runs by itself on first launch, or whenever your hardware stops matching the saved settings.
 
 ## Local Translation with NLLB-200
 
@@ -72,11 +86,13 @@ Privacy note: all speech recognition and translation happens on your machine. No
 
 ## Usage
 
+The app opens two windows: **Rhema Controller** (a preview of the output plus status, Pause, and Toggle Fullscreen) and **Rhema** (the fullscreen output shown to your audience, on whichever monitor you select). All settings live in **File > Options**.
+
 - Speak into your microphone.
-- The app transcribes your speech and translates it to English.
-- Use the slider to adjust text size.
-- Click "Toggle Fullscreen" for fullscreen mode.
-- Optionally enable autostart with Windows from the settings window.
+- The app transcribes your speech and, if translation is enabled, translates it into the target language you selected.
+- Adjust text size, colours, and the number of visible lines in Options > Display.
+- Click "Toggle Fullscreen" to move the output window in and out of fullscreen.
+- Optionally enable autostart with Windows from Options > Advanced.
 
 ## Video Overlay (OBS Virtual Camera)
 
@@ -128,7 +144,7 @@ correctly, just resized to fit the window.
 
 ### 6. Enable Video Feed mode in this app
 
-1. Open the app's Settings window.
+1. Open **File > Options** on the Rhema Controller window.
 2. In the Display section, check **Show video feed behind captions**.
 3. Under **Camera Device**, click **Refresh** to (re)scan for camera
    devices — do this after starting the OBS Virtual Camera, not before,
@@ -160,14 +176,29 @@ correctly, just resized to fit the window.
 
 ## Dependencies
 
-- speechrecognition
-- pyaudio
-- ttkbootstrap
-- faster-whisper
-- transformers
-- sentencepiece
-- torch
-- RealtimeSTT
-- tkinter (system package on Ubuntu)
+See `requirements.txt` for the authoritative list; the headline ones are:
 
-Note: You may need to install PyAudio manually on some systems. See https://people.csail.mit.edu/hubert/pyaudio/
+- `RealtimeSTT` — speech recognition. Installed from [our fork](https://github.com/TopGradeTech/RealtimeSTT/tree/faster-whisper-engine-options) rather than PyPI, which is **required, not optional**: the app relies on that branch's `engine_options` pass-through to load models strictly from the local cache. Stock upstream accepts the option and silently ignores it, so on upstream the app quietly contacts Hugging Face on every launch. `requirements.txt` explains this in full.
+- `faster-whisper`, `torch`, `ctranslate2` — the model runtime. `torch` is CPU-only by default; see the GPU note under Installation.
+- `transformers`, `sentencepiece` — NLLB-200 translation.
+- `silero-vad` — bundles the VAD models locally so no download is needed at runtime.
+- `opencv-python`, `pillow` — Video Feed mode and the Controller's preview thumbnail.
+- `pygrabber` (Windows only) — real camera names in the Camera Device dropdown instead of bare indices.
+- `ttkbootstrap`, `speechrecognition`, `pyaudio` — UI theming and audio device handling.
+- `tkinter` — system package on Ubuntu (`python3-tk`); bundled with Python on Windows.
+
+`requirements.lock` records the exact set each release was built from. Read its header before using it — the pinned `torch` is a CUDA build that is not on the default PyPI index.
+
+Note: you may need to install PyAudio manually on some systems. See https://people.csail.mit.edu/hubert/pyaudio/
+
+## Feature requests, questions, and bugs
+
+- **Feature requests and ideas** → [GitHub Discussions, Ideas category](https://github.com/TopGradeTech/rhema/discussions/categories/ideas). The app links here directly from **About > Feature Request**.
+- **Questions** → [Discussions, Q&A](https://github.com/TopGradeTech/rhema/discussions/categories/q-a).
+- **Bugs** → [open an issue](https://github.com/TopGradeTech/rhema/issues). Please include your Rhema version (About > About Rhema), whether STT/translation were set to CPU or GPU, and the relevant log from the `logs` folder in the install directory.
+
+## Development notes
+
+- There is no automated test suite. `python scripts/smoke_check.py` runs the same fast checks CI does (syntax across all files, version file sync, requirements parsing); it is stdlib-only and installs nothing. Real verification means running the app and speaking into it.
+- Architecture and conventions are documented in `CLAUDE.md`, which is written as onboarding for both human and AI contributors.
+- Rhema was built collaboratively with [Claude Code](https://claude.com/claude-code); commits co-authored by Claude are marked as such in the git history.
