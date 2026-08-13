@@ -197,6 +197,16 @@ Note: you may need to install PyAudio manually on some systems. See https://peop
 - **Questions** → [Discussions, Q&A](https://github.com/TopGradeTech/rhema/discussions/categories/q-a).
 - **Bugs** → [open an issue](https://github.com/TopGradeTech/rhema/issues). Please include your Rhema version (About > About Rhema), whether STT/translation were set to CPU or GPU, and the relevant log from the `logs` folder in the install directory.
 
+## License
+
+Rhema is free software licensed under the **[GNU General Public License v3.0](LICENSE)**.
+
+Copyright (C) 2026 Zachary Price
+
+You may use, study, modify, and redistribute it. If you distribute a modified version, you must release your changes under the GPL as well, so the software stays free for the people who receive it.
+
+All bundled dependencies are permissively licensed (MIT, Apache-2.0, BSD) and compatible with the GPL. Note that the NLLB-200 **model weights**, which the app downloads at runtime rather than shipping, carry their own licence from Meta — check its terms before commercial use.
+
 ## Development notes
 
 - There is no automated test suite. `python scripts/smoke_check.py` runs the same fast checks CI does (syntax across all files, version file sync, requirements parsing); it is stdlib-only and installs nothing. Real verification means running the app and speaking into it.
