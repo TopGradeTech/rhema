@@ -8,9 +8,25 @@ sentencepiece
 # CUDA 12.1 (GPU): pip install torch --index-url https://download.pytorch.org/whl/cu121
 # CUDA 11.8 (GPU): pip install torch --index-url https://download.pytorch.org/whl/cu118
 torch
-# RealtimeSTT — local real-time transcription with dual VAD + two-pass models
-# GPU build: pip install RealtimeSTT[gpu]
-RealtimeSTT
+# RealtimeSTT — local real-time transcription with dual VAD + two-pass models.
+#
+# Pinned to our fork's `faster-whisper-engine-options` branch, and this is
+# REQUIRED rather than a nicety: realtime_stt_mixin.py passes
+#   transcription_engine_options={"model": {"local_files_only": True}}
+# to keep startup fully offline. Upstream *accepts* that argument but its
+# faster_whisper adapter silently ignores it, so on stock upstream the app
+# reaches out to Hugging Face on every launch and raises no error to explain
+# why — a silent behavior regression rather than a visible failure. The fork
+# only adds that pass-through (see its commit "Honor engine_options in the
+# faster_whisper engine"); it is otherwise stock RealtimeSTT 1.0.2.
+#
+# Once the upstream PR lands, drop the URL and pin the release that has it.
+# For a GPU build, add the extra: RealtimeSTT[gpu] @ git+https://...
+#
+# Developing against the fork itself? Install it editable instead of this line:
+#   git clone -b faster-whisper-engine-options https://github.com/TopGradeTech/RealtimeSTT.git
+#   pip install -e path/to/RealtimeSTT
+RealtimeSTT @ git+https://github.com/TopGradeTech/RealtimeSTT.git@faster-whisper-engine-options
 # Ships the Silero VAD ONNX models locally so RealtimeSTT's auto backend
 # never needs a torch.hub download at runtime (offline-first, and avoids a
 # fresh-install failure with no local model file to fall back to)

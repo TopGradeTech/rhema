@@ -18,10 +18,15 @@ A Windows desktop application for real-time speech transcription and translation
    ```
 3. If you plan to run RealtimeSTT or Local NLLB on an NVIDIA GPU, install the NVIDIA driver, CUDA Toolkit 12.x, and cuDNN 9.x for CUDA 12 first. CPU mode does not require these GPU libraries.
 4. The Local NLLB model may download the first time it is used. After it is cached, it can run offline.
-5. Install dependencies:
+5. Install dependencies (this pulls RealtimeSTT from our fork via git, so `git`
+   must be on your PATH — see the note in `requirements.txt` for why the fork is
+   required rather than optional):
    ```
    pip install -r requirements.txt
    ```
+   To instead reproduce the exact dependency set a released build was made from,
+   use `pip install -r requirements.lock` and read that file's header first — the
+   pinned `torch` is a CUDA build that is not on the default PyPI index.
 6. Run the app:
    ```
    python main.py

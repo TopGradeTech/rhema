@@ -13,6 +13,12 @@ All speech recognition and translation runs on-device — no cloud STT/translati
 # Setup (Python 3.11+; repo currently developed on 3.12)
 pip install -r requirements.txt
 
+# Reproduce the exact set a shipped build was made from, instead of resolving
+# fresh (see requirements.lock's own header for the torch/CUDA caveat):
+pip install -r requirements.lock
+# Regenerate that lockfile after intentionally changing dependencies:
+python scripts/gen_lock.py
+
 # GPU mode for RealtimeSTT and/or Local NLLB requires, before installing deps:
 #   NVIDIA driver + CUDA Toolkit 12.x + cuDNN 9.x for CUDA 12
 # CPU mode needs none of that.
@@ -62,6 +68,7 @@ The app is split into `main.py` plus a set of mixin modules, all mixed into `Tra
 - By default only finalized RealtimeSTT output is displayed — the original always-on interim preview was removed because it caused jerky re-wrap/reflow on every ~100ms partial update. An opt-in "Show live interim text" checkbox re-adds live text on a reserved bottom row that never re-wraps frozen lines: raw partials when translation is off, throttled NLLB translations of stabilized text when translation is on.
 - Device (CPU/GPU) and model sizes are configurable in settings.
 - Post-speech silence duration is not a user-facing setting: RealtimeSTT overwrites it dynamically (`_realtime_stt_adjust_silence`) within ~200ms of any speech, so it was cosmetic as a slider.
+- **RealtimeSTT comes from our fork, and that is load-bearing — not a convenience.** `requirements.txt` points at the `faster-whisper-engine-options` branch of `TopGradeTech/RealtimeSTT`. `realtime_stt_mixin.py` passes `transcription_engine_options={"model": {"local_files_only": True}}` to keep startup fully offline; stock upstream *accepts* that argument but its faster_whisper adapter silently ignores it, so on upstream the app quietly reaches for Hugging Face on every launch and reports no error explaining why. If offline startup ever regresses, check which RealtimeSTT is actually installed first (`pip show realtimestt`). The fork is otherwise stock 1.0.2.
 
 ### Translation
 - Local NLLB-200 (`translation_mixin.py`) is the only translation engine, running locally via `transformers`. NLLB is text-only — it does not perform speech recognition and does not restore punctuation.

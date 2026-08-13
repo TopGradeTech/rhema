@@ -1,0 +1,106 @@
+# -------------------------------------------------------------------------
+# requirements.lock - the EXACT dependency set the shipped v1.1.4 Windows
+# installer was built and verified against (Python 3.12, Windows 11).
+#
+# This is a record, not the install spec. requirements.txt stays the loose,
+# human-edited list; this file exists so a build can be reproduced, and so
+# "it worked on my machine" can be diffed against something concrete.
+#
+# Reproduce this environment:
+#     python -m venv .venv
+#     .venv\Scripts\activate
+#     pip install -r requirements.lock
+#
+# TWO CAVEATS, both of which will bite a plain install from default PyPI:
+#
+#  1. torch/torchaudio are pinned to +cu124 local-version builds, which do
+#     NOT exist on the default PyPI index. Install them from the CUDA index
+#     FIRST, then this file:
+#         pip install torch==2.6.0+cu124 torchaudio==2.6.0+cu124 \
+#             --index-url https://download.pytorch.org/whl/cu124
+#     For a CPU-only environment, drop the +cu124 suffixes and use plain
+#     PyPI; the app runs on CPU, just slower (see the Device settings).
+#
+#  2. RealtimeSTT is pinned to an exact commit on our fork rather than a
+#     PyPI release, because the app depends on that commit's engine_options
+#     pass-through to keep startup offline. See the long note in
+#     requirements.txt for why stock upstream fails silently without it.
+#
+# Regenerate with scripts/gen_lock.py (or `pip freeze`, rewriting the
+# editable RealtimeSTT line back into the pinned git+...@<sha> form below).
+# -------------------------------------------------------------------------
+altgraph==0.17.5
+annotated-doc==0.0.4
+anyio==4.14.1
+av==17.1.0
+certifi==2026.6.17
+cffi==2.0.0
+charset-normalizer==3.4.7
+click==8.4.2
+colorama==0.4.6
+comtypes==1.4.16
+ctranslate2==4.8.0
+faster-whisper==1.2.1
+filelock==3.29.0
+flatbuffers==25.12.19
+fsspec==2026.4.0
+git-filter-repo==2.47.0
+h11==0.16.0
+halo==0.0.31
+hf-xet==1.5.1
+httpcore==1.0.9
+httpx==0.28.1
+huggingface_hub==1.21.0
+idna==3.18
+Jinja2==3.1.6
+log-symbols==0.0.14
+markdown-it-py==4.2.0
+MarkupSafe==3.0.3
+mdurl==0.1.2
+mpmath==1.3.0
+networkx==3.6.1
+numpy==2.5.0
+onnxruntime==1.27.0
+opencv-python==5.0.0.93
+packaging==26.2
+pefile==2024.8.26
+pillow==12.2.0
+protobuf==7.35.1
+PyAudio==0.2.14
+pycparser==3.0
+pydub==0.25.1
+pyflakes==3.4.0
+Pygments==2.20.0
+pygrabber==0.2
+pyinstaller-hooks-contrib==2026.6
+pyinstaller==6.21.0
+pywin32-ctypes==0.2.3
+PyYAML==6.0.3
+RealtimeSTT @ git+https://github.com/TopGradeTech/RealtimeSTT.git@6f4b4f492c45b62f0c649ebaec2972e56618489f
+regex==2026.5.9
+requests==2.34.2
+rich==15.0.0
+safetensors==0.8.0
+scipy==1.17.1
+sentencepiece==0.2.1
+setuptools==70.2.0
+shellingham==1.5.4
+silero-vad==6.2.1
+six==1.17.0
+soundfile==0.13.1
+SpeechRecognition==3.17.0
+spinners==0.0.24
+sympy==1.13.1
+termcolor==3.3.0
+tokenizers==0.22.2
+torch==2.6.0+cu124
+torchaudio==2.6.0+cu124
+tqdm==4.68.3
+transformers==5.12.1
+ttkbootstrap==1.20.4
+typer==0.25.1
+typing_extensions==4.15.0
+urllib3==2.7.0
+webrtcvad-wheels==2.0.14
+websocket-client==1.9.0
+websockets==16.0
