@@ -1,0 +1,34 @@
+name: smoke
+
+# Fast pre-flight checks only. This deliberately installs no dependencies:
+# the app's real dependency set includes torch and CUDA-linked wheels that
+# take minutes and gigabytes to pull, which is not worth paying on every
+# push to learn whether the code parses.
+#
+# What this cannot do is verify Rhema actually works - live audio in,
+# correct translation out, on the right monitor - which stays a manual check
+# (see CLAUDE.md). It exists to catch the mistakes that look fine locally
+# and only surface after an installer has shipped.
+
+on:
+  push:
+    branches: [main, development]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # Stdlib-only, so there is nothing to install and nothing to cache.
+      - name: Run smoke checks
+        run: python scripts/smoke_check.py

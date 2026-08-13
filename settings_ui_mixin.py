@@ -22,7 +22,11 @@ from languages import whisper_language_options, nllb_language_options
 from tooltip import Tooltip
 
 DONATE_URL = "https://www.paypal.com/donate/?hosted_button_id=N36X2WBFVU9U8"
-FEATURE_REQUEST_EMAIL = "zachary.price@topgradetech.com"
+# GitHub Discussions "Ideas" rather than a mailto: requests land somewhere
+# public, searchable and upvotable instead of in one inbox, and the app stops
+# shipping a personal address to every install. Requires the repo to be
+# public - the link just 404s for anyone not signed in with access otherwise.
+FEATURE_REQUEST_URL = "https://github.com/TopGradeTech/rhema/discussions/categories/ideas"
 
 # Output window snapshot (replaces the old live text preview): a periodic
 # screenshot thumbnail instead of a per-render text mirror, so the
@@ -1245,7 +1249,7 @@ class SettingsUIMixin:
         )
         about_menu.add_command(label="Donate", command=self._show_donate_popup)
         about_menu.add_command(
-            label="Feature Request", command=self._open_feature_request_email
+            label="Feature Request", command=self._open_feature_request_page
         )
         menu_bar.add_cascade(label="About", menu=about_menu)
 
@@ -1323,9 +1327,9 @@ class SettingsUIMixin:
         except Exception:
             pass
 
-    def _open_feature_request_email(self):
+    def _open_feature_request_page(self):
         try:
-            webbrowser.open(f"mailto:{FEATURE_REQUEST_EMAIL}")
+            webbrowser.open(FEATURE_REQUEST_URL)
         except Exception:
             pass
 

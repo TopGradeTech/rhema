@@ -57,7 +57,7 @@ The app is split into `main.py` plus a set of mixin modules, all mixed into `Tra
 - `text_filter_mixin.py`: Bad words, hallucination filtering, custom vocab, scripture formatting, defaults.
 - `display_mixin.py`: Word reveal, text rendering, audio level meter.
 - `video_capture_mixin.py`: OBS Virtual Camera capture thread and the canvas render tick that draws it behind the captions.
-- `update_mixin.py`: In-app "Check for Updates" — queries the public `TopGradeTech/rhema-releases` repo and installs newer builds.
+- `update_mixin.py`: In-app "Check for Updates" — queries this repo's latest release and installs newer builds.
 - `languages.py`: Display-name tables for all RealtimeSTT/Whisper language codes and all NLLB FLORES-200 codes, plus the reverse map between them. No logic — data only.
 - `version.py`: Single source of truth for `APP_VERSION`.
 - `tooltip.py`: Tooltip widget.
@@ -89,10 +89,14 @@ The app is split into `main.py` plus a set of mixin modules, all mixed into `Tra
 - Update output rendering: look for `render_text`, `_update_line_items`, and font sizing helpers in `display_mixin.py`.
 
 ## Releases / Versioning
-The in-app "Check for Updates" (`update_mixin.py`) compares `version.py`'s `APP_VERSION` against the latest tag on the public `TopGradeTech/rhema-releases` repo (binaries only, no source — see that repo's README). Bump the version **only when actually shipping a rebuilt installer**, not on every commit/push — ordinary commits (docs, in-progress code, TODO updates) should leave it alone. When you do ship:
-1. Bump both `version.py`'s `APP_VERSION` and `installer.iss`'s `MyAppVersion` to the same value — they aren't linked by tooling, so keep them in sync manually.
+The in-app "Check for Updates" (`update_mixin.py`) compares `version.py`'s `APP_VERSION` against the latest release tag on this repo, `TopGradeTech/rhema`. Bump the version **only when actually shipping a rebuilt installer**, not on every commit/push — ordinary commits (docs, in-progress code, TODO updates) should leave it alone. When you do ship:
+1. Bump both `version.py`'s `APP_VERSION` and `installer.iss`'s `MyAppVersion` to the same value — they aren't linked by tooling, so keep them in sync manually. CI enforces this (`.github/workflows/smoke.yml`), so a mismatch fails the build rather than shipping.
 2. Rebuild: `python -m PyInstaller --noconfirm --clean main.spec`, then `ISCC.exe installer.iss`.
-3. Publish a GitHub release tagged `vX.Y.Z` on `TopGradeTech/rhema-releases` with `dist/Rhema-Setup.exe` attached (`gh release create vX.Y.Z dist/Rhema-Setup.exe --repo TopGradeTech/rhema-releases`) — installed copies won't see the update until this step happens, regardless of what's bumped locally.
+3. Publish a GitHub release tagged `vX.Y.Z` with `dist/Rhema-Setup.exe` attached (`gh release create vX.Y.Z dist/Rhema-Setup.exe --repo TopGradeTech/rhema`) — installed copies won't see the update until this step happens, regardless of what's bumped locally.
+
+**This repo must stay public.** The update check is unauthenticated by design (a token inside a distributed exe would be extractable), and GitHub's API answers 404 rather than 403 for anonymous reads of a private repo — so making it private makes every install silently believe it is up to date, with no error surfaced.
+
+Releases up to and including v1.1.4 were published to a separate `TopGradeTech/rhema-releases` repo, which existed only because this one was private. It is retained read-only for those historical installers; nothing new goes there. Builds from v1.1.5 onward publish here. Note that installs of v1.1.4 and earlier poll the old repo, so they will not see releases published here — those were reinstalled manually.
 
 ## Conventions
 - Prefer small, safe changes that preserve user settings.

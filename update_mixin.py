@@ -1,9 +1,18 @@
-"""Checks a public, releases-only GitHub repo for newer Rhema builds and
-installs them. Deliberately points at a separate public repo
-(TopGradeTech/rhema-releases) that only ever holds release binaries,
-never source - so the check needs no auth token, and there's nothing in
-it that could expose this (private) repo's code if the app were
-reverse-engineered.
+"""Checks this project's own public GitHub repo for newer Rhema builds and
+installs them.
+
+Historically this pointed at a separate binaries-only repo
+(TopGradeTech/rhema-releases), because the source repo was private and
+releases still had to be publicly downloadable. That split went away when
+the source went public - one repo is now the single source of truth for
+code, issues, discussions, and releases alike.
+
+The repo it points at MUST stay public: the check below is deliberately
+unauthenticated (an auth token shipped inside a distributed exe would be
+extractable), and GitHub's REST API returns 404 rather than 403 for a
+private repo to an anonymous caller - so against a private repo this
+silently reports "no update available" forever, with nothing in the UI to
+suggest the check is broken.
 """
 
 import json
@@ -22,7 +31,7 @@ import tkinter as tk
 
 from version import APP_VERSION
 
-GITHUB_RELEASES_REPO = "TopGradeTech/rhema-releases"
+GITHUB_RELEASES_REPO = "TopGradeTech/rhema"
 GITHUB_LATEST_RELEASE_URL = (
     f"https://api.github.com/repos/{GITHUB_RELEASES_REPO}/releases/latest"
 )
