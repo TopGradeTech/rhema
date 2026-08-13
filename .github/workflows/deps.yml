@@ -1,0 +1,76 @@
+name: deps
+
+# Installs the project for real and imports it, to catch dependency drift.
+#
+# This exists because requirements.txt is intentionally loose: releases are
+# built from requirements.lock, so drift can never break a shipped installer -
+# it can only break someone who clones the repo and follows the README. That
+# failure is invisible from here without actually performing the install, which
+# the fast `smoke` workflow deliberately does not do (it installs nothing so it
+# can stay a few seconds long).
+#
+# Runs weekly rather than on push: a real install pulls torch and friends, and
+# there is no reason to pay that on every commit. It is also intentionally a
+# separate workflow from `smoke`, so a red result here - which usually means an
+# upstream project released something, not that you broke anything - never
+# blocks your own pushes.
+#
+# Note: scheduled workflows only run from the default branch.
+
+on:
+  schedule:
+    # Mondays, 06:17 UTC. Off-the-hour on purpose: scheduled jobs queue heavily
+    # at :00, and GitHub drops schedules it cannot service in time.
+    - cron: '17 6 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  install:
+    name: Install from requirements.txt and import
+    # windows-latest, not ubuntu: Rhema is a Windows application, and its audio
+    # and Win32 paths are what a contributor actually installs against.
+    runs-on: windows-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          # Deliberately NO pip cache. A cache would serve previously resolved
+          # wheels and could mask the very drift this job exists to surface.
+
+      - name: Install from requirements.txt
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # The most fragile dependency by far: RealtimeSTT is installed from a
+      # branch on our fork, not from PyPI. If that branch is renamed, deleted or
+      # force-pushed, every fresh clone silently loses offline model loading -
+      # the app keeps working but starts contacting Hugging Face on each launch,
+      # with no error explaining why. No version bound can protect against that,
+      # so assert it directly.
+      - name: Verify RealtimeSTT came from the fork, with its patch
+        run: |
+          python -c "import json, importlib.metadata as md; d = md.distribution('realtimestt'); url = json.loads(d.read_text('direct_url.json'))['url']; print('source:', url); assert 'TopGradeTech/RealtimeSTT' in url, 'RealtimeSTT did not come from the fork: ' + url"
+          python -c "import inspect, RealtimeSTT.transcription_engines.faster_whisper_engine as fw; src = inspect.getsource(fw); print('engine_options references:', src.count('engine_options')); assert 'engine_options' in src, 'faster_whisper adapter lacks the engine_options patch - offline startup will silently regress'"
+
+      - name: Import the application
+        run: python -c "import main; print('import OK, version', __import__('version').APP_VERSION)"
+
+      - name: Run smoke checks
+        run: python scripts/smoke_check.py
+
+      # Informational, and never fails the job: shows what actually resolved
+      # versus what releases are built from, so even a green run tells you how
+      # far the contributor environment has moved.
+      - name: Report drift against requirements.lock
+        if: always()
+        run: python scripts/report_drift.py

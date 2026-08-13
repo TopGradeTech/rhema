@@ -28,21 +28,62 @@ The rest of this README is for running from source or contributing.
    sudo apt update
    sudo apt install -y python3-tk portaudio19-dev
    ```
-3. If you plan to run RealtimeSTT or Local NLLB on an NVIDIA GPU, install the NVIDIA driver, CUDA Toolkit 12.x, and cuDNN 9.x for CUDA 12 first. CPU mode does not require these GPU libraries.
-4. The Local NLLB model may download the first time it is used. After it is cached, it can run offline.
-5. Install dependencies (this pulls RealtimeSTT from our fork via git, so `git`
-   must be on your PATH — see the note in `requirements.txt` for why the fork is
-   required rather than optional):
+3. Install dependencies. Both files pull RealtimeSTT from our fork via git, so
+   `git` must be on your PATH — see the note in `requirements.txt` for why the
+   fork is required rather than optional.
+
+   **Recommended — the exact set releases are built from:**
+   ```
+   pip install -r requirements.lock
+   ```
+   Read that file's header first: its `torch` is a CUDA build that is not on the
+   default PyPI index, so CPU-only users need the one substitution it describes.
+
+   **Or, the loose set (latest of everything):**
    ```
    pip install -r requirements.txt
    ```
-   To instead reproduce the exact dependency set a released build was made from,
-   use `pip install -r requirements.lock` and read that file's header first — the
-   pinned `torch` is a CUDA build that is not on the default PyPI index.
-6. Run the app:
+   This resolves whatever is current, which is usually fine but is not what any
+   release was tested against. A weekly CI job (`.github/workflows/deps.yml`)
+   installs this way and reports how far it has drifted.
+4. The speech and translation models download the first time they are used.
+   After they are cached, the app runs fully offline.
+5. Run the app:
    ```
    python main.py
    ```
+
+### Running on a GPU
+
+Optional — Rhema works on CPU, just further behind the speaker. The important
+thing to know is that **two separate engines need GPU support, and they get it
+differently**:
+
+| Engine | Used for | How it gets CUDA |
+| --- | --- | --- |
+| `torch` | Translation (NLLB) | Bundled in the CUDA wheel |
+| `faster-whisper` → CTranslate2 | Speech recognition | **System** cuBLAS + cuDNN 9 |
+
+So a CUDA build of `torch` on its own accelerates *translation only*. Worse, the
+app's device check uses `torch.cuda.is_available()` as a proxy for both engines,
+so it will report `cuda` while transcription is quietly still on CPU. Install
+the system libraries too:
+
+1. NVIDIA driver.
+2. **CUDA Toolkit 12.x** — provides cuBLAS for CTranslate2.
+3. **cuDNN 9.x for CUDA 12** — also for CTranslate2. This is the step most often
+   missed, and its absence is what causes the mismatch above.
+4. Install a CUDA `torch`, replacing the CPU one. Releases are built on cu124:
+   ```
+   pip install torch torchaudio --index-url https://download.pytorch.org/whl/cu124
+   ```
+5. In the app, run **File > Hardware Autodetect**. It reads your available VRAM,
+   sets both devices to CUDA, and picks model sizes that fit.
+6. If the libraries are installed but not found, set **Options > Advanced > GPU
+   Runtime** to your CUDA `bin` directory. That registers it via
+   `os.add_dll_directory`, so you do not have to modify `PATH`.
+
+Roughly 4–6 GB of VRAM is a comfortable target.
 
 ## Speech-to-Text: RealtimeSTT
 

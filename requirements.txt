@@ -4,9 +4,19 @@ ttkbootstrap
 faster-whisper
 transformers
 sentencepiece
-# CPU-only (default): torch
-# CUDA 12.1 (GPU): pip install torch --index-url https://download.pytorch.org/whl/cu121
-# CUDA 11.8 (GPU): pip install torch --index-url https://download.pytorch.org/whl/cu118
+# Plain `torch` here resolves to the CPU-only build from PyPI, which is the
+# right default: it works everywhere and needs no CUDA install.
+#
+# For GPU, install a CUDA build INSTEAD, after installing this file. Releases
+# are built against cu124, so that is the best-tested choice:
+#   pip install torch torchaudio --index-url https://download.pytorch.org/whl/cu124
+#
+# IMPORTANT: a CUDA torch alone only accelerates translation (NLLB). Speech
+# recognition runs on faster-whisper -> CTranslate2, which bundles no CUDA of
+# its own and needs the NVIDIA driver plus CUDA Toolkit 12.x and cuDNN 9.x for
+# CUDA 12 installed on the system. Install those first, or transcription
+# silently stays on CPU (or fails) while the app still reports "cuda", because
+# the device check uses torch as a proxy for both engines. See the README.
 torch
 # RealtimeSTT — local real-time transcription with dual VAD + two-pass models.
 #
