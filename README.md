@@ -85,6 +85,35 @@ the system libraries too:
 
 Roughly 4–6 GB of VRAM is a comfortable target.
 
+#### AMD GPUs are not supported out of the box
+
+GPU acceleration here is **NVIDIA/CUDA only**. On an AMD card Rhema still runs,
+but on CPU — it will not use the GPU at all, and the Device dropdowns will not
+offer a working GPU option. Same for Apple Silicon: CTranslate2 has no Metal
+backend, so there is no GPU path there either.
+
+This is a packaging gap rather than a design decision, and it is not
+insurmountable if someone wants to try:
+
+- AMD publishes ROCm PyTorch wheels for Windows (public preview, Radeon RX
+  7000/9000 and some Ryzen AI APUs) at `repo.radeon.com`.
+- Upstream CTranslate2 now publishes ROCm Windows wheels too, though there is an
+  open issue about a `libhipblas.dll` vs `hipblas.dll` naming mismatch against
+  the installable HIP SDK.
+- Usefully, `torch.cuda.is_available()` returns `True` on ROCm builds, so
+  `_resolve_stt_device` / `_resolve_local_nllb_device` would need no code
+  changes — AMD support is mostly a matter of swapping those two wheels.
+
+The reason it is not wired up is that nobody has tested it, and there is a nasty
+failure mode if you get it half right: a ROCm `torch` paired with a CUDA
+CTranslate2 makes the device gate report `cuda` while speech recognition fails,
+because the gate trusts torch as a proxy for both engines. If you do try it,
+swap **both** wheels, and please report what happens.
+
+ZLUDA (the CUDA-on-AMD translation layer) was evaluated and is **not** the route
+to take — its PyTorch support is immature, and CTranslate2, which needs both
+cuBLAS and cuDNN 9, is not on its roadmap at all.
+
 ## Speech-to-Text: RealtimeSTT
 
 RealtimeSTT runs two faster-whisper models locally:
