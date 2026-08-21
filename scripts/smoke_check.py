@@ -19,7 +19,7 @@
 Deliberately imports nothing outside the standard library, so this runs in a
 bare CI container in seconds without installing torch. It cannot verify the
 app actually works - live speech in, correct translation out, on the right
-monitor is still a manual check (see CLAUDE.md). What it does catch is the
+monitor is still a manual check (see ARCHITECTURE.md). What it does catch is the
 class of mistake that is invisible locally and only surfaces after a release:
 a syntax error in a rarely-imported mixin, a version bumped in one file but
 not the other, or a requirements file that no longer parses.

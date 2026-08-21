@@ -7,7 +7,7 @@ name: smoke
 #
 # What this cannot do is verify Rhema actually works - live audio in,
 # correct translation out, on the right monitor - which stays a manual check
-# (see CLAUDE.md). It exists to catch the mistakes that look fine locally
+# (see ARCHITECTURE.md). It exists to catch the mistakes that look fine locally
 # and only surface after an installer has shipped.
 
 on:

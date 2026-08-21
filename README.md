@@ -251,5 +251,4 @@ All bundled dependencies are permissively licensed (MIT, Apache-2.0, BSD) and co
 ## Development notes
 
 - There is no automated test suite. `python scripts/smoke_check.py` runs the same fast checks CI does (syntax across all files, version file sync, requirements parsing); it is stdlib-only and installs nothing. Real verification means running the app and speaking into it.
-- Architecture and conventions are documented in `CLAUDE.md`, which is written as onboarding for both human and AI contributors.
-- Rhema was built collaboratively with [Claude Code](https://claude.com/claude-code); commits co-authored by Claude are marked as such in the git history.
+- Architecture and conventions are documented in [ARCHITECTURE.md](ARCHITECTURE.md) — worth reading before changing anything, since several decisions look arbitrary until you know what they cost to get wrong.
