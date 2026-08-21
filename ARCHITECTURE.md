@@ -103,3 +103,11 @@ Releases up to and including v1.1.4 were published to a separate `TopGradeTech/r
 - Use ASCII-only edits unless the file already uses Unicode.
 - Keep changes scoped to the mixin that owns the concern; avoid large refactors unless requested.
 - Do not commit or share API keys. If one appears in files, notify the user.
+- Run `python scripts/smoke_check.py` before pushing. It is stdlib-only and takes a second, and it catches the mistakes that are invisible locally — a syntax error in a rarely-imported mixin, `version.py` and `installer.iss` drifting apart, an unparseable requirements file.
+
+## Branches and commits
+- **Work on `development`.** It is the default target for changes.
+- **Do not push to `main` directly.** Promote work by opening a pull request from `development` into `main`; CI runs on the pull request before it merges.
+- `main` should still be advanced at each release rather than left far behind — the weekly dependency-drift check (`.github/workflows/deps.yml`) only runs from the default branch, so a stale `main` means that check is quietly testing stale requirements.
+- **Write commit messages explaining *why*, not just what.** The history here is used as documentation; several fixes are only comprehensible from the reasoning recorded in the message.
+- **Do not add co-author trailers or tool attribution** to commit messages, pull request bodies, or release notes.

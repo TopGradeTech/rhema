@@ -30,3 +30,7 @@ build/
 
 # Crash artifacts from MSYS/Git-Bash
 *.stackdump
+
+# Local-only notes and per-machine editor/agent config: project-scoped but
+# never published. Generic patterns on purpose.
+*.local.md
