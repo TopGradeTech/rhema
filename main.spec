@@ -94,12 +94,23 @@ realtimestt_datas = [
 # this file via sys._MEIPASS at runtime - was never actually bundled
 # before, so that link has been broken in every packaged build to date.
 doc_datas = [("README.md", ".")]
+# ttkbootstrap 2.x ships real asset files that 1.x did not: an icon font
+# (assets/icons/bootstrap.ttf) plus the element PNGs its themes draw
+# rounded widgets from. They are read from the package directory at Style()
+# construction, so a build without them dies on the very first line of the
+# UI - FileNotFoundError on bootstrap.ttf out of ttkb.Style(), before any
+# window exists and with nothing written to the app's own logs. A source
+# checkout can't reveal this: the files are simply present on disk there.
+# The element PNGs matter twice over, since _surface_bootstyle recolors
+# them per container background.
+ttkbootstrap_datas = collect_data_files("ttkbootstrap")
 
 a = Analysis(
     ['main.py'],
     pathex=realtimestt_pathex,
     binaries=[],
-    datas=faster_whisper_datas + silero_vad_datas + tcl_tk_datas + realtimestt_datas + doc_datas,
+    datas=faster_whisper_datas + silero_vad_datas + tcl_tk_datas + realtimestt_datas
+    + doc_datas + ttkbootstrap_datas,
     hiddenimports=['tkinter', 'tkinter.ttk', '_tkinter'] + realtimestt_hiddenimports,
     hookspath=['pyinstaller_hooks'],
     hooksconfig={},
