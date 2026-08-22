@@ -215,6 +215,10 @@ class SettingsMixin:
             data.get("cuda_directory", self.cuda_directory)
         )
         self.settings_geometry = data.get("settings_geometry", self.settings_geometry)
+        self.settings_maximized = self._coerce_bool(
+            data.get("settings_maximized", self.settings_maximized),
+            default=self.settings_maximized,
+        )
         self.options_geometry = data.get("options_geometry", self.options_geometry)
         self.options_maximized = self._coerce_bool(
             data.get("options_maximized", self.options_maximized),
@@ -439,7 +443,17 @@ class SettingsMixin:
     def save_settings(self):
         if self.settings_window is not None and self.settings_window.winfo_exists():
             try:
-                self.settings_geometry = self.settings_window.geometry()
+                state = self.settings_window.state()
+                if state == "zoomed":
+                    self.settings_maximized = True
+                elif state == "normal":
+                    # Same reasoning as the Options block below: a zoomed
+                    # window's .geometry() is the full-monitor bounding box,
+                    # so capturing it unconditionally (as this did) both lost
+                    # the "was maximized" fact and overwrote the only usable
+                    # restore size with a value that isn't one.
+                    self.settings_maximized = False
+                    self.settings_geometry = self.settings_window.geometry()
             except Exception:
                 pass
         if self.options_window is not None and self.options_window.winfo_exists():
@@ -514,6 +528,7 @@ class SettingsMixin:
             "monitor_device": monitor_device,
             "monitor_origin": monitor_origin,
             "settings_geometry": self.settings_geometry,
+            "settings_maximized": self.settings_maximized,
             "options_geometry": self.options_geometry,
             "options_maximized": self.options_maximized,
             "settings_monitor_index": self.settings_monitor_index,

@@ -1101,11 +1101,13 @@ class SettingsUIMixin:
         self._video_scan_popup_status_var = None
 
     def _apply_settings_geometry(self, settings_window):
-        # Small and non-maximized on purpose: the Controller only shows
-        # Preview + status now (everything else lives in the Options
+        # Small and non-maximized only as a *default*: the Controller shows
+        # just Preview + status now (everything else lives in the Options
         # dialog - see _apply_options_geometry), so it doesn't need the
-        # tall, maximized footprint the old single-window layout did.
-        settings_window.geometry("700x820")
+        # tall, maximized footprint the old single-window layout did. A
+        # size or maximized state the user chose themselves still wins over
+        # that default - same treatment Options gets.
+        settings_window.geometry(self.settings_geometry or "700x820")
         settings_window.minsize(520, 620)
         settings_window.update_idletasks()
         geometry_monitor_index = self._monitor_index_from_saved_settings_geometry(
@@ -1114,6 +1116,10 @@ class SettingsUIMixin:
         if self._settings_window_requires_reposition(geometry_monitor_index):
             self._position_settings_window(settings_window)
         self._move_settings_window_to_selected_monitor()
+        if self.settings_maximized:
+            # Last on purpose: both helpers above set an explicit geometry,
+            # which would knock the window straight back out of zoomed.
+            self._maximize_settings_window(settings_window)
 
     def _apply_options_geometry(self, options_window):
         # Restores the last real (non-maximized) size/position saved

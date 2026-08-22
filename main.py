@@ -425,6 +425,7 @@ class TranslationApp(
         self._output_snapshot_raw_image = None
         self._output_snapshot_after_id = None
         self.settings_geometry = None
+        self.settings_maximized = False
         self.options_geometry = None
         self.options_maximized = True
         self.settings_monitor_index = 0
@@ -724,6 +725,21 @@ class TranslationApp(
         watchdog = _threading.Timer(3.0, _watchdog_force_exit)
         watchdog.daemon = True
         watchdog.start()
+
+        # Persist window geometry/maximized state on the way out. Until this
+        # was added, save_settings() only ran on Apply (plus audio-device
+        # change and Hardware Autodetect), so resizing or maximizing either
+        # window and then just closing the app silently discarded it - the
+        # window layout is the one thing here the user adjusts without ever
+        # touching Apply. Placed after the watchdog is armed so a stuck
+        # write cannot wedge the close, and before any teardown so both
+        # windows can still be asked for their state. Only already-applied
+        # self.* state is serialized (save_settings never reads the Tk
+        # vars), so this cannot commit edits left pending without Apply.
+        try:
+            self.save_settings()
+        except Exception:
+            pass
 
         self.listening = False
         try:
