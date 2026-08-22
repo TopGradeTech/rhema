@@ -1,6 +1,10 @@
 # -------------------------------------------------------------------------
-# requirements.lock - the EXACT dependency set the shipped v1.1.4 Windows
-# installer was built and verified against (Python 3.12, Windows 11).
+# requirements.lock - the dependency set this working tree resolves to,
+# captured on Python 3.12 / Windows 11 while APP_VERSION was 1.1.5.
+#
+# It matches a shipped installer only if it was regenerated as part of
+# that release. Regenerating mid-cycle - after a deliberate dependency
+# change - makes it describe the intended NEXT build, not the last one.
 #
 # This is a record, not the install spec. requirements.txt stays the loose,
 # human-edited list; this file exists so a build can be reproduced, and so
@@ -76,7 +80,7 @@ pyinstaller-hooks-contrib==2026.6
 pyinstaller==6.21.0
 pywin32-ctypes==0.2.3
 PyYAML==6.0.3
-RealtimeSTT @ git+https://github.com/TopGradeTech/RealtimeSTT.git@6f4b4f492c45b62f0c649ebaec2972e56618489f
+RealtimeSTT @ git+https://github.com/TopGradeTech/RealtimeSTT.git@f4a7ac75d2d47809d5e684c1de13884d6ada9edd
 regex==2026.5.9
 requests==2.34.2
 rich==15.0.0
@@ -97,7 +101,7 @@ torch==2.6.0+cu124
 torchaudio==2.6.0+cu124
 tqdm==4.68.3
 transformers==5.12.1
-ttkbootstrap==1.20.4
+ttkbootstrap==2.2.2
 typer==0.25.1
 typing_extensions==4.15.0
 urllib3==2.7.0

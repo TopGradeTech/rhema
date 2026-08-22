@@ -1467,7 +1467,7 @@ class SettingsUIMixin:
         """
         dark = self.ui_theme == "dark"
         try:
-            self.style.theme_use("darkly" if dark else "flatly")
+            self.style.theme_use("bootstrap-dark" if dark else "bootstrap-light")
         except Exception:
             pass
         self.apply_dark_title_bar(self.root, dark=dark)

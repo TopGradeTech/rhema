@@ -21,6 +21,7 @@ doubled backslashes before Python saw them, so '\\Scripts\\activate' became
 '\a' (a bell char) and mangled the header.
 """
 import io
+import os
 import re
 import subprocess
 import sys
@@ -51,10 +52,35 @@ pkgs.sort(key=str.lower)
 ACTIVATE = ".venv" + chr(92) + "Scripts" + chr(92) + "activate"
 CONT = " " + chr(92)  # trailing line-continuation backslash
 
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
+def _app_version():
+    """Read APP_VERSION by parsing version.py as text.
+
+    Deliberately not an import: this script must keep working even if
+    version.py ever grows an import of its own.
+    """
+    try:
+        text = io.open(os.path.join(ROOT, "version.py"), encoding="utf-8").read()
+        for line in text.splitlines():
+            if line.strip().startswith("APP_VERSION"):
+                return line.split("=", 1)[1].strip().strip('"').strip("'")
+    except Exception:
+        pass
+    return "unknown"
+
+
 HEADER = [
     "# " + "-" * 73,
-    "# requirements.lock - the EXACT dependency set the shipped v1.1.4 Windows",
-    "# installer was built and verified against (Python 3.12, Windows 11).",
+    "# requirements.lock - the dependency set this working tree resolves to,",
+    "# captured on Python 3.12 / Windows 11 while APP_VERSION was "
+    + _app_version()
+    + ".",
+    "#",
+    "# It matches a shipped installer only if it was regenerated as part of",
+    "# that release. Regenerating mid-cycle - after a deliberate dependency",
+    "# change - makes it describe the intended NEXT build, not the last one.",
     "#",
     "# This is a record, not the install spec. requirements.txt stays the loose,",
     "# human-edited list; this file exists so a build can be reproduced, and so",
