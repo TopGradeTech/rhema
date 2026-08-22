@@ -318,7 +318,7 @@ class TranslationApp(
         self.ui_font_family = self.pick_font_family(
             ["Segoe UI", "SF Pro Text", "Inter", "Noto Sans", self.font_family]
         )
-        self.style = ttkb.Style(theme="flatly")
+        self.style = ttkb.Style(theme="bootstrap-light")
         self.style.configure(
             "primary.TButton",
             background="#5B8FF7",
