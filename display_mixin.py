@@ -424,7 +424,12 @@ class DisplayMixin:
                         stream = self._close_audio_level_stream_handle(stream)
                         pa = self._close_audio_level_pyaudio(pa)
                         current_key = None
-                    self.audio_level_target = 0.0
+                    # Deliberately does NOT zero audio_level_target here any
+                    # more: _realtime_stt_on_recorded_chunk is feeding it
+                    # from the recorder's own stream, and zeroing it on this
+                    # loop's 100ms cadence would just fight that feed.
+                    # Silence still falls to zero on its own - see the
+                    # staleness decay in _update_audio_level_meter.
                     time.sleep(0.1)
                     continue
                 device_index = self._resolve_audio_level_device_index()
