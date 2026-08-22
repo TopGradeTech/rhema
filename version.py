@@ -20,4 +20,4 @@ installer.iss's MyAppVersion on every release - the two aren't linked
 by tooling, so keeping them in sync is a manual step.
 """
 
-APP_VERSION = "1.1.5"
+APP_VERSION = "1.1.6"
