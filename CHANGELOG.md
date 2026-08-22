@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.1.6] - 2026-08-21
+
+### Fixed
+- **The Controller window now comes back the size you left it, including maximized.** It previously reopened at a fixed small size no matter what: the saved geometry was captured even while the window was maximized, which records the full-monitor bounding box rather than a usable restore size, and nothing recorded that it had been maximized at all.
+- **The status area's Latency reading works again with translation turned off.** Finalized speech goes straight to the display on that path, bypassing the queue that supplies the timing stamp, so the reading had nothing to report and sat at `--`.
+- **The Audio level meter works again.** It had no source of audio at all: its own microphone stream deliberately stands down whenever the speech recognizer is running, to avoid two streams competing for one device, and the recognizer is now the only engine and always running. It now reads the levels from the recognizer's own audio instead, so there is still only one microphone stream open.
+- **The loading bar no longer draws a white square border in light theme.** The rounded ends were being blended against the UI toolkit's own background colour instead of the panel the bar actually sits on. Dark theme was never smoother - its colours simply happened to match closely enough to hide the same seam.
+
+### Changed
+- **Window size, position, and maximized state are saved when the app closes**, not only when Apply is clicked. Window layout is the one thing adjusted without ever touching Apply, so those changes were previously discarded. Settings edits left pending without pressing Apply are still not committed by this.
+
 ## [1.1.5] - 2026-08-13
 
 ### Changed
