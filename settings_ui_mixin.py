@@ -320,7 +320,12 @@ class SettingsUIMixin:
             fg=settings_fg,
             font=(self.ui_font_family, 14, "bold"),
         ).pack(pady=(0, 14))
-        progress = ttkb.Progressbar(center, mode="indeterminate", length=320)
+        progress = ttkb.Progressbar(
+            center,
+            mode="indeterminate",
+            length=320,
+            bootstyle=self._surface_bootstyle(settings_bg),
+        )
         progress.pack()
         progress.start(15)
 
@@ -1037,7 +1042,12 @@ class SettingsUIMixin:
         # Indeterminate (bouncing) bar, matching the startup loading overlay -
         # a determinate fill bar here visibly stalls between per-device probe
         # callbacks (each cv2 probe can take a while), which reads as frozen.
-        progress = ttkb.Progressbar(frame, mode="indeterminate", length=280)
+        progress = ttkb.Progressbar(
+            frame,
+            mode="indeterminate",
+            length=280,
+            bootstyle=self._surface_bootstyle(palette["section_bg"]),
+        )
         progress.pack()
         progress.start(15)
         # No "0 of N" here: the real probe count isn't known until the scan's
@@ -1461,6 +1471,25 @@ class SettingsUIMixin:
             "accent_hover": "#4A7FEA",
             "accent_soft": "#EEF4FF",
         }
+
+    def _surface_bootstyle(self, container_bg):
+        """bootstyle naming the exact background a ttk widget sits on.
+
+        ttkbootstrap 2.x composites a widget's rounded, anti-aliased raster
+        assets against its "surface" - which defaults to the *theme's* own
+        background (#ffffff light / #212529 dark), not the background of the
+        tk container the widget was actually placed in. This app colors its
+        raw tk containers from _settings_palette() instead, and light-mode
+        window_bg (#C6CAD1) is far darker than white, so a Progressbar
+        dropped on it drew its edge pixels blended toward white - a bright
+        square halo around the track. Dark mode looked clean only by
+        coincidence: #1E2228 happens to sit within ~4/channel of #212529.
+
+        Naming the real container color as an @#hex surface makes the edges
+        blend into it in both themes, and lets the recessed trough shade
+        derive from it rather than from a white it isn't sitting on.
+        """
+        return "@%s" % str(container_bg or "").strip().lower()
 
     def _apply_ui_theme(self):
         """Applies self.ui_theme ("light"/"dark") to the ttk theme and to
@@ -3943,7 +3972,12 @@ class SettingsUIMixin:
         # determinate fill bar here would visibly stall for long stretches
         # (a multi-GB download or model load has no reliable byte-progress
         # signal to drive it), which reads as frozen.
-        progress = ttkb.Progressbar(frame, mode="indeterminate", length=280)
+        progress = ttkb.Progressbar(
+            frame,
+            mode="indeterminate",
+            length=280,
+            bootstyle=self._surface_bootstyle(palette["section_bg"]),
+        )
         progress.pack()
         progress.start(15)
         status_var = tk.StringVar(value=message)

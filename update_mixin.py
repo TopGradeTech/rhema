@@ -188,7 +188,12 @@ class UpdateMixin:
         ).pack(pady=(0, 10))
         progress_var = tk.DoubleVar(value=0.0)
         progress = ttkb.Progressbar(
-            frame, mode="determinate", length=280, variable=progress_var, maximum=100.0
+            frame,
+            mode="determinate",
+            length=280,
+            variable=progress_var,
+            maximum=100.0,
+            bootstyle=self._surface_bootstyle(palette["section_bg"]),
         )
         progress.pack()
         status_var = tk.StringVar(value="Connecting...")

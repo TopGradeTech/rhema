@@ -1,6 +1,12 @@
 speechrecognition
 pyaudio
-ttkbootstrap
+# ttkbootstrap 2.1+ specifically: the app names its own container colors as
+# @#hex "surface" bootstyles (see _surface_bootstyle) so ttkbootstrap
+# composites rounded widget edges against the real background instead of the
+# theme's, and 2.x renamed the themes this app asks for (bootstrap-light /
+# bootstrap-dark). An older 2.0 would not error - it warns and silently falls
+# back, reappearing as the cosmetic halo this pin exists to prevent.
+ttkbootstrap>=2.1
 faster-whisper
 transformers
 sentencepiece
