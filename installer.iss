@@ -71,7 +71,15 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"
 
 [Files]
-Source: "dist\Rhema\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+; Excludes exist because running dist\Rhema\Rhema.exe to verify a build -
+; which is the only way to catch a packaging fault, since neither a source
+; run nor CI touches the built exe - makes the app write its own
+; settings.json, logs\ and realtimesst.log right next to that exe. Without
+; these, the next ISCC run packages the builder's machine config into every
+; install: their audio device label and monitor device IDs. It also breaks
+; first-run behavior, because a settings.json that already exists means the
+; app no longer looks like a first launch and skips Hardware Autodetect.
+Source: "dist\Rhema\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs; Excludes: "settings.json,*.log,logs"
 
 [Icons]
 Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
