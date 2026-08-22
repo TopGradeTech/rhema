@@ -80,7 +80,7 @@ pyinstaller-hooks-contrib==2026.6
 pyinstaller==6.21.0
 pywin32-ctypes==0.2.3
 PyYAML==6.0.3
-RealtimeSTT @ git+https://github.com/TopGradeTech/RealtimeSTT.git@f4a7ac75d2d47809d5e684c1de13884d6ada9edd
+RealtimeSTT @ git+https://github.com/TopGradeTech/RealtimeSTT.git@beb00a1c29a11f4c56da9fc4ccab78a2e0bbdd24
 regex==2026.5.9
 requests==2.34.2
 rich==15.0.0

@@ -236,6 +236,14 @@ class RealtimeSttMixin:
             "on_vad_detect_start": self._realtime_stt_on_listening,
             "on_recording_start": self._realtime_stt_on_recording_start,
             "on_transcription_start": self._realtime_stt_on_transcription_start,
+            # The Audio level meter's own PyAudio stream stands down while
+            # this recorder is active (two input streams on one device
+            # starves transcription - see _audio_level_stream_loop), which
+            # left the meter with no source at all once RealtimeSTT became
+            # the only speech engine. Tapping the recorder's chunks instead
+            # costs no extra stream and meters exactly the audio the
+            # recognizer actually hears.
+            "on_recorded_chunk": self._realtime_stt_on_recorded_chunk,
         }
         if lang and len(lang) == 2 and lang.isalpha():
             kwargs["language"] = lang
@@ -249,6 +257,22 @@ class RealtimeSttMixin:
         """Fires when RealtimeSTT starts waiting for voice (was "speak now")."""
         try:
             self.update_status(self.STATUS_LISTENING)
+        except Exception:
+            pass
+
+    def _realtime_stt_on_recorded_chunk(self, chunk):
+        # Fires for every chunk the recording worker dequeues, speech or
+        # not, so the meter stays live during silence too. This runs inline
+        # on that worker (RealtimeSTT's start_callback_in_new_thread
+        # defaults to False), and _audio_rms/_audio_max are pure-Python
+        # per-sample loops, so it is throttled to just under the meter's
+        # own 50ms render tick: computing a level the meter will never draw
+        # would only tax the thread that has to keep up with transcription.
+        if time.time() - float(self.audio_level_last_update or 0.0) < 0.04:
+            return
+        # 16-bit mono is what RealtimeSTT normalizes its capture to.
+        try:
+            self._capture_audio_level_from_raw(chunk, 2)
         except Exception:
             pass
 
@@ -474,14 +498,31 @@ class RealtimeSttMixin:
         if self.translation_enabled:
             self._enqueue_flushed_sentences_from_buffer(cleaned, overlap_words=0)
         else:
+            # Stamped here so the Latency readout works with translation off
+            # too. The translation path gets its "queued_at" from
+            # _build_sentence_payload; this path bypasses the sentence queue
+            # entirely, so with no meta of its own _record_chunk_latency
+            # bailed on its "if not started_at" guard and the label sat at
+            # its initial "Latency: --" forever.
+            latency_meta = {
+                "queued_at": time.time(),
+                "stt_confidence": self.last_faster_whisper_confidence,
+            }
             try:
-                self.root.after(0, lambda t=cleaned: self._realtime_stt_show(t))
+                self.root.after(
+                    0,
+                    lambda t=cleaned, m=latency_meta: self._realtime_stt_show(t, m),
+                )
             except Exception:
                 pass
 
-    def _realtime_stt_show(self, text):
+    def _realtime_stt_show(self, text, latency_meta=None):
         """Direct commit to display — used when translation is off. Large
         multi-sentence finals are metered out sentence-by-sentence instead
         of dumping at once (see _meter_display_commit)."""
         self.live_line = ""
-        self._meter_display_commit(text, stage="realtime_stt_commit")
+        self._meter_display_commit(
+            text,
+            latency_meta=latency_meta,
+            stage="realtime_stt_commit",
+        )
