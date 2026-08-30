@@ -1,4 +1,4 @@
-"""Port test: Rhema's Controller in pywebview, driven by the real engine code.
+r"""Port test: Rhema's Controller in pywebview, driven by the real engine code.
 
 This is not a port. It is the smallest thing that answers the two questions a
 port depends on, using real code and a real microphone rather than a mock:
