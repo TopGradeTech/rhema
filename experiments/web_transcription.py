@@ -332,6 +332,33 @@ class HeadlessEngine(
     def _local_nllb_ready_for_translation(self):
         return True
 
+    def prewarm_translation(self):
+        """Load NLLB onto the GPU before any real speech arrives.
+
+        The app does this at startup via _execute_local_nllb_test, behind the
+        settings window's loading overlay. This test bypasses settings_ui_mixin
+        entirely, so without an equivalent the first utterance pays the whole
+        model load - and because _translate_with_local_nllb times from before
+        _get_local_nllb_components, that load is reported as translation time.
+        Measured on this machine: 12,727 ms for the first utterance against
+        194-340 ms for every one after it, with the intervening speech piling
+        up behind it in the queue.
+        """
+        self.push_state({"type": "status", "text": "Loading translation model..."})
+        started = time.time()
+        try:
+            # A real translation is what actually populates local_nllb_model,
+            # and no overrides are passed so it warms the configured direction
+            # rather than some other language pair's tokenizer setup.
+            self._translate_with_local_nllb("Hello.")
+        except Exception as exc:
+            self.push_state({"type": "status", "text": f"Translation model failed: {exc}"})
+            return
+        self.push_state({
+            "type": "status",
+            "text": f"Translation model ready ({int((time.time() - started) * 1000)} ms)",
+        })
+
     def _local_nllb_model_kwargs(self, local_files_only=True):
         return {"local_files_only": bool(local_files_only)}
 
@@ -511,6 +538,10 @@ def main():
         engine.translation_thread.start()
         engine.display_thread = Thread(target=engine._display_worker, daemon=True)
         engine.display_thread.start()
+        # Prewarm on its own thread so the NLLB load overlaps RealtimeSTT's
+        # rather than running after it - both are slow, both are mostly
+        # transfer, and there is 24 GB of VRAM for the pair of them.
+        Thread(target=engine.prewarm_translation, daemon=True).start()
         engine._start_realtime_stt()
 
     def on_closed():
