@@ -82,8 +82,7 @@ monitor_var/settings_monitor_var (single "Monitor 1" placeholder - real
 multi-monitor placement is a separate, not-yet-tackled item, see
 project_pywebview_port_progress.md).
 
-Out of scope, deliberately, same reasons as the original version of this
-file:
+Still out of scope, deliberately:
 - theme_var: applying it calls _apply_ui_theme() (a real ttkbootstrap Style
   + real Tk root/title-bar API) and schedules _rebuild_settings_windows()
   (destroys/recreates real Controller/Options Tk windows) - output-window
@@ -93,17 +92,46 @@ file:
   engine has no VideoCaptureMixin (start_video_feed/stop_video_feed are
   no-op stubs), so wiring them would just flip inert bookkeeping - the real
   version of these lives in web_video_overlay.py instead.
-- enable_translation_var: flipping translation on reaches
-  _start_local_nllb_cache_check(prompt_if_missing=True), a real cache probe/
-  ~2.5 GB download prompt an unattended port test should not trigger.
-  translation_enabled is forced False in __init__ (see the comment there)
-  and stays False for the whole session, so the OTHER NLLB settings below
-  can be wired safely: _apply_translation_vars only reaches the cache-check
-  call in its final `if self.translation_enabled:` line, never entered here.
-- start_with_windows_var (writes HKCU\...\Run) and cuda_directory_var
-  (validates a real directory and reconfigures the process's DLL search
-  path) both write real, persistent state outside this repo - left
-  unwired, same as before.
+
+**Real side effects, wired with the user present (2026-08-31) rather than
+left unwired forever:** the three fields above needed genuinely attended
+handling, not just an unattended-test caution -
+
+- enable_translation_var: flipping this on reaches
+  _start_local_nllb_cache_check(prompt_if_missing=True) -> a real cache
+  probe, then (if cached) _start_local_nllb_verification() ->
+  _execute_local_nllb_test(), the same real model-load-plus-test-translation
+  web_transcription.py already proved safe standalone. Every model in
+  NLLB_MODEL_NAME_OPTIONS was already cached locally (~/.cache/huggingface)
+  on the machine this was tested on, confirmed before wiring this, so the
+  real ~2.5GB download path (_start_local_nllb_download, only reached if
+  the cache-check comes back missing) was never actually exercised here -
+  a real port still needs to handle that path attended, separately.
+  translation_enabled now defaults to False (moved before load_settings(),
+  not forced back to False after it) so a real prior Apply is honored on
+  the next run instead of being reset every time. Needed several
+  previously-missing NLLB status-tracking attributes (nllb_status,
+  local_nllb_status_var, app_startup_ready, etc. - see __init__) that this
+  minimal engine never had a reason to set before; app_startup_ready=True
+  short-circuits the one part of that real code path (the startup-overlay/
+  hardware-autodetect tail) this engine has no equivalent for.
+- start_with_windows_var: writes a real HKCU\...\Run\Rhema value via the
+  real _set_windows_startup_enabled() (needs WINDOWS_RUN_KEY_PATH/
+  WINDOWS_STARTUP_VALUE_NAME, copied from main.py's TranslationApp onto
+  this class - nothing in this minimal engine's mixin chain defined them).
+  Verified with a real winreg read afterward that toggling it on writes
+  the expected command line and toggling it back off removes the value
+  entirely - this test does not leave a stray autostart entry behind.
+- cuda_directory_var: turned out lower-risk than the "writes real,
+  persistent state outside this repo" framing this file used to give it -
+  _configure_cuda_dll_search_path() only calls the process-local
+  os.add_dll_directory() (no persistent state of its own beyond
+  cuda_directory itself landing in the scratch settings.json, same as
+  every other field here); the real caution is just that
+  _apply_advanced_vars raises ValueError for a path that doesn't exist.
+  Tested against a real, existing CUDA toolkit directory on the test
+  machine and confirmed the validation error path separately with a
+  nonexistent one.
 
 Setup: .venv\Scripts\pip.exe install pywebview   (see web_transcription.py)
 
@@ -176,11 +204,28 @@ LOGGING_MODE_OPTIONS = [
 ]
 
 
+class _NullConfigurable:
+    """Stands in for a real Tk widget in the couple of spots real,
+    unmodified engine code calls .config(...) on one unconditionally
+    (update_status()'s status_label) - this minimal engine has no such
+    widget, and this avoids a harmless-but-noisy logged exception on
+    FakeRoot's callback thread every time that code path runs for real."""
+
+    def config(self, **_kwargs):
+        pass
+
+
 class OptionsEngine(OutputEngine):
     """Real DisplayMixin/SettingsUIMixin/SettingsMixin, unmodified. Adds a
     minimal but real vars-dict (genuine tk.Variable/tk.Text objects) and the
     real dirty-tracking context, then exposes set_var()/set_text()/apply()
     for the HTML form to call through pywebview's js_api."""
+
+    # Copied verbatim from main.py's TranslationApp - _set_windows_startup_enabled
+    # (in logging_mixin.py) reads these off self, and nothing else in this
+    # minimal engine's mixin chain defines them.
+    WINDOWS_RUN_KEY_PATH = r"Software\Microsoft\Windows\CurrentVersion\Run"
+    WINDOWS_STARTUP_VALUE_NAME = "Rhema"
 
     def __init__(self, push_debug, canvas, measurer, pixels_per_inch, var_root):
         super().__init__(push_debug, canvas, measurer, pixels_per_inch)
@@ -219,19 +264,43 @@ class OptionsEngine(OutputEngine):
         self.monitor_index = 0
         self.monitors = self.get_monitors()  # real MonitorMixin enumeration, already Tk-free
 
-        self.load_settings()
-
         # OutputEngine.__init__ defaults translation_enabled=True (that
-        # engine exists to drive a real STT+NLLB pipeline); load_settings()
-        # may have just loaded True again from a prior run of this file.
-        # Forced off here - _apply_translation_vars({})'s "translation is
-        # on" branch reaches _start_local_nllb_cache_check, a real cache
-        # probe/download-prompt this test promises not to trigger (see the
-        # module docstring), and one that needs nllb_status/
-        # local_nllb_status_var/etc this minimal engine never initializes.
-        # This holds even now that the OTHER nllb_* fields below are wired -
-        # see the module docstring's "Out of scope" section.
+        # engine exists to drive a real STT+NLLB pipeline) - overridden to
+        # the real app's own opt-in-by-default False here, BEFORE
+        # load_settings(), so a real prior Apply of enable_translation_var
+        # (see below) is honored on the next run of this file instead of
+        # being forced back off every time.
         self.translation_enabled = False
+        # The rest of the real NLLB status-tracking state
+        # _apply_translation_vars's tail (now reachable - see
+        # enable_translation_var below) touches - real main.py defaults,
+        # copied verbatim, not invented.
+        self.nllb_status = "Not selected"
+        self.nllb_status_detail = ""
+        self.nllb_download_in_progress = False
+        self.nllb_check_in_progress = False
+        self.nllb_model_loaded = False
+        self.nllb_last_error = ""
+        self.nllb_ready_config = None
+        self.local_nllb_last_unready_notice = 0.0
+        self.local_nllb_status_var = None
+        self.local_nllb_message_var = None
+        self.local_nllb_download_button = None
+        # app_startup_ready=True short-circuits _check_startup_ready (called
+        # via _mark_startup_translation_ready, at the end of a real NLLB
+        # cache-check/verification pass) before it ever touches the
+        # startup-loading-overlay/menu-bar/hardware-autodetect machinery
+        # this minimal engine has no equivalent for - not a real gate here,
+        # this engine never shows a startup overlay to begin with.
+        self.app_startup_ready = True
+        self.startup_translation_ready = False
+        # update_status()'s root.after(0, ...) callback touches this - a
+        # real Tk Label doesn't exist here, so a no-op stand-in avoids a
+        # (harmless but noisy) logged exception on FakeRoot's callback
+        # thread every time a real NLLB status update fires.
+        self.status_label = _NullConfigurable()
+
+        self.load_settings()
 
         # _apply_display_vars calls these unconditionally; VideoCaptureMixin
         # isn't mixed in here (video is a separate experiment), so they need
@@ -323,10 +392,16 @@ class OptionsEngine(OutputEngine):
                 master=v, value=self.realtime_stt_silero_sensitivity
             ),
         }
-        # Deliberately excludes enable_translation_var - see the module
-        # docstring's "Out of scope" section. Every other field here is safe
-        # to apply with translation forced off.
+        # enable_translation_var now wired too - see the module docstring's
+        # "Real side effects, wired with the user present" section. The
+        # NLLB model this defaults to (and every size in
+        # NLLB_MODEL_NAME_OPTIONS) is already cached locally on the machine
+        # this was tested on, so flipping this on reaches a real cache-check
+        # -> real model load (verified with a real test translation), not a
+        # download - _start_local_nllb_download only runs if the cache-check
+        # comes back missing.
         self.translation_vars = {
+            "enable_translation_var": tk.BooleanVar(master=v, value=self.translation_enabled),
             "local_nllb_model_name_var": tk.StringVar(
                 master=v,
                 value=nllb_model_name_rev_map.get(
@@ -342,13 +417,16 @@ class OptionsEngine(OutputEngine):
             "local_nllb_target_lang_map": nllb_target_lang_map,
             "local_nllb_max_chars_var": tk.IntVar(master=v, value=self.local_nllb_max_chars),
         }
-        # Deliberately excludes start_with_windows_var/cuda_directory_var -
-        # see the module docstring's "Out of scope" section.
+        # start_with_windows_var/cuda_directory_var now wired too - see the
+        # module docstring's "Real side effects, wired with the user
+        # present" section.
         self.advanced_vars = {
             "logging_mode_var": tk.StringVar(
                 master=v, value=logging_mode_rev_map.get(self.logging_mode, "Normal")
             ),
             "logging_mode_map": logging_mode_map,
+            "start_with_windows_var": tk.BooleanVar(master=v, value=self.start_with_windows),
+            "cuda_directory_var": tk.StringVar(master=v, value=self.cuda_directory),
             "bad_words_en_text": tk.Text(v),
             "bad_words_es_text": tk.Text(v),
             "custom_vocab_en_text": tk.Text(v),
@@ -472,6 +550,9 @@ class OptionsEngine(OutputEngine):
             "local_nllb_target_lang": self.local_nllb_target_lang,
             "local_nllb_max_chars": self.local_nllb_max_chars,
             "logging_mode": self.logging_mode,
+            "start_with_windows": self.start_with_windows,
+            "cuda_directory": self.cuda_directory,
+            "nllb_status": self.nllb_status,
             "bad_words_en": sorted(self.bad_words_by_lang.get("en", [])),
             "bad_words_es": sorted(self.bad_words_by_lang.get("es", [])),
             "custom_vocab_en": self.custom_vocabulary_by_lang.get("en", []),
@@ -574,15 +655,19 @@ input[type=checkbox]{width:16px;height:16px;accent-color:var(--accent)}
   <div class="row"><label>Realtime model</label><select id="realtimeModel"></select></div>
   <div class="row"><label>Voice sensitivity</label><input type="number" id="silero" min="0.1" max="0.9" step="0.05"></div>
 
-  <h2>Translation (Local NLLB) &mdash; stays off in this test</h2>
+  <h2>Translation (Local NLLB)</h2>
+  <div class="row"><label>Enable translation</label><input type="checkbox" id="enableTranslation"></div>
   <div class="row"><label>Model name</label><select id="nllbModel"></select></div>
   <div class="row"><label>Device</label>
     <select id="nllbDevice"><option value="cpu">CPU</option><option value="cuda">CUDA</option><option value="auto">Auto</option></select></div>
   <div class="row"><label>Target language</label><select id="nllbTargetLang"></select></div>
   <div class="row"><label>Max chars per chunk</label><input type="number" id="nllbMaxChars" min="250" max="20000" step="250"></div>
+  <div id="nllbStatus" style="color:#9CA3AF;font-size:12px;margin:4px 0 8px">nllb status: --</div>
 
   <h2>Advanced</h2>
   <div class="row"><label>Logging mode</label><select id="loggingMode"></select></div>
+  <div class="row"><label>Start app when Windows starts</label><input type="checkbox" id="startWithWindows"></div>
+  <div class="row"><label>CUDA directory</label><input type="text" id="cudaDirectory" style="width:280px"></div>
   <div class="row"><label>Bad words (English, comma-separated)</label></div>
   <textarea id="badWordsEn" rows="2"></textarea>
   <div class="row"><label>Bad words (Spanish, comma-separated)</label></div>
@@ -615,11 +700,14 @@ const fields = {
   finalModel: {varName: 'realtime_stt_final_model_var', kind: 'str'},
   realtimeModel: {varName: 'realtime_stt_realtime_model_var', kind: 'str'},
   silero: {varName: 'realtime_stt_silero_var', kind: 'float'},
+  enableTranslation: {varName: 'enable_translation_var', kind: 'bool'},
   nllbModel: {varName: 'local_nllb_model_name_var', kind: 'str'},
   nllbDevice: {varName: 'local_nllb_device_var', kind: 'str'},
   nllbTargetLang: {varName: 'local_nllb_target_lang_var', kind: 'str'},
   nllbMaxChars: {varName: 'local_nllb_max_chars_var', kind: 'int'},
   loggingMode: {varName: 'logging_mode_var', kind: 'str'},
+  startWithWindows: {varName: 'start_with_windows_var', kind: 'bool'},
+  cudaDirectory: {varName: 'cuda_directory_var', kind: 'str'},
 }
 const textFields = {
   badWordsEn: 'bad_words_en_text',
@@ -688,15 +776,17 @@ applyBtn.addEventListener('click', async () => {
     'show_interim_text=' + v.show_interim_text + '  stt_device=' + v.stt_device + '  source_lang=' + v.source_lang,
     'final_model=' + v.realtime_stt_final_model + '  realtime_model=' + v.realtime_stt_realtime_model
       + '  silero=' + v.realtime_stt_silero_sensitivity,
-    'translation_enabled=' + v.translation_enabled + ' (forced off by this test)'
+    'translation_enabled=' + v.translation_enabled + '  nllb_status=' + v.nllb_status
       + '  nllb_model=' + v.local_nllb_model_name + '  nllb_device=' + v.local_nllb_device
       + '  nllb_target_lang=' + v.local_nllb_target_lang + '  nllb_max_chars=' + v.local_nllb_max_chars,
-    'logging_mode=' + v.logging_mode,
+    'logging_mode=' + v.logging_mode + '  start_with_windows=' + v.start_with_windows
+      + '  cuda_directory=' + v.cuda_directory,
     'bad_words_en=[' + v.bad_words_en.join(', ') + ']',
     'bad_words_es=[' + v.bad_words_es.join(', ') + ']',
     'custom_vocab_en=[' + v.custom_vocab_en.join(', ') + ']',
     'custom_vocab_es=[' + v.custom_vocab_es.join(', ') + ']',
   ]
+  document.getElementById('nllbStatus').textContent = 'nllb status: ' + v.nllb_status
   if (result.restart_requested_changed){
     lines.push('STT restart flag changed -> _realtime_stt_restart_requested is now ' + result.restart_requested
       + ' (the same flag the real Apply button sets; nothing services it here since RealtimeSTT is not running)')
@@ -725,8 +815,12 @@ window.addEventListener('pywebviewready', async () => {
   document.getElementById('interim').checked = v.show_interim_text
   document.getElementById('device').value = v.stt_device
   document.getElementById('silero').value = v.realtime_stt_silero_sensitivity
+  document.getElementById('enableTranslation').checked = v.translation_enabled
   document.getElementById('nllbDevice').value = v.local_nllb_device
   document.getElementById('nllbMaxChars').value = v.local_nllb_max_chars
+  document.getElementById('nllbStatus').textContent = 'nllb status: ' + v.nllb_status
+  document.getElementById('startWithWindows').checked = v.start_with_windows
+  document.getElementById('cudaDirectory').value = v.cuda_directory
   document.getElementById('badWordsEn').value = v.bad_words_en.join(', ')
   document.getElementById('badWordsEs').value = v.bad_words_es.join(', ')
   document.getElementById('vocabEn').value = v.custom_vocab_en.join(', ')
