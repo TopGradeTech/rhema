@@ -196,11 +196,18 @@ def _font_css(font):
 
 
 class WebCanvas:
-    """The only Tk Canvas surface DisplayMixin/SettingsUIMixin actually
-    touch: winfo_width/height, create_text, coords, itemconfigure, delete.
-    Backed by a real <canvas> in the fullscreen window - draw ops are queued
-    and flushed in one evaluate_js round trip per render_text() call rather
+    """The only Tk Canvas surface DisplayMixin/SettingsUIMixin (and, when
+    mixed in, VideoCaptureMixin) actually touch: winfo_width/height,
+    create_text, create_image, coords, itemconfigure, delete. Backed by a
+    real <canvas> in the fullscreen window - draw ops are queued and
+    flushed in one evaluate_js round trip per render_text() call rather
     than one per item, since a page can hold up to LINES_NO_VIDEO_MAX items.
+
+    Item ids are handed out in creation order and the JS side iterates its
+    item registry by numeric id, which (like Tk's own stacking order) means
+    whatever was created first paints first - so as long as callers create
+    background items (video, caption bar) before foreground ones (caption
+    text), the stacking comes out right with no separate z-index to manage.
     """
 
     def __init__(self, window, width, height):
@@ -231,6 +238,14 @@ class WebCanvas:
         })
         return item_id
 
+    def create_image(self, x, y, anchor="nw", state="normal", **_ignored):
+        item_id = self._next_id
+        self._next_id += 1
+        self._ops.append({
+            "op": "create_image", "id": item_id, "x": x, "y": y, "anchor": anchor, "state": state,
+        })
+        return item_id
+
     def coords(self, item_id, x, y):
         self._ops.append({"op": "coords", "id": item_id, "x": x, "y": y})
 
@@ -244,6 +259,11 @@ class WebCanvas:
             entry["font"] = _font_css(kw["font"])
         if "state" in kw:
             entry["state"] = kw["state"]
+        if "image" in kw:
+            # A data: URI (or "" to clear) - the real code always passes an
+            # ImageTk.PhotoImage here instead, which has no browser
+            # equivalent; see web_video_overlay.py for what builds this.
+            entry["image"] = kw["image"] or ""
         self._ops.append(entry)
 
     def delete(self, item_id):
@@ -625,18 +645,35 @@ function lineHeight(font){
 function applyCanvasOps(ops){
   for (const op of ops){
     if (op.op === 'create'){
-      items[op.id] = {x: op.x, y: op.y, anchor: op.anchor || 'nw', text: op.text || '',
+      items[op.id] = {type: 'text', x: op.x, y: op.y, anchor: op.anchor || 'nw', text: op.text || '',
                        fill: op.fill || '#fff', font: op.font || "16px 'Arial'", state: 'normal'}
+    } else if (op.op === 'create_image'){
+      items[op.id] = {type: 'image', x: op.x, y: op.y, anchor: op.anchor || 'nw',
+                       state: op.state || 'normal', img: null, ready: false, src: null}
     } else if (op.op === 'coords'){
       const it = items[op.id]
       if (it){ it.x = op.x; it.y = op.y }
     } else if (op.op === 'config'){
       const it = items[op.id]
       if (!it) continue
-      if (op.text !== undefined) it.text = op.text
-      if (op.fill !== undefined) it.fill = op.fill
-      if (op.font !== undefined && op.font) it.font = op.font
-      if (op.state !== undefined) it.state = op.state
+      if (it.type === 'image'){
+        if (op.state !== undefined) it.state = op.state
+        if (op.image !== undefined && op.image !== it.src){
+          it.src = op.image
+          if (!op.image){
+            it.img = null; it.ready = false
+          } else {
+            const im = new Image()
+            im.onload = () => { it.img = im; it.ready = true; repaint() }
+            im.src = op.image
+          }
+        }
+      } else {
+        if (op.text !== undefined) it.text = op.text
+        if (op.fill !== undefined) it.fill = op.fill
+        if (op.font !== undefined && op.font) it.font = op.font
+        if (op.state !== undefined) it.state = op.state
+      }
     } else if (op.op === 'delete'){
       delete items[op.id]
     }
@@ -644,16 +681,35 @@ function applyCanvasOps(ops){
   repaint()
 }
 
+function anchoredXY(it, w, h){
+  // Tk anchors: the point given to create_image/create_text is the named
+  // corner (or edge midpoint) of the item, not always its top-left -
+  // "sw" (the caption bar, docked to the bottom) sits ABOVE its y
+  // coordinate, for instance.
+  let x = it.x, y = it.y
+  if (it.anchor.includes('e')) x -= w
+  else if (!it.anchor.includes('w')) x -= w / 2
+  if (it.anchor.includes('s')) y -= h
+  else if (!it.anchor.includes('n')) y -= h / 2
+  return [x, y]
+}
+
 function repaint(){
   ctx.clearRect(0, 0, canvas.width, canvas.height)
   ctx.textAlign = 'left'
   for (const id in items){
     const it = items[id]
-    if (it.state !== 'normal' || !it.text) continue
-    ctx.font = it.font
-    ctx.fillStyle = it.fill
-    ctx.textBaseline = (it.anchor === 'sw' || it.anchor === 'se') ? 'bottom' : 'top'
-    ctx.fillText(it.text, it.x, it.y)
+    if (it.state !== 'normal') continue
+    if (it.type === 'image'){
+      if (!it.ready) continue
+      const [x, y] = anchoredXY(it, it.img.width, it.img.height)
+      ctx.drawImage(it.img, x, y)
+    } else if (it.text){
+      ctx.font = it.font
+      ctx.fillStyle = it.fill
+      ctx.textBaseline = it.anchor.includes('s') ? 'bottom' : (it.anchor.includes('n') ? 'top' : 'middle')
+      ctx.fillText(it.text, it.x, it.y)
+    }
   }
 }
 
