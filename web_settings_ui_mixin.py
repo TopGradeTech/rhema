@@ -43,12 +43,10 @@ exit_fullscreen()) - those two now come from WebMonitorMixin
 against pywebview windows instead of Tk geometry.
 
 The Preview/Output Snapshot feature is wired up end-to-end (JS polling, an
-img tag, a js_api call) but its actual capture function is DISABLED - see
-_capture_output_snapshot_data_uri's own comment for why: the planned
-bbox/BitBlt technique was verified live to capture whatever window
-actually occludes that screen region, not the Output window specifically,
-which is a real information-disclosure risk on an ordinary desktop, not an
-edge case. No replacement technique has been implemented yet.
+img tag, a js_api call) - see _capture_output_snapshot_data_uri's own
+comment for the real occlusion-independent capture technique (Windows
+Graphics Capture, via the windows-capture package) and the two unsafe
+techniques (bbox/BitBlt, PrintWindow) it replaces.
 """
 
 import json
@@ -123,10 +121,10 @@ h2{margin:0;font-size:16px;color:#F3F4F6}
 #meterTrack{flex:1;height:12px;background:#1A1A1A;border:1px solid #3A3A3A;border-radius:3px;overflow:hidden}
 #meterFill{height:100%;width:0;background:#5B8FF7;transition:width 70ms linear}
 #buttonRow{display:flex;gap:10px;margin-top:10px}
-button{flex:1;padding:8px 10px;border:none;border-radius:5px;background:#5B8FF7;color:#fff;
+#buttonRow button{padding:8px 16px;border:none;border-radius:5px;background:#5B8FF7;color:#fff;
   font:inherit;font-weight:600;cursor:pointer}
-button:hover{background:#4A7FEA}
-button:active{background:#3E6FD8}
+#buttonRow button:hover{background:#4A7FEA}
+#buttonRow button:active{background:#3E6FD8}
 #startupOverlay{position:fixed;inset:0;background:#1E2228;display:flex;align-items:center;
   justify-content:center;flex-direction:column;z-index:1000}
 #startupOverlay.hidden{display:none}
@@ -636,6 +634,7 @@ class WebSettingsUIMixin(SettingsLogicMixin):
             browser_view = BrowserView.instances.get(self._controller_window.uid)
             if browser_view is not None:
                 browser_view.set_window_menu(self._controller_menu)
+                self._style_controller_menu()
         except Exception:
             pass
         # Same first-run/recommendation-changed Hardware Autodetect the
@@ -648,6 +647,150 @@ class WebSettingsUIMixin(SettingsLogicMixin):
             self.root.after(300, lambda: self._run_hardware_autodetect_from_menu(
                 self._transcription_vars, self._translation_vars
             ))
+
+    def _style_controller_menu(self):
+        """Recolors the Controller's native WinForms MenuStrip (File/About)
+        to match self.ui_theme.
+
+        pywebview's set_window_menu (platforms/winforms.py) always builds a
+        plain WinForms.MenuStrip with the default light
+        ToolStripProfessionalRenderer - it has no theme hook of its own, so
+        with a dark Controller body and a dark title bar
+        (apply_dark_title_bar), the menu bar was the one piece of chrome
+        that stayed hard-coded light. Reuses _settings_palette()
+        (settings_logic_mixin.py) instead of its own colors so this tracks
+        whatever the Tk app's real dark/light palette is, not a separate
+        guess. Only called once at startup (right after set_window_menu) -
+        self.ui_theme isn't live-switchable in this port yet (see
+        build_web_options's own docstring: theme_var is a known, separate,
+        still-open gap), so there's nothing to re-apply later.
+
+        Reach-past-the-public-API by design, matching apply_dark_title_bar/
+        set_window_menu's own caller: pywebview exposes no menu styling
+        hook, so this walks browser_view.Controls for the MenuStrip
+        set_window_menu just added and restyles it directly via .NET.
+        Marshaled through invoke_on_ui_thread since WinForms controls are
+        apartment-bound to the thread that created them - direct access
+        from elsewhere previously caused real apartment-threading errors
+        (see webview_bridge.py's own docstring).
+        """
+        if self._controller_window is None:
+            return
+        try:
+            from webview.platforms.winforms import BrowserView
+            from webview_bridge import invoke_on_ui_thread
+
+            def _apply():
+                browser_view = BrowserView.instances.get(self._controller_window.uid)
+                if browser_view is None:
+                    return
+
+                import clr  # noqa: F401
+                clr.AddReference("System.Windows.Forms")
+                clr.AddReference("System.Drawing")
+                import System.Windows.Forms as WinForms
+                from System.Drawing import Color, Rectangle, SolidBrush
+
+                menu_strip = None
+                for control in browser_view.Controls:
+                    if isinstance(control, WinForms.MenuStrip):
+                        menu_strip = control
+                        break
+                if menu_strip is None:
+                    return
+
+                palette = self._settings_palette()
+
+                def _c(hex_str):
+                    hex_str = hex_str.lstrip("#")
+                    return Color.FromArgb(
+                        int(hex_str[0:2], 16),
+                        int(hex_str[2:4], 16),
+                        int(hex_str[4:6], 16),
+                    )
+
+                bar_bg = _c(palette["window_bg"])
+                panel_bg = _c(palette["section_bg"])
+                text_fg = _c(palette["text"])
+                border = _c(palette["border"])
+                hover_bg = _c(palette["accent_soft"])
+                hover_border = _c(palette["accent"])
+
+                class _ThemedColorTable(WinForms.ProfessionalColorTable):
+                    def __init__(self):
+                        WinForms.ProfessionalColorTable.__init__(self)
+
+                    MenuStripGradientBegin = property(lambda self: bar_bg)
+                    MenuStripGradientEnd = property(lambda self: bar_bg)
+                    ToolStripDropDownBackground = property(lambda self: panel_bg)
+                    ImageMarginGradientBegin = property(lambda self: panel_bg)
+                    ImageMarginGradientMiddle = property(lambda self: panel_bg)
+                    ImageMarginGradientEnd = property(lambda self: panel_bg)
+                    MenuBorder = property(lambda self: border)
+                    MenuItemBorder = property(lambda self: hover_border)
+                    MenuItemSelected = property(lambda self: hover_bg)
+                    MenuItemSelectedGradientBegin = property(lambda self: hover_bg)
+                    MenuItemSelectedGradientEnd = property(lambda self: hover_bg)
+                    MenuItemPressedGradientBegin = property(lambda self: hover_bg)
+                    MenuItemPressedGradientEnd = property(lambda self: hover_bg)
+                    SeparatorDark = property(lambda self: border)
+                    SeparatorLight = property(lambda self: border)
+
+                menu_strip.BackColor = bar_bg
+                menu_strip.ForeColor = text_fg
+                menu_strip.Renderer = WinForms.ToolStripProfessionalRenderer(
+                    _ThemedColorTable()
+                )
+
+                def _style_items(items):
+                    for item in items:
+                        try:
+                            item.ForeColor = text_fg
+                        except Exception:
+                            pass
+                        if (
+                            isinstance(item, WinForms.ToolStripMenuItem)
+                            and item.DropDownItems.Count
+                        ):
+                            dd = item.DropDown
+                            dd.BackColor = panel_bg
+
+                            # The ImageMarginGradient* overrides above don't
+                            # actually reach this strip in practice - the
+                            # left-hand gutter ToolStripDropDownMenu reserves
+                            # for item icons/checkmarks (dd.Padding.Left,
+                            # ~33px even with no icons in use) stayed
+                            # white-on-click regardless, a real, confirmed
+                            # WinForms/ColorTable gap for this control, not a
+                            # bug in the override values themselves. Painting
+                            # over just that strip after the base paint (a
+                            # Paint event handler, not a Renderer subclass -
+                            # subclassing ToolStripProfessionalRenderer itself
+                            # was tried and confirmed to break ALL of this
+                            # dropdown's custom coloring, not just fix the
+                            # margin) is the actual fix. margin_dd/margin_bg
+                            # default-argument capture avoids the classic
+                            # Python closure-in-loop bug (every handler
+                            # otherwise closing over the same loop variable
+                            # and only ever painting the LAST item's margin).
+                            def _paint_margin(sender, e, margin_dd=dd, margin_bg=panel_bg):
+                                width = margin_dd.Padding.Left or 24
+                                brush = SolidBrush(margin_bg)
+                                try:
+                                    e.Graphics.FillRectangle(
+                                        brush, Rectangle(0, 0, width, margin_dd.Height)
+                                    )
+                                finally:
+                                    brush.Dispose()
+
+                            dd.Paint += _paint_margin
+                            _style_items(item.DropDownItems)
+
+                _style_items(menu_strip.Items)
+
+            invoke_on_ui_thread(self._controller_window, _apply)
+        except Exception:
+            pass
 
     # ------------------------------------------------------------------ #
     # File menu actions - real as of Phase 6.
@@ -804,46 +947,114 @@ class WebSettingsUIMixin(SettingsLogicMixin):
             self.exit_fullscreen()
 
     # ------------------------------------------------------------------ #
-    # Preview / Output Snapshot - DISABLED, not just unimplemented.
+    # Preview / Output Snapshot.
     #
-    # The original plan for this (bbox/BitBlt against the Output window's
-    # own real HWND, resolved via webview_bridge.hwnd_for/real_window_rect
-    # rather than any PID/title lookup) was verified LIVE during this
-    # phase to be unsafe on a real, actively-used desktop: ImageGrab.grab(
-    # bbox=...) captures whatever is actually visible on screen at those
-    # coordinates, not the specific window the HWND was resolved from.
-    # Confirmed twice, independently, against small self-contained test
-    # windows whose HWND/rect were resolved correctly and unambiguously:
-    # both captures returned a DIFFERENT, unrelated real window that
-    # happened to be occluding that screen region at the moment of
-    # capture, once showing real client/business data and once showing
-    # what looked like the user's own ticketing system - neither of which
-    # this app had any business capturing. This is not an edge case to
-    # guard against with a try/except; it's the technique's actual,
-    # ordinary behavior whenever anything else overlaps that screen
-    # region, which is entirely normal on a real desktop.
+    # Two techniques were tried and rejected before this one - both real,
+    # confirmed findings, not theoretical:
     #
-    # The real Tk app's own technique (ImageGrab.grab(window=self.root.
-    # winfo_id()), i.e. PrintWindow) does NOT have this problem - it asks
-    # a SPECIFIC window to render itself, occlusion-independent - but
-    # experiments/web_controller_window.py already found PrintWindow
-    # returns solid black against a real WebView2 surface. So neither
-    # technique this port has tried is both safe AND working against
-    # WebView2 content, and no further screen-capture technique was
-    # attempted this session given what the first two attempts exposed.
-    # A real fix needs a genuinely occlusion-independent capture path (the
-    # Windows DWM Thumbnail API - the same mechanism Alt+Tab/Task View use
-    # - is the most promising untried option) before this feature ships,
-    # not a quick swap back to bbox capture.
+    # - bbox/BitBlt (ImageGrab.grab(bbox=...) against the Output window's
+    #   real HWND rect) captures whatever is actually visible on screen at
+    #   those coordinates, not the specific window the rect was resolved
+    #   from. Confirmed twice, independently, against small self-contained
+    #   test windows whose HWND/rect were resolved correctly and
+    #   unambiguously: both captures returned a DIFFERENT, unrelated real
+    #   window that happened to be occluding that screen region at the
+    #   moment of capture, once showing real client/business data and once
+    #   what looked like the user's own ticketing system - neither of which
+    #   this app had any business capturing. Not an edge case to guard
+    #   against with a try/except; it's the technique's ordinary behavior
+    #   whenever anything else overlaps that screen region, which is
+    #   entirely normal on a real desktop.
+    # - PrintWindow (the real Tk app's own technique, ImageGrab.grab(
+    #   window=self.root.winfo_id())) IS occlusion-independent - it asks a
+    #   specific window to render itself rather than reading screen pixels
+    #   - but experiments/web_controller_window.py found it returns solid
+    #   black against a real WebView2 surface, so it doesn't work here.
     #
-    # Left wired up end-to-end (JS polling, the img tag, the js_api call)
-    # so only this one function needs to change once a safe technique is
-    # found - the Controller window just shows its "Capturing snapshot..."
-    # placeholder indefinitely in the meantime, which is honest about the
-    # feature being unavailable rather than silently risky.
+    # The actual fix: Windows Graphics Capture (the same per-window,
+    # occlusion-independent, DWM-composited capture API OBS/Xbox Game
+    # Bar/Snipping Tool's "Window" mode use), via the `windows-capture`
+    # package (Rust-backed, targets this exact API - see requirements.txt).
+    # Captures by HWND, so it's immune to both failure modes above: no
+    # screen-region readback (nothing else can be captured by accident,
+    # regardless of what's on top of the Output window) and no WebView2-
+    # specific blackout (it reads the DWM-composited surface, not the
+    # window's own GDI device context, which is exactly what PrintWindow
+    # against a WebView2 surface can't do).
+    #
+    # start_free_threaded() (not the plain blocking start()) is deliberate:
+    # it returns a CaptureControl immediately, before any frame has
+    # arrived, so the done.wait() timeout below can always call
+    # control.stop() to tear the native capture session down cleanly even
+    # if a frame never arrives (window closed mid-capture, capture session
+    # failed silently) - the blocking start() only exposes a stop() that's
+    # constructed fresh inside on_frame_arrived, so there'd be nothing to
+    # call if no frame ever showed up.
     # ------------------------------------------------------------------ #
     def _capture_output_snapshot_data_uri(self):
-        return None
+        if self._window is None:
+            return None
+        try:
+            from windows_capture import WindowsCapture
+            import cv2
+            import base64
+            import threading
+
+            from webview_bridge import hwnd_for
+
+            hwnd = hwnd_for(self._window)
+            if not hwnd:
+                return None
+
+            result = {}
+            done = threading.Event()
+
+            capture = WindowsCapture(
+                cursor_capture=False,
+                draw_border=False,
+                window_hwnd=hwnd,
+            )
+
+            @capture.event
+            def on_frame_arrived(frame, capture_control):
+                result["frame"] = frame.convert_to_bgr()
+                capture_control.stop()
+                done.set()
+
+            @capture.event
+            def on_closed():
+                done.set()
+
+            control = capture.start_free_threaded()
+            if not done.wait(timeout=3.0):
+                control.stop()
+                return None
+
+            frame = result.get("frame")
+            if frame is None:
+                return None
+
+            image = frame.frame_buffer
+            # Matches the real Tk app's own _render_output_snapshot_thumbnail
+            # (settings_ui_mixin.py) capping at 1.0x native resolution to
+            # avoid upscaling blur - only ever shrinks, and only shrinks a
+            # real (usually fullscreen-sized) Output frame down to a size
+            # that keeps the pywebview JS<->Python IPC payload small for a
+            # snapshot polled every 15s (pollPreview, in this file's own
+            # CONTROLLER_HTML).
+            max_width = 640
+            if frame.width > max_width:
+                scale = max_width / frame.width
+                image = cv2.resize(
+                    image, (max_width, max(1, int(frame.height * scale)))
+                )
+
+            ok, buf = cv2.imencode(".png", image)
+            if not ok:
+                return None
+            return "data:image/png;base64," + base64.b64encode(buf).decode("ascii")
+        except Exception:
+            return None
 
     # ------------------------------------------------------------------ #
     # Phase 6: chrome hooks the shared SettingsLogicMixin methods call by
@@ -1132,7 +1343,24 @@ class WebSettingsUIMixin(SettingsLogicMixin):
         )
         self._options_window = window
         self._options_dirty_ctx["options_window"] = window
-        window.events.closing += self.on_closing
+        # Real behavior is settings_ui_mixin.py's
+        # options_window.protocol("WM_DELETE_WINDOW", options_window.withdraw)
+        # - Options is a sub-dialog reached from Controller > File > Options,
+        # not one of the app's two main windows, so closing it should only
+        # hide it (build_web_options's own reuse branch above shows/restores
+        # the same window next time rather than rebuilding it). Wiring this
+        # to self.on_closing like the Controller/Output windows do would
+        # tear down the whole app just from closing this dialog.
+        # A closing handler must return exactly False to cancel the close
+        # (webview/event.py's Event.set() only treats a literal False return
+        # as "cancel" - winforms.py's on_closing then sets args.Cancel);
+        # window.hide's own return value doesn't qualify, so hide-then-
+        # return-False has to be one handler, not window.hide by itself.
+        def _hide_options_window():
+            window.hide()
+            return False
+
+        window.events.closing += _hide_options_window
         window.events.shown += lambda: self.apply_dark_title_bar(
             window, dark=(self.ui_theme == "dark")
         )
@@ -1256,5 +1484,22 @@ class WebSettingsUIMixin(SettingsLogicMixin):
             if self._video_device_label(index) == label:
                 self.video_device_index = index
                 self.save_settings()
+                # Real bug, not just missing polish: _apply_display_vars
+                # (settings_logic_mixin.py, shared with the Tk app) re-
+                # derives video_device_index from display_vars["video_
+                # device_var"] on EVERY Apply - without updating that
+                # StringVar here too, this method's own write above took
+                # effect immediately but then got silently reverted back to
+                # whatever device was selected when Options was first
+                # opened the next time Apply ran (stop_video_feed/
+                # start_video_feed still fired, just against the stale
+                # index) - live symptom: picking OBS's Virtual Camera here,
+                # closing OBS, and still seeing video, because Apply had
+                # already reverted the capture back to the previously
+                # selected physical webcam.
+                if getattr(self, "_display_vars", None) is not None:
+                    video_device_var = self._display_vars.get("video_device_var")
+                    if video_device_var is not None:
+                        video_device_var.set(label)
                 return {"ok": True}
         return {"ok": False}

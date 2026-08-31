@@ -163,6 +163,24 @@ class WebMonitorMixin(MonitorLogicMixin):
         self.move_window_to_monitor(window, self.monitor_index, keep_size=False)
         window.toggle_fullscreen()
         window._rhema_is_fullscreen = True
+        # Real parity gap: monitor_mixin.py's own _apply_custom_fullscreen
+        # sets self.root.attributes("-topmost", bool(self.lock_output_
+        # focus)) at exactly this point (entering fullscreen) - nothing
+        # here ever read self.lock_output_focus at all, so "Lock output
+        # focus" was fully wired through Options (form, persistence,
+        # _apply_display_vars) but never actually applied to the real
+        # window. pywebview's window.on_top is a real public property
+        # (window.py), not a reach-past-the-API call - its setter marshals
+        # to platforms/winforms.py's set_on_top(), which sets the real
+        # Form's TopMost. Matches Tk's own contract too: like
+        # _apply_custom_fullscreen, this only takes effect when (re-)
+        # entering fullscreen, not from a live Apply while already
+        # fullscreen - toggling the checkbox needs a fullscreen exit/
+        # re-enter (Escape/F11 twice) to take effect there too.
+        try:
+            window.on_top = bool(self.lock_output_focus)
+        except Exception:
+            pass
 
     def exit_fullscreen(self):
         window = self._window
@@ -171,3 +189,10 @@ class WebMonitorMixin(MonitorLogicMixin):
         if getattr(window, "_rhema_is_fullscreen", False):
             window.toggle_fullscreen()
             window._rhema_is_fullscreen = False
+        # Mirrors monitor_mixin.py's exit_fullscreen restoring prev_topmost
+        # - the Output window shouldn't stay pinned above every other
+        # window (Controller/Options included) once it's not fullscreen.
+        try:
+            window.on_top = False
+        except Exception:
+            pass

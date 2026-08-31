@@ -15,7 +15,7 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 import time
-from threading import Thread, Lock, Event
+from threading import Thread, Lock, Event, current_thread
 
 import cv2
 from PIL import Image, ImageColor, ImageTk
@@ -50,6 +50,29 @@ _VIDEO_CAPTION_BAR_COLOR = (60, 60, 60)  # RGB gray fallback if bg_color fails t
 _VIDEO_CAPTION_BAR_ALPHA = 0.5  # default opacity; user-adjustable via the Caption Bar Opacity slider
 
 _VIDEO_MIN_RENDER_INTERVAL_MS = 16  # don't bother redrawing faster than ~60fps
+
+# A known real-world MSMF/virtual-camera quirk (OBS Virtual Camera included):
+# after running for a while, cap.read() can keep returning ret=True while
+# silently delivering solid-black frames - the underlying media session
+# stalls without ever surfacing a decode failure. consecutive_failures
+# (below) only ever watched for ret=False, so this went completely
+# undetected: the video layer just went black and stayed black, with
+# nothing to notice or recover from it. A real sermon/live-event frame is
+# never going to average this close to pure black by coincidence, so a
+# sustained near-zero mean brightness is a safe signal to treat as a lost
+# feed, not a legitimate dark scene.
+_VIDEO_BLACK_FRAME_MEAN_THRESHOLD = 3.0
+_VIDEO_BLACK_FRAME_TIMEOUT_S = 3.0
+
+# How long to wait before auto-reconnecting after the worker exits on its
+# own (camera lost, sustained black frames) rather than via a deliberate
+# stop_video_feed() call. Not a retry cap - a source that stays gone just
+# keeps getting retried every _VIDEO_RECONNECT_DELAY_MS, which is the
+# right behavior for a live-event tool (OBS coming back should be picked
+# up without the user having to notice and re-toggle the checkbox); this
+# only throttles the retry rate so a permanently-gone device doesn't
+# spin-retry as fast as the loop can open/fail a capture.
+_VIDEO_RECONNECT_DELAY_MS = 2000
 
 
 def _probe_video_device_names():
@@ -271,6 +294,7 @@ class VideoCaptureMixin:
         if cap is None:
             self.video_status = f"Camera {device_index} not found - start OBS Virtual Camera first"
             self.root.after(0, self._update_video_status_ui)
+            self._finish_video_capture_worker(reconnect=False)
             return
         self.video_status = "Connected - waiting for first frame"
         self.root.after(0, self._update_video_status_ui)
@@ -284,7 +308,14 @@ class VideoCaptureMixin:
             self.video_render_interval_ms = max(
                 _VIDEO_MIN_RENDER_INTERVAL_MS, int(round(1000 / reported_fps))
             )
-        consecutive_failures = 0
+        consecutive_read_failures = 0
+        # None while frames look real; set to the monotonic time the FIRST
+        # near-black frame showed up once _VIDEO_BLACK_FRAME_TIMEOUT_S has
+        # passed since then with every checked frame still black, that's
+        # treated the same as a lost feed (see _VIDEO_BLACK_FRAME_MEAN_
+        # THRESHOLD's own comment for why this check exists at all).
+        black_since = None
+        lost_reason = None
         # cap.get(CAP_PROP_FRAME_WIDTH/HEIGHT) only reports what the driver
         # claims to have negotiated, queried before any frame is decoded -
         # it can be stale or simply wrong for virtual cameras, and won't
@@ -300,20 +331,24 @@ class VideoCaptureMixin:
         # be thrown away anyway, and processing them just burns CPU/GIL the
         # draws need. This also makes the frames that ARE published evenly
         # spaced instead of "whichever ones the loop got to", which is what
-        # steady pacing on screen requires.
+        # steady pacing on screen requires. The black-frame check below
+        # rides along on this same render-interval cadence rather than the
+        # full device rate, for the same reason - it doesn't need to look
+        # at every frame to catch a SUSTAINED black condition, and
+        # checking only the ones already selected for processing keeps the
+        # extra cost negligible.
         last_processed = 0.0
         try:
             while not self._video_stop_event.is_set():
                 ret, frame = cap.read()
                 if not ret:
-                    consecutive_failures += 1
-                    if consecutive_failures > 30:
-                        self.video_status = "Camera feed lost"
-                        self.root.after(0, self._update_video_status_ui)
+                    consecutive_read_failures += 1
+                    if consecutive_read_failures > 30:
+                        lost_reason = "Camera feed lost"
                         break
                     time.sleep(0.1)
                     continue
-                consecutive_failures = 0
+                consecutive_read_failures = 0
                 frame_height, frame_width = frame.shape[:2]
                 last_reported_size = self._report_video_frame_size(
                     (frame_width, frame_height), last_reported_size
@@ -322,6 +357,18 @@ class VideoCaptureMixin:
                 if (now - last_processed) * 1000.0 < self.video_render_interval_ms:
                     continue
                 last_processed = now
+                # Coarse-sampled (every 8th pixel in each dimension, ~1/64
+                # the work of a full-frame mean) mean brightness check -
+                # plenty accurate for "is this frame essentially all
+                # black", and cheap enough to run on every processed frame.
+                if frame[::8, ::8].mean() < _VIDEO_BLACK_FRAME_MEAN_THRESHOLD:
+                    if black_since is None:
+                        black_since = now
+                    elif now - black_since > _VIDEO_BLACK_FRAME_TIMEOUT_S:
+                        lost_reason = "Camera feed lost - source stopped sending frames"
+                        break
+                    continue
+                black_since = None
                 # Letterbox-resize the raw BGR frame first, THEN color
                 # convert - cvtColor on the already-shrunk frame instead of
                 # the full 60fps-source resolution.
@@ -333,6 +380,34 @@ class VideoCaptureMixin:
                     self._video_frame_seq += 1
         finally:
             cap.release()
+        if lost_reason is not None:
+            self.video_status = lost_reason
+            self.root.after(0, self._update_video_status_ui)
+        self._finish_video_capture_worker(reconnect=lost_reason is not None)
+
+    def _finish_video_capture_worker(self, reconnect):
+        """Runs on every _video_capture_worker exit path.
+
+        Clears self._video_capture_thread ONLY if it's still this worker's
+        own thread - stop_video_feed() may already have claimed it and
+        started a newer one (e.g. the user toggled the feed off/on while
+        this one was mid-exit), and clearing unconditionally would stomp
+        that newer thread's own reference out from under it.
+
+        Without this, start_video_feed()'s "already running" guard
+        (self._video_capture_thread is not None) permanently blocked any
+        recovery once a worker exited on its own (camera lost, sustained
+        black frames) - the only way back was manually unchecking and
+        rechecking Show Video Feed. A deliberate stop (stop_video_feed
+        already set _video_stop_event before this runs) does NOT
+        reconnect; only an exit the worker decided on its own does, and
+        only after a short delay so a genuinely gone device doesn't spin-
+        retry as fast as open/fail allows.
+        """
+        if self._video_capture_thread is current_thread():
+            self._video_capture_thread = None
+        if reconnect and not self._video_stop_event.is_set() and self.video_feed_enabled:
+            self.root.after(_VIDEO_RECONNECT_DELAY_MS, self.start_video_feed)
 
     def _report_video_frame_size(self, actual_size, last_reported_size):
         """Update the status label when the decoded frame size changes.
