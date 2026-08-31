@@ -14,10 +14,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-"""Phase 3 of the pywebview port (see the approved port plan): the real
-Output window - real STT+NLLB+caption pipeline, real persisted settings -
-built parallel to main.py/TranslationApp, which keeps working unchanged
-throughout the whole port per the plan's architecture decision.
+"""Phases 3-4 of the pywebview port (see the approved port plan): the real
+Output window - real STT+NLLB+caption pipeline, real video overlay, real
+persisted settings - built parallel to main.py/TranslationApp, which keeps
+working unchanged throughout the whole port per the plan's architecture
+decision.
 
 Deliberately still narrow in scope, matching the plan's own phase
 ordering, not an oversight:
@@ -25,17 +26,19 @@ ordering, not an oversight:
     self.options_window stay None for real, and every real mixin method
     that touches them already guards on that (winfo_exists()-style checks),
     the same way the Tk app behaves before those windows are first built.
-  - The actual video overlay RENDERING (webcam/OBS frame capture and
-    compositing) is still Phase 4's job - VideoCaptureMixin is mixed in
-    unmodified (same as MonitorMixin/SettingsUIMixin below) because
-    DisplayMixin/SettingsUIMixin's shared, unmodified render path
-    (_update_line_items) calls its caption-bar-sizing methods
-    unconditionally whenever real settings have video_feed_enabled=true
-    (discovered live: this dev machine's own settings.json already has it
-    on from earlier testing) - not because Phase 4's own work is done.
-    start_video_feed() is never called here, so no frame ever actually
-    decodes; only the caption-bar-height math runs, which is pure
-    layout arithmetic with no Tk/camera dependency either way.
+  - Video overlay RENDERING is real as of Phase 4 (WebVideoCaptureMixin,
+    web_video_capture_mixin.py) - device enumeration, capture-thread
+    lifecycle, and letterbox math all reused unmodified from
+    VideoCaptureMixin; only the two PhotoImage-coupled methods
+    (_render_video_frame/_update_caption_bar) are overridden, using the
+    data-URI-per-frame approach experiments/web_video_overlay.py already
+    measured as fast enough. Phase 3 originally needed VideoCaptureMixin
+    mixed in anyway (discovered live: this dev machine's own settings.json
+    already has video_feed_enabled=true from earlier testing, and
+    DisplayMixin's shared render path calls its caption-bar-sizing method
+    unconditionally whenever that setting is on) - Phase 4 is what makes
+    start_video_feed() safe to actually call, rather than leaving the
+    frame-capture side dark.
   - No menu bar / global hotkeys yet (the Phase 0 design question of
     JS keydown vs. a low-level hook is Phase 5's to answer).
   - No real per-monitor placement yet (Phase 8, WebMonitorMixin) - this
@@ -74,8 +77,8 @@ from translation_mixin import TranslationMixin
 from text_filter_mixin import TextFilterMixin
 from display_mixin import DisplayMixin
 from realtime_stt_mixin import RealtimeSttMixin
-from video_capture_mixin import VideoCaptureMixin
 from web_messagebox import WebMessageBoxMixin
+from web_video_capture_mixin import WebVideoCaptureMixin
 from webview_bridge import (
     FakeRoot,
     WebCanvas,
@@ -210,7 +213,7 @@ class WebTranslationApp(
     TextFilterMixin,
     DisplayMixin,
     RealtimeSttMixin,
-    VideoCaptureMixin,
+    WebVideoCaptureMixin,
 ):
     def pick_font_family(self, candidates):
         """The real one (main.py) resolves a single installed font name via
@@ -521,6 +524,13 @@ class WebTranslationApp(
         self._start_audio_level_stream_thread()
         self.thread = Thread(target=self.listen_and_translate, daemon=True)
         self.thread.start()
+        # Matches main.py's own __init__ (the _video_scan_in_progress gate
+        # there exists only because open_settings()'s startup camera scan
+        # can race the real device handle - not reachable yet here, since
+        # there's no Options window in this phase to run that scan from).
+        # start_video_feed() itself already no-ops if video_feed_enabled is
+        # false or video_device_index is None, matching real settings.
+        self.start_video_feed()
 
 
 if __name__ == "__main__":
