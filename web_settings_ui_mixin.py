@@ -263,52 +263,58 @@ input[type=checkbox]{width:16px;height:16px;accent-color:var(--accent)}
  background:#3A3F4B;color:#6B7280;cursor:not-allowed}
 #apply.dirty{background:var(--dirty);color:#1E2228;cursor:pointer}
 #status{margin-top:12px;font-size:12px;color:var(--muted);white-space:pre-wrap}
+.help{display:inline-block;margin-left:6px;width:15px;height:15px;border-radius:50%;
+ background:#3A3F4B;color:var(--text);text-align:center;font-size:10px;font-weight:700;
+ line-height:15px;cursor:help;user-select:none}
+#tooltip{position:fixed;background:#111111;color:#fff;border:1px solid #333;
+ padding:4px 6px;font-size:12px;max-width:320px;line-height:1.3;z-index:2000;
+ pointer-events:none;display:none}
 </style></head><body>
 <div class="card">
   <h1>Rhema Options</h1>
 
   <h2>Display</h2>
-  <div class="row"><label>Max caption lines</label><input type="number" id="lines" min="4" max="10"></div>
-  <div class="row"><label>Background color</label><input type="color" id="bg"></div>
+  <div class="row"><label>Max caption lines<span class="help" data-tip="Maximum number of translated lines kept on screen.">?</span></label><input type="number" id="lines" min="4" max="10"></div>
+  <div class="row"><label>Background color<span class="help" data-tip="Background color for the output overlay and preview. Also tints the caption bar behind the video overlay, if enabled.">?</span></label><input type="color" id="bg"></div>
   <div class="row"><label>Lock output window focus</label><input type="checkbox" id="lockFocus"></div>
   <div class="row"><label>Clear display on inactivity</label><input type="checkbox" id="clear"></div>
   <div class="row"><label>&nbsp;&nbsp;...after N seconds</label><input type="number" id="clearSeconds" min="5" max="3600"></div>
   <div class="row"><label>Video overlay enabled</label><input type="checkbox" id="videoEnabled"></div>
-  <div class="row"><label>Camera device</label><select id="videoDevice"></select></div>
-  <div class="row"><label>Caption bar opacity (%)</label><input type="number" id="videoAlpha" min="0" max="100"></div>
+  <div class="row"><label>Camera device<span class="help" data-tip="Camera index for the OBS Virtual Camera. Click Refresh after starting OBS's Virtual Camera if it isn't listed yet.">?</span></label><select id="videoDevice"></select></div>
+  <div class="row"><label>Caption bar opacity (%)<span class="help" data-tip="How solid the bar behind the caption lines looks, using the Background Color above. 0% is fully see-through, 100% is a solid bar.">?</span></label><input type="number" id="videoAlpha" min="0" max="100"></div>
 
   <h2>Audio</h2>
-  <div class="row"><label>Microphone</label><select id="audioDevice"></select></div>
+  <div class="row"><label>Microphone<span class="help" data-tip="Input device used for speech capture.">?</span></label><select id="audioDevice"></select></div>
 
   <h2>Transcription</h2>
   <div class="row"><label>Show live interim text</label><input type="checkbox" id="interim"></div>
-  <div class="row"><label>STT device</label>
+  <div class="row"><label>STT device<span class="help" data-tip="Auto uses CUDA when available, otherwise CPU.">?</span></label>
     <select id="device"><option value="cpu">CPU</option><option value="cuda">CUDA</option><option value="auto">Auto</option></select></div>
   <div class="row"><label>Source language</label>
     <select id="sourceLang"><option value="auto">Auto-detect</option><option value="en">English</option><option value="es">Spanish</option></select></div>
-  <div class="row"><label>Final model</label><select id="finalModel"></select></div>
-  <div class="row"><label>Realtime model</label><select id="realtimeModel"></select></div>
-  <div class="row"><label>Voice sensitivity</label><input type="number" id="silero" min="0.1" max="0.9" step="0.05"></div>
+  <div class="row"><label>Final model<span class="help" data-tip="Accurate faster-whisper model used after each utterance ends. Larger models are more accurate but need more VRAM and take longer per utterance.">?</span></label><select id="finalModel"></select></div>
+  <div class="row"><label>Realtime model<span class="help" data-tip="Fast model used internally every ~0.2s to drive dynamic silence detection. Not shown on screen - kept small so it doesn't compete with the final model for GPU time.">?</span></label><select id="realtimeModel"></select></div>
+  <div class="row"><label>Voice sensitivity<span class="help" data-tip="How easily speech is detected. Lower catches softer/quieter speech; higher ignores background noise better.">?</span></label><input type="number" id="silero" min="0.1" max="0.9" step="0.05"></div>
 
   <h2>Translation (Local NLLB)</h2>
   <div class="row"><label>Enable translation</label><input type="checkbox" id="enableTranslation"></div>
-  <div class="row"><label>Model name</label><select id="nllbModel"></select></div>
-  <div class="row"><label>Device</label>
+  <div class="row"><label>Model name<span class="help" data-tip="Hugging Face model id for local text translation. Larger models translate more accurately but need more VRAM/RAM and disk space, and run slower.">?</span></label><select id="nllbModel"></select></div>
+  <div class="row"><label>Device<span class="help" data-tip="Auto uses CUDA when available, otherwise CPU.">?</span></label>
     <select id="nllbDevice"><option value="cpu">CPU</option><option value="cuda">CUDA</option><option value="auto">Auto</option></select></div>
-  <div class="row"><label>Target language</label>
+  <div class="row"><label>Target language<span class="help" data-tip="Language the translated transcript is produced in. Type to search all 200 languages.">?</span></label>
     <select id="nllbTargetLang"><option value="eng_Latn">English</option><option value="spa_Latn">Spanish</option></select></div>
-  <div class="row"><label>Max chars per chunk</label><input type="number" id="nllbMaxChars" min="250" max="20000" step="250"></div>
+  <div class="row"><label>Max chars per chunk<span class="help" data-tip="Long transcripts are split by paragraph, sentence, or length before translation.">?</span></label><input type="number" id="nllbMaxChars" min="250" max="20000" step="250"></div>
   <div id="nllbStatus" style="color:#9CA3AF;font-size:12px;margin:4px 0 8px">nllb status: --</div>
 
   <h2>Advanced</h2>
-  <div class="row"><label>Logging mode</label><select id="loggingMode"></select></div>
+  <div class="row"><label>Logging mode<span class="help" data-tip="Normal keeps status/error and finalized output logs. Debug adds pipeline traces. Evaluation adds raw transcribed/translated comparison logs. Full enables all logs.">?</span></label><select id="loggingMode"></select></div>
   <div class="row"><label>Start app when Windows starts</label><input type="checkbox" id="startWithWindows"></div>
-  <div class="row"><label>CUDA directory</label><input type="text" id="cudaDirectory" style="width:280px"></div>
-  <div class="row"><label>Bad words (English, comma-separated)</label></div>
+  <div class="row"><label>CUDA directory<span class="help" data-tip="Optional Windows path used to find CUDA Toolkit 12.x and cuDNN 9.x DLLs for local faster-whisper GPU mode. Select the CUDA toolkit folder or its bin folder.">?</span></label><input type="text" id="cudaDirectory" style="width:280px"></div>
+  <div class="row"><label>Bad words (English, comma-separated)<span class="help" data-tip="Words to omit from the output.">?</span></label></div>
   <textarea id="badWordsEn" rows="2"></textarea>
   <div class="row"><label>Bad words (Spanish, comma-separated)</label></div>
   <textarea id="badWordsEs" rows="2"></textarea>
-  <div class="row"><label>Custom vocabulary (English, comma-separated)</label></div>
+  <div class="row"><label>Custom vocabulary (English, comma-separated)<span class="help" data-tip="Words or phrases to bias recognition and preserve capitalization.">?</span></label></div>
   <textarea id="vocabEn" rows="2"></textarea>
   <div class="row"><label>Custom vocabulary (Spanish, comma-separated)</label></div>
   <textarea id="vocabEs" rows="2"></textarea>
@@ -316,6 +322,52 @@ input[type=checkbox]{width:16px;height:16px;accent-color:var(--accent)}
   <button id="apply" disabled>Apply</button>
   <div id="status">loading current settings...</div>
 </div>
+<div id="tooltip"></div>
+<script>
+// Tooltip help icons - inline JS, not a shared Python module (tooltip.py
+// stays as-is for the Tk app's own _create_help_icon; this is the "small
+// JS-snippet helper" the port plan called for instead of a shared
+// abstraction). Proved in experiments/web_tooltip.py: 400ms hover delay
+// matching tooltip.py's Tooltip class default, plus one deliberate
+// improvement the original never had - viewport-edge clamping, since a
+// position:fixed div (unlike Tk's own tipwindow) is trivial to keep
+// on-screen.
+(function () {
+  const DELAY_MS = 400
+  const tip = document.getElementById('tooltip')
+  let showTimer = null
+
+  function clampedPosition(x, y, tipEl) {
+    const vw = window.innerWidth, vh = window.innerHeight
+    const w = tipEl.offsetWidth, h = tipEl.offsetHeight
+    const cx = Math.min(x, vw - w - 4)
+    const cy = Math.min(y, vh - h - 4)
+    return {x: Math.max(0, cx), y: Math.max(0, cy)}
+  }
+
+  document.querySelectorAll('.help').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      clearTimeout(showTimer)
+      showTimer = setTimeout(() => {
+        const rect = el.getBoundingClientRect()
+        tip.textContent = el.dataset.tip
+        tip.style.display = 'block'
+        const pos = clampedPosition(rect.left + 20, rect.bottom + 6, tip)
+        tip.style.left = pos.x + 'px'
+        tip.style.top = pos.y + 'px'
+      }, DELAY_MS)
+    })
+    el.addEventListener('mouseleave', () => {
+      clearTimeout(showTimer)
+      tip.style.display = 'none'
+    })
+    el.addEventListener('click', () => {
+      clearTimeout(showTimer)
+      tip.style.display = 'none'
+    })
+  })
+})()
+</script>
 <script>
 const applyBtn = document.getElementById('apply')
 const statusEl = document.getElementById('status')
