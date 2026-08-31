@@ -32,15 +32,15 @@ live in. Everything else either mixin defines (Options-dialog building,
 NLLB workers, dirty-tracking, the caption-rendering path) is untouched and
 simply not exercised by the Controller window itself yet.
 
-toggle_fullscreen here is a deliberate Phase-5-scoped stand-in, not the
-real thing: the actual enter_fullscreen/exit_fullscreen (monitor_mixin.py)
-do real per-monitor placement math against Tk window geometry with no
-analog built yet - that's Phase 8's job. This override exists to prove the
-CROSS-WINDOW PLUMBING (a Controller button reaching into the Output
-window's own state) works, which is this phase's actual scope - it calls
-pywebview's own window.toggle_fullscreen(), confirmed (platforms/
-winforms.py) to already do its own internal InvokeRequired/Invoke()
-marshaling, so no extra wrapping is needed here.
+toggle_fullscreen was originally a Phase-5-scoped stand-in that called
+pywebview's window.toggle_fullscreen() directly, proving the CROSS-WINDOW
+PLUMBING (a Controller button reaching into the Output window's own
+state) worked before real per-monitor placement existed to call into. As
+of Phase 8 it's a genuine port of main.py's own TranslationApp.
+toggle_fullscreen body (flip is_fullscreen, call enter_fullscreen()/
+exit_fullscreen()) - those two now come from WebMonitorMixin
+(web_monitor_mixin.py), which does the real per-monitor placement math
+against pywebview windows instead of Tk geometry.
 
 The Preview/Output Snapshot feature is wired up end-to-end (JS polling, an
 img tag, a js_api call) but its actual capture function is DISABLED - see
@@ -510,6 +510,13 @@ class WebSettingsUIMixin(SettingsLogicMixin):
         self._controller_window = controller_window
         self._controller_menu = menu
         controller_window.events.closing += self.on_closing
+        # shown (not immediately after create_window) - window.native's
+        # real WinForms Form isn't guaranteed realized until then, and
+        # apply_dark_title_bar's hwnd_for() needs a real Handle to Invoke()
+        # against.
+        controller_window.events.shown += lambda: self.apply_dark_title_bar(
+            controller_window, dark=(self.ui_theme == "dark")
+        )
         self._show_startup_loading_overlay()
         return controller_window
 
@@ -689,14 +696,22 @@ class WebSettingsUIMixin(SettingsLogicMixin):
         return getattr(self, "_controller_window", None)
 
     def toggle_fullscreen(self):
+        # Matches the real main.py TranslationApp.toggle_fullscreen exactly
+        # (flip is_fullscreen, call enter_fullscreen()/exit_fullscreen()) -
+        # not a Tk-Toplevel-touching method there, just a plain method on
+        # the app class, so there's nothing to inherit; this is a genuine
+        # port of its body, not an override. hide_status()/
+        # show_status_temporarily() (main.py) are deliberately not called
+        # here - both are about showing/hiding the Output window's OWN
+        # native Tk menu bar briefly outside fullscreen, which has no Web
+        # analog worth building for a canvas-only Output window.
         if self._window is None:
             return
-        # window.toggle_fullscreen() already does its own InvokeRequired/
-        # Invoke() marshaling internally (platforms/winforms.py) - unlike
-        # a raw .native touch, this one is safe to call directly from any
-        # thread, including the fresh thread pywebview spawns per menu/
-        # button callback.
-        self._window.toggle_fullscreen()
+        self.is_fullscreen = not self.is_fullscreen
+        if self.is_fullscreen:
+            self.enter_fullscreen()
+        else:
+            self.exit_fullscreen()
 
     # ------------------------------------------------------------------ #
     # Preview / Output Snapshot - DISABLED, not just unimplemented.
@@ -762,21 +777,10 @@ class WebSettingsUIMixin(SettingsLogicMixin):
             "This may be several GB and requires an internet connection.",
         )
 
-    def enter_fullscreen(self):
-        # Deliberate Phase-6-scoped no-op, matching toggle_fullscreen's own
-        # Phase 5 stand-in note: the Output window is already created with
-        # fullscreen=True, and _apply_settings_vars (settings_logic_mixin.py)
-        # calls this unconditionally after every Apply to re-assert monitor
-        # placement - real per-monitor-aware placement is Phase 8's job
-        # (WebMonitorMixin). Skipping it here is safe for now because
-        # nothing in this phase's Options form can actually change which
-        # monitor the Output window should be on (monitor_var/
-        # settings_monitor_var aren't wired - see build_web_options's own
-        # comment).
-        pass
-
-    def exit_fullscreen(self):
-        pass  # same Phase-6 stand-in as enter_fullscreen above - see its comment
+    # enter_fullscreen/exit_fullscreen used to be Phase-6-scoped no-ops
+    # here - real per-monitor-aware versions now come from WebMonitorMixin
+    # (web_monitor_mixin.py, Phase 8), mixed in ahead of this class in
+    # main_webview.py's MRO.
 
     def _set_settings_dirty_state(self, dirty_ctx, is_dirty, force=False):
         # Real version does save_button.config(...) - dirty_ctx never gets
@@ -1021,6 +1025,9 @@ class WebSettingsUIMixin(SettingsLogicMixin):
         self._options_window = window
         self._options_dirty_ctx["options_window"] = window
         window.events.closing += self.on_closing
+        window.events.shown += lambda: self.apply_dark_title_bar(
+            window, dark=(self.ui_theme == "dark")
+        )
         return window
 
     def _find_options_var(self, name):

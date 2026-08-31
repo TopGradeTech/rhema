@@ -41,10 +41,15 @@ ordering, not an oversight:
     frame-capture side dark.
   - No menu bar / global hotkeys yet (the Phase 0 design question of
     JS keydown vs. a low-level hook is Phase 5's to answer).
-  - No real per-monitor placement yet (Phase 8, WebMonitorMixin) - this
-    window uses pywebview's own fullscreen=True, which defaults to the
-    primary monitor, rather than MonitorMixin's real monitor_index
-    selection.
+  - Real per-monitor placement is wired as of Phase 8 (WebMonitorMixin,
+    web_monitor_mixin.py) - enter_fullscreen() moves/resizes onto the real
+    selected monitor_index before toggling native fullscreen, reusing the
+    DPI-aware physical-to-logical conversion webview_bridge.py already
+    proved. Real per-monitor selection in the Options form (monitor_var/
+    settings_monitor_var) is still not wired, though - that remains a
+    "Monitor 1" placeholder (see build_web_options's own comment); only
+    the underlying placement mechanism is real so far, not the UI to
+    change it away from settings.json's persisted value.
 
 Everything else is the real thing: RealtimeSttMixin, TranscriptionMixin,
 TranslationMixin, TextFilterMixin, AudioCaptureMixin, DisplayMixin, and
@@ -69,7 +74,7 @@ from app_constants import AppConstants
 from app_lifecycle_mixin import AppLifecycleMixin, bootstrap_and_run
 from logging_mixin import LoggingMixin
 from settings_mixin import SettingsMixin
-from monitor_mixin import MonitorMixin
+from web_monitor_mixin import WebMonitorMixin
 from settings_ui_mixin import SettingsUIMixin
 from audio_capture_mixin import AudioCaptureMixin
 from transcription_mixin import TranscriptionMixin
@@ -207,7 +212,7 @@ class WebTranslationApp(
     WebSettingsUIMixin,
     LoggingMixin,
     SettingsMixin,
-    MonitorMixin,
+    WebMonitorMixin,
     SettingsUIMixin,
     AudioCaptureMixin,
     TranscriptionMixin,
@@ -414,7 +419,7 @@ class WebTranslationApp(
         self.status_hide_after_id = None
         self.overlay_visible = False
         self.is_fullscreen = True
-        self.use_custom_fullscreen = False  # pywebview's own fullscreen=True is used instead - see Phase 8 note
+        self.use_custom_fullscreen = False  # unused here - WebMonitorMixin's enter_fullscreen() has no such branch
         self.prev_geometry = None
         self.prev_overrideredirect = None
         self.prev_topmost = None
@@ -494,10 +499,16 @@ class WebTranslationApp(
             sys.exit(1)
 
         storage_path = os.path.join(self.app_data_dir, "webview_data")
+        # Deliberately NOT fullscreen=True here (Phase 3-7's approach) -
+        # Phase 8's enter_fullscreen() needs the window in a known windowed
+        # state to move+resize it onto the REAL selected monitor before
+        # toggling fullscreen (see web_monitor_mixin.py's own comment on
+        # why that order matters). Starting fullscreen=True here would
+        # fullscreen on whatever monitor pywebview defaults to first,
+        # then require an exit+re-enter to correct it.
         window = webview.create_window(
             "Rhema",
             html=OUTPUT_HTML,
-            fullscreen=True,
             background_color=self.bg_color,
         )
         self._window = window
@@ -512,6 +523,17 @@ class WebTranslationApp(
         webview.start(storage_path=storage_path, private_mode=False, debug=False)
 
     def _on_window_loaded(self):
+        # Must run BEFORE initCanvas() below: enter_fullscreen() (Phase 8,
+        # WebMonitorMixin) moves/resizes the real window onto the selected
+        # monitor and toggles native fullscreen, changing window.innerWidth/
+        # innerHeight - initCanvas() needs to read the FINAL size, not
+        # whatever size the window happened to be created at. A brief
+        # settle delay matches the same one
+        # experiments/web_multimonitor.py used after its own
+        # move+resize+toggle_fullscreen sequence, before trusting the new
+        # geometry is visible to anything that queries it.
+        self.enter_fullscreen()
+        time.sleep(0.3)
         dims = self._window.evaluate_js("initCanvas()")
         width, height = int(dims["w"]), int(dims["h"])
         self.text_canvas = WebCanvas(self._window, width, height)
