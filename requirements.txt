@@ -53,3 +53,9 @@ pillow
 # Real camera friendly names ("OBS Virtual Camera") for the Camera Device
 # dropdown instead of bare index numbers — Windows-only, DirectShow-based
 pygrabber; sys_platform == "win32"
+# pywebview port (main_webview.py / WebTranslationApp) — Windows backend
+# (platforms/winforms.py) needs pythonnet for its WinForms/.NET interop;
+# webview_bridge.py's invoke_on_ui_thread() imports clr/System directly for
+# the same reason. main.py/TranslationApp (the Tk app) does not use either.
+pywebview>=6.2.1
+pythonnet>=3.1.0; sys_platform == "win32"

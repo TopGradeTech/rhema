@@ -538,7 +538,7 @@ class SettingsUIMixin:
         except Exception:
             pass
         try:
-            messagebox.showerror("Apply Failed", f"{exc}")
+            self._show_error_dialog("Apply Failed", f"{exc}")
         except Exception:
             pass
 

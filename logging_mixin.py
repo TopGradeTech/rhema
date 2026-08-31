@@ -34,9 +34,34 @@ class LoggingMixin:
     def _handle_unhandled_exception(self, exc_type, exc, tb):
         self._write_unhandled_exception(exc_type, exc, tb)
         try:
-            messagebox.showerror("Unhandled Error", f"{exc}")
+            self._show_error_dialog("Unhandled Error", f"{exc}")
         except Exception:
             pass
+
+    def _show_error_dialog(self, title, message, parent=None):
+        """Overridable so a non-Tk app (WebTranslationApp) can replace the
+        dialog backend without touching call sites - the default here is a
+        zero-behavior-change wrapper around the same tkinter.messagebox call
+        every one of these call sites used directly before this indirection
+        was added. Deliberately NOT wrapped in try/except here (matches how
+        most existing call sites called messagebox directly) - callers that
+        need failures swallowed already wrap their own call in try/except,
+        same as before."""
+        if parent is not None:
+            messagebox.showerror(title, message, parent=parent)
+        else:
+            messagebox.showerror(title, message)
+
+    def _show_info_dialog(self, title, message, parent=None):
+        if parent is not None:
+            messagebox.showinfo(title, message, parent=parent)
+        else:
+            messagebox.showinfo(title, message)
+
+    def _confirm_yes_no(self, title, message, parent=None):
+        if parent is not None:
+            return messagebox.askyesno(title, message, parent=parent)
+        return messagebox.askyesno(title, message)
 
     def _write_unhandled_exception(self, exc_type, exc, tb):
         try:
