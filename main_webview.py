@@ -202,8 +202,48 @@ function repaint(){
     }
   }
 }
+
+// Phase 12 QA pass finding: main.py's real root.bind_all() reaches every
+// focused widget across the whole Tk process (F11/Ctrl-Alt-F/Escape all
+// toggle fullscreen; Ctrl-S focuses the Controller; Ctrl-Q quits) - no Web
+// equivalent of that process-wide reach exists, so the same listener is
+// duplicated into both the Output and Controller windows' own HTML
+// (see CONTROLLER_HTML in web_settings_ui_mixin.py) rather than attached
+// to just one, so the hotkeys work regardless of which window has focus,
+// matching the real scope rather than a subset of it.
+document.addEventListener('keydown', (e) => {
+  const key = e.key.toLowerCase()
+  if (key === 'f11' || (e.ctrlKey && e.altKey && key === 'f') || key === 'escape') {
+    e.preventDefault()
+    pywebview.api.toggle_fullscreen_clicked()
+  } else if (e.ctrlKey && key === 's') {
+    e.preventDefault()
+    pywebview.api.open_settings_clicked()
+  } else if (e.ctrlKey && key === 'q') {
+    e.preventDefault()
+    pywebview.api.close_app_clicked()
+  }
+})
 </script></body></html>
 """
+
+
+class _OutputApi:
+    """Exposed to the Output window's JS as `pywebview.api.*` - just the
+    hotkey targets (Phase 12), matching _ControllerApi/_OptionsApi's own
+    kept-small, delegate-to-the-real-app pattern (web_settings_ui_mixin.py)."""
+
+    def __init__(self, app):
+        self._app = app
+
+    def toggle_fullscreen_clicked(self):
+        self._app.toggle_fullscreen()
+
+    def open_settings_clicked(self):
+        self._app.focus_controller_window()
+
+    def close_app_clicked(self):
+        self._app.on_closing()
 
 
 class WebTranslationApp(
@@ -512,6 +552,7 @@ class WebTranslationApp(
             "Rhema",
             html=OUTPUT_HTML,
             background_color=self.bg_color,
+            js_api=_OutputApi(self),
         )
         self._window = window
         window.events.loaded += self._on_window_loaded

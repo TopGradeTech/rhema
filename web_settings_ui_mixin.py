@@ -176,6 +176,23 @@ function pollPreview(){
 }
 setInterval(pollPreview, 15000)
 setTimeout(pollPreview, 300)
+
+// Same hotkey listener as the Output window's own HTML (main_webview.py) -
+// see that copy's comment for why this is deliberately duplicated rather
+// than attached once.
+document.addEventListener('keydown', (e) => {
+  const key = e.key.toLowerCase()
+  if (key === 'f11' || (e.ctrlKey && e.altKey && key === 'f') || key === 'escape') {
+    e.preventDefault()
+    pywebview.api.toggle_fullscreen_clicked()
+  } else if (e.ctrlKey && key === 's') {
+    e.preventDefault()
+    pywebview.api.open_settings_clicked()
+  } else if (e.ctrlKey && key === 'q') {
+    e.preventDefault()
+    pywebview.api.close_app_clicked()
+  }
+})
 </script></body></html>
 """
 
@@ -198,6 +215,12 @@ class _ControllerApi:
 
     def get_preview_data_uri(self):
         return self._app._capture_output_snapshot_data_uri()
+
+    def open_settings_clicked(self):
+        self._app.focus_controller_window()
+
+    def close_app_clicked(self):
+        self._app.on_closing()
 
 
 class _OptionsApi:
@@ -641,6 +664,21 @@ class WebSettingsUIMixin(SettingsLogicMixin):
     def _show_options_dialog(self):
         self.build_web_options()
 
+    def focus_controller_window(self):
+        # Phase 12 QA pass: Ctrl-S's real target (main.py's
+        # open_settings_event - "settings_window" is the real app's own
+        # name for the Controller, not the Options dialog). The real
+        # version opens the Controller if it doesn't exist yet and
+        # focuses it if it does; this port's Controller always exists
+        # already (built eagerly at startup, unlike Tk's lazy
+        # open_settings()), so this only ever needs the focus half.
+        if self._controller_window is not None:
+            try:
+                self._controller_window.show()
+                self._controller_window.restore()
+            except Exception:
+                pass
+
     # ------------------------------------------------------------------ #
     # About/Donate popups - the real settings_ui_mixin.py versions build a
     # tk.Toplevel(parent), falling back to `self.root` when
@@ -967,6 +1005,18 @@ class WebSettingsUIMixin(SettingsLogicMixin):
             "show_interim_text_var": tk.BooleanVar(master=v, value=self.show_interim_text),
             "stt_device_var": tk.StringVar(master=v, value=self.stt_device),
             "stt_source_lang_var": tk.StringVar(master=v, value=self.source_lang or "auto"),
+            # Phase 12 QA pass finding: _apply_transcription_vars
+            # (settings_logic_mixin.py) only applies this var at all if a
+            # companion "stt_source_lang_map" key exists in the dict
+            # (_optional_mapped_setting returns the unchanged current
+            # value otherwise, silently no-oping the whole field). Every
+            # OTHER mapped field here has a real display-name-to-code map
+            # because their <select> options show a friendly display name;
+            # this one's <select> already sends the raw code directly
+            # (OPTIONS_HTML's sourceLang has hardcoded value=auto/en/es
+            # options), so this is a real identity map, not a stand-in -
+            # exactly what a source_lang_var without a display layer needs.
+            "stt_source_lang_map": {"auto": "auto", "en": "en", "es": "es"},
             "realtime_stt_final_model_var": tk.StringVar(
                 master=v,
                 value=final_model_rev_map.get(self.realtime_stt_final_model, REALTIME_STT_FINAL_MODEL_OPTIONS[-1][0]),
@@ -994,6 +1044,12 @@ class WebSettingsUIMixin(SettingsLogicMixin):
             "local_nllb_model_name_map": nllb_model_name_map,
             "local_nllb_device_var": tk.StringVar(master=v, value=self.local_nllb_device),
             "local_nllb_target_lang_var": tk.StringVar(master=v, value=self.local_nllb_target_lang),
+            # Same real finding as stt_source_lang_map above -
+            # _apply_translation_vars silently no-ops this whole field
+            # without a companion map key. OPTIONS_HTML's nllbTargetLang
+            # <select> already sends the real FLORES code directly, so
+            # this is genuinely an identity map, not a placeholder.
+            "local_nllb_target_lang_map": {"eng_Latn": "eng_Latn", "spa_Latn": "spa_Latn"},
             "local_nllb_max_chars_var": tk.IntVar(master=v, value=self.local_nllb_max_chars),
         }
         self._advanced_vars = {
