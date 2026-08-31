@@ -84,6 +84,7 @@ from display_mixin import DisplayMixin
 from realtime_stt_mixin import RealtimeSttMixin
 from web_messagebox import WebMessageBoxMixin
 from web_settings_ui_mixin import WebSettingsUIMixin
+from web_update_mixin import WebUpdateMixin
 from web_video_capture_mixin import WebVideoCaptureMixin
 from webview_bridge import (
     FakeRoot,
@@ -221,6 +222,7 @@ class WebTranslationApp(
     DisplayMixin,
     RealtimeSttMixin,
     WebVideoCaptureMixin,
+    WebUpdateMixin,
 ):
     def pick_font_family(self, candidates):
         """The real one (main.py) resolves a single installed font name via
