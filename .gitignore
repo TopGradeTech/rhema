@@ -15,6 +15,12 @@ logs/
 .env.local
 settings.json
 
+# WebView2 storage (pywebview port, main_webview.py) - written next to
+# whichever app_data_dir the app resolves (repo root when run from
+# source, unfrozen; the install folder once built), same category as
+# settings.json/logs/ above.
+webview_data/
+
 # Editor / OS files
 .vscode/
 *.swp

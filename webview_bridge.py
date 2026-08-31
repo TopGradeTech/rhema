@@ -313,6 +313,15 @@ class FakeRoot:
         captions render too large on any monitor above 100% scale."""
         return 96.0
 
+    def config(self, **kwargs):
+        """apply_colors() (settings_ui_mixin.py) calls `self.root.config(bg=...)`
+        unmodified - there is no real top-level window here to recolor, and
+        the page's html/body background is already set once via static CSS
+        in the output window's own HTML (see main_webview.py), so this is a
+        deliberate no-op rather than a missing feature. WebCanvas.config()
+        below is the one that actually matters visually."""
+        pass
+
     def _run(self):
         import heapq
 
@@ -469,6 +478,18 @@ class WebCanvas:
 
     def winfo_height(self):
         return self._h
+
+    def config(self, **kwargs):
+        """apply_colors() (settings_ui_mixin.py) calls
+        `self.text_canvas.config(bg=...)` unmodified - unlike FakeRoot's own
+        no-op config(), this one actually matters: it is the real background
+        color of the caption canvas. Queued through the same ops list as
+        every other draw op (flush() sends it in the next evaluate_js round
+        trip) rather than pushed immediately, so a bg change lands in the
+        same paint as whatever else render_text() queued in the same tick,
+        instead of one extra round trip ahead of it."""
+        if "bg" in kwargs:
+            self._ops.append({"op": "bg", "color": kwargs["bg"]})
 
     def create_text(self, x, y, anchor="nw", text="", fill="#ffffff", font=None, **_ignored):
         item_id = self._next_id

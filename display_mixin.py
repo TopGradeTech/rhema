@@ -344,6 +344,14 @@ class DisplayMixin:
             msg = self._listening_status_message()
         self._log_status(msg)
         def update():
+            # Guards the same way _set_chunk_latency_label_text does -
+            # status_label lives on the Controller window (settings_ui_
+            # mixin.py), which doesn't necessarily exist yet by the time
+            # real speech starts producing status updates (e.g. the
+            # pywebview port's Output window, built before its own
+            # Controller window in the port's phase order).
+            if not self.status_label or not self.status_label.winfo_exists():
+                return
             self.status_label.config(text=f"Status: {msg}")
         self.root.after(0, update)
 
