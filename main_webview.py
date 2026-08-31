@@ -78,6 +78,7 @@ from text_filter_mixin import TextFilterMixin
 from display_mixin import DisplayMixin
 from realtime_stt_mixin import RealtimeSttMixin
 from web_messagebox import WebMessageBoxMixin
+from web_settings_ui_mixin import WebSettingsUIMixin
 from web_video_capture_mixin import WebVideoCaptureMixin
 from webview_bridge import (
     FakeRoot,
@@ -203,6 +204,7 @@ class WebTranslationApp(
     AppConstants,
     AppLifecycleMixin,
     WebMessageBoxMixin,
+    WebSettingsUIMixin,
     LoggingMixin,
     SettingsMixin,
     MonitorMixin,
@@ -288,6 +290,11 @@ class WebTranslationApp(
         self._audio_level_last_error_log = 0.0
 
         self.root = FakeRoot(on_error=self._write_unhandled_exception)
+        # Set early so any status/latency/meter update that fires before
+        # build_web_controller() runs (e.g. a very early update_status()
+        # call) finds a real, already-guarded None rather than an
+        # AttributeError.
+        self._controller_window = None
 
         self.font_family = self.pick_font_family(
             ["DejaVu Sans", "Liberation Sans", "Arial", "Helvetica"]
@@ -516,6 +523,12 @@ class WebTranslationApp(
         self.apply_colors()
         self._apply_scaled_fonts()
         self.render_text()
+
+        # Built before the STT/translation threads start, so the first
+        # real update_status()/_render_audio_level_meter() calls have a
+        # real Controller window to push into, matching main.py's own
+        # open_settings()-before-thread-start ordering.
+        self.build_web_controller()
 
         self.translation_thread = Thread(target=self._translation_worker, daemon=True)
         self.translation_thread.start()
