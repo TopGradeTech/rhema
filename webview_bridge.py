@@ -79,6 +79,60 @@ def hwnd_for(window):
     return invoke_on_ui_thread(window, lambda: int(window.native.Handle.ToInt32()))
 
 
+# The same 4 registry GUIDs platforms/winforms.py's own _is_chromium() checks
+# (Runtime/Beta/Dev/Canary channels), reimplemented independently here rather
+# than importing that private, underscore-prefixed function directly - it is
+# not part of pywebview's public API and could change shape between
+# versions without notice.
+_WEBVIEW2_CHANNEL_KEYS = (
+    "{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}",  # Runtime
+    "{2CD8A007-E189-409D-A2C8-9AF4EF3C72AA}",  # Beta
+    "{0D50BFEC-CD6A-4F9A-964C-C7416E3ACB10}",  # Dev
+    "{65C35B14-6C1D-4122-AC46-7148CC9D6497}",  # Canary
+)
+
+
+def is_webview2_runtime_available():
+    """True if ANY WebView2 channel (Runtime/Beta/Dev/Canary) is installed,
+    in either HKCU or HKLM.
+
+    **Why this exists, and why it must be checked before webview.start()
+    rather than left to pywebview itself**: pywebview's WinForms backend
+    (platforms/winforms.py's _is_chromium()) does the exact same registry
+    check internally - but if it finds NOTHING installed, it does not raise
+    or show any user-visible error. It silently falls back to `mshtml`, the
+    deprecated IE11/Trident engine, logging only a `logger.warning()` (never
+    surfaced to a user, and this app doesn't enable pywebview's own debug
+    logging). That is exactly the invisible-failure class of bug this
+    project has already been burned by once (RealtimeSTT silently reaching
+    Hugging Face instead of erroring when engine_options was ignored - see
+    ARCHITECTURE.md's fork rationale) - and it would be worse here: MSHTML
+    cannot run the modern canvas/measureText/evaluate_js machinery this
+    entire port is built on, so every window would render broken or blank
+    with no diagnostic pointing at the real cause.
+
+    A real port must call this BEFORE webview.create_window()/webview.start()
+    and, if it returns False, show a clear, loud error (via
+    _show_error_dialog / web_messagebox.py - the same ctypes MessageBoxW
+    path the crash hook uses, since this can fail before any window exists
+    too) directing the user to install the WebView2 Runtime, rather than
+    letting pywebview silently degrade."""
+    import winreg
+
+    for hive in (winreg.HKEY_CURRENT_USER, winreg.HKEY_LOCAL_MACHINE):
+        for key_path in (
+            r"SOFTWARE\Microsoft\EdgeUpdate\Clients\{key}",
+            r"SOFTWARE\WOW6432Node\Microsoft\EdgeUpdate\Clients\{key}",
+        ):
+            for guid in _WEBVIEW2_CHANNEL_KEYS:
+                try:
+                    with winreg.OpenKey(hive, key_path.format(key=guid)):
+                        return True
+                except OSError:
+                    continue
+    return False
+
+
 class _RECT(ctypes.Structure):
     _fields_ = [
         ("left", wintypes.LONG),
