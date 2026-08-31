@@ -52,9 +52,57 @@ edge case. No replacement technique has been implemented yet.
 """
 
 import json
+import tkinter as tk
 import webbrowser
 
+from settings_logic_mixin import SettingsLogicMixin
 from settings_ui_mixin import DONATE_URL
+from webview_bridge import TkVariableInterpreter
+
+# The real, current option tables from settings_ui_mixin.py's
+# _build_display_controls/_build_transcription_section/
+# _build_translation_section (Advanced/Transcription/Translation sections
+# respectively) - copied verbatim from that file rather than re-derived,
+# so this can never quietly drift from what those sections actually offer.
+REALTIME_STT_FINAL_MODEL_OPTIONS = [
+    ("tiny (~1 GB VRAM)", "tiny"),
+    ("base (~1 GB VRAM)", "base"),
+    ("small (~2 GB VRAM)", "small"),
+    ("medium (~5 GB VRAM)", "medium"),
+    ("distil-large-v3 (~6 GB VRAM, fast)", "distil-large-v3"),
+    ("large-v3-turbo (~6 GB VRAM, fast)", "large-v3-turbo"),
+    ("large-v2 (~10 GB VRAM)", "large-v2"),
+    ("large-v3 (~10 GB VRAM, recommended)", "large-v3"),
+]
+REALTIME_STT_REALTIME_MODEL_OPTIONS = [
+    ("tiny (~1 GB VRAM, recommended)", "tiny"),
+    ("base (~1 GB VRAM)", "base"),
+    ("small (~2 GB VRAM)", "small"),
+]
+NLLB_MODEL_NAME_OPTIONS = [
+    (
+        "nllb-200-distilled-600M (~2.5 GB disk, ~4-6 GB VRAM, recommended)",
+        "facebook/nllb-200-distilled-600M",
+    ),
+    (
+        "nllb-200-distilled-1.3B (~5.5 GB disk, ~6-8 GB VRAM)",
+        "facebook/nllb-200-distilled-1.3B",
+    ),
+    (
+        "nllb-200-1.3B (~5.5 GB disk, ~8-10 GB VRAM, dense/higher quality)",
+        "facebook/nllb-200-1.3B",
+    ),
+    (
+        "nllb-200-3.3B (~13 GB disk, ~16+ GB VRAM, highest quality)",
+        "facebook/nllb-200-3.3B",
+    ),
+]
+LOGGING_MODE_OPTIONS = [
+    ("Normal", "normal"),
+    ("Debug", "debug"),
+    ("Evaluation", "evaluation"),
+    ("Full", "full"),
+]
 
 CONTROLLER_HTML = r"""
 <!doctype html><html><head><meta charset="utf-8"><title>Rhema Controller</title><style>
@@ -140,7 +188,268 @@ class _ControllerApi:
         return self._app._capture_output_snapshot_data_uri()
 
 
-class WebSettingsUIMixin:
+class _OptionsApi:
+    """Exposed to the Options window's JS as `pywebview.api.*` - same
+    kept-small, delegate-to-the-real-app pattern as _ControllerApi above."""
+
+    def __init__(self, app):
+        self._app = app
+
+    def set_var(self, name, value):
+        return self._app.options_set_var(name, value)
+
+    def set_text(self, name, value):
+        return self._app.options_set_text(name, value)
+
+    def apply(self):
+        return self._app.options_apply()
+
+    def options(self):
+        return self._app.options_list()
+
+    def current_values(self):
+        return self._app.options_current_values()
+
+    def select_audio_device(self, label):
+        return self._app.options_select_audio_device(label)
+
+    def select_video_device(self, label):
+        return self._app.options_select_video_device(label)
+
+    def refresh_devices(self):
+        self._app._refresh_audio_devices()
+        self._app._refresh_video_devices()
+        return {"ok": True}
+
+
+OPTIONS_HTML = r"""
+<!doctype html><html><head><meta charset="utf-8"><title>Rhema Options</title>
+<style>
+:root{--bg:#1E2228;--card:#262A33;--text:#E5E7EB;--muted:#9CA3AF;--border:#3A3F4B;--accent:#5B8FF7;--dirty:#E0A458}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);
+ font:14px/1.5 "Segoe UI","Segoe UI Variable Text",system-ui,sans-serif;padding:24px;overflow-y:auto}
+.card{max-width:640px;margin:0 auto 24px;background:var(--card);border:1px solid var(--border);
+ border-radius:12px;padding:20px}
+h1{font-size:15px;margin:0 0 4px;color:var(--text)}
+h2{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin:18px 0 2px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 0;
+ border-bottom:1px solid #2F343E}
+.row:last-of-type{border-bottom:none}
+label{font-size:13px}
+input[type=number]{width:80px;background:#14171C;border:1px solid var(--border);color:var(--text);
+ border-radius:6px;padding:4px 8px}
+input[type=color]{width:40px;height:26px;border:none;background:none;padding:0}
+select{background:#14171C;border:1px solid var(--border);color:var(--text);border-radius:6px;padding:4px 8px;
+ max-width:280px}
+input[type=text]{background:#14171C;border:1px solid var(--border);color:var(--text);border-radius:6px;
+ padding:4px 8px}
+textarea{width:100%;background:#14171C;border:1px solid var(--border);color:var(--text);border-radius:6px;
+ padding:6px 8px;font:12px/1.4 monospace;resize:vertical}
+input[type=checkbox]{width:16px;height:16px;accent-color:var(--accent)}
+#apply{margin-top:16px;width:100%;padding:10px;border-radius:8px;border:none;font-size:13px;font-weight:600;
+ background:#3A3F4B;color:#6B7280;cursor:not-allowed}
+#apply.dirty{background:var(--dirty);color:#1E2228;cursor:pointer}
+#status{margin-top:12px;font-size:12px;color:var(--muted);white-space:pre-wrap}
+</style></head><body>
+<div class="card">
+  <h1>Rhema Options</h1>
+
+  <h2>Display</h2>
+  <div class="row"><label>Max caption lines</label><input type="number" id="lines" min="4" max="10"></div>
+  <div class="row"><label>Background color</label><input type="color" id="bg"></div>
+  <div class="row"><label>Lock output window focus</label><input type="checkbox" id="lockFocus"></div>
+  <div class="row"><label>Clear display on inactivity</label><input type="checkbox" id="clear"></div>
+  <div class="row"><label>&nbsp;&nbsp;...after N seconds</label><input type="number" id="clearSeconds" min="5" max="3600"></div>
+  <div class="row"><label>Video overlay enabled</label><input type="checkbox" id="videoEnabled"></div>
+  <div class="row"><label>Camera device</label><select id="videoDevice"></select></div>
+  <div class="row"><label>Caption bar opacity (%)</label><input type="number" id="videoAlpha" min="0" max="100"></div>
+
+  <h2>Audio</h2>
+  <div class="row"><label>Microphone</label><select id="audioDevice"></select></div>
+
+  <h2>Transcription</h2>
+  <div class="row"><label>Show live interim text</label><input type="checkbox" id="interim"></div>
+  <div class="row"><label>STT device</label>
+    <select id="device"><option value="cpu">CPU</option><option value="cuda">CUDA</option><option value="auto">Auto</option></select></div>
+  <div class="row"><label>Source language</label>
+    <select id="sourceLang"><option value="auto">Auto-detect</option><option value="en">English</option><option value="es">Spanish</option></select></div>
+  <div class="row"><label>Final model</label><select id="finalModel"></select></div>
+  <div class="row"><label>Realtime model</label><select id="realtimeModel"></select></div>
+  <div class="row"><label>Voice sensitivity</label><input type="number" id="silero" min="0.1" max="0.9" step="0.05"></div>
+
+  <h2>Translation (Local NLLB)</h2>
+  <div class="row"><label>Enable translation</label><input type="checkbox" id="enableTranslation"></div>
+  <div class="row"><label>Model name</label><select id="nllbModel"></select></div>
+  <div class="row"><label>Device</label>
+    <select id="nllbDevice"><option value="cpu">CPU</option><option value="cuda">CUDA</option><option value="auto">Auto</option></select></div>
+  <div class="row"><label>Target language</label>
+    <select id="nllbTargetLang"><option value="eng_Latn">English</option><option value="spa_Latn">Spanish</option></select></div>
+  <div class="row"><label>Max chars per chunk</label><input type="number" id="nllbMaxChars" min="250" max="20000" step="250"></div>
+  <div id="nllbStatus" style="color:#9CA3AF;font-size:12px;margin:4px 0 8px">nllb status: --</div>
+
+  <h2>Advanced</h2>
+  <div class="row"><label>Logging mode</label><select id="loggingMode"></select></div>
+  <div class="row"><label>Start app when Windows starts</label><input type="checkbox" id="startWithWindows"></div>
+  <div class="row"><label>CUDA directory</label><input type="text" id="cudaDirectory" style="width:280px"></div>
+  <div class="row"><label>Bad words (English, comma-separated)</label></div>
+  <textarea id="badWordsEn" rows="2"></textarea>
+  <div class="row"><label>Bad words (Spanish, comma-separated)</label></div>
+  <textarea id="badWordsEs" rows="2"></textarea>
+  <div class="row"><label>Custom vocabulary (English, comma-separated)</label></div>
+  <textarea id="vocabEn" rows="2"></textarea>
+  <div class="row"><label>Custom vocabulary (Spanish, comma-separated)</label></div>
+  <textarea id="vocabEs" rows="2"></textarea>
+
+  <button id="apply" disabled>Apply</button>
+  <div id="status">loading current settings...</div>
+</div>
+<script>
+const applyBtn = document.getElementById('apply')
+const statusEl = document.getElementById('status')
+
+const fields = {
+  lines: {varName: 'lines_var', kind: 'int'},
+  bg: {varName: 'bg_color_var', kind: 'str'},
+  lockFocus: {varName: 'lock_output_focus_var', kind: 'bool'},
+  clear: {varName: 'clear_display_on_inactivity_var', kind: 'bool'},
+  clearSeconds: {varName: 'clear_display_inactivity_seconds_var', kind: 'int'},
+  videoEnabled: {varName: 'video_feed_enabled_var', kind: 'bool'},
+  videoAlpha: {varName: 'video_caption_alpha_var', kind: 'float'},
+  interim: {varName: 'show_interim_text_var', kind: 'bool'},
+  device: {varName: 'stt_device_var', kind: 'str'},
+  sourceLang: {varName: 'stt_source_lang_var', kind: 'str'},
+  finalModel: {varName: 'realtime_stt_final_model_var', kind: 'str'},
+  realtimeModel: {varName: 'realtime_stt_realtime_model_var', kind: 'str'},
+  silero: {varName: 'realtime_stt_silero_var', kind: 'float'},
+  enableTranslation: {varName: 'enable_translation_var', kind: 'bool'},
+  nllbModel: {varName: 'local_nllb_model_name_var', kind: 'str'},
+  nllbDevice: {varName: 'local_nllb_device_var', kind: 'str'},
+  nllbTargetLang: {varName: 'local_nllb_target_lang_var', kind: 'str'},
+  nllbMaxChars: {varName: 'local_nllb_max_chars_var', kind: 'int'},
+  loggingMode: {varName: 'logging_mode_var', kind: 'str'},
+  startWithWindows: {varName: 'start_with_windows_var', kind: 'bool'},
+  cudaDirectory: {varName: 'cuda_directory_var', kind: 'str'},
+}
+const textFields = {
+  badWordsEn: 'bad_words_en_text',
+  badWordsEs: 'bad_words_es_text',
+  vocabEn: 'custom_vocab_en_text',
+  vocabEs: 'custom_vocab_es_text',
+}
+
+function elFor(key){ return document.getElementById(key) }
+
+function fieldValue(key, f){
+  const el = elFor(key)
+  if (el.type === 'checkbox') return el.checked
+  if (f.kind === 'int') return parseInt(el.value, 10)
+  if (f.kind === 'float') return parseFloat(el.value)
+  return el.value
+}
+
+function setDirty(isDirty){
+  applyBtn.disabled = !isDirty
+  applyBtn.classList.toggle('dirty', isDirty)
+}
+
+async function onFieldChange(key){
+  const f = fields[key]
+  const result = await pywebview.api.set_var(f.varName, fieldValue(key, f))
+  setDirty(result.dirty)
+}
+
+async function onTextChange(key){
+  const result = await pywebview.api.set_text(textFields[key], elFor(key).value)
+  setDirty(result.dirty)
+}
+
+for (const key in fields){
+  elFor(key).addEventListener('input', () => onFieldChange(key))
+}
+for (const key in textFields){
+  elFor(key).addEventListener('input', () => onTextChange(key))
+}
+
+document.getElementById('audioDevice').addEventListener('change', async (e) => {
+  await pywebview.api.select_audio_device(e.target.value)
+})
+document.getElementById('videoDevice').addEventListener('change', async (e) => {
+  await pywebview.api.select_video_device(e.target.value)
+})
+
+function fillSelect(id, names, selected){
+  const el = elFor(id)
+  el.innerHTML = ''
+  for (const name of names){
+    const opt = document.createElement('option')
+    opt.value = name
+    opt.textContent = name
+    el.appendChild(opt)
+  }
+  if (selected) el.value = selected
+}
+
+applyBtn.addEventListener('click', async () => {
+  const result = await pywebview.api.apply()
+  if (!result.ok){
+    statusEl.textContent = 'Apply failed: ' + result.error
+    return
+  }
+  setDirty(result.dirty)
+  const v = result.values
+  document.getElementById('nllbStatus').textContent = 'nllb status: ' + v.nllb_status
+  statusEl.textContent = 'Applied and saved.'
+})
+
+window.addEventListener('pywebviewready', async () => {
+  let v = null
+  for (let i = 0; i < 50 && !v; i++){
+    v = await pywebview.api.current_values()
+    if (!v) await new Promise(r => setTimeout(r, 50))
+  }
+  if (!v){ statusEl.textContent = 'Engine did not become ready.'; return }
+  const opts = await pywebview.api.options()
+
+  document.getElementById('lines').value = v.max_lines
+  document.getElementById('bg').value = v.bg_color
+  document.getElementById('lockFocus').checked = v.lock_output_focus
+  document.getElementById('clear').checked = v.clear_display_on_inactivity
+  document.getElementById('clearSeconds').value = v.clear_display_inactivity_seconds
+  document.getElementById('videoEnabled').checked = v.video_feed_enabled
+  document.getElementById('videoAlpha').value = v.video_caption_bar_alpha
+  document.getElementById('interim').checked = v.show_interim_text
+  document.getElementById('device').value = v.stt_device
+  document.getElementById('sourceLang').value = v.source_lang
+  document.getElementById('silero').value = v.realtime_stt_silero_sensitivity
+  document.getElementById('enableTranslation').checked = v.translation_enabled
+  document.getElementById('nllbDevice').value = v.local_nllb_device
+  document.getElementById('nllbTargetLang').value = v.local_nllb_target_lang
+  document.getElementById('nllbMaxChars').value = v.local_nllb_max_chars
+  document.getElementById('nllbStatus').textContent = 'nllb status: ' + v.nllb_status
+  document.getElementById('startWithWindows').checked = v.start_with_windows
+  document.getElementById('cudaDirectory').value = v.cuda_directory
+  document.getElementById('badWordsEn').value = v.bad_words_en.join(', ')
+  document.getElementById('badWordsEs').value = v.bad_words_es.join(', ')
+  document.getElementById('vocabEn').value = v.custom_vocab_en.join(', ')
+  document.getElementById('vocabEs').value = v.custom_vocab_es.join(', ')
+
+  fillSelect('finalModel', opts.realtime_stt_final_model, v.display.realtime_stt_final_model)
+  fillSelect('realtimeModel', opts.realtime_stt_realtime_model, v.display.realtime_stt_realtime_model)
+  fillSelect('nllbModel', opts.local_nllb_model_name, v.display.local_nllb_model_name)
+  fillSelect('loggingMode', opts.logging_mode, v.display.logging_mode)
+  fillSelect('audioDevice', opts.audio_device, v.preferred_device_label)
+  fillSelect('videoDevice', [], v.video_device_label)
+  await pywebview.api.refresh_devices()
+
+  setDirty(v.dirty)
+  statusEl.textContent = 'Loaded current settings.'
+})
+</script></body></html>
+"""
+
+
+class WebSettingsUIMixin(SettingsLogicMixin):
     def build_web_controller(self):
         """Analogous to open_settings() - called once at startup from
         main_webview.py after the Output window is loaded (needs
@@ -153,13 +462,8 @@ class WebSettingsUIMixin:
             Menu(
                 "File",
                 [
-                    # Real Hardware Autodetect/Options wiring is Phase 6's
-                    # job (needs the Options dialog/its vars dicts, which
-                    # don't exist yet) - stubbed rather than silently
-                    # absent, so the menu structure matches the real app
-                    # now and only the ACTION swaps in later.
-                    MenuAction("Hardware Autodetect", self._menu_stub_autodetect),
-                    MenuAction("Options", self._menu_stub_options),
+                    MenuAction("Hardware Autodetect", self._run_hardware_autodetect_menu_action),
+                    MenuAction("Options", self._show_options_dialog),
                 ],
             ),
             Menu(
@@ -188,13 +492,19 @@ class WebSettingsUIMixin:
         return controller_window
 
     # ------------------------------------------------------------------ #
-    # Menu stubs - Phase 6 replaces these with the real thing.
+    # File menu actions - real as of Phase 6.
     # ------------------------------------------------------------------ #
-    def _menu_stub_autodetect(self):
-        self._log_status("Hardware Autodetect isn't wired up yet in this preview build.")
+    def _run_hardware_autodetect_menu_action(self):
+        # Real _run_hardware_autodetect_from_menu (settings_logic_mixin.py)
+        # needs the real transcription_vars/translation_vars dicts, which
+        # only exist once the Options window has been built at least once -
+        # build it (silently, without stealing focus, if this is the very
+        # first time) rather than requiring the user to open Options first.
+        self.build_web_options()
+        self._run_hardware_autodetect_from_menu(self._transcription_vars, self._translation_vars)
 
-    def _menu_stub_options(self):
-        self._log_status("The Options window isn't built yet in this preview build.")
+    def _show_options_dialog(self):
+        self.build_web_options()
 
     # ------------------------------------------------------------------ #
     # About/Donate popups - the real settings_ui_mixin.py versions build a
@@ -353,3 +663,376 @@ class WebSettingsUIMixin:
     # ------------------------------------------------------------------ #
     def _capture_output_snapshot_data_uri(self):
         return None
+
+    # ------------------------------------------------------------------ #
+    # Phase 6: chrome hooks the shared SettingsLogicMixin methods call by
+    # name (see settings_logic_mixin.py's own module docstring for the
+    # full accounting of which real chrome touches survive inside "logic").
+    # ------------------------------------------------------------------ #
+    def _show_hardware_autodetect_result(self, text):
+        self._show_info_dialog("Hardware Autodetect", text)
+
+    def _confirm_local_nllb_download(self, model_name):
+        # Real settings_ui_mixin.py version builds a modal tk.Toplevel with
+        # grab_set()/wait_window() - a synchronous confirm. ctypes
+        # MessageBoxW (web_messagebox.py, Phase 1) is ALSO synchronous/
+        # blocking, so this is a genuine drop-in equivalent, not an
+        # approximation - the caller gets the same "blocks until the user
+        # answers, then returns a bool" contract either way.
+        model_name = (model_name or "").strip() or self.LOCAL_NLLB_DEFAULT_MODEL_NAME
+        return self._confirm_yes_no(
+            "Download Local NLLB Model",
+            f"Download the Local NLLB model now?\n\n{model_name}\n\n"
+            "This may be several GB and requires an internet connection.",
+        )
+
+    def enter_fullscreen(self):
+        # Deliberate Phase-6-scoped no-op, matching toggle_fullscreen's own
+        # Phase 5 stand-in note: the Output window is already created with
+        # fullscreen=True, and _apply_settings_vars (settings_logic_mixin.py)
+        # calls this unconditionally after every Apply to re-assert monitor
+        # placement - real per-monitor-aware placement is Phase 8's job
+        # (WebMonitorMixin). Skipping it here is safe for now because
+        # nothing in this phase's Options form can actually change which
+        # monitor the Output window should be on (monitor_var/
+        # settings_monitor_var aren't wired - see build_web_options's own
+        # comment).
+        pass
+
+    def exit_fullscreen(self):
+        pass  # same Phase-6 stand-in as enter_fullscreen above - see its comment
+
+    def _set_settings_dirty_state(self, dirty_ctx, is_dirty, force=False):
+        # Real version does save_button.config(...) - dirty_ctx never gets
+        # a "save_button" key from build_web_options below, so the real
+        # _apply_settings_from_controller/_update_settings_dirty_state
+        # calls into this safely no-op today (dirty_ctx.get("save_button")
+        # is None-guarded at every call site). Overridden anyway so the
+        # Options window's own Apply button can visually reflect dirty
+        # state, which the real no-op wouldn't give it.
+        if not force and is_dirty == bool(dirty_ctx.get("dirty_value")):
+            return
+        dirty_ctx["dirty_value"] = bool(is_dirty)
+        window = dirty_ctx.get("options_window")
+        if window is None:
+            return
+        try:
+            window.evaluate_js("setDirty(%s)" % json.dumps(bool(is_dirty)))
+        except Exception:
+            pass
+
+    def _refresh_audio_devices(self):
+        # Real version rescans devices on a worker thread and repopulates a
+        # real tk.OptionMenu. Called from _apply_settings_vars
+        # (settings_logic_mixin.py) after every Apply, in case the device
+        # list changed - this override does the same rescan, then pushes
+        # the refreshed list to the Options window's own dropdown instead
+        # of a Tk menu.
+        if getattr(self, "_options_window", None) is None:
+            return
+        try:
+            self.devices = self.get_audio_devices()
+            window = self._options_window
+            window.evaluate_js(
+                "fillSelect('audioDevice', %s, %s)"
+                % (json.dumps(self.devices), json.dumps(self.preferred_device_label))
+            )
+        except Exception:
+            pass
+
+    def _refresh_video_devices(self):
+        # Same real-app trigger point as _refresh_audio_devices (called
+        # after Apply); full rewrite per the port plan, same reasoning -
+        # the real method interleaves a worker thread with tk._setit/menu
+        # manipulation with no Web equivalent.
+        if getattr(self, "_options_window", None) is None:
+            return
+        try:
+            available = self.enumerate_video_devices()
+            labels = [self._video_device_label(i) for i in available]
+            current = (
+                self._video_device_label(self.video_device_index)
+                if self.video_device_index is not None
+                else ""
+            )
+            self._options_window.evaluate_js(
+                "fillSelect('videoDevice', %s, %s)" % (json.dumps(labels), json.dumps(current))
+            )
+        except Exception:
+            pass
+
+    # ------------------------------------------------------------------ #
+    # The real Options window - every real setting wired to a genuine
+    # tk.Variable/tk.Text, exactly as experiments/web_options.py already
+    # proved (that file's own docstring covers the two real thread-
+    # affinity findings this reuses: a dedicated var_root mainloop thread,
+    # and a forced var_root.update() after every tk.Text edit so
+    # <<Modified>> has already fired by the time set_text() returns).
+    # Deliberately still narrow, matching that experiment's own reviewed
+    # scope: theme_var (destroys/rebuilds real Tk windows on the other
+    # side) and real per-monitor selection (monitor_var/
+    # settings_monitor_var) aren't wired - dark/light theme switching and
+    # real multi-monitor placement remain open, the same two gaps that
+    # experiment already flagged and this phase doesn't newly introduce.
+    # ------------------------------------------------------------------ #
+    def build_web_options(self):
+        import webview
+
+        if getattr(self, "_options_window", None) is not None:
+            try:
+                self._options_window.restore()
+                return self._options_window
+            except Exception:
+                pass
+
+        if getattr(self, "_var_interpreter", None) is None:
+            self._var_interpreter = TkVariableInterpreter()
+        v = self._var_interpreter.root
+
+        final_model_map = dict(REALTIME_STT_FINAL_MODEL_OPTIONS)
+        final_model_rev_map = {code: name for name, code in REALTIME_STT_FINAL_MODEL_OPTIONS}
+        realtime_model_map = dict(REALTIME_STT_REALTIME_MODEL_OPTIONS)
+        realtime_model_rev_map = {code: name for name, code in REALTIME_STT_REALTIME_MODEL_OPTIONS}
+        nllb_model_name_map = dict(NLLB_MODEL_NAME_OPTIONS)
+        nllb_model_name_rev_map = {code: name for name, code in NLLB_MODEL_NAME_OPTIONS}
+        logging_mode_map = dict(LOGGING_MODE_OPTIONS)
+        logging_mode_rev_map = {code: name for name, code in LOGGING_MODE_OPTIONS}
+        self._logging_mode_rev_map = logging_mode_rev_map
+        self._final_model_rev_map = final_model_rev_map
+        self._realtime_model_rev_map = realtime_model_rev_map
+        self._nllb_model_name_rev_map = nllb_model_name_rev_map
+
+        self._display_vars = {
+            "lines_var": tk.IntVar(master=v, value=self.max_lines),
+            "video_lines_var": tk.IntVar(master=v, value=self.video_max_lines),
+            "bg_color_var": tk.StringVar(master=v, value=self.bg_color),
+            "text_color_var": tk.StringVar(master=v, value=self.text_color),
+            "monitor_labels": ["Monitor 1"],
+            "monitor_var": tk.StringVar(master=v, value="Monitor 1"),
+            "settings_monitor_var": tk.StringVar(master=v, value="Monitor 1"),
+            "clear_display_on_inactivity_var": tk.BooleanVar(
+                master=v, value=self.clear_display_on_inactivity
+            ),
+            "clear_display_inactivity_seconds_var": tk.IntVar(
+                master=v, value=self.clear_display_inactivity_seconds
+            ),
+            "lock_output_focus_var": tk.BooleanVar(master=v, value=self.lock_output_focus),
+            "video_feed_enabled_var": tk.BooleanVar(master=v, value=self.video_feed_enabled),
+            "video_device_var": tk.StringVar(
+                master=v,
+                value=(
+                    self._video_device_label(self.video_device_index)
+                    if self.video_device_index is not None
+                    else ""
+                ),
+            ),
+            "video_caption_alpha_var": tk.DoubleVar(
+                master=v, value=self.video_caption_bar_alpha * 100
+            ),
+        }
+        self._transcription_vars = {
+            "show_interim_text_var": tk.BooleanVar(master=v, value=self.show_interim_text),
+            "stt_device_var": tk.StringVar(master=v, value=self.stt_device),
+            "stt_source_lang_var": tk.StringVar(master=v, value=self.source_lang or "auto"),
+            "realtime_stt_final_model_var": tk.StringVar(
+                master=v,
+                value=final_model_rev_map.get(self.realtime_stt_final_model, REALTIME_STT_FINAL_MODEL_OPTIONS[-1][0]),
+            ),
+            "realtime_stt_final_model_map": final_model_map,
+            "realtime_stt_realtime_model_var": tk.StringVar(
+                master=v,
+                value=realtime_model_rev_map.get(
+                    self.realtime_stt_realtime_model, REALTIME_STT_REALTIME_MODEL_OPTIONS[0][0]
+                ),
+            ),
+            "realtime_stt_realtime_model_map": realtime_model_map,
+            "realtime_stt_silero_var": tk.DoubleVar(
+                master=v, value=self.realtime_stt_silero_sensitivity
+            ),
+        }
+        self._translation_vars = {
+            "enable_translation_var": tk.BooleanVar(master=v, value=self.translation_enabled),
+            "local_nllb_model_name_var": tk.StringVar(
+                master=v,
+                value=nllb_model_name_rev_map.get(
+                    self.local_nllb_model_name, NLLB_MODEL_NAME_OPTIONS[0][0]
+                ),
+            ),
+            "local_nllb_model_name_map": nllb_model_name_map,
+            "local_nllb_device_var": tk.StringVar(master=v, value=self.local_nllb_device),
+            "local_nllb_target_lang_var": tk.StringVar(master=v, value=self.local_nllb_target_lang),
+            "local_nllb_max_chars_var": tk.IntVar(master=v, value=self.local_nllb_max_chars),
+        }
+        self._advanced_vars = {
+            "logging_mode_var": tk.StringVar(
+                master=v, value=logging_mode_rev_map.get(self.logging_mode, "Normal")
+            ),
+            "logging_mode_map": logging_mode_map,
+            "start_with_windows_var": tk.BooleanVar(master=v, value=self.start_with_windows),
+            "cuda_directory_var": tk.StringVar(master=v, value=self.cuda_directory),
+            "bad_words_en_text": tk.Text(v),
+            "bad_words_es_text": tk.Text(v),
+            "custom_vocab_en_text": tk.Text(v),
+            "custom_vocab_es_text": tk.Text(v),
+        }
+        self._advanced_vars["bad_words_en_text"].insert(
+            "1.0", ", ".join(sorted(self.bad_words_by_lang.get("en", [])))
+        )
+        self._advanced_vars["bad_words_es_text"].insert(
+            "1.0", ", ".join(sorted(self.bad_words_by_lang.get("es", [])))
+        )
+        self._advanced_vars["custom_vocab_en_text"].insert(
+            "1.0", ", ".join(self.custom_vocabulary_by_lang.get("en", []))
+        )
+        self._advanced_vars["custom_vocab_es_text"].insert(
+            "1.0", ", ".join(self.custom_vocabulary_by_lang.get("es", []))
+        )
+        for widget in (
+            self._advanced_vars["bad_words_en_text"],
+            self._advanced_vars["bad_words_es_text"],
+            self._advanced_vars["custom_vocab_en_text"],
+            self._advanced_vars["custom_vocab_es_text"],
+        ):
+            widget.edit_modified(False)
+
+        self._options_dirty_ctx = self._new_settings_dirty_context()
+        self._collect_settings_vars_for_dirty_tracking(self._display_vars, self._options_dirty_ctx)
+        self._collect_settings_vars_for_dirty_tracking(self._transcription_vars, self._options_dirty_ctx)
+        self._collect_settings_vars_for_dirty_tracking(self._translation_vars, self._options_dirty_ctx)
+        self._collect_settings_vars_for_dirty_tracking(self._advanced_vars, self._options_dirty_ctx)
+        self._options_dirty_ctx["dirty_ready"] = True
+        self._options_dirty_ctx["applied_snapshot"] = self._capture_settings_snapshot(self._options_dirty_ctx)
+
+        window = webview.create_window(
+            "Rhema Options",
+            html=OPTIONS_HTML,
+            js_api=_OptionsApi(self),
+            width=680,
+            height=760,
+            background_color="#1E2228",
+        )
+        self._options_window = window
+        self._options_dirty_ctx["options_window"] = window
+        window.events.closing += self.on_closing
+        return window
+
+    def _find_options_var(self, name):
+        for mapping in (
+            self._display_vars, self._transcription_vars,
+            self._translation_vars, self._advanced_vars,
+        ):
+            value = mapping.get(name)
+            if isinstance(value, tk.Variable):
+                return value
+        return None
+
+    def options_set_var(self, name, value):
+        var = self._find_options_var(name)
+        if var is None:
+            return {"ok": False, "error": f"unknown var {name!r}"}
+        var.set(value)
+        return {"ok": True, "dirty": bool(self._options_dirty_ctx["dirty_value"])}
+
+    def options_set_text(self, name, value):
+        widget = self._advanced_vars.get(name)
+        if not isinstance(widget, tk.Text):
+            return {"ok": False, "error": f"unknown text field {name!r}"}
+        widget.delete("1.0", tk.END)
+        widget.insert("1.0", value)
+        self._var_interpreter.root.update()
+        return {"ok": True, "dirty": bool(self._options_dirty_ctx["dirty_value"])}
+
+    def options_list(self):
+        return {
+            "realtime_stt_final_model": [name for name, _code in REALTIME_STT_FINAL_MODEL_OPTIONS],
+            "realtime_stt_realtime_model": [name for name, _code in REALTIME_STT_REALTIME_MODEL_OPTIONS],
+            "local_nllb_model_name": [name for name, _code in NLLB_MODEL_NAME_OPTIONS],
+            "logging_mode": [name for name, _code in LOGGING_MODE_OPTIONS],
+            "stt_source_lang": ["auto", "en", "es"],
+            "local_nllb_target_lang": ["eng_Latn", "spa_Latn"],
+            "audio_device": list(self.devices),
+        }
+
+    def options_current_values(self):
+        return {
+            "max_lines": self.max_lines,
+            "video_max_lines": self.video_max_lines,
+            "bg_color": self.bg_color,
+            "text_color": self.text_color,
+            "lock_output_focus": self.lock_output_focus,
+            "clear_display_on_inactivity": self.clear_display_on_inactivity,
+            "clear_display_inactivity_seconds": self.clear_display_inactivity_seconds,
+            "video_feed_enabled": self.video_feed_enabled,
+            "video_caption_bar_alpha": self.video_caption_bar_alpha * 100,
+            "show_interim_text": self.show_interim_text,
+            "stt_device": self.stt_device,
+            "source_lang": self.source_lang,
+            "realtime_stt_final_model": self.realtime_stt_final_model,
+            "realtime_stt_realtime_model": self.realtime_stt_realtime_model,
+            "realtime_stt_silero_sensitivity": self.realtime_stt_silero_sensitivity,
+            "translation_enabled": self.translation_enabled,
+            "local_nllb_model_name": self.local_nllb_model_name,
+            "local_nllb_device": self.local_nllb_device,
+            "local_nllb_target_lang": self.local_nllb_target_lang,
+            "local_nllb_max_chars": self.local_nllb_max_chars,
+            "nllb_status": self.nllb_status,
+            "logging_mode": self.logging_mode,
+            "start_with_windows": self.start_with_windows,
+            "cuda_directory": self.cuda_directory,
+            "bad_words_en": sorted(self.bad_words_by_lang.get("en", [])),
+            "bad_words_es": sorted(self.bad_words_by_lang.get("es", [])),
+            "custom_vocab_en": self.custom_vocabulary_by_lang.get("en", []),
+            "custom_vocab_es": self.custom_vocabulary_by_lang.get("es", []),
+            "preferred_device_label": self.preferred_device_label,
+            "video_device_label": (
+                self._video_device_label(self.video_device_index)
+                if self.video_device_index is not None else ""
+            ),
+            "display": {
+                "realtime_stt_final_model": self._final_model_rev_map.get(
+                    self.realtime_stt_final_model, REALTIME_STT_FINAL_MODEL_OPTIONS[-1][0]
+                ),
+                "realtime_stt_realtime_model": self._realtime_model_rev_map.get(
+                    self.realtime_stt_realtime_model, REALTIME_STT_REALTIME_MODEL_OPTIONS[0][0]
+                ),
+                "local_nllb_model_name": self._nllb_model_name_rev_map.get(
+                    self.local_nllb_model_name, NLLB_MODEL_NAME_OPTIONS[0][0]
+                ),
+                "logging_mode": self._logging_mode_rev_map.get(self.logging_mode, "Normal"),
+            },
+            "dirty": bool(self._options_dirty_ctx["dirty_value"]),
+        }
+
+    def options_apply(self):
+        try:
+            self._apply_settings_from_controller(
+                self._display_vars, {}, self._transcription_vars,
+                self._translation_vars, self._advanced_vars, self._options_dirty_ctx,
+            )
+        except Exception as exc:
+            return {"ok": False, "error": str(exc)}
+        return {
+            "ok": True,
+            "dirty": bool(self._options_dirty_ctx["dirty_value"]),
+            "values": self.options_current_values(),
+        }
+
+    def options_select_audio_device(self, label):
+        if label not in self.devices:
+            return {"ok": False}
+        self.microphone_index = self.devices.index(label)
+        self.preferred_device_label = label
+        self.save_settings()
+        return {"ok": True}
+
+    def options_select_video_device(self, label):
+        try:
+            available = self.enumerate_video_devices()
+        except Exception:
+            available = []
+        for index in available:
+            if self._video_device_label(index) == label:
+                self.video_device_index = index
+                self.save_settings()
+                return {"ok": True}
+        return {"ok": False}

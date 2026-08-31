@@ -295,6 +295,8 @@ class WebTranslationApp(
         # call) finds a real, already-guarded None rather than an
         # AttributeError.
         self._controller_window = None
+        self._options_window = None
+        self._var_interpreter = None
 
         self.font_family = self.pick_font_family(
             ["DejaVu Sans", "Liberation Sans", "Arial", "Helvetica"]
