@@ -127,7 +127,18 @@ button{flex:1;padding:8px 10px;border:none;border-radius:5px;background:#5B8FF7;
   font:inherit;font-weight:600;cursor:pointer}
 button:hover{background:#4A7FEA}
 button:active{background:#3E6FD8}
+#startupOverlay{position:fixed;inset:0;background:#1E2228;display:flex;align-items:center;
+  justify-content:center;flex-direction:column;z-index:1000}
+#startupOverlay.hidden{display:none}
+.spinner{width:40px;height:40px;border-radius:50%;border:4px solid #3A3F4B;
+  border-top-color:#5B8FF7;animation:spin 0.8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+#startupText{margin-top:14px;font-size:14px;font-weight:600}
 </style></head><body>
+<div id="startupOverlay">
+  <div class="spinner"></div>
+  <div id="startupText">Loading...</div>
+</div>
 <div id="wrap">
   <h2>Rhema Controller</h2>
   <div id="previewBox"><span id="previewPlaceholder">Capturing snapshot...</span><img id="preview" style="display:none"></div>
@@ -149,6 +160,7 @@ function setStatus(text){ document.getElementById('status').textContent = text }
 function setLatency(text){ document.getElementById('latency').textContent = text }
 function setMeter(pct){ document.getElementById('meterFill').style.width = Math.max(0, Math.min(100, pct)) + '%' }
 function setPauseButtonText(text){ document.getElementById('pauseBtn').textContent = text }
+function hideStartupOverlay(){ document.getElementById('startupOverlay').classList.add('hidden') }
 function setPreview(dataUri){
   const img = document.getElementById('preview')
   const ph = document.getElementById('previewPlaceholder')
@@ -478,18 +490,82 @@ class WebSettingsUIMixin(SettingsLogicMixin):
             ),
         ]
 
+        # Deliberately WITHOUT menu=... here - the real _build_menu_bar()
+        # only attaches the menu once app_startup_ready is true
+        # ("same intent as the loading overlay itself"), and pywebview's
+        # public API has no way to attach a menu after window creation.
+        # _hide_startup_loading_overlay below reaches past that public API
+        # (BrowserView.instances[uid].set_window_menu(...), the same
+        # unsupported-but-real path every other cross-window HWND/Controls
+        # touch in this port already uses) - proved in
+        # experiments/web_startup_overlay.py before relying on it here.
         controller_window = webview.create_window(
             "Rhema Controller",
             html=CONTROLLER_HTML,
             width=420,
             height=560,
             background_color="#1E2228",
-            menu=menu,
             js_api=_ControllerApi(self),
         )
         self._controller_window = controller_window
+        self._controller_menu = menu
         controller_window.events.closing += self.on_closing
+        self._show_startup_loading_overlay()
         return controller_window
+
+    # ------------------------------------------------------------------ #
+    # Phase 7: startup loading gate - blocks Controller interaction until
+    # RealtimeSTT, Local NLLB, and the camera scan have all finished their
+    # initial load/verify pass, exactly matching what
+    # _show_startup_loading_overlay/_poll_startup_overlay_status/
+    # _hide_startup_loading_overlay do in settings_ui_mixin.py.
+    # _poll_startup_overlay_status itself is NOT overridden - its real body
+    # (settings_ui_mixin.py) only checks a sentinel, calls the shared
+    # _check_startup_ready() (settings_logic_mixin.py), and reschedules via
+    # self.root.after() - no Tk touch at all, so it's reused unmodified via
+    # inheritance, same as _fit_font_to_lines/_apply_scaled_fonts already
+    # were in Phase 3.
+    # ------------------------------------------------------------------ #
+    def _show_startup_loading_overlay(self):
+        # Real version rescans camera devices behind the overlay so the
+        # video device dropdown reflects last run's saved selection
+        # instead of a placeholder - only relevant if video was left on.
+        # This override's _refresh_video_devices is already synchronous
+        # (no worker thread, unlike the real one), so there is no async
+        # completion callback to wire - just call it and immediately mark
+        # the scan ready, matching the real method's own "camera scan
+        # done" semantics.
+        if self.video_feed_enabled:
+            self._refresh_video_devices()
+        self._mark_startup_video_scan_ready()
+        self._startup_loading_overlay = True  # sentinel, not a real widget
+        self._poll_startup_overlay_status()
+
+    def _hide_startup_loading_overlay(self):
+        self._startup_loading_overlay = None
+        if self._controller_window is not None:
+            try:
+                self._controller_window.evaluate_js("hideStartupOverlay()")
+            except Exception:
+                pass
+        try:
+            from webview.platforms.winforms import BrowserView
+
+            browser_view = BrowserView.instances.get(self._controller_window.uid)
+            if browser_view is not None:
+                browser_view.set_window_menu(self._controller_menu)
+        except Exception:
+            pass
+        # Same first-run/recommendation-changed Hardware Autodetect the
+        # real method triggers automatically - self._transcription_vars/
+        # self._translation_vars already exist by this point (Options was
+        # built hidden-but-eagerly at startup - see main_webview.py).
+        if getattr(self, "_transcription_vars", None) is not None and (
+            self.is_first_run or self._hardware_recommendation_differs()
+        ):
+            self.root.after(300, lambda: self._run_hardware_autodetect_from_menu(
+                self._transcription_vars, self._translation_vars
+            ))
 
     # ------------------------------------------------------------------ #
     # File menu actions - real as of Phase 6.
@@ -775,11 +851,12 @@ class WebSettingsUIMixin(SettingsLogicMixin):
     # real multi-monitor placement remain open, the same two gaps that
     # experiment already flagged and this phase doesn't newly introduce.
     # ------------------------------------------------------------------ #
-    def build_web_options(self):
+    def build_web_options(self, hidden=False):
         import webview
 
         if getattr(self, "_options_window", None) is not None:
             try:
+                self._options_window.show()
                 self._options_window.restore()
                 return self._options_window
             except Exception:
@@ -903,6 +980,35 @@ class WebSettingsUIMixin(SettingsLogicMixin):
         self._options_dirty_ctx["dirty_ready"] = True
         self._options_dirty_ctx["applied_snapshot"] = self._capture_settings_snapshot(self._options_dirty_ctx)
 
+        # Same real side effect _build_translation_section's own
+        # maybe_start_nllb_prewarm has at construction time (settings_ui_
+        # mixin.py) - translation is opt-in, so if it's off there is
+        # nothing to check/download, and _mark_startup_translation_ready()
+        # must still fire immediately or the startup overlay would wait
+        # forever on a check that will never run (the real method's own
+        # comment says exactly this). If translation IS on, kick off the
+        # real cache-check chain instead, which eventually marks it ready
+        # itself (success or failure - _set_local_nllb_status's whole
+        # design is a terminal-state gate, not a success gate).
+        if self.translation_enabled and self.nllb_status not in (
+            "Checking", "Downloading", "Loading", "Ready",
+        ):
+            self._start_local_nllb_cache_check(
+                self._local_nllb_config_from_vars(
+                    self._translation_vars["local_nllb_model_name_var"],
+                    self._translation_vars["local_nllb_device_var"],
+                    self._translation_vars["local_nllb_max_chars_var"],
+                    model_name_map=self._translation_vars["local_nllb_model_name_map"],
+                ),
+                prompt_if_missing=True,
+            )
+        elif not self.translation_enabled:
+            self._set_local_nllb_status(
+                "Not selected",
+                "Translation is off. Enable it above to check or download the Local NLLB model.",
+            )
+            self._mark_startup_translation_ready()
+
         window = webview.create_window(
             "Rhema Options",
             html=OPTIONS_HTML,
@@ -910,6 +1016,7 @@ class WebSettingsUIMixin(SettingsLogicMixin):
             width=680,
             height=760,
             background_color="#1E2228",
+            hidden=hidden,
         )
         self._options_window = window
         self._options_dirty_ctx["options_window"] = window

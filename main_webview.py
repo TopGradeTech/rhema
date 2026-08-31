@@ -531,6 +531,13 @@ class WebTranslationApp(
         # real Controller window to push into, matching main.py's own
         # open_settings()-before-thread-start ordering.
         self.build_web_controller()
+        # Eager-but-hidden, matching open_settings()'s real behavior
+        # (_build_options_dialog runs unconditionally at launch): building
+        # the Translation section's vars kicks off the real NLLB cache-
+        # check, which is what eventually flips startup_translation_ready
+        # and lets the Controller's startup loading overlay (Phase 7)
+        # dismiss itself. Revealed for real only via File > Options.
+        self.build_web_options(hidden=True)
 
         self.translation_thread = Thread(target=self._translation_worker, daemon=True)
         self.translation_thread.start()
