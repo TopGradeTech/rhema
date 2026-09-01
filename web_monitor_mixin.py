@@ -51,7 +51,12 @@ other window), so nothing here targets them.
 import os
 
 from monitor_logic_mixin import MonitorLogicMixin
-from webview_bridge import hwnd_for, physical_to_logical, real_monitors_with_scale
+from webview_bridge import (
+    hwnd_for,
+    invoke_on_ui_thread,
+    physical_to_logical,
+    real_monitors_with_scale,
+)
 
 
 class WebMonitorMixin(MonitorLogicMixin):
@@ -170,15 +175,27 @@ class WebMonitorMixin(MonitorLogicMixin):
         # focus" was fully wired through Options (form, persistence,
         # _apply_display_vars) but never actually applied to the real
         # window. pywebview's window.on_top is a real public property
-        # (window.py), not a reach-past-the-API call - its setter marshals
-        # to platforms/winforms.py's set_on_top(), which sets the real
-        # Form's TopMost. Matches Tk's own contract too: like
+        # (window.py), not a reach-past-the-API call, but its setter still
+        # ends up at platforms/winforms.py's set_on_top(), which sets
+        # `i.TopMost` directly with NO InvokeRequired/Invoke() guard -
+        # unlike window.toggle_fullscreen() (which does check/marshal).
+        # toggle_fullscreen_clicked() runs on whatever thread pywebview's
+        # js_api dispatch used for that call, not necessarily the real
+        # WinForms UI thread, so setting on_top directly here is exactly
+        # the cross-thread WinForms touch this port's own webview_bridge.py
+        # already warns must go through invoke_on_ui_thread() - confirmed
+        # for real: repeatedly clicking Pause/Toggle Fullscreen crashed the
+        # whole process, not just this window, matching a cross-thread
+        # Control access rather than a catchable Python exception (nothing
+        # useful landed in error.log). Matches Tk's own contract too: like
         # _apply_custom_fullscreen, this only takes effect when (re-)
         # entering fullscreen, not from a live Apply while already
         # fullscreen - toggling the checkbox needs a fullscreen exit/
         # re-enter (Escape/F11 twice) to take effect there too.
         try:
-            window.on_top = bool(self.lock_output_focus)
+            invoke_on_ui_thread(
+                window, lambda: setattr(window, "on_top", bool(self.lock_output_focus))
+            )
         except Exception:
             pass
 
@@ -192,7 +209,9 @@ class WebMonitorMixin(MonitorLogicMixin):
         # Mirrors monitor_mixin.py's exit_fullscreen restoring prev_topmost
         # - the Output window shouldn't stay pinned above every other
         # window (Controller/Options included) once it's not fullscreen.
+        # See enter_fullscreen's own comment for why this must go through
+        # invoke_on_ui_thread rather than setting window.on_top directly.
         try:
-            window.on_top = False
+            invoke_on_ui_thread(window, lambda: setattr(window, "on_top", False))
         except Exception:
             pass

@@ -16,11 +16,22 @@
 
 """Phase 5 of the pywebview port: the Controller window - the real
 Preview/Status/Latency/audio-level-meter/Pause/Toggle-Fullscreen block that
-open_settings() builds in settings_ui_mixin.py, plus the real File/About
-native menu bar from _build_menu_bar(). Deliberately NOT the Options
-dialog (Phase 6) and NOT the startup loading overlay (Phase 7) - those
-stay real-but-unbuilt for this phase, same as Phase 3/4 left the Controller
+open_settings() builds in settings_ui_mixin.py, plus the File/About menu
+options from _build_menu_bar(). Deliberately NOT the Options dialog
+(Phase 6) and NOT the startup loading overlay (Phase 7) - those stay
+real-but-unbuilt for this phase, same as Phase 3/4 left the Controller
 itself unbuilt.
+
+The menu itself is NOT a native WinForms MenuStrip (pywebview's
+set_window_menu) - it started as one, but that path needed a
+ProfessionalColorTable subclass, a Paint-event overpaint for a WinForms-
+reserved gutter that ignores ColorTable overrides regardless, and still
+never looked quite native. Replaced with a plain HTML/CSS/JS dropdown menu
+bar (#menuBar in CONTROLLER_HTML) after a gear-icon experiment for Options
+alone showed a page element themes with three ordinary CSS rules instead
+of fighting WinForms - see _ControllerApi's own menu-action methods for
+where each item now calls the same real backend method the old
+Menu/MenuAction list called.
 
 Mixed in ahead of SettingsUIMixin AND DisplayMixin in WebTranslationApp's
 MRO (see main_webview.py) so these override just the handful of methods
@@ -53,6 +64,7 @@ import json
 import tkinter as tk
 import webbrowser
 
+from languages import whisper_language_options, nllb_language_options
 from settings_logic_mixin import SettingsLogicMixin
 from settings_ui_mixin import DONATE_URL
 from webview_bridge import TkVariableInterpreter
@@ -104,32 +116,42 @@ LOGGING_MODE_OPTIONS = [
 
 CONTROLLER_HTML = r"""
 <!doctype html><html><head><meta charset="utf-8"><title>Rhema Controller</title><style>
-:root{color-scheme:dark}
-html,body{margin:0;height:100%;background:#1E2228;color:#E5E7EB;
+:root{__THEME_CSS__}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--text);
   font:14px/1.4 "Segoe UI",system-ui,sans-serif;overflow:hidden}
 #wrap{display:flex;flex-direction:column;height:100vh;box-sizing:border-box;padding:14px;gap:12px}
-h2{margin:0;font-size:16px;color:#F3F4F6}
-#previewBox{flex:1;min-height:0;border:1px solid #3A3F47;border-radius:6px;
+#menuBar{display:flex;gap:2px;margin:-4px 0 -6px -6px}
+.menuItem{position:relative;padding:5px 10px;border-radius:5px;font-size:13px;color:var(--muted);
+  cursor:pointer;user-select:none}
+.menuItem:hover,.menuItem.open{background:var(--overlay);color:var(--text)}
+.menuDropdown{display:none;position:absolute;top:100%;left:0;margin-top:4px;background:var(--overlay);
+  border:1px solid var(--border);border-radius:6px;min-width:190px;padding:4px;
+  box-shadow:0 8px 20px rgba(0,0,0,.45);z-index:20}
+.menuItem.open .menuDropdown{display:block}
+.menuOption{padding:7px 10px;border-radius:4px;font-size:13px;color:var(--text);cursor:pointer;
+  white-space:nowrap}
+.menuOption:hover{background:var(--accent);color:#fff}
+.menuSeparator{height:1px;background:var(--border);margin:4px 2px}
+#previewBox{flex:1;min-height:0;border:1px solid var(--border);border-radius:6px;
   background:#000;display:flex;align-items:center;justify-content:center;overflow:hidden}
 #preview{max-width:100%;max-height:100%;display:block}
-#previewPlaceholder{color:#6B7280;font-size:13px}
-#statusSection{border:1px solid #3A3F47;border-radius:6px;padding:10px 12px;flex:0 0 auto}
-#statusSection .label{color:#9CA3AF;font-size:11px;text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px}
+#previewPlaceholder{color:var(--muted);font-size:13px}
+#statusSection{border:1px solid var(--border);border-radius:6px;padding:10px 12px;flex:0 0 auto}
+#statusSection .label{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px}
 #status{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#latency{color:#9CA3AF;margin-top:4px}
+#latency{color:var(--muted);margin-top:4px}
 #meterRow{display:flex;align-items:center;gap:8px;margin-top:8px}
 #meterTrack{flex:1;height:12px;background:#1A1A1A;border:1px solid #3A3A3A;border-radius:3px;overflow:hidden}
-#meterFill{height:100%;width:0;background:#5B8FF7;transition:width 70ms linear}
+#meterFill{height:100%;width:0;background:var(--accent);transition:width 70ms linear}
 #buttonRow{display:flex;gap:10px;margin-top:10px}
-#buttonRow button{padding:8px 16px;border:none;border-radius:5px;background:#5B8FF7;color:#fff;
+#buttonRow button{padding:8px 16px;border:none;border-radius:5px;background:var(--accent);color:#fff;
   font:inherit;font-weight:600;cursor:pointer}
-#buttonRow button:hover{background:#4A7FEA}
-#buttonRow button:active{background:#3E6FD8}
-#startupOverlay{position:fixed;inset:0;background:#1E2228;display:flex;align-items:center;
+#buttonRow button:hover,#buttonRow button:active{background:var(--accent-hover)}
+#startupOverlay{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;
   justify-content:center;flex-direction:column;z-index:1000}
 #startupOverlay.hidden{display:none}
-.spinner{width:40px;height:40px;border-radius:50%;border:4px solid #3A3F4B;
-  border-top-color:#5B8FF7;animation:spin 0.8s linear infinite}
+.spinner{width:40px;height:40px;border-radius:50%;border:4px solid var(--border);
+  border-top-color:var(--accent);animation:spin 0.8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 #startupText{margin-top:14px;font-size:14px;font-weight:600}
 </style></head><body>
@@ -138,7 +160,23 @@ h2{margin:0;font-size:16px;color:#F3F4F6}
   <div id="startupText">Loading...</div>
 </div>
 <div id="wrap">
-  <h2>Rhema Controller</h2>
+  <div id="menuBar">
+    <div class="menuItem">File
+      <div class="menuDropdown">
+        <div class="menuOption" onclick="pywebview.api.hardware_autodetect_clicked()">Hardware Autodetect</div>
+        <div class="menuOption" onclick="pywebview.api.open_options_clicked()">Options</div>
+      </div>
+    </div>
+    <div class="menuItem">About
+      <div class="menuDropdown">
+        <div class="menuOption" onclick="pywebview.api.about_clicked()">About Rhema</div>
+        <div class="menuSeparator"></div>
+        <div class="menuOption" onclick="pywebview.api.check_updates_clicked()">Check for Updates</div>
+        <div class="menuOption" onclick="pywebview.api.donate_clicked()">Donate</div>
+        <div class="menuOption" onclick="pywebview.api.feature_request_clicked()">Feature Request</div>
+      </div>
+    </div>
+  </div>
   <div id="previewBox"><span id="previewPlaceholder">Capturing snapshot...</span><img id="preview" style="display:none"></div>
   <div id="statusSection">
     <div class="label">Status</div>
@@ -159,6 +197,13 @@ function setLatency(text){ document.getElementById('latency').textContent = text
 function setMeter(pct){ document.getElementById('meterFill').style.width = Math.max(0, Math.min(100, pct)) + '%' }
 function setPauseButtonText(text){ document.getElementById('pauseBtn').textContent = text }
 function hideStartupOverlay(){ document.getElementById('startupOverlay').classList.add('hidden') }
+function applyThemeVars(vars){
+  const root = document.documentElement
+  for (const key in vars){
+    if (key === 'colorScheme') { root.style.colorScheme = vars[key]; continue }
+    root.style.setProperty(key, vars[key])
+  }
+}
 function setPreview(dataUri){
   const img = document.getElementById('preview')
   const ph = document.getElementById('previewPlaceholder')
@@ -173,6 +218,24 @@ function pollPreview(){
   }).catch(function(){})
 }
 setInterval(pollPreview, 15000)
+
+// File/About menu bar - a plain HTML/CSS dropdown replacing the old
+// native WinForms MenuStrip (see this file's own module docstring for
+// why). One item open at a time; clicking an option (or anywhere outside
+// an open menu) closes it - the option's own onclick fires first, then
+// this same bubbled click closes the menu, which is normal menu UX and
+// needs no extra code to get right.
+document.querySelectorAll('.menuItem').forEach(function(item){
+  item.addEventListener('click', function(e){
+    e.stopPropagation()
+    var wasOpen = item.classList.contains('open')
+    document.querySelectorAll('.menuItem.open').forEach(function(m){ m.classList.remove('open') })
+    if (!wasOpen) item.classList.add('open')
+  })
+})
+document.addEventListener('click', function(){
+  document.querySelectorAll('.menuItem.open').forEach(function(m){ m.classList.remove('open') })
+})
 setTimeout(pollPreview, 300)
 
 // Same hotkey listener as the Output window's own HTML (main_webview.py) -
@@ -217,6 +280,24 @@ class _ControllerApi:
     def open_settings_clicked(self):
         self._app.focus_controller_window()
 
+    def open_options_clicked(self):
+        self._app._show_options_dialog()
+
+    def hardware_autodetect_clicked(self):
+        self._app._run_hardware_autodetect_menu_action()
+
+    def about_clicked(self):
+        self._app._show_about_popup()
+
+    def check_updates_clicked(self):
+        self._app.check_for_updates(manual=True)
+
+    def donate_clicked(self):
+        self._app._show_donate_popup()
+
+    def feature_request_clicked(self):
+        self._app._open_feature_request_page()
+
     def close_app_clicked(self):
         self._app.on_closing()
 
@@ -254,38 +335,72 @@ class _OptionsApi:
         self._app._refresh_video_devices()
         return {"ok": True}
 
+    def get_video_status(self):
+        # self.video_status is updated directly by the capture worker
+        # (video_capture_mixin.py) regardless of any UI layer - the real
+        # Tk app just happens to also push it into a tk.StringVar
+        # (video_status_var) for a live label. This port has no live-var-
+        # to-page push mechanism, so the Options page polls this instead,
+        # same pattern as the Controller's Preview polling.
+        return getattr(self._app, "video_status", "")
+
+    def browse_cuda_directory(self):
+        return self._app._browse_cuda_directory()
+
+    def check_nllb_download(self):
+        return self._app._check_nllb_download_from_options()
+
+    def select_output_monitor(self, label):
+        return self._app._select_output_monitor(label)
+
+    def select_settings_monitor(self, label):
+        return self._app._select_settings_monitor(label)
+
+    def show_monitor_ids(self):
+        self._app.show_monitor_ids()
+        return {"ok": True}
+
 
 OPTIONS_HTML = r"""
 <!doctype html><html><head><meta charset="utf-8"><title>Rhema Options</title>
 <style>
-:root{--bg:#1E2228;--card:#262A33;--text:#E5E7EB;--muted:#9CA3AF;--border:#3A3F4B;--accent:#5B8FF7;--dirty:#E0A458}
+:root{__THEME_CSS__}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);
- font:14px/1.5 "Segoe UI","Segoe UI Variable Text",system-ui,sans-serif;padding:24px;overflow-y:auto}
+ font:14px/1.5 "Segoe UI","Segoe UI Variable Text",system-ui,sans-serif;padding:24px 24px 110px;overflow-y:auto}
 .card{max-width:640px;margin:0 auto 24px;background:var(--card);border:1px solid var(--border);
  border-radius:12px;padding:20px}
+#applyBar{position:fixed;left:0;right:0;bottom:0;background:var(--bg);
+ border-top:1px solid var(--border);padding:14px 24px;box-shadow:0 -4px 16px rgba(0,0,0,.2)}
+#applyBarInner{max-width:640px;margin:0 auto}
 h1{font-size:15px;margin:0 0 4px;color:var(--text)}
-h2{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin:18px 0 2px}
+h2{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--accent);font-weight:700;
+ margin:28px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--border)}
+h2:first-of-type{margin-top:2px}
 .row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 0;
- border-bottom:1px solid #2F343E}
+ border-bottom:1px solid var(--border)}
 .row:last-of-type{border-bottom:none}
+.row[hidden]{display:none}
 label{font-size:13px}
-input[type=number]{width:80px;background:#14171C;border:1px solid var(--border);color:var(--text);
+input[type=number]{width:80px;background:var(--input-bg);border:1px solid var(--border);color:var(--text);
  border-radius:6px;padding:4px 8px}
 input[type=color]{width:40px;height:26px;border:none;background:none;padding:0}
-select{background:#14171C;border:1px solid var(--border);color:var(--text);border-radius:6px;padding:4px 8px;
+select{background:var(--input-bg);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:4px 8px;
  max-width:280px}
-input[type=text]{background:#14171C;border:1px solid var(--border);color:var(--text);border-radius:6px;
+input[type=text]{background:var(--input-bg);border:1px solid var(--border);color:var(--text);border-radius:6px;
  padding:4px 8px}
-textarea{width:100%;background:#14171C;border:1px solid var(--border);color:var(--text);border-radius:6px;
+textarea{width:100%;background:var(--input-bg);border:1px solid var(--border);color:var(--text);border-radius:6px;
  padding:6px 8px;font:12px/1.4 monospace;resize:vertical}
 input[type=checkbox]{width:16px;height:16px;accent-color:var(--accent)}
-#apply{margin-top:16px;width:100%;padding:10px;border-radius:8px;border:none;font-size:13px;font-weight:600;
- background:#3A3F4B;color:#6B7280;cursor:not-allowed}
+.smallBtn{padding:5px 12px;border-radius:6px;border:none;font:inherit;font-size:12px;font-weight:600;
+ background:var(--accent);color:#fff;cursor:pointer;white-space:nowrap}
+.smallBtn:hover{background:var(--accent-hover)}
+#apply{width:100%;padding:10px;border-radius:8px;border:none;font-size:13px;font-weight:600;
+ background:var(--border);color:var(--muted);cursor:not-allowed}
 #apply.dirty{background:var(--dirty);color:#1E2228;cursor:pointer}
 #status{margin-top:12px;font-size:12px;color:var(--muted);white-space:pre-wrap}
 .help{display:inline-block;margin-left:6px;width:15px;height:15px;border-radius:50%;
- background:#3A3F4B;color:var(--text);text-align:center;font-size:10px;font-weight:700;
+ background:var(--border);color:var(--text);text-align:center;font-size:10px;font-weight:700;
  line-height:15px;cursor:help;user-select:none}
 #tooltip{position:fixed;background:#111111;color:#fff;border:1px solid #333;
  padding:4px 6px;font-size:12px;max-width:320px;line-height:1.3;z-index:2000;
@@ -295,14 +410,23 @@ input[type=checkbox]{width:16px;height:16px;accent-color:var(--accent)}
   <h1>Rhema Options</h1>
 
   <h2>Display</h2>
-  <div class="row"><label>Max caption lines<span class="help" data-tip="Maximum number of translated lines kept on screen.">?</span></label><input type="number" id="lines" min="4" max="10"></div>
+  <div class="row"><label>Theme<span class="help" data-tip="Switches the Controller and Options windows between light and dark.">?</span></label>
+    <select id="theme"><option value="Light">Light</option><option value="Dark">Dark</option></select></div>
+  <div class="row"><label>Max caption lines (no video feed)<span class="help" data-tip="Maximum number of translated lines kept on screen when the video feed below is off.">?</span></label><input type="number" id="lines" min="4" max="10"></div>
   <div class="row"><label>Background color<span class="help" data-tip="Background color for the output overlay and preview. Also tints the caption bar behind the video overlay, if enabled.">?</span></label><input type="color" id="bg"></div>
-  <div class="row"><label>Lock output window focus</label><input type="checkbox" id="lockFocus"></div>
+  <div class="row"><label>Text color<span class="help" data-tip="Text color for the output overlay and preview.">?</span></label><input type="color" id="textColor"></div>
+  <div class="row"><label>Always keep on top of other apps<span class="help" data-tip="Keeps the fullscreen output window on top of other windows and attempts to focus it. Leave this off to let other apps appear above the output window.">?</span></label><input type="checkbox" id="lockFocus"></div>
   <div class="row"><label>Clear display on inactivity</label><input type="checkbox" id="clear"></div>
-  <div class="row"><label>&nbsp;&nbsp;...after N seconds</label><input type="number" id="clearSeconds" min="5" max="3600"></div>
-  <div class="row"><label>Video overlay enabled</label><input type="checkbox" id="videoEnabled"></div>
-  <div class="row"><label>Camera device<span class="help" data-tip="Camera index for the OBS Virtual Camera. Click Refresh after starting OBS's Virtual Camera if it isn't listed yet.">?</span></label><select id="videoDevice"></select></div>
+  <div class="row" id="clearSecondsRow"><label>&nbsp;&nbsp;...after N seconds</label><input type="number" id="clearSeconds" min="5" max="3600"></div>
+  <div class="row"><label>Show video feed behind captions<span class="help" data-tip="Shows the OBS Virtual Camera behind captions. Start OBS's Virtual Camera first.">?</span></label><input type="checkbox" id="videoEnabled"></div>
+  <div class="row"><label>Camera device<span class="help" data-tip="Camera index for the OBS Virtual Camera. Click Refresh after starting OBS's Virtual Camera if it isn't listed yet.">?</span></label>
+    <span style="display:flex;gap:8px;align-items:center"><select id="videoDevice"></select><button type="button" id="videoRefresh" class="smallBtn">Refresh</button></span></div>
+  <div class="row"><label>&nbsp;&nbsp;Camera status</label><span id="videoStatus" style="color:#9CA3AF;font-size:12px">--</span></div>
+  <div class="row"><label>Max caption lines (with video feed)<span class="help" data-tip="Maximum number of translated lines kept on screen when the video feed is on. Kept lower than the no-video default to leave more of the video visible.">?</span></label><input type="number" id="videoLines" min="1" max="3"></div>
   <div class="row"><label>Caption bar opacity (%)<span class="help" data-tip="How solid the bar behind the caption lines looks, using the Background Color above. 0% is fully see-through, 100% is a solid bar.">?</span></label><input type="number" id="videoAlpha" min="0" max="100"></div>
+  <div class="row"><label>Output monitor<span class="help" data-tip="Monitor where the translation output appears.">?</span></label><select id="outputMonitor"></select></div>
+  <div class="row"><label>Controller monitor<span class="help" data-tip="Monitor where this Controller/Options window opens.">?</span></label><select id="settingsMonitor"></select></div>
+  <div class="row"><span></span><button type="button" id="showMonitorIds" class="smallBtn">Show Monitor Numbers</button></div>
 
   <h2>Audio</h2>
   <div class="row"><label>Microphone<span class="help" data-tip="Input device used for speech capture.">?</span></label><select id="audioDevice"></select></div>
@@ -311,8 +435,8 @@ input[type=checkbox]{width:16px;height:16px;accent-color:var(--accent)}
   <div class="row"><label>Show live interim text</label><input type="checkbox" id="interim"></div>
   <div class="row"><label>STT device<span class="help" data-tip="Auto uses CUDA when available, otherwise CPU.">?</span></label>
     <select id="device"><option value="cpu">CPU</option><option value="cuda">CUDA</option><option value="auto">Auto</option></select></div>
-  <div class="row"><label>Source language</label>
-    <select id="sourceLang"><option value="auto">Auto-detect</option><option value="en">English</option><option value="es">Spanish</option></select></div>
+  <div class="row"><label>Source language<span class="help" data-tip="The language your speech is transcribed as. Type to search all supported languages.">?</span></label>
+    <input type="text" id="sourceLang" list="sourceLangOptions" autocomplete="off" style="width:220px"><datalist id="sourceLangOptions"></datalist></div>
   <div class="row"><label>Final model<span class="help" data-tip="Accurate faster-whisper model used after each utterance ends. Larger models are more accurate but need more VRAM and take longer per utterance.">?</span></label><select id="finalModel"></select></div>
   <div class="row"><label>Realtime model<span class="help" data-tip="Fast model used internally every ~0.2s to drive dynamic silence detection. Not shown on screen - kept small so it doesn't compete with the final model for GPU time.">?</span></label><select id="realtimeModel"></select></div>
   <div class="row"><label>Voice sensitivity<span class="help" data-tip="How easily speech is detected. Lower catches softer/quieter speech; higher ignores background noise better.">?</span></label><input type="number" id="silero" min="0.1" max="0.9" step="0.05"></div>
@@ -323,25 +447,37 @@ input[type=checkbox]{width:16px;height:16px;accent-color:var(--accent)}
   <div class="row"><label>Device<span class="help" data-tip="Auto uses CUDA when available, otherwise CPU.">?</span></label>
     <select id="nllbDevice"><option value="cpu">CPU</option><option value="cuda">CUDA</option><option value="auto">Auto</option></select></div>
   <div class="row"><label>Target language<span class="help" data-tip="Language the translated transcript is produced in. Type to search all 200 languages.">?</span></label>
-    <select id="nllbTargetLang"><option value="eng_Latn">English</option><option value="spa_Latn">Spanish</option></select></div>
+    <input type="text" id="nllbTargetLang" list="nllbTargetLangOptions" autocomplete="off" style="width:220px"><datalist id="nllbTargetLangOptions"></datalist></div>
   <div class="row"><label>Max chars per chunk<span class="help" data-tip="Long transcripts are split by paragraph, sentence, or length before translation.">?</span></label><input type="number" id="nllbMaxChars" min="250" max="20000" step="250"></div>
-  <div id="nllbStatus" style="color:#9CA3AF;font-size:12px;margin:4px 0 8px">nllb status: --</div>
+  <div class="row"><span></span><button type="button" id="nllbDownload" class="smallBtn">Download / Check for Updates</button></div>
+  <div id="nllbStatus" style="color:#9CA3AF;font-size:12px;margin:4px 0 8px">NLLB status: --</div>
 
   <h2>Advanced</h2>
   <div class="row"><label>Logging mode<span class="help" data-tip="Normal keeps status/error and finalized output logs. Debug adds pipeline traces. Evaluation adds raw transcribed/translated comparison logs. Full enables all logs.">?</span></label><select id="loggingMode"></select></div>
   <div class="row"><label>Start app when Windows starts</label><input type="checkbox" id="startWithWindows"></div>
-  <div class="row"><label>CUDA directory<span class="help" data-tip="Optional Windows path used to find CUDA Toolkit 12.x and cuDNN 9.x DLLs for local faster-whisper GPU mode. Select the CUDA toolkit folder or its bin folder.">?</span></label><input type="text" id="cudaDirectory" style="width:280px"></div>
-  <div class="row"><label>Bad words (English, comma-separated)<span class="help" data-tip="Words to omit from the output.">?</span></label></div>
-  <textarea id="badWordsEn" rows="2"></textarea>
-  <div class="row"><label>Bad words (Spanish, comma-separated)</label></div>
-  <textarea id="badWordsEs" rows="2"></textarea>
-  <div class="row"><label>Custom vocabulary (English, comma-separated)<span class="help" data-tip="Words or phrases to bias recognition and preserve capitalization.">?</span></label></div>
-  <textarea id="vocabEn" rows="2"></textarea>
-  <div class="row"><label>Custom vocabulary (Spanish, comma-separated)</label></div>
-  <textarea id="vocabEs" rows="2"></textarea>
+  <div class="row"><label>CUDA directory<span class="help" data-tip="Optional Windows path used to find CUDA Toolkit 12.x and cuDNN 9.x DLLs for local faster-whisper GPU mode. Select the CUDA toolkit folder or its bin folder.">?</span></label>
+    <span style="display:flex;gap:8px;align-items:center"><input type="text" id="cudaDirectory" style="width:220px"><button type="button" id="cudaBrowse" class="smallBtn">Browse</button></span></div>
+  <div class="row"><label>Bad words filter<span class="help" data-tip="Words to omit from the output.">?</span></label><button type="button" id="badWordsToggle" class="smallBtn">Show list</button></div>
+  <div id="badWordsContainer" hidden>
+    <div class="row"><label>&nbsp;&nbsp;English (comma-separated)</label></div>
+    <textarea id="badWordsEn" rows="2"></textarea>
+    <div class="row"><label>&nbsp;&nbsp;Spanish (comma-separated)</label></div>
+    <textarea id="badWordsEs" rows="2"></textarea>
+  </div>
+  <div class="row"><label>Custom vocabulary<span class="help" data-tip="Words or phrases to bias recognition and preserve capitalization.">?</span></label><button type="button" id="vocabToggle" class="smallBtn">Show list</button></div>
+  <div id="vocabContainer" hidden>
+    <div class="row"><label>&nbsp;&nbsp;English (comma-separated)</label></div>
+    <textarea id="vocabEn" rows="2"></textarea>
+    <div class="row"><label>&nbsp;&nbsp;Spanish (comma-separated)</label></div>
+    <textarea id="vocabEs" rows="2"></textarea>
+  </div>
 
-  <button id="apply" disabled>Apply</button>
-  <div id="status">loading current settings...</div>
+</div>
+<div id="applyBar">
+  <div id="applyBarInner">
+    <button id="apply" disabled>Apply</button>
+    <div id="status">loading current settings...</div>
+  </div>
 </div>
 <div id="tooltip"></div>
 <script>
@@ -394,12 +530,15 @@ const applyBtn = document.getElementById('apply')
 const statusEl = document.getElementById('status')
 
 const fields = {
+  theme: {varName: 'theme_var', kind: 'str'},
   lines: {varName: 'lines_var', kind: 'int'},
   bg: {varName: 'bg_color_var', kind: 'str'},
+  textColor: {varName: 'text_color_var', kind: 'str'},
   lockFocus: {varName: 'lock_output_focus_var', kind: 'bool'},
   clear: {varName: 'clear_display_on_inactivity_var', kind: 'bool'},
   clearSeconds: {varName: 'clear_display_inactivity_seconds_var', kind: 'int'},
   videoEnabled: {varName: 'video_feed_enabled_var', kind: 'bool'},
+  videoLines: {varName: 'video_lines_var', kind: 'int'},
   videoAlpha: {varName: 'video_caption_alpha_var', kind: 'float'},
   interim: {varName: 'show_interim_text_var', kind: 'bool'},
   device: {varName: 'stt_device_var', kind: 'str'},
@@ -462,6 +601,52 @@ document.getElementById('audioDevice').addEventListener('change', async (e) => {
 document.getElementById('videoDevice').addEventListener('change', async (e) => {
   await pywebview.api.select_video_device(e.target.value)
 })
+document.getElementById('videoRefresh').addEventListener('click', async () => {
+  await pywebview.api.refresh_devices()
+})
+document.getElementById('cudaBrowse').addEventListener('click', async () => {
+  const result = await pywebview.api.browse_cuda_directory()
+  if (result.ok){
+    document.getElementById('cudaDirectory').value = result.path
+    setDirty(result.dirty)
+  }
+})
+document.getElementById('nllbDownload').addEventListener('click', () => {
+  pywebview.api.check_nllb_download()
+})
+document.getElementById('outputMonitor').addEventListener('change', async (e) => {
+  await pywebview.api.select_output_monitor(e.target.value)
+})
+document.getElementById('settingsMonitor').addEventListener('change', async (e) => {
+  await pywebview.api.select_settings_monitor(e.target.value)
+})
+document.getElementById('showMonitorIds').addEventListener('click', () => {
+  pywebview.api.show_monitor_ids()
+})
+
+function makeListToggle(buttonId, containerId){
+  const button = document.getElementById(buttonId)
+  const container = document.getElementById(containerId)
+  button.addEventListener('click', () => {
+    container.hidden = !container.hidden
+    button.textContent = container.hidden ? 'Show list' : 'Hide list'
+  })
+}
+makeListToggle('badWordsToggle', 'badWordsContainer')
+makeListToggle('vocabToggle', 'vocabContainer')
+
+function syncClearSecondsVisibility(){
+  document.getElementById('clearSecondsRow').hidden = !document.getElementById('clear').checked
+}
+document.getElementById('clear').addEventListener('change', syncClearSecondsVisibility)
+
+function pollVideoStatus(){
+  pywebview.api.get_video_status().then((status) => {
+    document.getElementById('videoStatus').textContent = status || '--'
+  }).catch(() => {})
+}
+setInterval(pollVideoStatus, 2000)
+setTimeout(pollVideoStatus, 300)
 
 function fillSelect(id, names, selected){
   const el = elFor(id)
@@ -475,6 +660,24 @@ function fillSelect(id, names, selected){
   if (selected) el.value = selected
 }
 
+function fillDatalist(id, names){
+  const el = elFor(id)
+  el.innerHTML = ''
+  for (const name of names){
+    const opt = document.createElement('option')
+    opt.value = name
+    el.appendChild(opt)
+  }
+}
+
+function applyThemeVars(vars){
+  const root = document.documentElement
+  for (const key in vars){
+    if (key === 'colorScheme') { root.style.colorScheme = vars[key]; continue }
+    root.style.setProperty(key, vars[key])
+  }
+}
+
 applyBtn.addEventListener('click', async () => {
   const result = await pywebview.api.apply()
   if (!result.ok){
@@ -483,7 +686,15 @@ applyBtn.addEventListener('click', async () => {
   }
   setDirty(result.dirty)
   const v = result.values
-  document.getElementById('nllbStatus').textContent = 'nllb status: ' + v.nllb_status
+  document.getElementById('nllbStatus').textContent = 'NLLB status: ' + v.nllb_status
+  // Snaps the language fields to whatever actually took effect - typing
+  // something that doesn't match a real option falls back to the
+  // previous value server-side (_optional_mapped_setting, settings_logic_
+  // mixin.py) without erroring, but the input would otherwise keep
+  // showing the un-matched text the user typed, which no longer reflects
+  // reality once applied.
+  document.getElementById('sourceLang').value = v.display.stt_source_lang
+  document.getElementById('nllbTargetLang').value = v.display.local_nllb_target_lang
   statusEl.textContent = 'Applied and saved.'
 })
 
@@ -496,22 +707,26 @@ window.addEventListener('pywebviewready', async () => {
   if (!v){ statusEl.textContent = 'Engine did not become ready.'; return }
   const opts = await pywebview.api.options()
 
+  document.getElementById('theme').value = v.ui_theme
   document.getElementById('lines').value = v.max_lines
   document.getElementById('bg').value = v.bg_color
+  document.getElementById('textColor').value = v.text_color
   document.getElementById('lockFocus').checked = v.lock_output_focus
   document.getElementById('clear').checked = v.clear_display_on_inactivity
   document.getElementById('clearSeconds').value = v.clear_display_inactivity_seconds
+  syncClearSecondsVisibility()
   document.getElementById('videoEnabled').checked = v.video_feed_enabled
+  document.getElementById('videoLines').value = v.video_max_lines
   document.getElementById('videoAlpha').value = v.video_caption_bar_alpha
   document.getElementById('interim').checked = v.show_interim_text
   document.getElementById('device').value = v.stt_device
-  document.getElementById('sourceLang').value = v.source_lang
+  document.getElementById('sourceLang').value = v.display.stt_source_lang
   document.getElementById('silero').value = v.realtime_stt_silero_sensitivity
   document.getElementById('enableTranslation').checked = v.translation_enabled
   document.getElementById('nllbDevice').value = v.local_nllb_device
-  document.getElementById('nllbTargetLang').value = v.local_nllb_target_lang
+  document.getElementById('nllbTargetLang').value = v.display.local_nllb_target_lang
   document.getElementById('nllbMaxChars').value = v.local_nllb_max_chars
-  document.getElementById('nllbStatus').textContent = 'nllb status: ' + v.nllb_status
+  document.getElementById('nllbStatus').textContent = 'NLLB status: ' + v.nllb_status
   document.getElementById('startWithWindows').checked = v.start_with_windows
   document.getElementById('cudaDirectory').value = v.cuda_directory
   document.getElementById('badWordsEn').value = v.bad_words_en.join(', ')
@@ -525,6 +740,10 @@ window.addEventListener('pywebviewready', async () => {
   fillSelect('loggingMode', opts.logging_mode, v.display.logging_mode)
   fillSelect('audioDevice', opts.audio_device, v.preferred_device_label)
   fillSelect('videoDevice', [], v.video_device_label)
+  fillDatalist('sourceLangOptions', opts.stt_source_lang)
+  fillDatalist('nllbTargetLangOptions', opts.local_nllb_target_lang)
+  fillSelect('outputMonitor', opts.monitor_labels, v.monitor_var)
+  fillSelect('settingsMonitor', opts.monitor_labels, v.settings_monitor_var)
   await pywebview.api.refresh_devices()
 
   setDirty(v.dirty)
@@ -541,47 +760,26 @@ class WebSettingsUIMixin(SettingsLogicMixin):
         self._window to already exist, for the Preview capture and the
         cross-window Toggle Fullscreen call)."""
         import webview
-        from webview.menu import Menu, MenuAction, MenuSeparator
 
-        menu = [
-            Menu(
-                "File",
-                [
-                    MenuAction("Hardware Autodetect", self._run_hardware_autodetect_menu_action),
-                    MenuAction("Options", self._show_options_dialog),
-                ],
-            ),
-            Menu(
-                "About",
-                [
-                    MenuAction("About Rhema", self._show_about_popup),
-                    MenuSeparator(),
-                    MenuAction("Check for Updates", lambda: self.check_for_updates(manual=True)),
-                    MenuAction("Donate", self._show_donate_popup),
-                    MenuAction("Feature Request", self._open_feature_request_page),
-                ],
-            ),
-        ]
-
-        # Deliberately WITHOUT menu=... here - the real _build_menu_bar()
-        # only attaches the menu once app_startup_ready is true
-        # ("same intent as the loading overlay itself"), and pywebview's
-        # public API has no way to attach a menu after window creation.
-        # _hide_startup_loading_overlay below reaches past that public API
-        # (BrowserView.instances[uid].set_window_menu(...), the same
-        # unsupported-but-real path every other cross-window HWND/Controls
-        # touch in this port already uses) - proved in
-        # experiments/web_startup_overlay.py before relying on it here.
+        # File/About are plain HTML (#menuBar in CONTROLLER_HTML), not a
+        # native WinForms MenuStrip - see this file's own module docstring
+        # for why. That also means the old "attach the menu only once
+        # app_startup_ready is true" dance (the real _build_menu_bar()'s
+        # own behavior, matched here via a deferred set_window_menu() call
+        # in _hide_startup_loading_overlay) needs no equivalent: #menuBar
+        # is ordinary content inside #wrap, sitting behind the same full-
+        # screen #startupOverlay (z-index 1000) that already blocks
+        # interaction with Preview/Status/buttons until hideStartupOverlay()
+        # runs - it's gated for free, not specially wired.
         controller_window = webview.create_window(
             "Rhema Controller",
-            html=CONTROLLER_HTML,
+            html=CONTROLLER_HTML.replace("__THEME_CSS__", self._theme_css_declaration()),
             width=420,
             height=560,
-            background_color="#1E2228",
+            background_color=self._settings_palette()["window_bg"],
             js_api=_ControllerApi(self),
         )
         self._controller_window = controller_window
-        self._controller_menu = menu
         controller_window.events.closing += self.on_closing
         # shown (not immediately after create_window) - window.native's
         # real WinForms Form isn't guaranteed realized until then, and
@@ -628,15 +826,6 @@ class WebSettingsUIMixin(SettingsLogicMixin):
                 self._controller_window.evaluate_js("hideStartupOverlay()")
             except Exception:
                 pass
-        try:
-            from webview.platforms.winforms import BrowserView
-
-            browser_view = BrowserView.instances.get(self._controller_window.uid)
-            if browser_view is not None:
-                browser_view.set_window_menu(self._controller_menu)
-                self._style_controller_menu()
-        except Exception:
-            pass
         # Same first-run/recommendation-changed Hardware Autodetect the
         # real method triggers automatically - self._transcription_vars/
         # self._translation_vars already exist by this point (Options was
@@ -647,150 +836,6 @@ class WebSettingsUIMixin(SettingsLogicMixin):
             self.root.after(300, lambda: self._run_hardware_autodetect_from_menu(
                 self._transcription_vars, self._translation_vars
             ))
-
-    def _style_controller_menu(self):
-        """Recolors the Controller's native WinForms MenuStrip (File/About)
-        to match self.ui_theme.
-
-        pywebview's set_window_menu (platforms/winforms.py) always builds a
-        plain WinForms.MenuStrip with the default light
-        ToolStripProfessionalRenderer - it has no theme hook of its own, so
-        with a dark Controller body and a dark title bar
-        (apply_dark_title_bar), the menu bar was the one piece of chrome
-        that stayed hard-coded light. Reuses _settings_palette()
-        (settings_logic_mixin.py) instead of its own colors so this tracks
-        whatever the Tk app's real dark/light palette is, not a separate
-        guess. Only called once at startup (right after set_window_menu) -
-        self.ui_theme isn't live-switchable in this port yet (see
-        build_web_options's own docstring: theme_var is a known, separate,
-        still-open gap), so there's nothing to re-apply later.
-
-        Reach-past-the-public-API by design, matching apply_dark_title_bar/
-        set_window_menu's own caller: pywebview exposes no menu styling
-        hook, so this walks browser_view.Controls for the MenuStrip
-        set_window_menu just added and restyles it directly via .NET.
-        Marshaled through invoke_on_ui_thread since WinForms controls are
-        apartment-bound to the thread that created them - direct access
-        from elsewhere previously caused real apartment-threading errors
-        (see webview_bridge.py's own docstring).
-        """
-        if self._controller_window is None:
-            return
-        try:
-            from webview.platforms.winforms import BrowserView
-            from webview_bridge import invoke_on_ui_thread
-
-            def _apply():
-                browser_view = BrowserView.instances.get(self._controller_window.uid)
-                if browser_view is None:
-                    return
-
-                import clr  # noqa: F401
-                clr.AddReference("System.Windows.Forms")
-                clr.AddReference("System.Drawing")
-                import System.Windows.Forms as WinForms
-                from System.Drawing import Color, Rectangle, SolidBrush
-
-                menu_strip = None
-                for control in browser_view.Controls:
-                    if isinstance(control, WinForms.MenuStrip):
-                        menu_strip = control
-                        break
-                if menu_strip is None:
-                    return
-
-                palette = self._settings_palette()
-
-                def _c(hex_str):
-                    hex_str = hex_str.lstrip("#")
-                    return Color.FromArgb(
-                        int(hex_str[0:2], 16),
-                        int(hex_str[2:4], 16),
-                        int(hex_str[4:6], 16),
-                    )
-
-                bar_bg = _c(palette["window_bg"])
-                panel_bg = _c(palette["section_bg"])
-                text_fg = _c(palette["text"])
-                border = _c(palette["border"])
-                hover_bg = _c(palette["accent_soft"])
-                hover_border = _c(palette["accent"])
-
-                class _ThemedColorTable(WinForms.ProfessionalColorTable):
-                    def __init__(self):
-                        WinForms.ProfessionalColorTable.__init__(self)
-
-                    MenuStripGradientBegin = property(lambda self: bar_bg)
-                    MenuStripGradientEnd = property(lambda self: bar_bg)
-                    ToolStripDropDownBackground = property(lambda self: panel_bg)
-                    ImageMarginGradientBegin = property(lambda self: panel_bg)
-                    ImageMarginGradientMiddle = property(lambda self: panel_bg)
-                    ImageMarginGradientEnd = property(lambda self: panel_bg)
-                    MenuBorder = property(lambda self: border)
-                    MenuItemBorder = property(lambda self: hover_border)
-                    MenuItemSelected = property(lambda self: hover_bg)
-                    MenuItemSelectedGradientBegin = property(lambda self: hover_bg)
-                    MenuItemSelectedGradientEnd = property(lambda self: hover_bg)
-                    MenuItemPressedGradientBegin = property(lambda self: hover_bg)
-                    MenuItemPressedGradientEnd = property(lambda self: hover_bg)
-                    SeparatorDark = property(lambda self: border)
-                    SeparatorLight = property(lambda self: border)
-
-                menu_strip.BackColor = bar_bg
-                menu_strip.ForeColor = text_fg
-                menu_strip.Renderer = WinForms.ToolStripProfessionalRenderer(
-                    _ThemedColorTable()
-                )
-
-                def _style_items(items):
-                    for item in items:
-                        try:
-                            item.ForeColor = text_fg
-                        except Exception:
-                            pass
-                        if (
-                            isinstance(item, WinForms.ToolStripMenuItem)
-                            and item.DropDownItems.Count
-                        ):
-                            dd = item.DropDown
-                            dd.BackColor = panel_bg
-
-                            # The ImageMarginGradient* overrides above don't
-                            # actually reach this strip in practice - the
-                            # left-hand gutter ToolStripDropDownMenu reserves
-                            # for item icons/checkmarks (dd.Padding.Left,
-                            # ~33px even with no icons in use) stayed
-                            # white-on-click regardless, a real, confirmed
-                            # WinForms/ColorTable gap for this control, not a
-                            # bug in the override values themselves. Painting
-                            # over just that strip after the base paint (a
-                            # Paint event handler, not a Renderer subclass -
-                            # subclassing ToolStripProfessionalRenderer itself
-                            # was tried and confirmed to break ALL of this
-                            # dropdown's custom coloring, not just fix the
-                            # margin) is the actual fix. margin_dd/margin_bg
-                            # default-argument capture avoids the classic
-                            # Python closure-in-loop bug (every handler
-                            # otherwise closing over the same loop variable
-                            # and only ever painting the LAST item's margin).
-                            def _paint_margin(sender, e, margin_dd=dd, margin_bg=panel_bg):
-                                width = margin_dd.Padding.Left or 24
-                                brush = SolidBrush(margin_bg)
-                                try:
-                                    e.Graphics.FillRectangle(
-                                        brush, Rectangle(0, 0, width, margin_dd.Height)
-                                    )
-                                finally:
-                                    brush.Dispose()
-
-                            dd.Paint += _paint_margin
-                            _style_items(item.DropDownItems)
-
-                _style_items(menu_strip.Items)
-
-            invoke_on_ui_thread(self._controller_window, _apply)
-        except Exception:
-            pass
 
     # ------------------------------------------------------------------ #
     # File menu actions - real as of Phase 6.
@@ -1083,6 +1128,98 @@ class WebSettingsUIMixin(SettingsLogicMixin):
     # (web_monitor_mixin.py, Phase 8), mixed in ahead of this class in
     # main_webview.py's MRO.
 
+    def _apply_ui_theme(self):
+        """Web-safe override of settings_ui_mixin.py's real version -
+        needed as soon as Options exposes a Theme control at all, not
+        optional polish. The real version touches self.style (a
+        ttkbootstrap Style object) and self.settings_window/self.options_
+        window - none of which exist on WebTranslationApp (this port uses
+        self._controller_window/self._options_window, real pywebview
+        windows, not Tk Toplevels). self.settings_window specifically is
+        touched with NO surrounding try/except (unlike the self.style/
+        apply_dark_title_bar calls right above it, which are individually
+        guarded), so calling the real version unmodified would raise a
+        bare AttributeError - and _apply_display_vars (settings_logic_
+        mixin.py, shared) calls this FIRST, before applying any other
+        Display setting, so that crash would silently abort an entire
+        Apply click's worth of changes the moment the theme dropdown
+        actually changed, not just fail to re-theme.
+
+        Real visual effect: the OS dark/light title bar on whichever of
+        the two real windows exist, plus (via _rebuild_settings_windows
+        below) the actual page content re-theming live.
+        """
+        dark = self.ui_theme == "dark"
+        for window in (self._controller_window, self._options_window):
+            if window is not None:
+                self.apply_dark_title_bar(window, dark=dark)
+
+    def _theme_vars(self):
+        """The live palette as CSS custom-property values, shared by both
+        the initial page render (build_web_controller/build_web_options
+        substitute __THEME_CSS__ with this, joined into a declaration
+        string, so first paint is never wrong-themed) and a later live
+        re-theme (_rebuild_settings_windows below, via each page's own
+        applyThemeVars(vars) JS function). One dict, one source of truth,
+        rather than the two staying in sync by hand. _settings_palette()
+        (settings_logic_mixin.py) is the SAME palette Tk's real dialogs
+        use, not a separate web-only guess.
+        """
+        palette = self._settings_palette()
+        dark = self.ui_theme == "dark"
+        return {
+            "colorScheme": "dark" if dark else "light",
+            # Dark keeps its original relationship (page darkest, card a
+            # step lighter). Light deliberately does NOT mirror that the
+            # same way Tk's own _settings_palette() intends it (light
+            # page, white card) - per explicit feedback on this port's own
+            # Controller: the app background should read as white, with
+            # the menu dropdown/hover states reading as a distinct grey
+            # "overlay" instead. --overlay carries that grey and is what
+            # CONTROLLER_HTML's dropdown/hover rules use - OPTIONS_HTML has
+            # no such overlay concept (a single bordered card, not a
+            # floating popup) so it only ever uses --bg/--card, unaffected
+            # by this beyond --bg itself now reading white in light mode.
+            "--bg": palette["window_bg"] if dark else palette["section_bg"],
+            "--card": palette["section_bg"],
+            "--overlay": palette["section_bg"] if dark else palette["window_bg"],
+            "--text": palette["text"],
+            "--muted": palette["muted_text"],
+            "--border": palette["border"],
+            "--input-bg": palette["input_bg"],
+            "--accent": palette["accent"],
+            "--accent-hover": palette["accent_hover"],
+            "--dirty": "#22C55E" if dark else "#16A34A",
+        }
+
+    def _theme_css_declaration(self):
+        vars_dict = self._theme_vars()
+        parts = []
+        for key, value in vars_dict.items():
+            if key == "colorScheme":
+                parts.append(f"color-scheme:{value}")
+            else:
+                parts.append(f"{key}:{value}")
+        return ";".join(parts)
+
+    def _rebuild_settings_windows(self):
+        # Real version destroys/reopens self.settings_window/self.options_
+        # window (Tk Toplevels) so their raw tk widgets pick up the new
+        # theme's palette. A pywebview page doesn't need a rebuild to
+        # re-theme at all - CONTROLLER_HTML/OPTIONS_HTML's :root custom
+        # properties can just be updated live via each page's own
+        # applyThemeVars(vars) JS function, genuinely instant with no
+        # window teardown (which would also have re-run the startup gate/
+        # hardware-autodetect logic build_web_controller triggers on
+        # first build - not something a theme change should ever redo).
+        try:
+            theme_vars = self._theme_vars()
+            for window in (self._controller_window, self._options_window):
+                if window is not None:
+                    window.evaluate_js("applyThemeVars(%s)" % json.dumps(theme_vars))
+        except Exception:
+            pass
+
     def _set_settings_dirty_state(self, dirty_ctx, is_dirty, force=False):
         # Real version does save_button.config(...) - dirty_ctx never gets
         # a "save_button" key from build_web_options below, so the real
@@ -1142,6 +1279,100 @@ class WebSettingsUIMixin(SettingsLogicMixin):
         except Exception:
             pass
 
+    def _browse_cuda_directory(self):
+        # Real settings_ui_mixin.py version opens a native folder picker
+        # via choose_directory (tkinter.filedialog.askdirectory) - pywebview
+        # has its own equivalent, create_file_dialog(FileDialog.FOLDER),
+        # a real native Windows folder picker, not an HTML substitute.
+        if self._options_window is None:
+            return {"ok": False}
+        try:
+            import os
+
+            import webview
+
+            current = self.cuda_directory or ""
+            result = self._options_window.create_file_dialog(
+                webview.FileDialog.FOLDER,
+                directory=current if os.path.isdir(current) else "",
+            )
+        except Exception:
+            return {"ok": False}
+        if not result:
+            return {"ok": False}
+        path = result[0]
+        self._advanced_vars["cuda_directory_var"].set(path)
+        return {
+            "ok": True,
+            "path": path,
+            "dirty": bool(self._options_dirty_ctx["dirty_value"]),
+        }
+
+    def _check_nllb_download_from_options(self):
+        # Real button (settings_ui_mixin.py) relabels itself between
+        # "Download Local NLLB model" and "Check for Updates" depending on
+        # self.nllb_status, but that relabeling happens through
+        # _refresh_local_nllb_runtime_ui's real button.config() calls,
+        # already None-guarded (this port never builds a real button
+        # object for it - see settings_logic_mixin.py's own module
+        # docstring) - so calling the shared decide-download-or-check
+        # method directly, with the SAME tk.Variables already backing the
+        # visible Model name/Device/Max chars fields, is a safe, complete
+        # equivalent without needing this page's own button to relabel.
+        self._download_or_check_local_nllb_from_vars(
+            self._translation_vars["local_nllb_model_name_var"],
+            self._translation_vars["local_nllb_device_var"],
+            self._translation_vars["local_nllb_max_chars_var"],
+            model_name_map=self._translation_vars["local_nllb_model_name_map"],
+        )
+        return {"ok": True}
+
+    def _select_output_monitor(self, label):
+        # Real on_output_monitor_change (settings_ui_mixin.py) is a
+        # trace_add callback that fires LIVE the instant the dropdown
+        # value changes, not at Apply time - _apply_display_vars
+        # (settings_logic_mixin.py, shared) only re-derives monitor_index
+        # from the var at Apply, it never actually moves anything itself.
+        # This mirrors that live-change contract via the same js_api
+        # pattern already used for the Video Device fix (options_select_
+        # video_device) rather than waiting for Apply, and updates
+        # monitor_var too so Apply doesn't clobber it back afterward -
+        # the exact bug that fix addressed for video device applies here
+        # identically.
+        monitor_labels = self._display_vars["monitor_labels"]
+        if label not in monitor_labels:
+            return {"ok": False}
+        self.monitor_index = monitor_labels.index(label)
+        self.monitor_device, self.monitor_origin = self._monitor_identity_for_index(
+            self.monitor_index
+        )
+        self._display_vars["monitor_var"].set(label)
+        if self.is_fullscreen:
+            self.enter_fullscreen()
+        else:
+            self.move_window_to_monitor(self._window, self.monitor_index, keep_size=False)
+        self.save_settings()
+        return {"ok": True}
+
+    def _select_settings_monitor(self, label):
+        # Mirrors on_settings_monitor_change - real _move_settings_window_
+        # to_monitor (monitor_mixin.py) additionally normalizes a
+        # maximized Tk Toplevel's state before moving it; pywebview
+        # windows here don't need that dance, so this calls the shared
+        # move_window_to_monitor (WebMonitorMixin's real per-monitor-aware
+        # override) directly against _controller_window.
+        monitor_labels = self._display_vars["monitor_labels"]
+        if label not in monitor_labels:
+            return {"ok": False}
+        self.settings_monitor_index = monitor_labels.index(label)
+        self.settings_monitor_device, self.settings_monitor_origin = (
+            self._monitor_identity_for_index(self.settings_monitor_index)
+        )
+        self._display_vars["settings_monitor_var"].set(label)
+        self.move_window_to_monitor(self._controller_window, self.settings_monitor_index, keep_size=True)
+        self.save_settings()
+        return {"ok": True}
+
     # ------------------------------------------------------------------ #
     # The real Options window - every real setting wired to a genuine
     # tk.Variable/tk.Text, exactly as experiments/web_options.py already
@@ -1184,14 +1415,49 @@ class WebSettingsUIMixin(SettingsLogicMixin):
         self._realtime_model_rev_map = realtime_model_rev_map
         self._nllb_model_name_rev_map = nllb_model_name_rev_map
 
+        # Real ~100/200-language lists (languages.py), same source Tk's own
+        # _build_searchable_language_combobox uses - previously this page
+        # hardcoded 3 and 2 raw-code options respectively, with a tooltip
+        # that dishonestly still claimed the full search (see this file's
+        # own OPTIONS_HTML). The var holds the DISPLAY NAME the <input
+        # list=...> field shows/lets the user type, matching every other
+        # mapped field's contract; the map resolves it back to the real
+        # code at Apply time (_optional_mapped_setting, settings_logic_
+        # mixin.py) exactly like Tk's combobox var/name_to_code pair.
+        stt_language_options = [("Auto-detect", "auto")] + whisper_language_options()
+        stt_lang_name_to_code = dict(stt_language_options)
+        stt_lang_code_to_name = {code: name for name, code in stt_language_options}
+        nllb_lang_options = nllb_language_options()
+        nllb_lang_name_to_code = dict(nllb_lang_options)
+        nllb_lang_code_to_name = {code: name for name, code in nllb_lang_options}
+        self._stt_language_options = stt_language_options
+        self._nllb_lang_options = nllb_lang_options
+        self._stt_source_lang_rev_map = stt_lang_code_to_name
+        self._nllb_target_lang_rev_map = nllb_lang_code_to_name
+
+        # Real monitor labels (monitor_logic_mixin.py, shared with Tk and
+        # already Tk-free) - previously hardcoded to a single "Monitor 1"
+        # placeholder regardless of actual hardware.
+        self.monitors = self.get_monitors()
+        monitor_labels = self.get_monitor_labels() or ["Monitor 1"]
+        current_output_monitor = monitor_labels[
+            min(max(self.monitor_index, 0), len(monitor_labels) - 1)
+        ]
+        current_settings_monitor = monitor_labels[
+            min(max(self.settings_monitor_index, 0), len(monitor_labels) - 1)
+        ]
+
         self._display_vars = {
+            "theme_var": tk.StringVar(
+                master=v, value="Dark" if self.ui_theme == "dark" else "Light"
+            ),
             "lines_var": tk.IntVar(master=v, value=self.max_lines),
             "video_lines_var": tk.IntVar(master=v, value=self.video_max_lines),
             "bg_color_var": tk.StringVar(master=v, value=self.bg_color),
             "text_color_var": tk.StringVar(master=v, value=self.text_color),
-            "monitor_labels": ["Monitor 1"],
-            "monitor_var": tk.StringVar(master=v, value="Monitor 1"),
-            "settings_monitor_var": tk.StringVar(master=v, value="Monitor 1"),
+            "monitor_labels": monitor_labels,
+            "monitor_var": tk.StringVar(master=v, value=current_output_monitor),
+            "settings_monitor_var": tk.StringVar(master=v, value=current_settings_monitor),
             "clear_display_on_inactivity_var": tk.BooleanVar(
                 master=v, value=self.clear_display_on_inactivity
             ),
@@ -1215,19 +1481,21 @@ class WebSettingsUIMixin(SettingsLogicMixin):
         self._transcription_vars = {
             "show_interim_text_var": tk.BooleanVar(master=v, value=self.show_interim_text),
             "stt_device_var": tk.StringVar(master=v, value=self.stt_device),
-            "stt_source_lang_var": tk.StringVar(master=v, value=self.source_lang or "auto"),
+            "stt_source_lang_var": tk.StringVar(
+                master=v,
+                value=stt_lang_code_to_name.get(self.source_lang or "auto", "Auto-detect"),
+            ),
             # Phase 12 QA pass finding: _apply_transcription_vars
             # (settings_logic_mixin.py) only applies this var at all if a
             # companion "stt_source_lang_map" key exists in the dict
             # (_optional_mapped_setting returns the unchanged current
-            # value otherwise, silently no-oping the whole field). Every
-            # OTHER mapped field here has a real display-name-to-code map
-            # because their <select> options show a friendly display name;
-            # this one's <select> already sends the raw code directly
-            # (OPTIONS_HTML's sourceLang has hardcoded value=auto/en/es
-            # options), so this is a real identity map, not a stand-in -
-            # exactly what a source_lang_var without a display layer needs.
-            "stt_source_lang_map": {"auto": "auto", "en": "en", "es": "es"},
+            # value otherwise, silently no-oping the whole field). Now a
+            # real display-name-to-code map covering all ~100 languages
+            # (languages.py) - OPTIONS_HTML's sourceLang field used to send
+            # raw codes directly from a 3-option <select> (a real identity
+            # map), but is now an <input list=...> holding a display name
+            # the user typed or picked, matching every other mapped field.
+            "stt_source_lang_map": stt_lang_name_to_code,
             "realtime_stt_final_model_var": tk.StringVar(
                 master=v,
                 value=final_model_rev_map.get(self.realtime_stt_final_model, REALTIME_STT_FINAL_MODEL_OPTIONS[-1][0]),
@@ -1254,13 +1522,21 @@ class WebSettingsUIMixin(SettingsLogicMixin):
             ),
             "local_nllb_model_name_map": nllb_model_name_map,
             "local_nllb_device_var": tk.StringVar(master=v, value=self.local_nllb_device),
-            "local_nllb_target_lang_var": tk.StringVar(master=v, value=self.local_nllb_target_lang),
+            "local_nllb_target_lang_var": tk.StringVar(
+                master=v,
+                value=nllb_lang_code_to_name.get(
+                    self.local_nllb_target_lang,
+                    nllb_lang_options[0][0] if nllb_lang_options else "",
+                ),
+            ),
             # Same real finding as stt_source_lang_map above -
             # _apply_translation_vars silently no-ops this whole field
-            # without a companion map key. OPTIONS_HTML's nllbTargetLang
-            # <select> already sends the real FLORES code directly, so
-            # this is genuinely an identity map, not a placeholder.
-            "local_nllb_target_lang_map": {"eng_Latn": "eng_Latn", "spa_Latn": "spa_Latn"},
+            # without a companion map key. Now a real display-name-to-
+            # FLORES-code map covering all 200 languages (languages.py) -
+            # OPTIONS_HTML's nllbTargetLang field used to send raw codes
+            # directly from a 2-option <select> (a real identity map), but
+            # is now an <input list=...> holding a display name.
+            "local_nllb_target_lang_map": nllb_lang_name_to_code,
             "local_nllb_max_chars_var": tk.IntVar(master=v, value=self.local_nllb_max_chars),
         }
         self._advanced_vars = {
@@ -1334,11 +1610,11 @@ class WebSettingsUIMixin(SettingsLogicMixin):
 
         window = webview.create_window(
             "Rhema Options",
-            html=OPTIONS_HTML,
+            html=OPTIONS_HTML.replace("__THEME_CSS__", self._theme_css_declaration()),
             js_api=_OptionsApi(self),
             width=680,
             height=760,
-            background_color="#1E2228",
+            background_color=self._settings_palette()["window_bg"],
             hidden=hidden,
         )
         self._options_window = window
@@ -1398,15 +1674,19 @@ class WebSettingsUIMixin(SettingsLogicMixin):
             "realtime_stt_realtime_model": [name for name, _code in REALTIME_STT_REALTIME_MODEL_OPTIONS],
             "local_nllb_model_name": [name for name, _code in NLLB_MODEL_NAME_OPTIONS],
             "logging_mode": [name for name, _code in LOGGING_MODE_OPTIONS],
-            "stt_source_lang": ["auto", "en", "es"],
-            "local_nllb_target_lang": ["eng_Latn", "spa_Latn"],
+            "stt_source_lang": [name for name, _code in self._stt_language_options],
+            "local_nllb_target_lang": [name for name, _code in self._nllb_lang_options],
             "audio_device": list(self.devices),
+            "monitor_labels": self._display_vars["monitor_labels"],
         }
 
     def options_current_values(self):
         return {
+            "ui_theme": "Dark" if self.ui_theme == "dark" else "Light",
             "max_lines": self.max_lines,
             "video_max_lines": self.video_max_lines,
+            "monitor_var": self._display_vars["monitor_var"].get(),
+            "settings_monitor_var": self._display_vars["settings_monitor_var"].get(),
             "bg_color": self.bg_color,
             "text_color": self.text_color,
             "lock_output_focus": self.lock_output_focus,
@@ -1449,6 +1729,13 @@ class WebSettingsUIMixin(SettingsLogicMixin):
                     self.local_nllb_model_name, NLLB_MODEL_NAME_OPTIONS[0][0]
                 ),
                 "logging_mode": self._logging_mode_rev_map.get(self.logging_mode, "Normal"),
+                "stt_source_lang": self._stt_source_lang_rev_map.get(
+                    self.source_lang or "auto", "Auto-detect"
+                ),
+                "local_nllb_target_lang": self._nllb_target_lang_rev_map.get(
+                    self.local_nllb_target_lang,
+                    self._nllb_lang_options[0][0] if self._nllb_lang_options else "",
+                ),
             },
             "dirty": bool(self._options_dirty_ctx["dirty_value"]),
         }
