@@ -469,7 +469,6 @@ input[type=checkbox]{width:16px;height:16px;accent-color:var(--accent)}
   <h2>Display</h2>
   <div class="row"><label>Theme<span class="help" data-tip="Switches the Controller and Options windows between light and dark.">?</span></label>
     <select id="theme"><option value="Light">Light</option><option value="Dark">Dark</option></select></div>
-  <div class="row" id="linesRow"><label>Max caption lines (no video feed)<span class="help" data-tip="Maximum number of translated lines kept on screen when the video feed below is off.">?</span></label><input type="number" id="lines" min="4" max="10"></div>
   <div class="row"><label>Background color<span class="help" data-tip="Background color for the output overlay and preview. Also tints the caption bar behind the video overlay, if enabled.">?</span></label>
     <span style="display:flex;gap:6px;align-items:center"><input type="color" id="bgSwatch"><input type="text" id="bg" maxlength="32" placeholder="#000000" style="width:90px"></span></div>
   <div class="row"><label>Text color<span class="help" data-tip="Text color for the output overlay and preview.">?</span></label>
@@ -478,10 +477,11 @@ input[type=checkbox]{width:16px;height:16px;accent-color:var(--accent)}
   <div class="row"><label>Clear display on inactivity</label><input type="checkbox" id="clear"></div>
   <div class="row" id="clearSecondsRow"><label>&nbsp;&nbsp;...after N seconds</label><input type="number" id="clearSeconds" min="__CLEAR_SECONDS_MIN__" max="__CLEAR_SECONDS_MAX__"></div>
   <div class="row"><label>Show video feed behind captions<span class="help" data-tip="Shows the OBS Virtual Camera behind captions. Start OBS's Virtual Camera first.">?</span></label><input type="checkbox" id="videoEnabled"></div>
-  <div class="row" id="videoDeviceRow"><label>Camera device<span class="help" data-tip="Camera index for the OBS Virtual Camera. Click Refresh after starting OBS's Virtual Camera if it isn't listed yet.">?</span></label>
+  <div class="row"><label>Camera device<span class="help" data-tip="Camera index for the OBS Virtual Camera. Click Refresh after starting OBS's Virtual Camera if it isn't listed yet.">?</span></label>
     <span style="display:flex;gap:8px;align-items:center"><select id="videoDevice"></select><button type="button" id="videoRefresh" class="smallBtn">Refresh</button></span></div>
-  <div class="row" id="videoStatusRow"><label>&nbsp;&nbsp;Camera status</label><span id="videoStatus" style="color:#9CA3AF;font-size:12px">--</span></div>
+  <div class="row"><label>&nbsp;&nbsp;Camera status</label><span id="videoStatus" style="color:#9CA3AF;font-size:12px">--</span></div>
   <div class="row" id="videoLinesRow"><label>Max caption lines (with video feed)<span class="help" data-tip="Maximum number of translated lines kept on screen when the video feed is on. Kept lower than the no-video default to leave more of the video visible.">?</span></label><input type="number" id="videoLines" min="1" max="3"></div>
+  <div class="row" id="linesRow"><label>Max caption lines (no video feed)<span class="help" data-tip="Maximum number of translated lines kept on screen when the video feed above is off.">?</span></label><input type="number" id="lines" min="4" max="10"></div>
   <div class="row" id="videoAlphaRow"><label>Caption bar opacity (%)<span class="help" data-tip="How solid the bar behind the caption lines looks, using the Background Color above. 0% is fully see-through, 100% is a solid bar.">?</span></label><input type="number" id="videoAlpha" min="0" max="100"></div>
   <div class="row"><label>Output monitor<span class="help" data-tip="Monitor where the translation output appears.">?</span></label><select id="outputMonitor"></select></div>
   <div class="row"><label>Controller monitor<span class="help" data-tip="Monitor where this Controller/Options window opens.">?</span></label><select id="settingsMonitor"></select></div>
@@ -710,16 +710,17 @@ function syncClearSecondsVisibility(){
 }
 document.getElementById('clear').addEventListener('change', syncClearSecondsVisibility)
 
-// Matches Tk's on_video_feed_toggle (settings_ui_mixin.py): exactly one
-// "Max caption lines" field and one camera-controls block is ever visible
-// at a time, based on whether the video feed is enabled - previously all
-// of these rows stayed visible/editable regardless, giving no visual cue
-// which "Max caption lines" value was actually in effect.
+// Matches Tk's on_video_feed_toggle (settings_ui_mixin.py) for the two
+// "Max caption lines" fields - exactly one is ever visible at a time,
+// based on whether the video feed is enabled, so there's no ambiguity
+// about which value is actually in effect. Camera device/status are
+// deliberately NOT included here (unlike an earlier version of this
+// page) - picking/checking a camera should work whether or not the feed
+// is currently on, e.g. to confirm OBS's Virtual Camera is available
+// before flipping the checkbox on.
 function syncVideoRowsVisibility(){
   const on = document.getElementById('videoEnabled').checked
   document.getElementById('linesRow').hidden = on
-  document.getElementById('videoDeviceRow').hidden = !on
-  document.getElementById('videoStatusRow').hidden = !on
   document.getElementById('videoLinesRow').hidden = !on
   document.getElementById('videoAlphaRow').hidden = !on
 }
