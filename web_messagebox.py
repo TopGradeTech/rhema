@@ -139,11 +139,20 @@ window.addEventListener('pywebviewready', async () => {
     btn.onclick = () => b.keepOpen ? pywebview.api.action(b.value) : pywebview.api.respond(b.value)
     row.appendChild(btn)
   })
-  // Measure AFTER the buttons are in the DOM (their height counts too),
-  // one frame later so layout has actually settled before reading it.
-  requestAnimationFrame(() => {
-    pywebview.api.resize_to_fit(document.body.scrollHeight)
-  })
+  // Measure AFTER the buttons are in the DOM (their height counts too).
+  // Deliberately NOT requestAnimationFrame (the original approach): a
+  // window created hidden=True never gets a compositor/paint cycle while
+  // hidden (confirmed live - Chromium suspends rAF entirely for a non-
+  // visible surface, a well-known rAF-throttling behavior, not specific
+  // to this app), so an rAF-gated call to resize_to_fit()/window.show()
+  // NEVER fired - every themed dialog (About/Donate/Check-for-Updates/
+  // NLLB-download-confirm/Hardware-Autodetect-result/etc.) silently
+  // stayed hidden forever, with the calling thread parked in done.wait()
+  // indefinitely. scrollHeight forces a synchronous layout reflow on its
+  // own regardless of paint state (a well-documented, different browser
+  // mechanism than rAF/painting), so it's accurate to read immediately -
+  // no frame to wait for in the first place.
+  pywebview.api.resize_to_fit(document.body.scrollHeight)
 })
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') pywebview.api.respond(escapeValue)
