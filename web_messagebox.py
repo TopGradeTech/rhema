@@ -98,22 +98,22 @@ _DIALOG_MAX_HEIGHT = 700
 DIALOG_HTML = r"""
 <!doctype html><html><head><meta charset="utf-8"><title>Rhema</title>
 <style>
-:root{color-scheme:dark}
-html,body{margin:0;background:#1E2228;color:#E5E7EB;
+:root{__THEME_CSS__}
+html,body{margin:0;background:var(--bg);color:var(--text);
   font:14px/1.5 "Segoe UI",system-ui,sans-serif;box-sizing:border-box}
 #drag{height:10px;-webkit-app-region:drag}
 #wrap{padding:0 22px 20px;box-sizing:border-box}
 #accentBar{height:3px;border-radius:2px;margin-bottom:14px}
-#title{font-size:15px;font-weight:700;color:#F3F4F6;margin-bottom:10px}
-#message{white-space:pre-wrap;font-size:13px;color:#E5E7EB;line-height:1.6}
+#title{font-size:15px;font-weight:700;color:var(--text);margin-bottom:10px}
+#message{white-space:pre-wrap;font-size:13px;color:var(--text);line-height:1.6}
 #buttonRow{display:flex;justify-content:flex-end;gap:10px;margin-top:16px;
   -webkit-app-region:no-drag}
 .dlgBtn{padding:8px 18px;border:none;border-radius:5px;font:inherit;font-weight:600;
   cursor:pointer}
-.dlgBtn.primary{background:#5B8FF7;color:#fff}
-.dlgBtn.primary:hover{background:#4A7FEA}
-.dlgBtn.secondary{background:#2A2F38;color:#E5E7EB}
-.dlgBtn.secondary:hover{background:#333944}
+.dlgBtn.primary{background:var(--accent);color:#fff}
+.dlgBtn.primary:hover{background:var(--accent-hover)}
+.dlgBtn.secondary{background:var(--input-bg);color:var(--text);border:1px solid var(--border)}
+.dlgBtn.secondary:hover{background:var(--overlay)}
 </style></head><body>
 <div id="drag"></div>
 <div id="wrap">
@@ -314,14 +314,14 @@ class WebMessageBoxMixin:
 
             dialog_window = webview.create_window(
                 str(title) or "Rhema",
-                html=DIALOG_HTML,
+                html=DIALOG_HTML.replace("__THEME_CSS__", self._theme_css_declaration()),
                 width=DIALOG_WIDTH,
                 height=_DIALOG_MIN_HEIGHT,
                 resizable=False,
                 frameless=True,
                 on_top=True,
                 hidden=True,
-                background_color="#1E2228",
+                background_color=self._settings_palette()["window_bg"],
                 js_api=_DialogApi(config, _on_respond, window_holder, on_action=_on_dialog_action),
             )
             window_holder["window"] = dialog_window

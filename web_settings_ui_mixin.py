@@ -261,17 +261,17 @@ document.addEventListener('keydown', (e) => {
 NLLB_PROGRESS_HTML = r"""
 <!doctype html><html><head><meta charset="utf-8"><title>Local NLLB</title>
 <style>
-:root{color-scheme:dark}
-html,body{margin:0;background:#1E2228;color:#E5E7EB;
+:root{__THEME_CSS__}
+html,body{margin:0;background:var(--bg);color:var(--text);
   font:14px/1.4 "Segoe UI",system-ui,sans-serif;overflow:hidden}
 #wrap{padding:20px 24px;box-sizing:border-box}
-h3{margin:0 0 12px;font-size:13px;font-weight:700;color:#F3F4F6}
-#track{height:10px;background:#14171C;border:1px solid #3A3A3A;border-radius:4px;overflow:hidden;
-  position:relative}
-#fill{position:absolute;top:0;height:100%;width:35%;background:#5B8FF7;border-radius:4px;
+h3{margin:0 0 12px;font-size:13px;font-weight:700;color:var(--text)}
+#track{height:10px;background:var(--input-bg);border:1px solid var(--border);border-radius:4px;
+  overflow:hidden;position:relative}
+#fill{position:absolute;top:0;height:100%;width:35%;background:var(--accent);border-radius:4px;
   animation:bounce 1.1s ease-in-out infinite}
 @keyframes bounce{0%{left:-35%}100%{left:100%}}
-#statusText{margin-top:10px;font-size:12px;color:#9CA3AF;white-space:pre-wrap}
+#statusText{margin-top:10px;font-size:12px;color:var(--muted);white-space:pre-wrap}
 </style></head><body>
 <div id="wrap">
   <h3>Preparing Local NLLB...</h3>
@@ -433,7 +433,6 @@ body{margin:0;background:var(--bg);color:var(--text);
 #applyBar{position:fixed;left:0;right:0;bottom:0;background:var(--bg);
  border-top:1px solid var(--border);padding:14px 24px;box-shadow:0 -4px 16px rgba(0,0,0,.2)}
 #applyBarInner{max-width:640px;margin:0 auto}
-h1{font-size:15px;margin:0 0 4px;color:var(--text)}
 h2{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--accent);font-weight:700;
  margin:28px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--border)}
 h2:first-of-type{margin-top:2px}
@@ -467,8 +466,6 @@ input[type=checkbox]{width:16px;height:16px;accent-color:var(--accent)}
  pointer-events:none;display:none}
 </style></head><body>
 <div class="card">
-  <h1>Rhema Options</h1>
-
   <h2>Display</h2>
   <div class="row"><label>Theme<span class="help" data-tip="Switches the Controller and Options windows between light and dark.">?</span></label>
     <select id="theme"><option value="Light">Light</option><option value="Dark">Dark</option></select></div>
@@ -1450,15 +1447,20 @@ class WebSettingsUIMixin(SettingsLogicMixin):
         import webview
 
         try:
+            html = (
+                NLLB_PROGRESS_HTML
+                .replace("__THEME_CSS__", self._theme_css_declaration())
+                .replace("__INITIAL__", json.dumps(message))
+            )
             popup = webview.create_window(
                 "Local NLLB",
-                html=NLLB_PROGRESS_HTML.replace("__INITIAL__", json.dumps(message)),
+                html=html,
                 width=340,
                 height=130,
                 resizable=False,
                 frameless=True,
                 on_top=True,
-                background_color="#1E2228",
+                background_color=self._settings_palette()["window_bg"],
             )
             self._local_nllb_popup = popup
         except Exception:

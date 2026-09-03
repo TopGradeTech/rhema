@@ -51,14 +51,15 @@ from update_mixin import UpdateMixin, INSTALLER_ASSET_NAME, _USER_AGENT, _REQUES
 PROGRESS_HTML = r"""
 <!doctype html><html><head><meta charset="utf-8"><title>Downloading Update</title>
 <style>
-:root{color-scheme:dark}
-html,body{margin:0;background:#1E2228;color:#E5E7EB;
+:root{__THEME_CSS__}
+html,body{margin:0;background:var(--bg);color:var(--text);
   font:14px/1.4 "Segoe UI",system-ui,sans-serif;overflow:hidden}
 #wrap{padding:24px;box-sizing:border-box}
-h3{margin:0 0 14px;font-size:14px;font-weight:700;color:#F3F4F6}
-#track{height:14px;background:#14171C;border:1px solid #3A3A3A;border-radius:4px;overflow:hidden}
-#fill{height:100%;width:0;background:#5B8FF7;transition:width 120ms linear}
-#statusText{margin-top:10px;font-size:12px;color:#9CA3AF;text-align:center}
+h3{margin:0 0 14px;font-size:14px;font-weight:700;color:var(--text)}
+#track{height:14px;background:var(--input-bg);border:1px solid var(--border);border-radius:4px;
+  overflow:hidden}
+#fill{height:100%;width:0;background:var(--accent);transition:width 120ms linear}
+#statusText{margin-top:10px;font-size:12px;color:var(--muted);text-align:center}
 </style></head><body>
 <div id="wrap">
   <h3>Downloading update...</h3>
@@ -90,13 +91,13 @@ class WebUpdateMixin(UpdateMixin):
         # install continues in the background with no visible progress.
         popup = webview.create_window(
             "Downloading Update",
-            html=PROGRESS_HTML,
+            html=PROGRESS_HTML.replace("__THEME_CSS__", self._theme_css_declaration()),
             width=360,
             height=140,
             resizable=False,
             frameless=True,
             on_top=True,
-            background_color="#1E2228",
+            background_color=self._settings_palette()["window_bg"],
         )
 
         def _veto_close():
