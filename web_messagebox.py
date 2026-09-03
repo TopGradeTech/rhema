@@ -136,7 +136,7 @@ window.addEventListener('pywebviewready', async () => {
     const btn = document.createElement('button')
     btn.className = 'dlgBtn ' + b.style
     btn.textContent = b.label
-    btn.onclick = () => pywebview.api.respond(b.value)
+    btn.onclick = () => b.keepOpen ? pywebview.api.action(b.value) : pywebview.api.respond(b.value)
     row.appendChild(btn)
   })
   // Measure AFTER the buttons are in the DOM (their height counts too),
@@ -160,16 +160,27 @@ class _DialogApi:
     exist yet when this Api instance has to be constructed - webview.
     create_window's own js_api= argument needs it up front."""
 
-    def __init__(self, config, on_respond, window_holder):
+    def __init__(self, config, on_respond, window_holder, on_action=None):
         self._config = config
         self._on_respond = on_respond
         self._window_holder = window_holder
+        self._on_action = on_action
 
     def get_config(self):
         return self._config
 
     def respond(self, value):
         self._on_respond(value)
+
+    def action(self, value):
+        # A button with keepOpen=True in its config (see kind == "donate"
+        # below) routes here instead of respond() - fires a side effect
+        # (opening the donate link) WITHOUT closing the dialog, unlike
+        # every other button, so a user can act on it and still dismiss
+        # the dialog afterward (or not) exactly like the real Tk Donate
+        # popup's independent Donate/Close button pair.
+        if self._on_action is not None:
+            self._on_action(value)
 
     def resize_to_fit(self, height):
         # Created with hidden=True specifically so this is the FIRST time
@@ -212,7 +223,7 @@ class WebMessageBoxMixin:
     these override LoggingMixin's Tk-default dialog methods without
     LoggingMixin itself needing any pywebview awareness."""
 
-    def _show_html_message_dialog(self, title, message, kind, timeout=None):
+    def _show_html_message_dialog(self, title, message, kind, timeout=None, on_action=None):
         """Returns (handled, value). handled is False whenever the HTML
         dialog couldn't be shown or didn't resolve within `timeout` (None
         = block indefinitely) - callers fall back to native MessageBoxW in
@@ -237,6 +248,19 @@ class WebMessageBoxMixin:
                 buttons = [
                     {"label": "No", "value": False, "style": "secondary"},
                     {"label": "Yes", "value": True, "style": "primary"},
+                ]
+                escape_value = False
+            elif kind == "donate":
+                # Matches the real Tk Donate popup's independent Donate/
+                # Close buttons (settings_ui_mixin.py _show_donate_popup):
+                # Donate opens the link but leaves the dialog open (so the
+                # user can keep reading or click it again); only Close (or
+                # Escape) actually dismisses it. keepOpen routes the click
+                # through _DialogApi.action() instead of respond().
+                accent = _ACCENT_INFO
+                buttons = [
+                    {"label": "Close", "value": False, "style": "secondary"},
+                    {"label": "Donate", "value": True, "style": "primary", "keepOpen": True},
                 ]
                 escape_value = False
             elif kind == "error":
@@ -275,6 +299,10 @@ class WebMessageBoxMixin:
                 # done.wait() forever instead of falling through below.
                 done.set()
 
+            def _on_dialog_action(value):
+                if on_action is not None:
+                    on_action(value)
+
             dialog_window = webview.create_window(
                 str(title) or "Rhema",
                 html=DIALOG_HTML,
@@ -285,7 +313,7 @@ class WebMessageBoxMixin:
                 on_top=True,
                 hidden=True,
                 background_color="#1E2228",
-                js_api=_DialogApi(config, _on_respond, window_holder),
+                js_api=_DialogApi(config, _on_respond, window_holder, on_action=_on_dialog_action),
             )
             window_holder["window"] = dialog_window
             dialog_window.events.closing += _on_closing

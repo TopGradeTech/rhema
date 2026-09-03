@@ -479,6 +479,21 @@ class WebCanvas:
     def winfo_height(self):
         return self._h
 
+    def resize(self, width, height):
+        """Updates the cached size winfo_width/height report, after the
+        real <canvas> has been told (via initCanvas(), re-run by the
+        caller) to actually resize itself. Without this, self._w/_h stay
+        pinned at whatever _on_window_loaded's one-time initCanvas() call
+        saw at startup forever - a real gap, not a hypothetical one:
+        _render_video_frame's letterbox math and DisplayMixin's font-
+        fitting both read winfo_width()/height() as their ground truth for
+        "how big is the Output window right now", so switching to a
+        different-resolution/DPI monitor at runtime left video and caption
+        sizing stuck at the old monitor's dimensions with no way to
+        recover short of restarting the app."""
+        self._w = width
+        self._h = height
+
     def config(self, **kwargs):
         """apply_colors() (settings_ui_mixin.py) calls
         `self.text_canvas.config(bg=...)` unmodified - unlike FakeRoot's own
@@ -610,27 +625,27 @@ class PywebviewGeometryAdapter:
     here rather than silently assumed correct.
 
     `window.x/.y/.width/.height` are pywebview's own live properties
-    (confirmed current in platforms/winforms.py); `.events.maximized/
-    .minimized/.restored` fire on real WindowState transitions (same file).
-    Geometry read here is in LOGICAL pixels (pywebview's own coordinate
-    space) - unlike real_monitors_with_scale()'s physical-pixel monitor
-    rects, this is exactly what Tk's own .geometry() string already used
-    (Tk's geometry strings are also logical/DPI-already-applied on a
-    DPI-aware process), so save_settings/load_settings round-trip through
-    the same string format with no unit conversion needed here."""
+    (confirmed current in platforms/winforms.py). Geometry read here is in
+    LOGICAL pixels (pywebview's own coordinate space) - unlike
+    real_monitors_with_scale()'s physical-pixel monitor rects, this is
+    exactly what Tk's own .geometry() string already used (Tk's geometry
+    strings are also logical/DPI-already-applied on a DPI-aware process),
+    so save_settings/load_settings round-trip through the same string
+    format with no unit conversion needed here.
+
+    state() queries the real WinForms Form's own WindowState directly
+    (Invoke()-marshaled, the same "reach past the wrapper for ground
+    truth" real_window_rect already does above) rather than tracking
+    `.events.maximized/.minimized/.restored` - confirmed live those don't
+    fire for a maximize() called programmatically right at startup (the
+    exact case this class exists for: restoring a maximized Controller/
+    Options window on launch), which silently made a maximized preference
+    read back as "normal" and get overwritten by save_settings on the very
+    next close - a real user-visible one-session-only-remembered bug, not
+    a hypothetical one."""
 
     def __init__(self, window):
         self._window = window
-        self._maximized = False
-        window.events.maximized += self._on_maximized
-        window.events.restored += self._on_restored
-        window.events.minimized += self._on_restored
-
-    def _on_maximized(self):
-        self._maximized = True
-
-    def _on_restored(self):
-        self._maximized = False
 
     def winfo_exists(self):
         try:
@@ -644,7 +659,13 @@ class PywebviewGeometryAdapter:
             return False
 
     def state(self):
-        return "zoomed" if self._maximized else "normal"
+        try:
+            window_state = invoke_on_ui_thread(
+                self._window, lambda: str(self._window.native.WindowState)
+            )
+        except Exception:
+            return "normal"
+        return "zoomed" if window_state == "Maximized" else "normal"
 
     def geometry(self):
         return "%dx%d+%d+%d" % (

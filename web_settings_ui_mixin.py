@@ -67,7 +67,7 @@ import webbrowser
 from languages import whisper_language_options, nllb_language_options
 from settings_logic_mixin import SettingsLogicMixin
 from settings_ui_mixin import DONATE_URL
-from webview_bridge import TkVariableInterpreter
+from webview_bridge import PywebviewGeometryAdapter, TkVariableInterpreter
 
 # The real, current option tables from settings_ui_mixin.py's
 # _build_display_controls/_build_transcription_section/
@@ -258,6 +258,33 @@ document.addEventListener('keydown', (e) => {
 """
 
 
+NLLB_PROGRESS_HTML = r"""
+<!doctype html><html><head><meta charset="utf-8"><title>Local NLLB</title>
+<style>
+:root{color-scheme:dark}
+html,body{margin:0;background:#1E2228;color:#E5E7EB;
+  font:14px/1.4 "Segoe UI",system-ui,sans-serif;overflow:hidden}
+#wrap{padding:20px 24px;box-sizing:border-box}
+h3{margin:0 0 12px;font-size:13px;font-weight:700;color:#F3F4F6}
+#track{height:10px;background:#14171C;border:1px solid #3A3A3A;border-radius:4px;overflow:hidden;
+  position:relative}
+#fill{position:absolute;top:0;height:100%;width:35%;background:#5B8FF7;border-radius:4px;
+  animation:bounce 1.1s ease-in-out infinite}
+@keyframes bounce{0%{left:-35%}100%{left:100%}}
+#statusText{margin-top:10px;font-size:12px;color:#9CA3AF;white-space:pre-wrap}
+</style></head><body>
+<div id="wrap">
+  <h3>Preparing Local NLLB...</h3>
+  <div id="track"><div id="fill"></div></div>
+  <div id="statusText"></div>
+</div>
+<script>
+function setNllbStatus(text){ document.getElementById('statusText').textContent = text }
+window.addEventListener('pywebviewready', () => setNllbStatus(__INITIAL__))
+</script></body></html>
+"""
+
+
 class _ControllerApi:
     """Exposed to the Controller window's JS as `pywebview.api.*` - kept
     small and separate from the real app instance (rather than exposing
@@ -332,7 +359,15 @@ class _OptionsApi:
 
     def refresh_devices(self):
         self._app._refresh_audio_devices()
-        self._app._refresh_video_devices()
+        # Matches Tk's own startup gating (settings_ui_mixin.py only scans
+        # the camera at all if video_feed_enabled is True) - this is
+        # called unconditionally from OPTIONS_HTML's pywebviewready
+        # handler on EVERY app launch (Options is built hidden-but-eagerly
+        # at startup), so without this check the camera got probed even
+        # when the video feed was off, wasting the scan's multi-second
+        # cost for a control the user hadn't even revealed yet.
+        if self._app.video_feed_enabled:
+            self._app._refresh_video_devices()
         return {"ok": True}
 
     def get_video_status(self):
@@ -350,6 +385,15 @@ class _OptionsApi:
     def check_nllb_download(self):
         return self._app._check_nllb_download_from_options()
 
+    def test_nllb(self):
+        return self._app._test_nllb_from_options()
+
+    def get_nllb_status(self):
+        return self._app._nllb_status_for_options()
+
+    def get_translation_summary(self):
+        return self._app._translation_summary_lines()
+
     def select_output_monitor(self, label):
         return self._app._select_output_monitor(label)
 
@@ -359,6 +403,22 @@ class _OptionsApi:
     def show_monitor_ids(self):
         self._app.show_monitor_ids()
         return {"ok": True}
+
+    # Same hotkey targets _ControllerApi/_OutputApi expose (Phase 12) -
+    # previously missing here entirely, which is why F11/Ctrl-Alt-F/
+    # Escape/Ctrl-S/Ctrl-Q silently did nothing while the Options window
+    # had focus (see OPTIONS_HTML's own keydown listener below, added for
+    # the same reason CONTROLLER_HTML/main_webview.py's OUTPUT_HTML each
+    # carry their own copy - pywebview has no process-wide bind_all
+    # equivalent to attach this to just once).
+    def toggle_fullscreen_clicked(self):
+        self._app.toggle_fullscreen()
+
+    def open_settings_clicked(self):
+        self._app.focus_controller_window()
+
+    def close_app_clicked(self):
+        self._app.on_closing()
 
 
 OPTIONS_HTML = r"""
@@ -412,18 +472,20 @@ input[type=checkbox]{width:16px;height:16px;accent-color:var(--accent)}
   <h2>Display</h2>
   <div class="row"><label>Theme<span class="help" data-tip="Switches the Controller and Options windows between light and dark.">?</span></label>
     <select id="theme"><option value="Light">Light</option><option value="Dark">Dark</option></select></div>
-  <div class="row"><label>Max caption lines (no video feed)<span class="help" data-tip="Maximum number of translated lines kept on screen when the video feed below is off.">?</span></label><input type="number" id="lines" min="4" max="10"></div>
-  <div class="row"><label>Background color<span class="help" data-tip="Background color for the output overlay and preview. Also tints the caption bar behind the video overlay, if enabled.">?</span></label><input type="color" id="bg"></div>
-  <div class="row"><label>Text color<span class="help" data-tip="Text color for the output overlay and preview.">?</span></label><input type="color" id="textColor"></div>
+  <div class="row" id="linesRow"><label>Max caption lines (no video feed)<span class="help" data-tip="Maximum number of translated lines kept on screen when the video feed below is off.">?</span></label><input type="number" id="lines" min="4" max="10"></div>
+  <div class="row"><label>Background color<span class="help" data-tip="Background color for the output overlay and preview. Also tints the caption bar behind the video overlay, if enabled.">?</span></label>
+    <span style="display:flex;gap:6px;align-items:center"><input type="color" id="bgSwatch"><input type="text" id="bg" maxlength="32" placeholder="#000000" style="width:90px"></span></div>
+  <div class="row"><label>Text color<span class="help" data-tip="Text color for the output overlay and preview.">?</span></label>
+    <span style="display:flex;gap:6px;align-items:center"><input type="color" id="textColorSwatch"><input type="text" id="textColor" maxlength="32" placeholder="#ffffff" style="width:90px"></span></div>
   <div class="row"><label>Always keep on top of other apps<span class="help" data-tip="Keeps the fullscreen output window on top of other windows and attempts to focus it. Leave this off to let other apps appear above the output window.">?</span></label><input type="checkbox" id="lockFocus"></div>
   <div class="row"><label>Clear display on inactivity</label><input type="checkbox" id="clear"></div>
-  <div class="row" id="clearSecondsRow"><label>&nbsp;&nbsp;...after N seconds</label><input type="number" id="clearSeconds" min="5" max="3600"></div>
+  <div class="row" id="clearSecondsRow"><label>&nbsp;&nbsp;...after N seconds</label><input type="number" id="clearSeconds" min="__CLEAR_SECONDS_MIN__" max="__CLEAR_SECONDS_MAX__"></div>
   <div class="row"><label>Show video feed behind captions<span class="help" data-tip="Shows the OBS Virtual Camera behind captions. Start OBS's Virtual Camera first.">?</span></label><input type="checkbox" id="videoEnabled"></div>
-  <div class="row"><label>Camera device<span class="help" data-tip="Camera index for the OBS Virtual Camera. Click Refresh after starting OBS's Virtual Camera if it isn't listed yet.">?</span></label>
+  <div class="row" id="videoDeviceRow"><label>Camera device<span class="help" data-tip="Camera index for the OBS Virtual Camera. Click Refresh after starting OBS's Virtual Camera if it isn't listed yet.">?</span></label>
     <span style="display:flex;gap:8px;align-items:center"><select id="videoDevice"></select><button type="button" id="videoRefresh" class="smallBtn">Refresh</button></span></div>
-  <div class="row"><label>&nbsp;&nbsp;Camera status</label><span id="videoStatus" style="color:#9CA3AF;font-size:12px">--</span></div>
-  <div class="row"><label>Max caption lines (with video feed)<span class="help" data-tip="Maximum number of translated lines kept on screen when the video feed is on. Kept lower than the no-video default to leave more of the video visible.">?</span></label><input type="number" id="videoLines" min="1" max="3"></div>
-  <div class="row"><label>Caption bar opacity (%)<span class="help" data-tip="How solid the bar behind the caption lines looks, using the Background Color above. 0% is fully see-through, 100% is a solid bar.">?</span></label><input type="number" id="videoAlpha" min="0" max="100"></div>
+  <div class="row" id="videoStatusRow"><label>&nbsp;&nbsp;Camera status</label><span id="videoStatus" style="color:#9CA3AF;font-size:12px">--</span></div>
+  <div class="row" id="videoLinesRow"><label>Max caption lines (with video feed)<span class="help" data-tip="Maximum number of translated lines kept on screen when the video feed is on. Kept lower than the no-video default to leave more of the video visible.">?</span></label><input type="number" id="videoLines" min="1" max="3"></div>
+  <div class="row" id="videoAlphaRow"><label>Caption bar opacity (%)<span class="help" data-tip="How solid the bar behind the caption lines looks, using the Background Color above. 0% is fully see-through, 100% is a solid bar.">?</span></label><input type="number" id="videoAlpha" min="0" max="100"></div>
   <div class="row"><label>Output monitor<span class="help" data-tip="Monitor where the translation output appears.">?</span></label><select id="outputMonitor"></select></div>
   <div class="row"><label>Controller monitor<span class="help" data-tip="Monitor where this Controller/Options window opens.">?</span></label><select id="settingsMonitor"></select></div>
   <div class="row"><span></span><button type="button" id="showMonitorIds" class="smallBtn">Show Monitor Numbers</button></div>
@@ -443,20 +505,26 @@ input[type=checkbox]{width:16px;height:16px;accent-color:var(--accent)}
 
   <h2>Translation (Local NLLB)</h2>
   <div class="row"><label>Enable translation</label><input type="checkbox" id="enableTranslation"></div>
+  <div id="translationSummary" style="color:#9CA3AF;font-size:12px;margin:2px 0 10px;white-space:pre-line"></div>
   <div class="row"><label>Model name<span class="help" data-tip="Hugging Face model id for local text translation. Larger models translate more accurately but need more VRAM/RAM and disk space, and run slower.">?</span></label><select id="nllbModel"></select></div>
   <div class="row"><label>Device<span class="help" data-tip="Auto uses CUDA when available, otherwise CPU.">?</span></label>
     <select id="nllbDevice"><option value="cpu">CPU</option><option value="cuda">CUDA</option><option value="auto">Auto</option></select></div>
   <div class="row"><label>Target language<span class="help" data-tip="Language the translated transcript is produced in. Type to search all 200 languages.">?</span></label>
     <input type="text" id="nllbTargetLang" list="nllbTargetLangOptions" autocomplete="off" style="width:220px"><datalist id="nllbTargetLangOptions"></datalist></div>
   <div class="row"><label>Max chars per chunk<span class="help" data-tip="Long transcripts are split by paragraph, sentence, or length before translation.">?</span></label><input type="number" id="nllbMaxChars" min="250" max="20000" step="250"></div>
-  <div class="row"><span></span><button type="button" id="nllbDownload" class="smallBtn">Download / Check for Updates</button></div>
+  <div class="row"><span></span><span style="display:flex;gap:8px">
+    <button type="button" id="nllbDownload" class="smallBtn">Download / Check for Updates</button>
+    <button type="button" id="nllbTest" class="smallBtn">Test Local NLLB</button>
+  </span></div>
   <div id="nllbStatus" style="color:#9CA3AF;font-size:12px;margin:4px 0 8px">NLLB status: --</div>
 
   <h2>Advanced</h2>
+  <div class="row"><span></span><button type="button" id="advancedToggle" class="smallBtn">Show Advanced Settings</button></div>
+  <div id="advancedContent" hidden>
   <div class="row"><label>Logging mode<span class="help" data-tip="Normal keeps status/error and finalized output logs. Debug adds pipeline traces. Evaluation adds raw transcribed/translated comparison logs. Full enables all logs.">?</span></label><select id="loggingMode"></select></div>
   <div class="row"><label>Start app when Windows starts</label><input type="checkbox" id="startWithWindows"></div>
   <div class="row"><label>CUDA directory<span class="help" data-tip="Optional Windows path used to find CUDA Toolkit 12.x and cuDNN 9.x DLLs for local faster-whisper GPU mode. Select the CUDA toolkit folder or its bin folder.">?</span></label>
-    <span style="display:flex;gap:8px;align-items:center"><input type="text" id="cudaDirectory" style="width:220px"><button type="button" id="cudaBrowse" class="smallBtn">Browse</button></span></div>
+    <span style="display:flex;gap:8px;align-items:center"><input type="text" id="cudaDirectory" style="width:220px"><button type="button" id="cudaBrowse" class="smallBtn">Browse</button><button type="button" id="cudaClear" class="smallBtn">Clear</button></span></div>
   <div class="row"><label>Bad words filter<span class="help" data-tip="Words to omit from the output.">?</span></label><button type="button" id="badWordsToggle" class="smallBtn">Show list</button></div>
   <div id="badWordsContainer" hidden>
     <div class="row"><label>&nbsp;&nbsp;English (comma-separated)</label></div>
@@ -470,6 +538,7 @@ input[type=checkbox]{width:16px;height:16px;accent-color:var(--accent)}
     <textarea id="vocabEn" rows="2"></textarea>
     <div class="row"><label>&nbsp;&nbsp;Spanish (comma-separated)</label></div>
     <textarea id="vocabEs" rows="2"></textarea>
+  </div>
   </div>
 
 </div>
@@ -611,8 +680,15 @@ document.getElementById('cudaBrowse').addEventListener('click', async () => {
     setDirty(result.dirty)
   }
 })
+document.getElementById('cudaClear').addEventListener('click', () => {
+  elFor('cudaDirectory').value = ''
+  onFieldChange('cudaDirectory')
+})
 document.getElementById('nllbDownload').addEventListener('click', () => {
   pywebview.api.check_nllb_download()
+})
+document.getElementById('nllbTest').addEventListener('click', () => {
+  pywebview.api.test_nllb()
 })
 document.getElementById('outputMonitor').addEventListener('change', async (e) => {
   await pywebview.api.select_output_monitor(e.target.value)
@@ -634,11 +710,134 @@ function makeListToggle(buttonId, containerId){
 }
 makeListToggle('badWordsToggle', 'badWordsContainer')
 makeListToggle('vocabToggle', 'vocabContainer')
+// Same real collapse/relabel behavior as the two list toggles above, just
+// wrapping the whole Advanced section instead of one field - matches
+// Tk's "Show Advanced Settings" button (settings_ui_mixin.py), which
+// keeps Advanced collapsed by default rather than always fully expanded.
+document.getElementById('advancedToggle').addEventListener('click', () => {
+  const content = document.getElementById('advancedContent')
+  const button = document.getElementById('advancedToggle')
+  content.hidden = !content.hidden
+  button.textContent = content.hidden ? 'Show Advanced Settings' : 'Hide Advanced Settings'
+})
 
 function syncClearSecondsVisibility(){
   document.getElementById('clearSecondsRow').hidden = !document.getElementById('clear').checked
 }
 document.getElementById('clear').addEventListener('change', syncClearSecondsVisibility)
+
+// Matches Tk's on_video_feed_toggle (settings_ui_mixin.py): exactly one
+// "Max caption lines" field and one camera-controls block is ever visible
+// at a time, based on whether the video feed is enabled - previously all
+// of these rows stayed visible/editable regardless, giving no visual cue
+// which "Max caption lines" value was actually in effect.
+function syncVideoRowsVisibility(){
+  const on = document.getElementById('videoEnabled').checked
+  document.getElementById('linesRow').hidden = on
+  document.getElementById('videoDeviceRow').hidden = !on
+  document.getElementById('videoStatusRow').hidden = !on
+  document.getElementById('videoLinesRow').hidden = !on
+  document.getElementById('videoAlphaRow').hidden = !on
+}
+document.getElementById('videoEnabled').addEventListener('change', syncVideoRowsVisibility)
+
+// Matches Tk's sync_interim_with_translation (settings_ui_mixin.py):
+// translating a still-changing partial produces reordered, inconsistent
+// output next to the eventual finalized translation, so translation wins
+// the conflict - live interim text is force-unchecked and disabled
+// whenever translation is on. Previously this only happened server-side
+// at Apply time here, so a user could leave both checked, see "Applied
+// and saved", and still have the checkbox showing checked even though
+// the feature was now off.
+function syncInterimWithTranslation(){
+  const enabled = document.getElementById('enableTranslation').checked
+  const interim = document.getElementById('interim')
+  interim.disabled = enabled
+  if (enabled && interim.checked){
+    interim.checked = false
+    onFieldChange('interim')
+  }
+}
+document.getElementById('enableTranslation').addEventListener('change', syncInterimWithTranslation)
+
+// Lets the user type an arbitrary color string (a named color, 3-digit
+// shorthand, or anything else Tk's own free-text Entry accepts) the same
+// way Tk's bg/text color Entry does - <input type=color> only accepts a
+// strict #rrggbb value, silently ignoring (and rendering black for)
+// anything else, and previously had no accompanying text field at all.
+// The swatch stays a convenience picker: picking a color there writes the
+// resolved hex into the real (tracked) text field, which is what actually
+// gets sent to the backend.
+function syncSwatchFromHex(hexId, swatchId){
+  const val = elFor(hexId).value
+  if (/^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(val)){
+    elFor(swatchId).value = val.length === 4
+      ? '#' + [...val.slice(1)].map((c) => c + c).join('')
+      : val
+  }
+}
+document.getElementById('bgSwatch').addEventListener('input', (e) => {
+  elFor('bg').value = e.target.value
+  onFieldChange('bg')
+})
+document.getElementById('textColorSwatch').addEventListener('input', (e) => {
+  elFor('textColor').value = e.target.value
+  onFieldChange('textColor')
+})
+elFor('bg').addEventListener('input', () => syncSwatchFromHex('bg', 'bgSwatch'))
+elFor('textColor').addEventListener('input', () => syncSwatchFromHex('textColor', 'textColorSwatch'))
+
+// Live NLLB status (previously only ever written once at page load and
+// once after Apply, so a Download/Test click's whole multi-GB/multi-
+// second progress showed the same frozen text the entire time) and the
+// translation mode/language summary Tk keeps visible under the Enable
+// Translation checkbox (previously missing from this page entirely).
+function pollNllbStatus(){
+  pywebview.api.get_nllb_status().then((s) => {
+    document.getElementById('nllbStatus').textContent = 'NLLB status: ' + s.text
+    document.getElementById('nllbDownload').disabled = s.busy
+    document.getElementById('nllbTest').disabled = s.busy
+  }).catch(() => {})
+}
+setInterval(pollNllbStatus, 1500)
+setTimeout(pollNllbStatus, 300)
+
+function pollTranslationSummary(){
+  pywebview.api.get_translation_summary().then((lines) => {
+    document.getElementById('translationSummary').textContent = lines.join('\n')
+  }).catch(() => {})
+}
+setInterval(pollTranslationSummary, 2000)
+setTimeout(pollTranslationSummary, 300)
+
+// Same hotkey listener as the Output/Controller windows' own HTML
+// (main_webview.py / CONTROLLER_HTML above) - previously missing from
+// this window entirely, so F11/Ctrl-Alt-F/Escape/Ctrl-S/Ctrl-Q silently
+// did nothing while Options had focus. pywebview has no process-wide
+// bind_all equivalent, so every real window needs its own copy.
+document.addEventListener('keydown', (e) => {
+  const key = e.key.toLowerCase()
+  if (key === 'f11' || (e.ctrlKey && e.altKey && key === 'f') || key === 'escape') {
+    e.preventDefault()
+    pywebview.api.toggle_fullscreen_clicked()
+  } else if (e.ctrlKey && key === 's') {
+    e.preventDefault()
+    pywebview.api.open_settings_clicked()
+  } else if (e.ctrlKey && key === 'q') {
+    e.preventDefault()
+    pywebview.api.close_app_clicked()
+  }
+})
+
+function setVideoRefreshBusy(busy){
+  // Matches Tk's own Refresh-button-disable during a camera scan
+  // (settings_ui_mixin.py _refresh_video_devices) - cv2's DirectShow
+  // backend isn't safe to probe from two threads at once, so this is a
+  // real crash-avoidance signal, not just cosmetic feedback.
+  const button = document.getElementById('videoRefresh')
+  button.disabled = busy
+  button.textContent = busy ? 'Scanning...' : 'Refresh'
+}
 
 function pollVideoStatus(){
   pywebview.api.get_video_status().then((status) => {
@@ -695,6 +894,19 @@ applyBtn.addEventListener('click', async () => {
   // reality once applied.
   document.getElementById('sourceLang').value = v.display.stt_source_lang
   document.getElementById('nllbTargetLang').value = v.display.local_nllb_target_lang
+  // Same reasoning for clearSeconds - _apply_display_vars clamps this to
+  // 1-60 server-side regardless of what this field's own (wider) min/max
+  // allowed the user to type, so the input needs resyncing to the actual
+  // clamped value or it would keep showing an un-applied number forever.
+  document.getElementById('clearSeconds').value = v.clear_display_inactivity_seconds
+  // Translation, when just enabled, forces interim text off server-side
+  // too (_apply_translation_vars) - resync in case the live checkbox
+  // listener above didn't already catch it (e.g. Enable Translation was
+  // toggled via Hardware Autodetect or another path).
+  document.getElementById('interim').checked = v.show_interim_text
+  syncInterimWithTranslation()
+  syncVideoRowsVisibility()
+  pollTranslationSummary()
   statusEl.textContent = 'Applied and saved.'
 })
 
@@ -711,6 +923,8 @@ window.addEventListener('pywebviewready', async () => {
   document.getElementById('lines').value = v.max_lines
   document.getElementById('bg').value = v.bg_color
   document.getElementById('textColor').value = v.text_color
+  syncSwatchFromHex('bg', 'bgSwatch')
+  syncSwatchFromHex('textColor', 'textColorSwatch')
   document.getElementById('lockFocus').checked = v.lock_output_focus
   document.getElementById('clear').checked = v.clear_display_on_inactivity
   document.getElementById('clearSeconds').value = v.clear_display_inactivity_seconds
@@ -718,11 +932,13 @@ window.addEventListener('pywebviewready', async () => {
   document.getElementById('videoEnabled').checked = v.video_feed_enabled
   document.getElementById('videoLines').value = v.video_max_lines
   document.getElementById('videoAlpha').value = v.video_caption_bar_alpha
+  syncVideoRowsVisibility()
   document.getElementById('interim').checked = v.show_interim_text
   document.getElementById('device').value = v.stt_device
   document.getElementById('sourceLang').value = v.display.stt_source_lang
   document.getElementById('silero').value = v.realtime_stt_silero_sensitivity
   document.getElementById('enableTranslation').checked = v.translation_enabled
+  syncInterimWithTranslation()
   document.getElementById('nllbDevice').value = v.local_nllb_device
   document.getElementById('nllbTargetLang').value = v.display.local_nllb_target_lang
   document.getElementById('nllbMaxChars').value = v.local_nllb_max_chars
@@ -754,6 +970,30 @@ window.addEventListener('pywebviewready', async () => {
 
 
 class WebSettingsUIMixin(SettingsLogicMixin):
+    def _restored_window_geometry(self, geometry_string, default_width, default_height):
+        """Turns a saved Tk-format "WxH+X+Y" geometry string (or None, on
+        a first run) into the width/height/x/y kwargs webview.create_window
+        accepts, falling back to the given defaults - the Web-side half of
+        real window geometry persistence (the other half is
+        PywebviewGeometryAdapter, which .geometry()'s the current live
+        window back into that same string format for save_settings to
+        write out). Reuses _parse_geometry (monitor_logic_mixin.py) rather
+        than writing a second WxH+X+Y parser, since Tk's own geometry
+        strings and this one need to agree on the exact same format for
+        settings.json to round-trip between the Tk and Web apps."""
+        parsed = self._parse_geometry(geometry_string) if geometry_string else None
+        if not parsed:
+            return {"width": default_width, "height": default_height}
+        width, height, x, y = parsed
+        kwargs = {
+            "width": width or default_width,
+            "height": height or default_height,
+        }
+        if x is not None and y is not None:
+            kwargs["x"] = x
+            kwargs["y"] = y
+        return kwargs
+
     def build_web_controller(self):
         """Analogous to open_settings() - called once at startup from
         main_webview.py after the Output window is loaded (needs
@@ -771,15 +1011,23 @@ class WebSettingsUIMixin(SettingsLogicMixin):
         # screen #startupOverlay (z-index 1000) that already blocks
         # interaction with Preview/Status/buttons until hideStartupOverlay()
         # runs - it's gated for free, not specially wired.
+        geometry_kwargs = self._restored_window_geometry(self.settings_geometry, 420, 560)
         controller_window = webview.create_window(
             "Rhema Controller",
             html=CONTROLLER_HTML.replace("__THEME_CSS__", self._theme_css_declaration()),
-            width=420,
-            height=560,
             background_color=self._settings_palette()["window_bg"],
             js_api=_ControllerApi(self),
+            **geometry_kwargs,
         )
         self._controller_window = controller_window
+        # Duck-types just enough of a Tk Toplevel for save_settings/
+        # load_settings (settings_mixin.py) to persist/restore this
+        # window's real size, position, and maximized state, exactly like
+        # Tk's own settings_window - previously left None for the life of
+        # the app, so every resize/move/maximize was silently discarded on
+        # close (settings_mixin.py's capture block no-ops whenever this is
+        # None).
+        self.settings_window = PywebviewGeometryAdapter(controller_window)
         controller_window.events.closing += self.on_closing
         # shown (not immediately after create_window) - window.native's
         # real WinForms Form isn't guaranteed realized until then, and
@@ -788,6 +1036,23 @@ class WebSettingsUIMixin(SettingsLogicMixin):
         controller_window.events.shown += lambda: self.apply_dark_title_bar(
             controller_window, dark=(self.ui_theme == "dark")
         )
+        if self.settings_maximized:
+            # Same events.shown timing requirement as apply_dark_title_bar
+            # right above - window.native's real WinForms Form isn't
+            # guaranteed realized before then either.
+            def _maximize_controller():
+                try:
+                    controller_window.maximize()
+                except Exception:
+                    pass
+            controller_window.events.shown += _maximize_controller
+        # Real open_settings() (settings_ui_mixin.py) starts the audio
+        # level meter's render loop here too - without this call, nothing
+        # ever turns audio_level_target (written continuously by the
+        # capture thread) into a rendered value, so the meter bar built
+        # into CONTROLLER_HTML stays frozen at 0% forever even while the
+        # mic is picking up real audio.
+        self._start_audio_level_updates()
         self._show_startup_loading_overlay()
         return controller_window
 
@@ -846,7 +1111,17 @@ class WebSettingsUIMixin(SettingsLogicMixin):
         # only exist once the Options window has been built at least once -
         # build it (silently, without stealing focus, if this is the very
         # first time) rather than requiring the user to open Options first.
-        self.build_web_options()
+        # Guarded on the vars not existing yet (rather than calling
+        # build_web_options() unconditionally): main_webview.py already
+        # builds Options hidden-but-eagerly at startup, before the File
+        # menu is ever clickable, so by the time this runs the vars almost
+        # always already exist - and build_web_options()'s own reuse
+        # branch unconditionally shows/restores an existing Options window
+        # regardless of the `hidden` flag, so calling it here every time
+        # made every Hardware Autodetect click pop Options onto the screen
+        # as an unwanted side effect.
+        if getattr(self, "_transcription_vars", None) is None:
+            self.build_web_options(hidden=True)
         self._run_hardware_autodetect_from_menu(self._transcription_vars, self._translation_vars)
 
     def _show_options_dialog(self):
@@ -890,8 +1165,7 @@ class WebSettingsUIMixin(SettingsLogicMixin):
         )
 
     def _show_donate_popup(self):
-        proceed = self._confirm_yes_no(
-            "Support Rhema",
+        message = (
             "“So faith comes from hearing, and hearing through the "
             "word (rhema) of Christ.” (Romans 10:17, ESV)\n\n"
             "If Rhema has helped carry that spoken word across a language "
@@ -904,14 +1178,34 @@ class WebSettingsUIMixin(SettingsLogicMixin):
             "available, free of charge, to churches and ministries who "
             "need it.\n\n"
             "Please note that financial contributions are not tax "
-            "deductible.\n\n"
-            "Open the donation page now?",
+            "deductible."
         )
-        if proceed:
-            try:
-                webbrowser.open(DONATE_URL)
-            except Exception:
-                self._show_error_dialog("Can't open link", f"Couldn't open:\n{DONATE_URL}")
+        # kind="donate" gives an independent Donate/Close button pair,
+        # matching the real Tk popup: Donate opens the link but leaves the
+        # dialog open, only Close (or Escape) dismisses it - unlike a plain
+        # Yes/No confirm, where either button closes the dialog the
+        # instant it's clicked, so there was no way to open the link and
+        # keep reading, or to close without answering.
+        handled, _ = self._show_html_message_dialog(
+            "Support Rhema", message, "donate", on_action=self._donate_action_clicked
+        )
+        if handled:
+            return
+        # Fallback (pre-window/crash-time only - see web_messagebox.py's
+        # own docstring): plain Yes/No, since native MessageBoxW has no
+        # "keep open" concept either way.
+        if self._confirm_yes_no("Support Rhema", message + "\n\nOpen the donation page now?"):
+            self._open_donate_link()
+
+    def _donate_action_clicked(self, value):
+        if value:
+            self._open_donate_link()
+
+    def _open_donate_link(self):
+        try:
+            webbrowser.open(DONATE_URL)
+        except Exception:
+            self._show_error_dialog("Can't open link", f"Couldn't open:\n{DONATE_URL}")
 
     # ------------------------------------------------------------------ #
     # Controller widget overrides (real methods in display_mixin.py this
@@ -990,6 +1284,11 @@ class WebSettingsUIMixin(SettingsLogicMixin):
             self.enter_fullscreen()
         else:
             self.exit_fullscreen()
+        # Same stale-canvas-size fix as _select_output_monitor above -
+        # exiting fullscreen (a windowed size) or re-entering it (possibly
+        # onto a different monitor than last time) both change the real
+        # window's dimensions.
+        self.root.after(300, self._refresh_output_canvas_size)
 
     # ------------------------------------------------------------------ #
     # Preview / Output Snapshot.
@@ -1036,6 +1335,28 @@ class WebSettingsUIMixin(SettingsLogicMixin):
     # constructed fresh inside on_frame_arrived, so there'd be nothing to
     # call if no frame ever showed up.
     # ------------------------------------------------------------------ #
+    def _capture_output_snapshot(self):
+        # Real settings_ui_mixin.py version (self.preview_widget-driven,
+        # ImageGrab-based) is called by video_capture_mixin.py's render
+        # tick ~50ms after the video feed's first frame draws, to refresh
+        # the Controller's preview thumbnail immediately after toggling
+        # video on rather than waiting for the next 15s poll. This app
+        # never builds a real preview_widget (main_webview.py sets it to
+        # None and never reassigns it - CONTROLLER_HTML's own <img> is
+        # driven by pollPreview()/get_preview_data_uri instead), so the
+        # inherited Tk method's own preview_widget-None guard made this a
+        # silent no-op - the real, occlusion-independent snapshot path
+        # (_capture_output_snapshot_data_uri) was only ever reachable via
+        # the 15s poll, not this fast-refresh signal.
+        if self._controller_window is None:
+            return
+        try:
+            data_uri = self._capture_output_snapshot_data_uri()
+            if data_uri:
+                self._controller_window.evaluate_js("setPreview(%s)" % json.dumps(data_uri))
+        except Exception:
+            pass
+
     def _capture_output_snapshot_data_uri(self):
         if self._window is None:
             return None
@@ -1108,6 +1429,134 @@ class WebSettingsUIMixin(SettingsLogicMixin):
     # ------------------------------------------------------------------ #
     def _show_hardware_autodetect_result(self, text):
         self._show_info_dialog("Hardware Autodetect", text)
+
+    # ------------------------------------------------------------------ #
+    # Local NLLB progress popup - the real settings_ui_mixin.py versions
+    # build a tk.Toplevel(self.settings_window or self.root). Web's
+    # self.root is a FakeRoot (no real Tcl interpreter, so tk.Toplevel(
+    # FakeRoot) throws) - previously unoverridden, so every download/
+    # check/verify's in-progress popup fell through the MRO to those Tk
+    # versions and threw inside FakeRoot's own callback runner, which only
+    # ever routes exceptions to the error log (see _write_unhandled_
+    # exception) - a real user saw the SAME frozen "NLLB status: ..." text
+    # for the whole multi-GB operation with no popup and no other feedback
+    # that anything was happening. Overridden here with a real, themed,
+    # non-modal pywebview window (indeterminate bouncing bar, matching
+    # Tk's own indeterminate Progressbar - a determinate one would stall
+    # visibly, since neither a download nor a model load has a reliable
+    # byte-progress signal for most of its duration).
+    # ------------------------------------------------------------------ #
+    def _show_local_nllb_progress_popup(self, message):
+        import webview
+
+        try:
+            popup = webview.create_window(
+                "Local NLLB",
+                html=NLLB_PROGRESS_HTML.replace("__INITIAL__", json.dumps(message)),
+                width=340,
+                height=130,
+                resizable=False,
+                frameless=True,
+                on_top=True,
+                background_color="#1E2228",
+            )
+            self._local_nllb_popup = popup
+        except Exception:
+            self._local_nllb_popup = None
+
+    def _update_local_nllb_progress_popup(self, message):
+        popup = getattr(self, "_local_nllb_popup", None)
+        if popup is None:
+            return
+        try:
+            popup.evaluate_js("setNllbStatus(%s)" % json.dumps(message))
+        except Exception:
+            pass
+
+    def _close_local_nllb_progress_popup(self):
+        popup = getattr(self, "_local_nllb_popup", None)
+        if popup is not None:
+            try:
+                popup.destroy()
+            except Exception:
+                pass
+        self._local_nllb_popup = None
+
+    def _nllb_status_for_options(self):
+        # Polled by OPTIONS_HTML (pollNllbStatus) so the #nllbStatus line
+        # updates live while a check/download/load is in progress -
+        # previously it was only ever written once at page load and once
+        # after Apply, so a user who clicked Download and left Options
+        # open saw the same stale text for the whole operation. "busy"
+        # mirrors _refresh_local_nllb_runtime_ui's own in_progress check
+        # (settings_ui_mixin.py), used to disable both NLLB buttons while
+        # true so a second click can't race the worker thread already
+        # running.
+        busy = bool(self.nllb_download_in_progress or self.nllb_check_in_progress)
+        busy = busy or self.nllb_status in ("Checking", "Downloading", "Loading")
+        return {
+            "text": self._local_nllb_status_message() or self.nllb_status,
+            "busy": busy,
+        }
+
+    def _test_nllb_from_options(self):
+        # Real "Test Local NLLB" button (settings_ui_mixin.py) was entirely
+        # absent from the Web Options page - a user had no way to confirm
+        # their selected model/device combo actually produces a working
+        # translation without enabling translation and speaking live,
+        # which conflates "is NLLB working" with "are my mic/STT also
+        # working". test_button/test_status_var are passed as None: the
+        # real method's own try/except around both already makes that
+        # safe (settings_logic_mixin.py's module docstring calls this
+        # exact None-guard pattern out as the intended Web-side contract),
+        # and the actual result still reaches the user via the same
+        # _set_local_nllb_status()/update_status() calls _execute_local_
+        # nllb_test already makes - surfaced here through the same
+        # #nllbStatus live poll _nllb_status_for_options feeds, matching
+        # how Tk's own Test button reuses local_nllb_message_var (the
+        # SAME var the main status line shows) rather than a separate one.
+        self._run_local_nllb_test_from_vars(
+            self._translation_vars["local_nllb_model_name_var"],
+            self._translation_vars["local_nllb_device_var"],
+            self._translation_vars["local_nllb_max_chars_var"],
+            None,
+            None,
+            model_name_map=self._translation_vars["local_nllb_model_name_map"],
+        )
+        return {"ok": True}
+
+    def _translation_summary_lines(self):
+        # Web-side equivalent of _refresh_translation_toggle_label
+        # (settings_ui_mixin.py), which Tk keeps live via three trace_add
+        # callbacks under the Enable Translation checkbox. Previously
+        # missing from Web entirely - purely informational (every value
+        # here is already visible/settable via the raw controls above),
+        # so this is computed fresh on each poll rather than needing its
+        # own dirty-tracking.
+        if self.translation_enabled:
+            mode_line = "Current mode: Translation ON (Local NLLB)"
+            target = (
+                self._nllb_target_lang_rev_map.get(
+                    self.local_nllb_target_lang, self.local_nllb_target_lang
+                )
+                if getattr(self, "_nllb_target_lang_rev_map", None)
+                else self.local_nllb_target_lang
+            ) or "English"
+            output_line = f"Output language: {target}"
+        else:
+            mode_line = "Current mode: Translation OFF"
+            output_line = "Output language: same as input (translation is off)"
+        source = (
+            self._stt_source_lang_rev_map.get(self.source_lang or "auto", "Auto-detect")
+            if getattr(self, "_stt_source_lang_rev_map", None)
+            else (self.source_lang or "Auto-detect")
+        )
+        if source.lower() == "auto-detect":
+            detected = (self.auto_detect_lang or "").strip().lower()
+            if detected:
+                source = f"Auto-detect (currently: {self._language_label(detected)})"
+        input_line = f"Input language: {source} (set in Transcription section above)"
+        return [mode_line, output_line, input_line]
 
     def _confirm_local_nllb_download(self, model_name):
         # Real settings_ui_mixin.py version builds a modal tk.Toplevel with
@@ -1246,15 +1695,58 @@ class WebSettingsUIMixin(SettingsLogicMixin):
         # list changed - this override does the same rescan, then pushes
         # the refreshed list to the Options window's own dropdown instead
         # of a Tk menu.
+        #
+        # Real _refresh_audio_devices (settings_ui_mixin.py) additionally
+        # re-resolves preferred_device_label against the freshly rescanned
+        # list via _resolve_preferred_device_label (name/type-normalized
+        # matching, monitor_logic_mixin.py, since a raw index can silently
+        # point at a different physical device after Windows re-enumerates
+        # them) and re-derives microphone_index from that - previously
+        # missing here entirely, so this only ever pushed the RAW, already-
+        # possibly-stale preferred_device_label string into the dropdown
+        # without ever touching self.microphone_index. Since
+        # main_webview.py unconditionally resets microphone_index to 0 at
+        # every launch, and this refresh runs at startup (Options is built
+        # hidden-but-eagerly before any capture thread starts) as well as
+        # after every Apply, the real recording device silently stayed
+        # "whatever enumerates at index 0" on every single run regardless
+        # of the saved microphone - the dropdown showed the right label the
+        # whole time, giving no visible sign anything was wrong.
         if getattr(self, "_options_window", None) is None:
             return
         try:
             self.devices = self.get_audio_devices()
+            resolved_label = self._resolve_preferred_device_label(self.preferred_device_label)
+            if resolved_label:
+                new_index = self.devices.index(resolved_label)
+            elif self.preferred_device_label in self.devices:
+                resolved_label = self.preferred_device_label
+                new_index = self.devices.index(resolved_label)
+            elif self.devices:
+                resolved_label = self.devices[0]
+                new_index = 0
+            else:
+                resolved_label = ""
+                new_index = None
+            device_changed = new_index != self.microphone_index
+            self.microphone_index = new_index
+            if resolved_label:
+                self.preferred_device_label = resolved_label
             window = self._options_window
             window.evaluate_js(
                 "fillSelect('audioDevice', %s, %s)"
                 % (json.dumps(self.devices), json.dumps(self.preferred_device_label))
             )
+            # Matches the real _handle_audio_device_change's own device_
+            # changed check (settings_ui_mixin.py), which fires on this
+            # same re-resolution via its device_var trace - RealtimeSTT/the
+            # level meter only read microphone_index at recorder-
+            # construction time, so a corrected index needs an explicit
+            # restart to actually take effect this session, not just in
+            # settings.json for next time.
+            if device_changed:
+                self._request_capture_restart()
+                self._request_audio_level_stream_restart()
         except Exception:
             pass
 
@@ -1263,8 +1755,25 @@ class WebSettingsUIMixin(SettingsLogicMixin):
         # after Apply); full rewrite per the port plan, same reasoning -
         # the real method interleaves a worker thread with tk._setit/menu
         # manipulation with no Web equivalent.
+        #
+        # _video_scan_in_progress guards against a REAL crash, not just
+        # janky UX: cv2's DirectShow backend is not safe to probe from two
+        # threads at once (Tk's own _refresh_video_devices, settings_ui_
+        # mixin.py, carries the same guard for the same documented reason -
+        # concurrent enumerate_video_devices calls have crashed the process
+        # with a native heap-corruption fault). js_api calls dispatch on
+        # their own threads, so a user clicking Refresh twice, or changing
+        # the camera dropdown while the page-load auto-scan is still
+        # running, could otherwise fire two genuinely concurrent probes.
         if getattr(self, "_options_window", None) is None:
             return
+        if getattr(self, "_video_scan_in_progress", False):
+            return
+        self._video_scan_in_progress = True
+        try:
+            self._options_window.evaluate_js("setVideoRefreshBusy(true)")
+        except Exception:
+            pass
         try:
             available = self.enumerate_video_devices()
             labels = [self._video_device_label(i) for i in available]
@@ -1278,6 +1787,12 @@ class WebSettingsUIMixin(SettingsLogicMixin):
             )
         except Exception:
             pass
+        finally:
+            self._video_scan_in_progress = False
+            try:
+                self._options_window.evaluate_js("setVideoRefreshBusy(false)")
+            except Exception:
+                pass
 
     def _browse_cuda_directory(self):
         # Real settings_ui_mixin.py version opens a native folder picker
@@ -1339,6 +1854,17 @@ class WebSettingsUIMixin(SettingsLogicMixin):
         # monitor_var too so Apply doesn't clobber it back afterward -
         # the exact bug that fix addressed for video device applies here
         # identically.
+        #
+        # Deliberately no self.save_settings() here (a real, previously
+        # fixed bug, not an oversight): every OTHER Display setting is
+        # gated behind Apply (options_set_var only calls var.set(), never
+        # save_settings() - see options_set_var below), so this live move
+        # persisting immediately meant closing Options without Apply still
+        # kept the new monitor on next launch, unlike Tk (which also moves
+        # the window live for the session but only persists on Apply).
+        # _apply_display_vars (settings_logic_mixin.py) already re-derives
+        # and saves monitor_index from monitor_var at Apply time, matching
+        # Tk exactly.
         monitor_labels = self._display_vars["monitor_labels"]
         if label not in monitor_labels:
             return {"ok": False}
@@ -1351,7 +1877,15 @@ class WebSettingsUIMixin(SettingsLogicMixin):
             self.enter_fullscreen()
         else:
             self.move_window_to_monitor(self._window, self.monitor_index, keep_size=False)
-        self.save_settings()
+        # enter_fullscreen()/move_window_to_monitor() resize the real
+        # window, but the Output <canvas>'s own cached pixel dimensions
+        # (WebCanvas._w/_h) were only ever set once, at startup - without
+        # this, switching to a different-resolution/DPI monitor left video
+        # letterboxing and caption font/wrap sizing stuck at the OLD
+        # monitor's size for the rest of the session. A short delay lets
+        # the native resize actually land first, matching _on_window_
+        # loaded's own settle delay after its move+resize+fullscreen call.
+        self.root.after(300, self._refresh_output_canvas_size)
         return {"ok": True}
 
     def _select_settings_monitor(self, label):
@@ -1360,7 +1894,9 @@ class WebSettingsUIMixin(SettingsLogicMixin):
         # maximized Tk Toplevel's state before moving it; pywebview
         # windows here don't need that dance, so this calls the shared
         # move_window_to_monitor (WebMonitorMixin's real per-monitor-aware
-        # override) directly against _controller_window.
+        # override) directly against _controller_window. No
+        # self.save_settings() here either - same Apply-gate reasoning as
+        # _select_output_monitor above.
         monitor_labels = self._display_vars["monitor_labels"]
         if label not in monitor_labels:
             return {"ok": False}
@@ -1370,8 +1906,30 @@ class WebSettingsUIMixin(SettingsLogicMixin):
         )
         self._display_vars["settings_monitor_var"].set(label)
         self.move_window_to_monitor(self._controller_window, self.settings_monitor_index, keep_size=True)
-        self.save_settings()
         return {"ok": True}
+
+    def _refresh_output_canvas_size(self):
+        """Re-measures the real Output window and pushes the new size into
+        both the <canvas> element itself (initCanvas(), the same JS the
+        constructor calls once at startup) and WebCanvas's own cached
+        dimensions (WebCanvas.resize, webview_bridge.py) - without the
+        latter, winfo_width()/height() (what the letterbox/font-fitting
+        math actually reads) would keep reporting the stale startup size
+        even after the on-screen canvas itself resized. Called after any
+        runtime change to the Output window's real geometry: switching the
+        Output monitor (_select_output_monitor above) or toggling
+        fullscreen (toggle_fullscreen below)."""
+        if self._window is None or getattr(self, "text_canvas", None) is None:
+            return
+        try:
+            dims = self._window.evaluate_js("initCanvas()")
+            width, height = int(dims["w"]), int(dims["h"])
+            self.text_canvas.resize(width, height)
+            self._apply_scaled_fonts()
+            self._fit_font_to_lines()
+            self.render_text()
+        except Exception:
+            pass
 
     # ------------------------------------------------------------------ #
     # The real Options window - every real setting wired to a genuine
@@ -1608,16 +2166,35 @@ class WebSettingsUIMixin(SettingsLogicMixin):
             )
             self._mark_startup_translation_ready()
 
+        geometry_kwargs = self._restored_window_geometry(self.options_geometry, 680, 760)
+        # __CLEAR_SECONDS_MIN__/__CLEAR_SECONDS_MAX__ substituted from the
+        # real shared constants (app_constants.py) rather than hardcoded a
+        # second time in OPTIONS_HTML's own markup - the field previously
+        # declared a hardcoded 5-3600 range with no relationship to the
+        # actual 1-60 range _apply_display_vars enforces (settings_logic_
+        # mixin.py, via _coerce_int_range/CLEAR_DISPLAY_INACTIVITY_MIN/MAX),
+        # so a value inside the field's own stated bounds but outside 1-60
+        # got silently clamped on Apply with the input never reflecting it.
+        options_html = (
+            OPTIONS_HTML
+            .replace("__THEME_CSS__", self._theme_css_declaration())
+            .replace("__CLEAR_SECONDS_MIN__", str(self.CLEAR_DISPLAY_INACTIVITY_MIN))
+            .replace("__CLEAR_SECONDS_MAX__", str(self.CLEAR_DISPLAY_INACTIVITY_MAX))
+        )
         window = webview.create_window(
             "Rhema Options",
-            html=OPTIONS_HTML.replace("__THEME_CSS__", self._theme_css_declaration()),
+            html=options_html,
             js_api=_OptionsApi(self),
-            width=680,
-            height=760,
             background_color=self._settings_palette()["window_bg"],
             hidden=hidden,
+            **geometry_kwargs,
         )
         self._options_window = window
+        # Same real size/position/maximized-state persistence as the
+        # Controller window above (settings_window) - previously left
+        # None, so every Options resize/move/maximize was silently
+        # discarded on close.
+        self.options_window = PywebviewGeometryAdapter(window)
         self._options_dirty_ctx["options_window"] = window
         # Real behavior is settings_ui_mixin.py's
         # options_window.protocol("WM_DELETE_WINDOW", options_window.withdraw)
@@ -1640,6 +2217,17 @@ class WebSettingsUIMixin(SettingsLogicMixin):
         window.events.shown += lambda: self.apply_dark_title_bar(
             window, dark=(self.ui_theme == "dark")
         )
+        # Same events.shown timing requirement as apply_dark_title_bar
+        # right above. Fires even for a hidden window once it's actually
+        # shown later (the eager hidden-startup build, or a real File >
+        # Options click), not just on first construction.
+        if self.options_maximized:
+            def _maximize_options():
+                try:
+                    window.maximize()
+                except Exception:
+                    pass
+            window.events.shown += _maximize_options
         return window
 
     def _find_options_var(self, name):
@@ -1757,12 +2345,30 @@ class WebSettingsUIMixin(SettingsLogicMixin):
     def options_select_audio_device(self, label):
         if label not in self.devices:
             return {"ok": False}
-        self.microphone_index = self.devices.index(label)
+        new_index = self.devices.index(label)
+        # Matches the real _handle_audio_device_change (settings_ui_
+        # mixin.py): without this, picking a different microphone here
+        # updated settings.json and the dropdown immediately, but
+        # RealtimeSTT/the level meter (which only read microphone_index at
+        # recorder-construction time) kept capturing from the PREVIOUS
+        # device for the rest of the running session - the switch only
+        # ever took effect after a full app restart.
+        device_changed = new_index != self.microphone_index
+        self.microphone_index = new_index
         self.preferred_device_label = label
         self.save_settings()
+        if device_changed:
+            self._request_capture_restart()
+            self._request_audio_level_stream_restart()
         return {"ok": True}
 
     def options_select_video_device(self, label):
+        # Same crash-avoidance guard as _refresh_video_devices above - this
+        # is a second, independent call site into the same not-safe-for-
+        # concurrent-probing enumerate_video_devices(), reachable any time
+        # the user changes the dropdown while a Refresh scan is in flight.
+        if getattr(self, "_video_scan_in_progress", False):
+            return {"ok": False}
         try:
             available = self.enumerate_video_devices()
         except Exception:

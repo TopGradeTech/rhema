@@ -80,9 +80,14 @@ class WebUpdateMixin(UpdateMixin):
 
         # The download can't be meaningfully cancelled mid-stream (partial
         # installer files aren't useful) - matches the real popup's own
-        # WM_DELETE_WINDOW-blocking intent by simply not giving this
-        # window a close button at all (frameless), rather than needing a
-        # closing-event veto.
+        # WM_DELETE_WINDOW-blocking intent. frameless alone only removes
+        # the title bar's own close button; Alt+F4 and a taskbar/system-
+        # menu close still raise the window's closing event regardless of
+        # frameless, so that event must be vetoed explicitly too (a
+        # closing handler must return the literal False to cancel - see
+        # web_settings_ui_mixin.py's _hide_options_window for the same
+        # mechanic) or the popup silently disappears while the download/
+        # install continues in the background with no visible progress.
         popup = webview.create_window(
             "Downloading Update",
             html=PROGRESS_HTML,
@@ -93,6 +98,11 @@ class WebUpdateMixin(UpdateMixin):
             on_top=True,
             background_color="#1E2228",
         )
+
+        def _veto_close():
+            return False
+
+        popup.events.closing += _veto_close
 
         def push_progress(done_bytes, total_bytes):
             if total_bytes > 0:
