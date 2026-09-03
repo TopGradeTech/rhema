@@ -382,6 +382,9 @@ class _OptionsApi:
     def browse_cuda_directory(self):
         return self._app._browse_cuda_directory()
 
+    def confirm_reveal_bad_words(self):
+        return self._app._confirm_reveal_bad_words()
+
     def check_nllb_download(self):
         return self._app._check_nllb_download_from_options()
 
@@ -702,15 +705,39 @@ document.getElementById('showMonitorIds').addEventListener('click', () => {
   pywebview.api.show_monitor_ids()
 })
 
-function makeListToggle(buttonId, containerId){
+// confirmApi, when given, names a pywebview.api method that has to
+// return true before the list is revealed - only the bad words list uses
+// it, since that's the one whose contents are exactly what the warning
+// says they are. Gates REVEALING only; collapsing it again never asks.
+// The in-flight guard is load-bearing: the confirm blocks its own js_api
+// thread until answered while this page stays fully clickable, so
+// without it a second click would queue a second dialog behind the
+// first. Deliberately web-only - the Tk app's equivalent toggle
+// (settings_ui_mixin.py) has no such prompt, so this is NOT a parity gap
+// to "fix" by deleting it.
+function makeListToggle(buttonId, containerId, confirmApi){
   const button = document.getElementById(buttonId)
   const container = document.getElementById(containerId)
-  button.addEventListener('click', () => {
+  let confirming = false
+  button.addEventListener('click', async () => {
+    if (confirming) return
+    if (confirmApi && container.hidden){
+      confirming = true
+      let ok = false
+      try {
+        ok = await pywebview.api[confirmApi]()
+      } catch (e) {
+        ok = false
+      } finally {
+        confirming = false
+      }
+      if (!ok) return
+    }
     container.hidden = !container.hidden
     button.textContent = container.hidden ? 'Show list' : 'Hide list'
   })
 }
-makeListToggle('badWordsToggle', 'badWordsContainer')
+makeListToggle('badWordsToggle', 'badWordsContainer', 'confirm_reveal_bad_words')
 makeListToggle('vocabToggle', 'vocabContainer')
 
 // .collapsed (visibility:hidden, CSS above) rather than the [hidden]
@@ -1831,6 +1858,16 @@ class WebSettingsUIMixin(SettingsLogicMixin):
             "path": path,
             "dirty": bool(self._options_dirty_ctx["dirty_value"]),
         }
+
+    def _confirm_reveal_bad_words(self):
+        # Blocks this js_api thread until answered, same as the Local NLLB
+        # download confirm already reached from this page
+        # (_confirm_local_nllb_download -> _confirm_yes_no) - so the page's
+        # own await resolves to a real bool, no polling needed.
+        return self._confirm_yes_no(
+            "Bad Words Filter",
+            "Are you sure? This area is not for the faint of heart.",
+        )
 
     def _check_nllb_download_from_options(self):
         # Real button (settings_ui_mixin.py) relabels itself between
