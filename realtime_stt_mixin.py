@@ -115,6 +115,30 @@ class RealtimeSttMixin:
                 recorder.shutdown()  # kill multiprocessing worker processes
             except Exception:
                 pass
+        # Wait for the worker thread to actually finish before returning -
+        # without this, _run_listen_iteration calls _start_realtime_stt()
+        # again immediately after this returns, which can spawn a brand
+        # new recorder while the OLD worker thread is still unwinding from
+        # abort()/shutdown() above. recorder.abort() unblocks the worker's
+        # blocked recorder.text() call, which can return one last in-
+        # flight transcription that the worker then finalizes through
+        # _on_realtime_stt_final - if the new recorder is already capturing
+        # by then and the speaker was still mid-utterance, the same speech
+        # gets shown twice: once from the old worker's trailing result,
+        # once from the new recorder's fresh capture of it. This is a
+        # genuine, confirmed cause of duplicate transcriptions, not a
+        # theoretical race - _service_realtime_stt_restart's own docstring
+        # already claims "stop-then-start stays sequential", but that was
+        # only ever true of the two *method calls*, not of the underlying
+        # worker thread each one's lifecycle actually depends on.
+        # Bounded (not join() with no timeout) so a hung recorder.shutdown()
+        # (the separately-tracked RealtimeSTT shutdown-hang issue) degrades
+        # to "one possible duplicate on this specific restart" rather than
+        # freezing capture entirely - the same trade-off on_closing's own
+        # close-time watchdog already makes for the identical hang.
+        worker_thread = self._realtime_stt_thread
+        if worker_thread is not None and worker_thread.is_alive():
+            worker_thread.join(timeout=5.0)
         try:
             self.root.after(0, lambda: self._realtime_stt_set_live_line(""))
         except Exception:
