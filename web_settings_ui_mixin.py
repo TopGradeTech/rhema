@@ -459,6 +459,18 @@ select{background:var(--input-bg);border:1px solid var(--border);color:var(--tex
  max-width:280px}
 input[type=text]{background:var(--input-bg);border:1px solid var(--border);color:var(--text);border-radius:6px;
  padding:4px 8px}
+/* Searchable language picker (see makeLanguageCombo below). Hand-rolled
+   rather than <input list=datalist> because the native datalist popup
+   can't be browsed as a full list and ignores this page's theme. */
+.combo{position:relative;display:flex;align-items:center;gap:4px}
+.comboBtn{background:var(--input-bg);border:1px solid var(--border);color:var(--text);border-radius:6px;
+ padding:4px 7px;font:inherit;font-size:10px;line-height:1.4;cursor:pointer}
+.comboBtn:hover{border-color:var(--accent)}
+.comboList{position:absolute;top:calc(100% + 3px);right:0;width:264px;max-height:240px;overflow-y:auto;z-index:60;
+ background:var(--input-bg);border:1px solid var(--border);border-radius:6px;box-shadow:0 8px 22px rgba(0,0,0,.35)}
+.comboList div{padding:5px 10px;font-size:13px;cursor:pointer;white-space:nowrap;overflow:hidden;
+ text-overflow:ellipsis}
+.comboList div:hover,.comboList div.active{background:var(--accent);color:#fff}
 textarea{width:100%;background:var(--input-bg);border:1px solid var(--border);color:var(--text);border-radius:6px;
  padding:6px 8px;font:12px/1.4 monospace;resize:vertical}
 input[type=checkbox]{width:16px;height:16px;accent-color:var(--accent)}
@@ -505,8 +517,8 @@ input[type=checkbox]{width:16px;height:16px;accent-color:var(--accent)}
   <div class="row"><label>Show live interim text</label><input type="checkbox" id="interim"></div>
   <div class="row"><label>STT device<span class="help" data-tip="Auto uses CUDA when available, otherwise CPU.">?</span></label>
     <select id="device"><option value="cpu">CPU</option><option value="cuda">CUDA</option><option value="auto">Auto</option></select></div>
-  <div class="row"><label>Source language<span class="help" data-tip="The language your speech is transcribed as. Type to search all supported languages.">?</span></label>
-    <input type="text" id="sourceLang" list="sourceLangOptions" autocomplete="off" style="width:220px"><datalist id="sourceLangOptions"></datalist></div>
+  <div class="row"><label>Source language<span class="help" data-tip="The language your speech is transcribed as. Type to search, or click the arrow to browse all 100 languages.">?</span></label>
+    <span class="combo"><input type="text" id="sourceLang" autocomplete="off" style="width:220px"><button type="button" class="comboBtn" id="sourceLangBtn" title="Browse all languages">&#9660;</button><div class="comboList" id="sourceLangList" hidden></div></span></div>
   <div class="row"><label>Final model<span class="help" data-tip="Accurate faster-whisper model used after each utterance ends. Larger models are more accurate but need more VRAM and take longer per utterance.">?</span></label><select id="finalModel"></select></div>
   <div class="row"><label>Realtime model<span class="help" data-tip="Fast model used internally every ~0.2s to drive dynamic silence detection. Not shown on screen - kept small so it doesn't compete with the final model for GPU time.">?</span></label><select id="realtimeModel"></select></div>
   <div class="row"><label>Voice sensitivity<span class="help" data-tip="How easily speech is detected. Lower catches softer/quieter speech; higher ignores background noise better.">?</span></label><input type="number" id="silero" min="0.1" max="0.9" step="0.05"></div>
@@ -517,8 +529,8 @@ input[type=checkbox]{width:16px;height:16px;accent-color:var(--accent)}
   <div class="row"><label>Model name<span class="help" data-tip="Hugging Face model id for local text translation. Larger models translate more accurately but need more VRAM/RAM and disk space, and run slower.">?</span></label><select id="nllbModel"></select></div>
   <div class="row"><label>Device<span class="help" data-tip="Auto uses CUDA when available, otherwise CPU.">?</span></label>
     <select id="nllbDevice"><option value="cpu">CPU</option><option value="cuda">CUDA</option><option value="auto">Auto</option></select></div>
-  <div class="row"><label>Target language<span class="help" data-tip="Language the translated transcript is produced in. Type to search all 200 languages.">?</span></label>
-    <input type="text" id="nllbTargetLang" list="nllbTargetLangOptions" autocomplete="off" style="width:220px"><datalist id="nllbTargetLangOptions"></datalist></div>
+  <div class="row"><label>Target language<span class="help" data-tip="Language the translated transcript is produced in. Type to search, or click the arrow to browse all 202 languages.">?</span></label>
+    <span class="combo"><input type="text" id="nllbTargetLang" autocomplete="off" style="width:220px"><button type="button" class="comboBtn" id="nllbTargetLangBtn" title="Browse all languages">&#9660;</button><div class="comboList" id="nllbTargetLangList" hidden></div></span></div>
   <div class="row"><label>Max chars per chunk<span class="help" data-tip="Long transcripts are split by paragraph, sentence, or length before translation.">?</span></label><input type="number" id="nllbMaxChars" min="250" max="20000" step="250"></div>
   <div class="row"><span></span><span style="display:flex;gap:8px">
     <button type="button" id="nllbDownload" class="smallBtn">Download / Check for Updates</button>
@@ -890,15 +902,125 @@ function fillSelect(id, names, selected){
   if (selected) el.value = selected
 }
 
-function fillDatalist(id, names){
-  const el = elFor(id)
-  el.innerHTML = ''
-  for (const name of names){
-    const opt = document.createElement('option')
-    opt.value = name
-    el.appendChild(opt)
+// Real searchable combobox for the two language pickers, replacing the
+// native <input list=datalist> they used to be. The data behind them was
+// always the full list (languages.py: 100 Whisper + 202 NLLB), but a
+// datalist can only be *filtered* by typing - there's no way to browse
+// everything, which read as "the languages are missing". Its popup is
+// also a native widget that ignores this page's theme.
+//
+// Behavior contract copied from Tk's _build_searchable_language_combobox
+// (settings_ui_mixin.py), which is what "the previous version" means
+// here: substring filter as you type, the FULL list when the field is
+// empty or the arrow is clicked, arrow-key/Enter selection, and typed
+// text snapped to its first substring match when the field is committed
+// (so a half-typed "Eng" can never be left as the saved value).
+function makeLanguageCombo(inputId, listId, buttonId){
+  const input = document.getElementById(inputId)
+  const list = document.getElementById(listId)
+  const button = document.getElementById(buttonId)
+  let all = []
+  let activeIndex = -1
+  let committing = false
+
+  function items(){ return Array.from(list.children) }
+
+  function open(filter){
+    const typed = (filter || '').trim().toLowerCase()
+    const matches = typed ? all.filter(name => name.toLowerCase().includes(typed)) : all
+    const shown = matches.length ? matches : all
+    list.innerHTML = ''
+    for (const name of shown){
+      const item = document.createElement('div')
+      item.textContent = name
+      // mousedown, not click: click fires after the input's blur, which
+      // would have already closed this list out from under the cursor.
+      item.addEventListener('mousedown', (e) => { e.preventDefault(); commit(name) })
+      list.appendChild(item)
+    }
+    activeIndex = -1
+    list.hidden = false
   }
+
+  function close(){ list.hidden = true; activeIndex = -1 }
+
+  function commit(name){
+    input.value = name
+    // The generic per-field listener (see `fields` above) is what pushes
+    // this into its tk.Variable - dispatching keeps picking from the list
+    // identical to typing the name by hand. The flag is why this can't
+    // just dispatch blind: THIS combo also listens for `input` (to filter
+    // as you type), so without it every pick would immediately reopen the
+    // list it was just dismissed from.
+    committing = true
+    try {
+      input.dispatchEvent(new Event('input', {bubbles: true}))
+    } finally {
+      committing = false
+    }
+    close()
+  }
+
+  function snap(){
+    const typed = input.value.trim()
+    if (!typed || all.includes(typed)) return
+    const lower = typed.toLowerCase()
+    const match = all.find(name => name.toLowerCase().includes(lower))
+    if (match) commit(match)
+  }
+
+  function setActive(next){
+    const all_items = items()
+    if (!all_items.length) return
+    all_items.forEach(el => el.classList.remove('active'))
+    activeIndex = (next + all_items.length) % all_items.length
+    const item = all_items[activeIndex]
+    item.classList.add('active')
+    item.scrollIntoView({block: 'nearest'})
+  }
+
+  input.addEventListener('input', () => { if (!committing) open(input.value) })
+  // Full list on focus (with the current value selected, so typing
+  // replaces it) rather than the one entry matching what's already in
+  // the field - matches Tk's select-all-on-focus behavior.
+  input.addEventListener('focus', () => { input.select(); open('') })
+  input.addEventListener('blur', () => { snap(); close() })
+  // Same reason as the list items above: preventDefault keeps focus in
+  // the input, so the arrow can't trigger blur -> close -> reopen.
+  button.addEventListener('mousedown', (e) => {
+    e.preventDefault()
+    if (list.hidden){ input.focus(); input.select(); open('') } else { close() }
+  })
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp'){
+      e.preventDefault()
+      // Arrow keys are a browse gesture, like the button - they open the
+      // full list, not the single entry matching the committed value
+      // that's already sitting in the field. Typing is what filters.
+      if (list.hidden) open('')
+      const down = e.key === 'ArrowDown'
+      // From "nothing highlighted", down starts at the top and up wraps
+      // to the bottom (setActive's modulo turns -1 into the last item).
+      setActive(activeIndex < 0 ? (down ? 0 : -1) : activeIndex + (down ? 1 : -1))
+    } else if (e.key === 'Enter'){
+      e.preventDefault()
+      const active = items()[activeIndex]
+      if (active) commit(active.textContent)
+      else snap()
+    } else if (e.key === 'Escape' && !list.hidden){
+      // Swallowed so it closes the list instead of reaching the page's
+      // own Escape hotkey (which toggles the output window fullscreen).
+      e.stopPropagation()
+      e.preventDefault()
+      close()
+    }
+  })
+
+  return {setOptions(names){ all = Array.isArray(names) ? names.slice() : [] }}
 }
+
+const sourceLangCombo = makeLanguageCombo('sourceLang', 'sourceLangList', 'sourceLangBtn')
+const nllbTargetLangCombo = makeLanguageCombo('nllbTargetLang', 'nllbTargetLangList', 'nllbTargetLangBtn')
 
 function applyThemeVars(vars){
   const root = document.documentElement
@@ -987,8 +1109,8 @@ window.addEventListener('pywebviewready', async () => {
   fillSelect('loggingMode', opts.logging_mode, v.display.logging_mode)
   fillSelect('audioDevice', opts.audio_device, v.preferred_device_label)
   fillSelect('videoDevice', [], v.video_device_label)
-  fillDatalist('sourceLangOptions', opts.stt_source_lang)
-  fillDatalist('nllbTargetLangOptions', opts.local_nllb_target_lang)
+  sourceLangCombo.setOptions(opts.stt_source_lang)
+  nllbTargetLangCombo.setOptions(opts.local_nllb_target_lang)
   fillSelect('outputMonitor', opts.monitor_labels, v.monitor_var)
   fillSelect('settingsMonitor', opts.monitor_labels, v.settings_monitor_var)
   await pywebview.api.refresh_devices()
