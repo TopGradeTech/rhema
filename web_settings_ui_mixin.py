@@ -516,8 +516,6 @@ input[type=checkbox]{width:16px;height:16px;accent-color:var(--accent)}
   <div id="nllbStatus" style="color:#9CA3AF;font-size:12px;margin:4px 0 8px">NLLB status: --</div>
 
   <h2>Advanced</h2>
-  <div class="row"><span></span><button type="button" id="advancedToggle" class="smallBtn">Show Advanced Settings</button></div>
-  <div id="advancedContent" hidden>
   <div class="row"><label>Logging mode<span class="help" data-tip="Normal keeps status/error and finalized output logs. Debug adds pipeline traces. Evaluation adds raw transcribed/translated comparison logs. Full enables all logs.">?</span></label><select id="loggingMode"></select></div>
   <div class="row"><label>Start app when Windows starts</label><input type="checkbox" id="startWithWindows"></div>
   <div class="row"><label>CUDA directory<span class="help" data-tip="Optional Windows path used to find CUDA Toolkit 12.x and cuDNN 9.x DLLs for local faster-whisper GPU mode. Select the CUDA toolkit folder or its bin folder.">?</span></label>
@@ -535,7 +533,6 @@ input[type=checkbox]{width:16px;height:16px;accent-color:var(--accent)}
     <textarea id="vocabEn" rows="2"></textarea>
     <div class="row"><label>&nbsp;&nbsp;Spanish (comma-separated)</label></div>
     <textarea id="vocabEs" rows="2"></textarea>
-  </div>
   </div>
 
 </div>
@@ -707,16 +704,6 @@ function makeListToggle(buttonId, containerId){
 }
 makeListToggle('badWordsToggle', 'badWordsContainer')
 makeListToggle('vocabToggle', 'vocabContainer')
-// Same real collapse/relabel behavior as the two list toggles above, just
-// wrapping the whole Advanced section instead of one field - matches
-// Tk's "Show Advanced Settings" button (settings_ui_mixin.py), which
-// keeps Advanced collapsed by default rather than always fully expanded.
-document.getElementById('advancedToggle').addEventListener('click', () => {
-  const content = document.getElementById('advancedContent')
-  const button = document.getElementById('advancedToggle')
-  content.hidden = !content.hidden
-  button.textContent = content.hidden ? 'Show Advanced Settings' : 'Hide Advanced Settings'
-})
 
 function syncClearSecondsVisibility(){
   document.getElementById('clearSecondsRow').hidden = !document.getElementById('clear').checked
