@@ -529,7 +529,38 @@ class WebTranslationApp(
         self.load_settings()
         self._refresh_bad_words()
         self.devices = self.get_audio_devices()
-        self.microphone_index = 0 if self.devices else None
+        # Resolve the SAVED microphone by name here, synchronously, before
+        # the capture thread (started below in _on_window_loaded) ever
+        # constructs the first RealtimeSTT recorder - not just a nicety.
+        # This used to default straight to index 0 and rely on
+        # _refresh_audio_devices() to correct it later, asynchronously,
+        # once the (hidden, eagerly-built) Options page loaded and fired
+        # its own pywebviewready handler. That correction raced the FIRST
+        # recorder's own construction: if it landed while that recorder
+        # was still mid-construction (loading the final STT model, which
+        # can legitimately take many seconds on first load), the resulting
+        # _request_capture_restart() had to abort()/shutdown() a recorder
+        # that was busy loading, not actively listening - a state
+        # RealtimeSTT's own abort() (which waits on was_interrupted with
+        # no timeout in that case) can take far longer than any reasonable
+        # restart budget to unwind from. The old worker thread could then
+        # remain alive in the background for the rest of the session,
+        # loading its own model copy and independently transcribing every
+        # utterance alongside the newly-started recorder - confirmed live
+        # via real transcript logs (see project memory), not theoretical:
+        # every single utterance duplicated, from the very first one.
+        # Resolving correctly before that first construction even happens
+        # means the common case (saved device still present) never asks
+        # for a restart at all - _refresh_audio_devices()'s own
+        # re-resolution below simply finds nothing changed.
+        resolved_label = self._resolve_preferred_device_label(self.preferred_device_label)
+        if resolved_label:
+            self.preferred_device_label = resolved_label
+            self.microphone_index = self.devices.index(resolved_label)
+        elif self.preferred_device_label in self.devices:
+            self.microphone_index = self.devices.index(self.preferred_device_label)
+        else:
+            self.microphone_index = 0 if self.devices else None
 
         if not is_webview2_runtime_available():
             self._show_error_dialog(
