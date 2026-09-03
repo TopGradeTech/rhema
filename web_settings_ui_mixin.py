@@ -485,12 +485,12 @@ input[type=checkbox]{width:16px;height:16px;accent-color:var(--accent)}
   <div class="row"><label>Clear display on inactivity</label><input type="checkbox" id="clear"></div>
   <div class="row indent" id="clearSecondsRow"><label>...after N seconds</label><input type="number" id="clearSeconds" min="__CLEAR_SECONDS_MIN__" max="__CLEAR_SECONDS_MAX__"></div>
   <div class="row"><label>Show video feed behind captions<span class="help" data-tip="Shows the OBS Virtual Camera behind captions. Start OBS's Virtual Camera first.">?</span></label><input type="checkbox" id="videoEnabled"></div>
-  <div class="row indent"><label>Camera device<span class="help" data-tip="Camera index for the OBS Virtual Camera. Click Refresh after starting OBS's Virtual Camera if it isn't listed yet.">?</span></label>
+  <div class="row indent" id="videoDeviceRow"><label>Camera device<span class="help" data-tip="Camera index for the OBS Virtual Camera. Click Refresh after starting OBS's Virtual Camera if it isn't listed yet.">?</span></label>
     <span style="display:flex;gap:8px;align-items:center"><select id="videoDevice"></select><button type="button" id="videoRefresh" class="smallBtn">Refresh</button></span></div>
-  <div class="row indent"><label>Camera status</label><span id="videoStatus" style="color:#9CA3AF;font-size:12px">--</span></div>
+  <div class="row indent" id="videoStatusRow"><label>Camera status</label><span id="videoStatus" style="color:#9CA3AF;font-size:12px">--</span></div>
   <div class="row indent" id="videoLinesRow"><label>Max caption lines (with video feed)<span class="help" data-tip="Maximum number of translated lines kept on screen when the video feed is on. Kept lower than the no-video default to leave more of the video visible.">?</span></label><input type="number" id="videoLines" min="1" max="3"></div>
-  <div class="row indent" id="linesRow"><label>Max caption lines (no video feed)<span class="help" data-tip="Maximum number of translated lines kept on screen when the video feed above is off.">?</span></label><input type="number" id="lines" min="4" max="10"></div>
   <div class="row indent" id="videoAlphaRow"><label>Caption bar opacity (%)<span class="help" data-tip="How solid the bar behind the caption lines looks, using the Background Color above. 0% is fully see-through, 100% is a solid bar.">?</span></label><input type="number" id="videoAlpha" min="0" max="100"></div>
+  <div class="row" id="linesRow"><label>Max caption lines (no video feed)<span class="help" data-tip="Maximum number of translated lines kept on screen when the video feed above is off.">?</span></label><input type="number" id="lines" min="4" max="10"></div>
   <div class="row"><label>Output monitor<span class="help" data-tip="Monitor where the translation output appears.">?</span></label><select id="outputMonitor"></select></div>
   <div class="row"><label>Controller monitor<span class="help" data-tip="Monitor where this Controller/Options window opens.">?</span></label><select id="settingsMonitor"></select></div>
   <div class="row"><span></span><button type="button" id="showMonitorIds" class="smallBtn">Show Monitor Numbers</button></div>
@@ -727,14 +727,18 @@ document.getElementById('clear').addEventListener('change', syncClearSecondsVisi
 // "Max caption lines" fields - exactly one is ever the active value at a
 // time, based on whether the video feed is enabled, so there's no
 // ambiguity about which one is in effect. Camera device/status are
-// deliberately NOT included here (unlike an earlier version of this
-// page) - picking/checking a camera should work whether or not the feed
-// is currently on, e.g. to confirm OBS's Virtual Camera is available
-// before flipping the checkbox on. Same .collapsed reasoning as
-// syncClearSecondsVisibility above - these three rows reserve their own
-// space instead of shifting Output/Controller monitor below them.
+// entirely dependent on the video feed too - there's nothing to pick or
+// check until OBS's Virtual Camera is actually in use - so they're
+// indented under the checkbox and hidden with it. Same .collapsed
+// reasoning as syncClearSecondsVisibility above - these rows reserve
+// their own space instead of shifting Output/Controller monitor below
+// them; "Max caption lines (no video feed)" is the one exception left at
+// the top level (not indented) since it's the row that's active while
+// the checkbox above is OFF, not on.
 function syncVideoRowsVisibility(){
   const on = document.getElementById('videoEnabled').checked
+  document.getElementById('videoDeviceRow').classList.toggle('collapsed', !on)
+  document.getElementById('videoStatusRow').classList.toggle('collapsed', !on)
   document.getElementById('linesRow').classList.toggle('collapsed', on)
   document.getElementById('videoLinesRow').classList.toggle('collapsed', !on)
   document.getElementById('videoAlphaRow').classList.toggle('collapsed', !on)
