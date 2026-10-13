@@ -68,3 +68,9 @@ pythonnet>=3.1.0; sys_platform == "win32"
 # solid black against a WebView2 surface). See web_settings_ui_mixin.py's
 # _capture_output_snapshot_data_uri for the full accounting.
 windows-capture; sys_platform == "win32"
+# Check for Updates verifies GitHub's TLS certificate through Windows' own
+# certificate engine instead of OpenSSL (update_mixin.py's _SSL_CONTEXT).
+# Python's default context only reads roots already in the Windows store
+# and never triggers Windows' lazy root download, so a PC that has not
+# browsed to a Sectigo-signed site fails with CERTIFICATE_VERIFY_FAILED.
+truststore

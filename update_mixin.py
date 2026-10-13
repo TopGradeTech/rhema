@@ -34,6 +34,7 @@ suggest the check is broken.
 import json
 import os
 import re
+import ssl
 import subprocess
 import sys
 import tempfile
@@ -41,6 +42,7 @@ import threading
 import urllib.error
 import urllib.request
 
+import truststore
 import ttkbootstrap as ttkb
 import tkinter as tk
 
@@ -54,6 +56,20 @@ INSTALLER_ASSET_NAME = "Rhema-Setup.exe"
 _REQUEST_TIMEOUT_S = 10
 _USER_AGENT = "Rhema-Update-Check"
 _DIALOG_TITLE = "Check for Updates"
+
+# Verify TLS through Windows' own certificate engine (SChannel) rather than
+# the OpenSSL default. The stdlib context reads the Windows root store once
+# and verifies in OpenSSL, so a PC whose store has never fetched GitHub's
+# root fails with "unable to get local issuer certificate" - Windows fills
+# that store lazily, on the first connection a *native* program makes to a
+# site needing that root, and Python never triggers the fetch. An OBS PC
+# that rarely browses hit exactly this. truststore hands verification to
+# the OS, which is what Edge and Windows Update do: the root download
+# happens, corporate roots are honored, and TLS-inspecting AV/firewalls
+# work. pip has shipped it as the default since 24.2. Deliberately an
+# explicit context on each urlopen rather than truststore.inject_into_ssl(),
+# so this cannot change how transformers/huggingface_hub do TLS.
+_SSL_CONTEXT = truststore.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
 
 
 def _version_tuple(version_string):
@@ -102,7 +118,7 @@ class UpdateMixin:
                 },
             )
             with urllib.request.urlopen(
-                request, timeout=_REQUEST_TIMEOUT_S
+                request, timeout=_REQUEST_TIMEOUT_S, context=_SSL_CONTEXT
             ) as response:
                 release = json.loads(response.read().decode("utf-8"))
         except Exception as exc:
@@ -234,7 +250,7 @@ class UpdateMixin:
                     asset_url, headers={"User-Agent": _USER_AGENT}
                 )
                 with urllib.request.urlopen(
-                    request, timeout=_REQUEST_TIMEOUT_S
+                    request, timeout=_REQUEST_TIMEOUT_S, context=_SSL_CONTEXT
                 ) as response:
                     total_bytes = int(response.headers.get("Content-Length", 0) or 0)
                     done_bytes = 0

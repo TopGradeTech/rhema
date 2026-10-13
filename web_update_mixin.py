@@ -46,7 +46,13 @@ import tempfile
 import threading
 import urllib.request
 
-from update_mixin import UpdateMixin, INSTALLER_ASSET_NAME, _USER_AGENT, _REQUEST_TIMEOUT_S
+from update_mixin import (
+    UpdateMixin,
+    INSTALLER_ASSET_NAME,
+    _USER_AGENT,
+    _REQUEST_TIMEOUT_S,
+    _SSL_CONTEXT,
+)
 
 PROGRESS_HTML = r"""
 <!doctype html><html><head><meta charset="utf-8"><title>Downloading Update</title>
@@ -127,7 +133,7 @@ class WebUpdateMixin(UpdateMixin):
                     asset_url, headers={"User-Agent": _USER_AGENT}
                 )
                 with urllib.request.urlopen(
-                    request, timeout=_REQUEST_TIMEOUT_S
+                    request, timeout=_REQUEST_TIMEOUT_S, context=_SSL_CONTEXT
                 ) as response:
                     total_bytes = int(response.headers.get("Content-Length", 0) or 0)
                     done_bytes = 0
