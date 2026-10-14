@@ -53,3 +53,24 @@ pillow
 # Real camera friendly names ("OBS Virtual Camera") for the Camera Device
 # dropdown instead of bare index numbers — Windows-only, DirectShow-based
 pygrabber; sys_platform == "win32"
+# pywebview port (main_webview.py / WebTranslationApp) — Windows backend
+# (platforms/winforms.py) needs pythonnet for its WinForms/.NET interop;
+# webview_bridge.py's invoke_on_ui_thread() imports clr/System directly for
+# the same reason. main.py/TranslationApp (the Tk app) does not use either.
+pywebview>=6.2.1
+pythonnet>=3.1.0; sys_platform == "win32"
+# Controller's Preview/Output Snapshot - occlusion-independent per-HWND
+# capture via Windows Graphics Capture (the same API OBS/Xbox Game Bar use
+# for "Window" capture). Replaces two rejected techniques: bbox/BitBlt
+# (captures whatever's on top of that screen region, a real information-
+# disclosure risk - confirmed twice against real unrelated windows during
+# development) and PrintWindow, the real Tk app's own technique (returns
+# solid black against a WebView2 surface). See web_settings_ui_mixin.py's
+# _capture_output_snapshot_data_uri for the full accounting.
+windows-capture; sys_platform == "win32"
+# Check for Updates verifies GitHub's TLS certificate through Windows' own
+# certificate engine instead of OpenSSL (update_mixin.py's _SSL_CONTEXT).
+# Python's default context only reads roots already in the Windows store
+# and never triggers Windows' lazy root download, so a PC that has not
+# browsed to a Sectigo-signed site fails with CERTIFICATE_VERIFY_FAILED.
+truststore

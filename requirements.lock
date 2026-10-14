@@ -1,6 +1,6 @@
 # -------------------------------------------------------------------------
 # requirements.lock - the dependency set this working tree resolves to,
-# captured on Python 3.12 / Windows 11 while APP_VERSION was 1.1.5.
+# captured on Python 3.12 / Windows 11 while APP_VERSION was 1.1.6.
 #
 # It matches a shipped installer only if it was regenerated as part of
 # that release. Regenerating mid-cycle - after a deliberate dependency
@@ -37,10 +37,12 @@ altgraph==0.17.5
 annotated-doc==0.0.4
 anyio==4.14.1
 av==17.1.0
+bottle==0.13.4
 certifi==2026.6.17
 cffi==2.0.0
 charset-normalizer==3.4.7
 click==8.4.2
+clr_loader==0.3.1
 colorama==0.4.6
 comtypes==1.4.16
 ctranslate2==4.8.0
@@ -70,6 +72,7 @@ packaging==26.2
 pefile==2024.8.26
 pillow==12.2.0
 protobuf==7.35.1
+proxy_tools==0.1.0
 PyAudio==0.2.14
 pycparser==3.0
 pydub==0.25.1
@@ -78,6 +81,8 @@ Pygments==2.20.0
 pygrabber==0.2
 pyinstaller-hooks-contrib==2026.6
 pyinstaller==6.21.0
+pythonnet==3.1.0
+pywebview==6.2.1
 pywin32-ctypes==0.2.3
 PyYAML==6.0.3
 RealtimeSTT @ git+https://github.com/TopGradeTech/RealtimeSTT.git@beb00a1c29a11f4c56da9fc4ccab78a2e0bbdd24
@@ -101,6 +106,7 @@ torch==2.6.0+cu124
 torchaudio==2.6.0+cu124
 tqdm==4.68.3
 transformers==5.12.1
+truststore==0.10.5
 ttkbootstrap==2.2.2
 typer==0.25.1
 typing_extensions==4.15.0
@@ -108,3 +114,4 @@ urllib3==2.7.0
 webrtcvad-wheels==2.0.14
 websocket-client==1.9.0
 websockets==16.0
+windows-capture==2.0.1

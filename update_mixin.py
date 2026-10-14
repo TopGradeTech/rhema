@@ -34,14 +34,15 @@ suggest the check is broken.
 import json
 import os
 import re
+import ssl
 import subprocess
 import sys
 import tempfile
 import threading
 import urllib.error
 import urllib.request
-from tkinter import messagebox
 
+import truststore
 import ttkbootstrap as ttkb
 import tkinter as tk
 
@@ -55,6 +56,20 @@ INSTALLER_ASSET_NAME = "Rhema-Setup.exe"
 _REQUEST_TIMEOUT_S = 10
 _USER_AGENT = "Rhema-Update-Check"
 _DIALOG_TITLE = "Check for Updates"
+
+# Verify TLS through Windows' own certificate engine (SChannel) rather than
+# the OpenSSL default. The stdlib context reads the Windows root store once
+# and verifies in OpenSSL, so a PC whose store has never fetched GitHub's
+# root fails with "unable to get local issuer certificate" - Windows fills
+# that store lazily, on the first connection a *native* program makes to a
+# site needing that root, and Python never triggers the fetch. An OBS PC
+# that rarely browses hit exactly this. truststore hands verification to
+# the OS, which is what Edge and Windows Update do: the root download
+# happens, corporate roots are honored, and TLS-inspecting AV/firewalls
+# work. pip has shipped it as the default since 24.2. Deliberately an
+# explicit context on each urlopen rather than truststore.inject_into_ssl(),
+# so this cannot change how transformers/huggingface_hub do TLS.
+_SSL_CONTEXT = truststore.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
 
 
 def _version_tuple(version_string):
@@ -103,7 +118,7 @@ class UpdateMixin:
                 },
             )
             with urllib.request.urlopen(
-                request, timeout=_REQUEST_TIMEOUT_S
+                request, timeout=_REQUEST_TIMEOUT_S, context=_SSL_CONTEXT
             ) as response:
                 release = json.loads(response.read().decode("utf-8"))
         except Exception as exc:
@@ -139,21 +154,21 @@ class UpdateMixin:
             self.root.after(0, self._show_up_to_date)
 
     def _show_update_check_error(self, exc):
-        messagebox.showerror(
+        self._show_error_dialog(
             _DIALOG_TITLE,
             f"Couldn't check for updates:\n{exc}",
             parent=self._update_dialog_parent(),
         )
 
     def _show_up_to_date(self):
-        messagebox.showinfo(
+        self._show_info_dialog(
             _DIALOG_TITLE,
             f"You're up to date (v{APP_VERSION}).",
             parent=self._update_dialog_parent(),
         )
 
     def _prompt_update_available(self, latest_version, asset_url):
-        proceed = messagebox.askyesno(
+        proceed = self._confirm_yes_no(
             "Update available",
             f"A new version of Rhema is available: {latest_version} "
             f"(you have v{APP_VERSION}).\n\n"
@@ -235,7 +250,7 @@ class UpdateMixin:
                     asset_url, headers={"User-Agent": _USER_AGENT}
                 )
                 with urllib.request.urlopen(
-                    request, timeout=_REQUEST_TIMEOUT_S
+                    request, timeout=_REQUEST_TIMEOUT_S, context=_SSL_CONTEXT
                 ) as response:
                     total_bytes = int(response.headers.get("Content-Length", 0) or 0)
                     done_bytes = 0
@@ -268,7 +283,7 @@ class UpdateMixin:
         except Exception:
             pass
         if exc is not None:
-            messagebox.showerror(
+            self._show_error_dialog(
                 _DIALOG_TITLE,
                 f"Couldn't download the update:\n{exc}",
                 parent=self._update_dialog_parent(),
@@ -333,7 +348,7 @@ class UpdateMixin:
                     close_fds=True,
                 )
         except Exception as exc:
-            messagebox.showerror(
+            self._show_error_dialog(
                 _DIALOG_TITLE,
                 f"Couldn't launch the installer:\n{exc}",
                 parent=self._update_dialog_parent(),
